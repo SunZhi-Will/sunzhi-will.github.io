@@ -1,0 +1,95 @@
+export type Lang = 'zh-TW' | 'en';
+
+export interface Translations {
+    [key: string]: {
+        nav: {
+            home: string;
+            about: string;
+            skills: string;
+            projects: string;
+        };
+        categories: {
+            all: string;
+            programming: string;
+            framework: string;
+            game: string;
+            ai: string;
+        };
+        hero: {
+            title: string;
+            subtitle: string;
+        };
+        about: {
+            title: string;
+            services: {
+                title: string;
+                available: string;
+                description: string;
+            };
+            teaching: {
+                title: string;
+                description: string;
+                courses: string[];
+            };
+        };
+        skills: {
+            title: string;
+        };
+        projects: {
+            title: string;
+            viewProject: string;
+            mainAchievements: string;
+            video: string;
+        };
+        footer: {
+            portfolio: string;
+            oldWebsite: string;
+        };
+        techCategories: {
+            programming: string;
+            framework: string;
+            game: string;
+            ai: string;
+            other: string;
+        };
+        aboutContent: {
+            intro: string;
+            experiences: Array<{
+                title: string;
+                period?: string;
+                description: string;
+                achievements: string[];
+            }>;
+        };
+        services: {
+            items: Array<{
+                title: string;
+                description: string;
+            }>;
+        };
+        teaching: {
+            description: string;
+            courses: string[];
+        };
+    };
+}
+
+export type MediaContent = {
+    type: 'image' | 'youtube';
+    src: string;
+    alt?: string;
+};
+
+export type Project = {
+    title: string;
+    description: string;
+    category: string;
+    achievements?: string[];
+    media?: MediaContent[];
+    technologies?: string[];
+    link?: string;
+    links?: {
+        ios?: string;
+        android?: string;
+    };
+}; 
