@@ -29,7 +29,7 @@ const useTypewriter = (text: string, speed: number = 100) => {
     let i = 0;
     const timer = setInterval(() => {
       if (i < text.length) {
-        setDisplayText(prev => text.slice(0, i + 1)); // 使用 slice 而不是累加
+        setDisplayText(text.slice(0, i + 1)); // 使用 slice 而不是累加
         i++;
       } else {
         clearInterval(timer);

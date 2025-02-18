@@ -248,17 +248,31 @@ export const translations: Translations = {
                     擅長快速掌握新技術並整合應用，將複雜的技術需求轉化為實用的解決方案。
                     特別在 AI 應用整合、企業系統開發與遊戲互動體驗設計方面有深入研究。
                     
-                    喜歡探索新技術，並樂於分享技術經驗。期待能為產業帶來更多創新應用，
-                    同時也能協助更多人學習與成長。`,
+                    目前專注於企業應用系統開發與 AI 技術整合，同時持續在 AR/VR 遊戲開發領域探索創新。
+                    期待能為產業帶來更多創新應用，同時也能協助更多人學習與成長。`,
             experiences: [
                 {
                     title: "英業達股份有限公司 - 軟體工程師",
                     period: "2023/12 - 至今",
-                    description: "負責企業級應用系統開發與維護，主要使用 .NET MVC、Low Code 軟體技術。",
+                    description: "負責企業級應用系統開發與維護，主要使用 .NET MVC、Low Code 技術，並參與 AI 技術導入專案。",
                     achievements: [
                         "開發與維護企業內部系統",
                         "參與 AI 技術導入專案",
-                        "進行技術分享與知識交流"
+                        "進行技術分享與知識交流",
+                        "優化系統架構與效能",
+                        "建立開發文件與規範"
+                    ]
+                },
+                {
+                    title: "酷愛迪數位創意 - 外包軟體工程師",
+                    period: "2020/10 - 至今",
+                    description: "以接案方式合作，專注於 AR 與 Unity 開發，負責多項創新互動專案的開發與實現。",
+                    achievements: [
+                        "研究 AR 臉部辨識，開發人臉位置判斷功能",
+                        "使用 Unity 開發跨平台手機 APP 介面",
+                        "開發互動式遊戲，與企劃密切溝通",
+                        "確保 UI 在不同裝置上的一致性",
+                        "優化應用程式效能與使用者體驗"
                     ]
                 },
                 {
@@ -563,23 +577,38 @@ export const translations: Translations = {
             other: 'Other Skills'
         },
         aboutContent: {
-            intro: `I am a passionate software engineer focused on .NET, AI application development, and Unity game development.
-                   My programming journey began with Minecraft mod development, and I have since accumulated extensive practical experience.
+            intro: `I am a passionate software engineer specializing in .NET development, AI applications, and Unity game development.
+                   My journey in programming began with Minecraft mod development, which has evolved into extensive professional experience.
                    
-                   I excel at quickly mastering new technologies and integrating them into practical solutions.
-                   I have particularly deep expertise in AI integration, enterprise system development, and game interaction design.
+                   I excel at rapidly adopting new technologies and integrating them into practical solutions.
+                   My expertise lies in AI integration, enterprise system development, and interactive game design.
                    
-                   I enjoy exploring new technologies and sharing technical experiences. I look forward to bringing more innovative
-                   applications to the industry while helping others learn and grow.`,
+                   Currently focused on enterprise application development and AI technology integration,
+                   while continuing to innovate in AR/VR game development. I am dedicated to bringing
+                   cutting-edge solutions to the industry while mentoring others in their technical growth.`,
             experiences: [
                 {
                     title: "Inventec Corporation - Software Engineer",
-                    period: "2023/12 - Present",
-                    description: "Responsible for enterprise application development and maintenance, primarily using .NET MVC and Low Code technologies.",
+                    period: "Dec 2023 - Present",
+                    description: "Lead enterprise application development and maintenance using .NET MVC and Low Code technologies, while driving AI technology integration initiatives.",
                     achievements: [
-                        "Develop and maintain internal systems",
-                        "Participate in AI technology integration projects",
-                        "Conduct technical sharing and knowledge exchange"
+                        "Develop and maintain mission-critical internal systems",
+                        "Spearhead AI technology integration projects",
+                        "Conduct technical knowledge sharing sessions",
+                        "Optimize system architecture and performance",
+                        "Establish development documentation and standards"
+                    ]
+                },
+                {
+                    title: "Coolidi Digital Creative - Freelance Software Engineer",
+                    period: "Oct 2020 - Present",
+                    description: "Collaborate on innovative AR and Unity development projects, focusing on creating immersive interactive experiences.",
+                    achievements: [
+                        "Research and implement AR facial recognition algorithms",
+                        "Develop cross-platform mobile applications using Unity",
+                        "Create engaging interactive games with close stakeholder collaboration",
+                        "Ensure consistent UI/UX across multiple devices",
+                        "Optimize application performance and user experience"
                     ]
                 },
                 {
