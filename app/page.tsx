@@ -6,13 +6,13 @@ import { Card } from "@nextui-org/react";
 import { useInView } from "react-intersection-observer";
 import ParticlesBackground from '@/components/ParticlesBackground';
 import GradientBackground from '@/components/GradientBackground';
-import { useState, useEffect, memo, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Masonry from 'react-masonry-css';
 import { GlowingButton } from '@/components/GlowingButton';
 import { TechIcon } from '@/components/TechIcon';
 import { NavDot } from '@/components/NavDot';
 import { ProjectMedia } from '@/components/ProjectMedia';
-import { Lang, Translations } from '@/types';
+import { Lang } from '@/types';
 import { translations } from '@/data/translations';
 
 // 在 CSS 中添加樣式
@@ -27,11 +27,13 @@ export default function Home() {
     threshold: 0.1,
   });
 
-  // 將 lang 的宣告移到這裡
-  const [lang, setLang] = useState<Lang>(() => {
+  const [lang, setLang] = useState<Lang>('zh-TW'); // 設定預設語言
+
+  useEffect(() => {
+    // 在瀏覽器端檢查語言
     const browserLang = navigator.language;
-    return browserLang.includes('zh') ? 'zh-TW' : 'en';
-  });
+    setLang(browserLang.includes('zh') ? 'zh-TW' : 'en');
+  }, []);
 
   const techStacks = useMemo(() => [
     {
@@ -400,7 +402,7 @@ export default function Home() {
       {/* 側邊導航 */}
       <nav className="fixed right-8 top-1/2 -translate-y-1/2 z-50 hidden lg:block">
         <div className="space-y-6">
-          {sections.map(({ id, name }) => (
+          {sections.map(({ id }) => (
             <NavDot
               key={id}
               active={activeSection === id}
