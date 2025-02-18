@@ -40,6 +40,23 @@ export interface Translations {
             viewProject: string;
             mainAchievements: string;
             video: string;
+            items: Array<{
+                title: string;
+                description: string;
+                category: string;
+                achievements: string[];
+                technologies: string[];
+                media: Array<{
+                    type: 'image' | 'youtube';
+                    src: string;
+                    alt: string;
+                }>;
+                link?: string;
+                links?: {
+                    ios?: string;
+                    android?: string;
+                };
+            }>;
         };
         footer: {
             portfolio: string;

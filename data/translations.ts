@@ -16,8 +16,8 @@ export const translations: Translations = {
             ai: 'AI 技術'
         },
         hero: {
-            title: '你好，我是謝上智',
-            subtitle: '軟體工程師 | AI 開發者 | Unity 專家'
+            title: '你好，我是謝上智(Sun)',
+            subtitle: '軟體工程師 | AI 應用開發 | Unity 遊戲開發'
         },
         about: {
             title: '關於我',
@@ -45,7 +45,188 @@ export const translations: Translations = {
             title: '主要專案',
             viewProject: '查看專案',
             mainAchievements: '主要成果：',
-            video: '影片'
+            video: '影片',
+            items: [
+                {
+                    title: "LexiTechly - 智慧英文內容分析",
+                    description: "使用 Google Gemini AI 分析英文網頁內容，提供 CEFR 等級評估、單字解析、AI 互動對話與語音發音功能，提升您的英文閱讀與學習體驗！",
+                    category: "AI 開發",
+                    achievements: [
+                        "網頁英文內容的 CEFR 等級分析",
+                        "全方位的詞彙、語法和主題難度評估",
+                        "互動式 AI 對話功能",
+                        "單字列表與 AI 詞彙分析",
+                        "支援單字和例句的語音播放",
+                        "無限制的本地儲存空間"
+                    ],
+                    technologies: [
+                        "Chrome Extension",
+                        "HTML",
+                        "CSS",
+                        "JavaScript",
+                        "Google Gemini AI",
+                        "Speechify API",
+                        "IndexedDB"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/lexitechly/unnamed.png", alt: "LexiTechly 主介面" },
+                        { type: 'image', src: "/projects/lexitechly/analysis.png", alt: "內容分析" },
+                        { type: 'image', src: "/projects/lexitechly/vocabulary.png", alt: "詞彙分析" },
+                        { type: 'image', src: "/projects/lexitechly/chat.png", alt: "AI 對話" }
+                    ],
+                    link: "https://chromewebstore.google.com/detail/lexitechly-%E6%99%BA%E6%85%A7%E8%8B%B1%E6%96%87%E5%85%A7%E5%AE%B9%E5%88%86%E6%9E%90/lnfheajgimgpheflgjgknhnppanfenmk"
+                },
+                {
+                    title: "Synvize",
+                    description: "AI 驅動的內容生成平台，能夠自動整合網站、YouTube、新聞和文本等多元資料來源，透過 AI 分析並生成結構化文章。使用者可以編輯生成的內容，並與社群分享。平台內建 AI 助手，協助讀者快速理解文章重點。",
+                    category: "AI 開發",
+                    achievements: [
+                        "多源數據自動蒐集與整合",
+                        "AI 智能分析與文章生成",
+                        "社群內容分享與互動功能",
+                        "內建 AI 助手即時解答",
+                        "自動新聞追蹤與更新",
+                        "文章編輯與發布系統"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/synvize/home.png", alt: "Synvize 首頁" },
+                        { type: 'image', src: "/projects/synvize/edit.png", alt: "編輯介面" }
+                    ],
+                    technologies: [
+                        "Next.js",
+                        "Python",
+                        "Google Gemini",
+                        "PostgreSQL",
+                        "Web Scraping",
+                    ],
+                    link: "https://synvize.com/"
+                },
+                {
+                    title: "TED × AI創新應用講座",
+                    description: "受邀擔任 TED 講座講師，分享 AI 技術的創新應用與未來展望",
+                    category: "演講分享",
+                    achievements: [
+                        "分享 AI 技術在各領域的實際應用案例",
+                        "探討 AI 發展趨勢與未來機會",
+                        "與聽眾互動討論 AI 創新想法"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/ted/594732_0.jpg", alt: "演講" },
+                        { type: 'image', src: "/projects/ted/594733_0.jpg", alt: "演講" }
+                    ],
+                    technologies: ["AI 應用", "ChatGPT", "NotebookLM"]
+                },
+                {
+                    title: "工廠自動化系統",
+                    description: "開發工廠生產線監控與管理系統",
+                    category: "企業應用",
+                    achievements: [
+                        "生產數據即時監控",
+                        "自動化報表生成",
+                        "供料防呆系統"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/factory/594729.jpg", alt: "供料防呆系統" }
+                    ],
+                    technologies: [".NET", "SQL Server", "PHP"]
+                },
+                {
+                    title: "LINE BOT 應用系列",
+                    description: "開發多款實用的 LINE BOT 應用，整合企業需求與使用者體驗，打造便利的自動化服務系統。",
+                    category: "企業應用",
+                    achievements: [
+                        "人事管理系統：上下班打卡、請假申請與簽核、發票上傳分類存檔",
+                        "揪團系統：創辦活動、活動參與、即時通知",
+                        "虛擬貨幣追蹤：即時匯率查看、價格波動通知",
+                        "AI 末日文字遊戲：互動式文字冒險遊戲，結合 AI 生成內容"
+                    ],
+                    technologies: [
+                        "LINE Messaging API",
+                        "Node.js",
+                        "Python",
+                        "Azure OpenAI",
+                        "MongoDB",
+                        "Docker"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/linebot/hr-bot.jpg", alt: "人事管理 LINE BOT" }
+                    ]
+                },
+                {
+                    title: "打擊垃圾⾞",
+                    description: "體感格鬥遊戲，透過體感偵測玩家的揮拳與踢擊動作，實現真實的格鬥體驗",
+                    category: "遊戲開發",
+                    achievements: [
+                        "實現精準的體感動作偵測系統",
+                        "開發部位打擊判定機制",
+                        "設計可切換角色系統",
+                        "優化遊戲流程與操作體驗",
+                        "成功上架 iOS 和 Android 平台"
+                    ],
+                    media: [
+                        { type: 'image', src: '/projects/games/unnamed.webp', alt: "打擊垃圾車遊戲畫面" }
+                    ],
+                    technologies: ["Unity", "Computer Vision", "動作識別", "跨平台開發"],
+                    links: {
+                        ios: "https://apps.apple.com/tw/app/%E6%89%93%E6%93%8A%E5%9E%83%E5%9C%BE%E8%BB%8A/id6444556663",
+                        android: "https://play.google.com/store/apps/details?id=com.FTL.BlowGame"
+                    }
+                },
+                {
+                    title: "垃圾車等等我",
+                    description: "結合體感技術的互動遊戲，參加 DIGI 展覽，完整負責程式開發。現已上架 App Store 和 Play Store",
+                    category: "遊戲開發",
+                    achievements: [
+                        "開發人體掃描系統",
+                        "設計動作行為判定邏輯",
+                        "實現完整遊戲流程",
+                        "優化展覽場域的互動體驗",
+                        "成功上架 iOS 和 Android 平台"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/games/garbage.png", alt: "垃圾車等等我遊戲畫面" },
+                        { type: 'youtube', src: 'H3ZRj114cQ4', alt: "遊戲展示影片 1" },
+                        { type: 'youtube', src: 'ILhiUjDvkEw', alt: "遊戲展示影片 2" }
+                    ],
+                    technologies: ["Unity", "人體識別", "互動設計", "跨平台開發"],
+                    links: {
+                        ios: "https://apps.apple.com/tw/app/%E5%9E%83%E5%9C%BE%E8%BB%8A%E7%AD%89%E7%AD%89%E6%88%91/id6444548706",
+                        android: "https://play.google.com/store/apps/details?id=com.FTL.GarbageTruckWaitForMe"
+                    }
+                },
+                {
+                    title: "VR 恐龍射擊",
+                    description: "VR 射擊遊戲，整合不同專案架構，實現流暢的 VR 射擊體驗",
+                    category: "遊戲開發",
+                    achievements: [
+                        "整合多個專案架構",
+                        "優化 VR 互動體驗",
+                        "設計怪物生成系統",
+                        "實現多樣化武器系統"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/games/hqdefault.jpg", alt: "VR 恐龍射擊遊戲畫面" },
+                        { type: 'youtube', src: "tvRp9Dz0hQA", alt: "VR 恐龍射擊遊戲畫面" }
+                    ],
+                    technologies: ["Unity", "SteamVR", "VR 開發"]
+                },
+                {
+                    title: "Unity 影像辨識課程",
+                    description: "在屏東科技大學碩士班擔任 Unity 結合 MediaPipe 影像辨識課程講師，分享實務經驗與技術整合",
+                    category: "教學分享",
+                    achievements: [
+                        "教授 Unity 與 MediaPipe 整合技術",
+                        "人體姿態估測在遊戲中的應用",
+                        "手部追蹤與手勢識別實作",
+                        "指導學生專案開發",
+                        "分享業界實務經驗"
+                    ],
+                    technologies: ["Unity", "MediaPipe", "Computer Vision", "影像辨識", "人體姿態估測"],
+                    media: [
+                        { type: 'image', src: "/projects/teaching/unity-cv.png", alt: "Unity 影像辨識課程" }
+                    ]
+                }
+            ]
         },
         footer: {
             portfolio: '謝上智 作品集',
@@ -183,7 +364,188 @@ export const translations: Translations = {
             title: 'Projects',
             viewProject: 'View Project',
             mainAchievements: 'Main Achievements:',
-            video: 'Video'
+            video: 'Video',
+            items: [
+                {
+                    title: "LexiTechly - Smart English Content Analysis",
+                    description: "Analyze English web content using Google Gemini AI, providing CEFR level assessment, vocabulary analysis, AI interactive dialogue, and pronunciation features to enhance your English reading and learning experience!",
+                    category: "AI Development",
+                    achievements: [
+                        "CEFR level analysis of web English content",
+                        "Comprehensive vocabulary, grammar, and topic difficulty assessment",
+                        "Interactive AI dialogue feature",
+                        "Vocabulary list and AI lexical analysis",
+                        "Word and sentence pronunciation support",
+                        "Unlimited local storage"
+                    ],
+                    technologies: [
+                        "Chrome Extension",
+                        "HTML",
+                        "CSS",
+                        "JavaScript",
+                        "Google Gemini AI",
+                        "Speechify API",
+                        "IndexedDB"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/lexitechly/unnamed.png", alt: "LexiTechly Main Interface" },
+                        { type: 'image', src: "/projects/lexitechly/analysis.png", alt: "Content Analysis" },
+                        { type: 'image', src: "/projects/lexitechly/vocabulary.png", alt: "Vocabulary Analysis" },
+                        { type: 'image', src: "/projects/lexitechly/chat.png", alt: "AI Chat" }
+                    ],
+                    link: "https://chromewebstore.google.com/detail/lexitechly-%E6%99%BA%E6%85%A7%E8%8B%B1%E6%96%87%E5%85%A7%E5%AE%B9%E5%88%86%E6%9E%90/lnfheajgimgpheflgjgknhnppanfenmk"
+                },
+                {
+                    title: "Synvize",
+                    description: "AI-powered content generation platform that automatically integrates data from websites, YouTube, news, and text sources. The AI analyzes and generates structured articles. Users can edit generated content and share with the community. Built-in AI assistant helps readers quickly understand article key points.",
+                    category: "AI Development",
+                    achievements: [
+                        "Multi-source data collection and integration",
+                        "AI-powered analysis and article generation",
+                        "Community content sharing and interaction",
+                        "Built-in AI assistant for instant answers",
+                        "Automated news tracking and updates",
+                        "Article editing and publishing system"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/synvize/home.png", alt: "Synvize Homepage" },
+                        { type: 'image', src: "/projects/synvize/edit.png", alt: "Edit Interface" }
+                    ],
+                    technologies: [
+                        "Next.js",
+                        "Python",
+                        "Google Gemini",
+                        "PostgreSQL",
+                        "Web Scraping",
+                    ],
+                    link: "https://synvize.com/"
+                },
+                {
+                    title: "TED × AI Innovation Applications",
+                    description: "Invited as a TED speaker to share innovative AI applications and future prospects",
+                    category: "Speaking",
+                    achievements: [
+                        "Share real-world AI application cases across various fields",
+                        "Discuss AI development trends and future opportunities",
+                        "Interactive discussions on AI innovation ideas"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/ted/594732_0.jpg", alt: "Speaking" },
+                        { type: 'image', src: "/projects/ted/594733_0.jpg", alt: "Speaking" }
+                    ],
+                    technologies: ["AI Applications", "ChatGPT", "NotebookLM"]
+                },
+                {
+                    title: "Factory Automation System",
+                    description: "Develop factory production line monitoring and management system",
+                    category: "Enterprise Solutions",
+                    achievements: [
+                        "Real-time production data monitoring",
+                        "Automated report generation",
+                        "Material feeding error prevention system"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/factory/594729.jpg", alt: "Error Prevention System" }
+                    ],
+                    technologies: [".NET", "SQL Server", "PHP"]
+                },
+                {
+                    title: "LINE BOT Applications",
+                    description: "Develop multiple practical LINE BOT applications, integrating enterprise requirements and user experience to create convenient automated service systems.",
+                    category: "Enterprise Solutions",
+                    achievements: [
+                        "HR Management: Clock in/out, leave applications, invoice management",
+                        "Event System: Create events, participation, real-time notifications",
+                        "Crypto Tracking: Real-time exchange rates, price fluctuation alerts",
+                        "AI Apocalypse Text Game: Interactive text adventure with AI-generated content"
+                    ],
+                    technologies: [
+                        "LINE Messaging API",
+                        "Node.js",
+                        "Python",
+                        "Azure OpenAI",
+                        "MongoDB",
+                        "Docker"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/linebot/hr-bot.jpg", alt: "HR Management LINE BOT" }
+                    ]
+                },
+                {
+                    title: "Garbage Truck Fighter",
+                    description: "Motion-sensing fighting game that detects player's punches and kicks for a realistic combat experience",
+                    category: "Game Development",
+                    achievements: [
+                        "Implement precise motion detection system",
+                        "Develop hit detection mechanics",
+                        "Design character switching system",
+                        "Optimize gameplay and controls",
+                        "Successfully launched on iOS and Android"
+                    ],
+                    media: [
+                        { type: 'image', src: '/projects/games/unnamed.webp', alt: "Game Screenshot" }
+                    ],
+                    technologies: ["Unity", "Computer Vision", "Motion Detection", "Cross-platform Development"],
+                    links: {
+                        ios: "https://apps.apple.com/tw/app/%E6%89%93%E6%93%8A%E5%9E%83%E5%9C%BE%E8%BB%8A/id6444556663",
+                        android: "https://play.google.com/store/apps/details?id=com.FTL.BlowGame"
+                    }
+                },
+                {
+                    title: "Wait For Me, Garbage Truck",
+                    description: "Interactive motion-sensing game showcased at DIGI exhibition, fully responsible for development. Now available on App Store and Play Store",
+                    category: "Game Development",
+                    achievements: [
+                        "Develop body scanning system",
+                        "Design motion behavior detection logic",
+                        "Implement complete game flow",
+                        "Optimize exhibition venue interaction",
+                        "Successfully launched on iOS and Android"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/games/garbage.png", alt: "Game Screenshot" },
+                        { type: 'youtube', src: 'H3ZRj114cQ4', alt: "Game Demo 1" },
+                        { type: 'youtube', src: 'ILhiUjDvkEw', alt: "Game Demo 2" }
+                    ],
+                    technologies: ["Unity", "Body Detection", "Interactive Design", "Cross-platform Development"],
+                    links: {
+                        ios: "https://apps.apple.com/tw/app/%E5%9E%83%E5%9C%BE%E8%BB%8A%E7%AD%89%E7%AD%89%E6%88%91/id6444548706",
+                        android: "https://play.google.com/store/apps/details?id=com.FTL.GarbageTruckWaitForMe"
+                    }
+                },
+                {
+                    title: "VR Dinosaur Shooter",
+                    description: "VR shooting game that integrates different project architectures for a smooth VR shooting experience",
+                    category: "Game Development",
+                    achievements: [
+                        "Integrate multiple project architectures",
+                        "Optimize VR interaction experience",
+                        "Design monster spawning system",
+                        "Implement diverse weapon systems"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/games/hqdefault.jpg", alt: "VR Game Screenshot" },
+                        { type: 'youtube', src: "tvRp9Dz0hQA", alt: "VR Game Footage" }
+                    ],
+                    technologies: ["Unity", "SteamVR", "VR Development"]
+                },
+                {
+                    title: "Unity Computer Vision Course",
+                    description: "Served as instructor for Unity with MediaPipe computer vision course at NPUST graduate school, sharing practical experience and technical integration",
+                    category: "Teaching",
+                    achievements: [
+                        "Teach Unity and MediaPipe integration",
+                        "Human pose estimation in games",
+                        "Hand tracking and gesture recognition",
+                        "Guide student projects",
+                        "Share industry experience"
+                    ],
+                    technologies: ["Unity", "MediaPipe", "Computer Vision", "Image Recognition", "Pose Estimation"],
+                    media: [
+                        { type: 'image', src: "/projects/teaching/unity-cv.png", alt: "Unity CV Course" }
+                    ]
+                }
+            ]
         },
         footer: {
             portfolio: 'Sun\'s Portfolio',
