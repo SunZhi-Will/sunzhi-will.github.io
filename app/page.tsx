@@ -14,7 +14,6 @@ import { NavDot } from '@/components/NavDot';
 import { ProjectMedia } from '@/components/ProjectMedia';
 import { Lang } from '@/types';
 import { translations } from '@/data/translations';
-import { AIChat } from '@/components/AIChat';
 
 // 在 CSS 中添加樣式
 const breakpointColumnsObj = {
@@ -254,37 +253,6 @@ export default function Home() {
         <AnimatePresence mode="wait">
           {isMenuOpen && (
             <div className="absolute inset-0">
-              {/* AI Chat 按鈕 - 左下 */}
-              <motion.button
-                initial={{ scale: 0, x: 6, y: 6 }}
-                animate={{ scale: 1, x: -40, y: 35 }}
-                exit={{
-                  scale: 0,
-                  x: 6,
-                  y: 6,
-                  transition: { duration: 0.1 }  // 確保退出動畫有足夠時間
-                }}
-                transition={{
-                  duration: 0.1,
-                  ease: [1, 1, 1, 1]
-                }}
-                onClick={() => {
-                  setIsAIChatOpen(true);
-                  setIsMenuOpen(false);
-                }}
-                className="w-10 h-10 rounded-full flex items-center justify-center
-                           bg-gradient-to-r from-emerald-600/90 to-teal-800/90 
-                           shadow-lg hover:shadow-emerald-500/50 transition-all duration-300
-                           absolute"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                </svg>
-              </motion.button>
-
               {/* GitHub 按鈕 - 左上 */}
               <motion.a
                 initial={{ scale: 0, x: 6, y: 6 }}
@@ -293,7 +261,7 @@ export default function Home() {
                   scale: 0,
                   x: 6,
                   y: 6,
-                  transition: { duration: 0.1 }  // 確保退出動畫有足夠時間
+                  transition: { duration: 0.1 }
                 }}
                 transition={{
                   duration: 0.1,
@@ -326,7 +294,7 @@ export default function Home() {
                   scale: 0,
                   x: 6,
                   y: 6,
-                  transition: { duration: 0.1 }  // 確保退出動畫有足夠時間
+                  transition: { duration: 0.1 }
                 }}
                 transition={{
                   duration: 0.1,
@@ -358,7 +326,7 @@ export default function Home() {
                   scale: 0,
                   x: 6,
                   y: 6,
-                  transition: { duration: 0.1 }  // 確保退出動畫有足夠時間
+                  transition: { duration: 0.1 }
                 }}
                 transition={{
                   duration: 0.1,
@@ -769,7 +737,7 @@ export default function Home() {
                     <div className="absolute top-4 right-4">
                       <span className="
                         px-4 py-2 
-                        bg-gradient-to-r from-blue-500/50 to-blue-600/5u0
+                        bg-gradient-to-r from-blue-500/50 to-blue-600/50
                         backdrop-blur-md 
                         border border-blue-400/20
                         rounded-full 
@@ -926,13 +894,6 @@ export default function Home() {
           </a>
         </div>
       </footer>
-
-      {/* 添加 AI Chat 組件 */}
-      <AIChat
-        isOpen={isAIChatOpen}
-        onClose={() => setIsAIChatOpen(false)}
-        lang={lang}
-      />
     </div>
   );
 }
