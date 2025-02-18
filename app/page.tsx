@@ -240,8 +240,7 @@ export default function Home() {
       </nav>
 
       {/* 右下角按鈕組 */}
-      <div className={`fixed right-8 bottom-8 z-50 transition-all duration-500
-                    ${showSocialButtons ? 'translate-x-0 opacity-100' : 'translate-x-12 opacity-0'}`}>
+      <div className={`fixed right-4 sm:right-8 bottom-8 z-50 transition-all duration-500 opacity-100`}>
         {/* 主按鈕 */}
         <motion.button
           onClick={() => setIsMenuOpen(prev => !prev)}
@@ -265,7 +264,7 @@ export default function Home() {
               {/* GitHub 按鈕 - 左上 */}
               <motion.a
                 initial={{ scale: 0, x: 6, y: 6 }}
-                animate={{ scale: 1, x: -45, y: -10 }}
+                animate={{ scale: 1, x: -60, y: -0 }}
                 exit={{
                   scale: 0,
                   x: 6,
@@ -298,7 +297,7 @@ export default function Home() {
               {/* LinkedIn 按鈕 - 上方 */}
               <motion.a
                 initial={{ scale: 0, x: 6, y: 6 }}
-                animate={{ scale: 1, x: -10, y: -45 }}
+                animate={{ scale: 1, x: -42, y: -42 }}
                 exit={{
                   scale: 0,
                   x: 6,
@@ -330,7 +329,7 @@ export default function Home() {
               {/* Email 按鈕 - 右上 */}
               <motion.a
                 initial={{ scale: 0, x: 6, y: 6 }}
-                animate={{ scale: 1, x: 35, y: -35 }}
+                animate={{ scale: 1, x: 0, y: -60 }}
                 exit={{
                   scale: 0,
                   x: 6,
