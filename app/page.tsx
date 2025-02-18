@@ -207,8 +207,7 @@ export default function Home() {
 
   const typedSubtitle = useTypewriter(translations[lang].hero.subtitle, 50);
 
-  // 添加狀態
-  const [isAIChatOpen, setIsAIChatOpen] = useState(false);
+
 
   // 添加主按鈕控制展開/收起
   const [isMenuOpen, setIsMenuOpen] = useState(false);
