@@ -13,9 +13,19 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// 定義靜態 metadata
 export const metadata: Metadata = {
-  title: "謝上智 - 軟體工程師 | AI 開發者",
-  description: "專注於 AI 應用開發與 Unity 遊戲開發的全端工程師",
+  title: {
+    default: "謝上智 - 軟體工程師 | AI 開發者",
+    template: "%s | Sun Zhi"
+  },
+  description: "Full-stack engineer specializing in AI application development and Unity game development",
+  alternates: {
+    languages: {
+      'en': 'Sun Zhi - Software Engineer | AI Developer',
+      'zh-TW': '謝上智 - 軟體工程師 | AI 開發者'
+    }
+  }
 };
 
 export default function RootLayout({

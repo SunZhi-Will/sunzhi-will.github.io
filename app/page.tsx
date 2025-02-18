@@ -14,6 +14,7 @@ import { NavDot } from '@/components/NavDot';
 import { ProjectMedia } from '@/components/ProjectMedia';
 import { Lang } from '@/types';
 import { translations } from '@/data/translations';
+import Head from 'next/head';
 
 // 在 CSS 中添加樣式
 const breakpointColumnsObj = {
@@ -55,6 +56,12 @@ export default function Home() {
     const browserLang = navigator.language;
     setLang(browserLang.includes('zh') ? 'zh-TW' : 'en');
   }, []);
+
+  useEffect(() => {
+    document.title = lang === 'zh-TW'
+      ? "謝上智 - 軟體工程師 | AI 開發者"
+      : "Sun Zhi - Software Engineer | AI Developer";
+  }, [lang]);
 
   const techStacks = useMemo(() => [
     {
@@ -214,6 +221,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen text-white">
+      <Head>
+        <title>{lang === 'zh-TW' ? '謝上智 - 軟體工程師 | AI 開發者' : 'Sun Zhi - Software Engineer | AI Developer'}</title>
+      </Head>
       <LanguageToggle />
       {/* 側邊導航 */}
       <nav className="fixed right-8 top-1/2 -translate-y-1/2 z-50 hidden lg:block">
