@@ -191,9 +191,8 @@ export default function Home() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
-      const threshold = window.innerHeight * 0.5; // 滾動超過螢幕高度的 50% 時顯示
-
-      setShowSocialButtons(scrollPosition > threshold);
+      // 當滾動超過首頁區塊時顯示
+      setShowSocialButtons(scrollPosition > window.innerHeight * 0.8);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -240,7 +239,8 @@ export default function Home() {
       </nav>
 
       {/* 右下角按鈕組 */}
-      <div className={`fixed right-4 sm:right-8 bottom-8 z-50 transition-all duration-500 opacity-100`}>
+      <div className={`fixed right-4 sm:right-8 bottom-8 z-50 transition-all duration-500
+                ${showSocialButtons ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
         {/* 主按鈕 */}
         <motion.button
           onClick={() => setIsMenuOpen(prev => !prev)}
