@@ -538,24 +538,24 @@ export default function Home() {
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.5 }}
         id="about"
-        className="py-24 relative"
+        className="py-12 sm:py-24 relative"
       >
         <div className="container mx-auto px-4">
           <Card className="bg-blue-950/40 backdrop-blur-md border border-blue-500/20 shadow-xl">
-            <div className="p-8">
-              <div className="flex flex-col items-center mb-8">
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-300 to-blue-500 bg-clip-text text-transparent">
+            <div className="p-4 sm:p-8">
+              <div className="flex flex-col items-center mb-6 sm:mb-8">
+                <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-300 to-blue-500 bg-clip-text text-transparent">
                   {translations[lang].about.title}
                 </h2>
                 <div className="mt-2 w-24 h-1 bg-gradient-to-r from-blue-300 to-blue-500 rounded-full" />
               </div>
-              <div className="max-w-3xl mx-auto space-y-8">
-                <p className="text-blue-100 text-lg leading-relaxed">
+              <div className="max-w-3xl mx-auto space-y-6 sm:space-y-8">
+                <p className={`text-blue-100 text-base sm:text-lg leading-relaxed ${lang === 'zh-TW' ? 'text-justify' : ''}`}>
                   {aboutContent.intro}
                 </p>
 
                 {/* 工作經驗時間線 */}
-                <div className="space-y-0">
+                <div className="space-y-4">
                   {aboutContent.experiences
                     .filter((exp: { period?: string }) => exp.period)
                     .map((exp, index) => (
@@ -564,24 +564,27 @@ export default function Home() {
                         initial={{ x: -50, opacity: 0 }}
                         animate={inView ? { x: 0, opacity: 1 } : {}}
                         transition={{ delay: index * 0.2 }}
-                        className="relative pl-8 pb-8 last:pb-0"
+                        className="relative pl-6 sm:pl-8 pb-6 sm:pb-8 last:pb-0"
                       >
                         {/* 時間線 */}
-                        <div className="absolute left-0 top-0 bottom-0 w-px bg-blue-500/20">
-                          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.5)]" />
+                        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-blue-500/20">
+                          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 sm:w-3 h-2 sm:h-3 
+                                         rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.5)]" />
                         </div>
 
-                        <div className="bg-blue-900/20 rounded-lg p-6 border border-blue-500/10">
-                          <div className="flex justify-between items-center mb-2">
-                            <h3 className="text-xl font-bold text-blue-300">{exp.title}</h3>
+                        <div className="bg-blue-900/20 rounded-lg p-4 sm:p-6 border border-blue-500/10">
+                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-2">
+                            <h3 className="text-base sm:text-lg font-bold text-blue-300">{exp.title}</h3>
                             <span className="text-blue-400 text-sm">{exp.period}</span>
                           </div>
-                          <p className="text-blue-100 mb-4">{exp.description}</p>
+                          <p className={`text-blue-100 mb-4 text-sm sm:text-base ${lang === 'zh-TW' ? 'text-justify' : ''}`}>
+                            {exp.description}
+                          </p>
                           <ul className="space-y-2">
                             {exp.achievements.map((achievement, i) => (
-                              <li key={i} className="flex items-center text-blue-200">
-                                <span className="text-blue-400 mr-2">•</span>
-                                {achievement}
+                              <li key={i} className={`flex items-start sm:items-center text-sm sm:text-base text-blue-200 ${lang === 'zh-TW' ? 'text-justify' : ''}`}>
+                                <span className="text-blue-400 mr-2 mt-1 sm:mt-0">•</span>
+                                <span>{achievement}</span>
                               </li>
                             ))}
                           </ul>
@@ -591,8 +594,8 @@ export default function Home() {
                 </div>
 
                 {/* 教學與顧問服務 */}
-                <div className="mt-12">
-                  <h3 className="text-2xl font-bold text-blue-300 mb-6">
+                <div className="mt-8 sm:mt-12">
+                  <h3 className="text-xl sm:text-2xl font-bold text-blue-300 mb-4 sm:mb-6">
                     {translations[lang].about.services.title}
                   </h3>
                   <motion.div
