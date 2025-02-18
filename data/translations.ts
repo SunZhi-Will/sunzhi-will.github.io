@@ -17,7 +17,8 @@ export const translations: Translations = {
         },
         hero: {
             title: '你好，我是謝上智(Sun)',
-            subtitle: '軟體工程師 | AI 應用開發 | Unity 遊戲開發'
+            subtitle: '軟體工程師 | AI 應用開發 | Unity 遊戲開發',
+            scrollDown: '向下滾動'
         },
         about: {
             title: '關於我',
@@ -117,6 +118,22 @@ export const translations: Translations = {
                     technologies: ["AI 應用", "ChatGPT", "NotebookLM"]
                 },
                 {
+                    title: "Unity 影像辨識課程",
+                    description: "在屏東科技大學碩士班擔任 Unity 結合 MediaPipe 影像辨識課程講師，分享實務經驗與技術整合",
+                    category: "教學分享",
+                    achievements: [
+                        "教授 Unity 與 MediaPipe 整合技術",
+                        "人體姿態估測在遊戲中的應用",
+                        "手部追蹤與手勢識別實作",
+                        "指導學生專案開發",
+                        "分享業界實務經驗"
+                    ],
+                    technologies: ["Unity", "MediaPipe", "Computer Vision", "影像辨識", "人體姿態估測"],
+                    media: [
+                        { type: 'image', src: "/projects/teaching/unity-cv.png", alt: "Unity 影像辨識課程" }
+                    ]
+                },
+                {
                     title: "工廠自動化系統",
                     description: "開發工廠生產線監控與管理系統",
                     category: "企業應用",
@@ -210,22 +227,7 @@ export const translations: Translations = {
                     ],
                     technologies: ["Unity", "SteamVR", "VR 開發"]
                 },
-                {
-                    title: "Unity 影像辨識課程",
-                    description: "在屏東科技大學碩士班擔任 Unity 結合 MediaPipe 影像辨識課程講師，分享實務經驗與技術整合",
-                    category: "教學分享",
-                    achievements: [
-                        "教授 Unity 與 MediaPipe 整合技術",
-                        "人體姿態估測在遊戲中的應用",
-                        "手部追蹤與手勢識別實作",
-                        "指導學生專案開發",
-                        "分享業界實務經驗"
-                    ],
-                    technologies: ["Unity", "MediaPipe", "Computer Vision", "影像辨識", "人體姿態估測"],
-                    media: [
-                        { type: 'image', src: "/projects/teaching/unity-cv.png", alt: "Unity 影像辨識課程" }
-                    ]
-                }
+
             ]
         },
         footer: {
@@ -336,7 +338,8 @@ export const translations: Translations = {
         },
         hero: {
             title: 'Hi, I\'m Sun',
-            subtitle: 'Software Engineer | AI Developer | Unity Expert'
+            subtitle: 'Software Engineer | AI Developer | Unity Expert',
+            scrollDown: 'Scroll Down'
         },
         about: {
             title: 'About Me',
@@ -436,6 +439,22 @@ export const translations: Translations = {
                     technologies: ["AI Applications", "ChatGPT", "NotebookLM"]
                 },
                 {
+                    title: "Unity Computer Vision Course",
+                    description: "Served as instructor for Unity with MediaPipe computer vision course at NPUST graduate school, sharing practical experience and technical integration",
+                    category: "Teaching",
+                    achievements: [
+                        "Teach Unity and MediaPipe integration",
+                        "Human pose estimation in games",
+                        "Hand tracking and gesture recognition",
+                        "Guide student projects",
+                        "Share industry experience"
+                    ],
+                    technologies: ["Unity", "MediaPipe", "Computer Vision", "Image Recognition", "Pose Estimation"],
+                    media: [
+                        { type: 'image', src: "/projects/teaching/unity-cv.png", alt: "Unity CV Course" }
+                    ]
+                },
+                {
                     title: "Factory Automation System",
                     description: "Develop factory production line monitoring and management system",
                     category: "Enterprise Solutions",
@@ -529,22 +548,7 @@ export const translations: Translations = {
                     ],
                     technologies: ["Unity", "SteamVR", "VR Development"]
                 },
-                {
-                    title: "Unity Computer Vision Course",
-                    description: "Served as instructor for Unity with MediaPipe computer vision course at NPUST graduate school, sharing practical experience and technical integration",
-                    category: "Teaching",
-                    achievements: [
-                        "Teach Unity and MediaPipe integration",
-                        "Human pose estimation in games",
-                        "Hand tracking and gesture recognition",
-                        "Guide student projects",
-                        "Share industry experience"
-                    ],
-                    technologies: ["Unity", "MediaPipe", "Computer Vision", "Image Recognition", "Pose Estimation"],
-                    media: [
-                        { type: 'image', src: "/projects/teaching/unity-cv.png", alt: "Unity CV Course" }
-                    ]
-                }
+
             ]
         },
         footer: {

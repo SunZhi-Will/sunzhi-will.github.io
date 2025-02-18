@@ -18,6 +18,7 @@ export interface Translations {
         hero: {
             title: string;
             subtitle: string;
+            scrollDown: string;
         };
         about: {
             title: string;

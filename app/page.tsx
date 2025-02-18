@@ -21,6 +21,27 @@ const breakpointColumnsObj = {
   992: 1
 };
 
+const useTypewriter = (text: string, speed: number = 100) => {
+  const [displayText, setDisplayText] = useState('');
+
+  useEffect(() => {
+    setDisplayText(''); // 重置文字
+    let i = 0;
+    const timer = setInterval(() => {
+      if (i < text.length) {
+        setDisplayText(prev => text.slice(0, i + 1)); // 使用 slice 而不是累加
+        i++;
+      } else {
+        clearInterval(timer);
+      }
+    }, speed);
+
+    return () => clearInterval(timer);
+  }, [text, speed]); // 依賴於 text，當文字改變時重新開始
+
+  return displayText;
+};
+
 export default function Home() {
   const [ref, inView] = useInView({
     triggerOnce: true,
@@ -156,6 +177,22 @@ export default function Home() {
   // 在其他 useState 宣告附近添加
   const [currentSlides, setCurrentSlides] = useState<Record<string, number>>({});
 
+  // 添加狀態來控制按鈕顯示
+  const [showSocialButtons, setShowSocialButtons] = useState(false);
+
+  // 監聽滾動事件
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      const threshold = window.innerHeight * 0.5; // 滾動超過螢幕高度的 50% 時顯示
+
+      setShowSocialButtons(scrollPosition > threshold);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   // 將 LanguageToggle 組件移到這裡
   const LanguageToggle = () => (
     <button
@@ -167,6 +204,8 @@ export default function Home() {
       {lang === 'zh-TW' ? 'EN' : '中文'}
     </button>
   );
+
+  const typedSubtitle = useTypewriter(translations[lang].hero.subtitle, 50);
 
   return (
     <div className="min-h-screen text-white">
@@ -185,59 +224,231 @@ export default function Home() {
         </div>
       </nav>
 
+      {/* 右下角社群按鈕 */}
+      <div className={`fixed right-8 bottom-8 z-50 flex flex-col gap-3 transition-all duration-500
+                      ${showSocialButtons ? 'translate-x-0 opacity-100' : 'translate-x-12 opacity-0'}`}>
+        <motion.a
+          href="https://github.com/SunZhi-Will"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-10 h-10 rounded-full flex items-center justify-center
+                     bg-gradient-to-r from-purple-600/90 to-indigo-800/90 
+                     shadow-lg hover:shadow-purple-500/50 transition-all duration-300"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+        >
+          <Image
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
+            alt="GitHub"
+            width={20}
+            height={20}
+            className="[filter:invert(1)]"
+          />
+        </motion.a>
+
+        <motion.a
+          href="https://www.linkedin.com/in/sunzhi-will"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-10 h-10 rounded-full flex items-center justify-center
+                     bg-gradient-to-r from-blue-600/90 to-blue-800/90 
+                     shadow-lg hover:shadow-blue-500/50 transition-all duration-300"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+        >
+          <Image
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg"
+            alt="LinkedIn"
+            width={20}
+            height={20}
+          />
+        </motion.a>
+
+        <motion.a
+          href="mailto:sun055676@gmail.com"
+          className="w-10 h-10 rounded-full flex items-center justify-center
+                     bg-gradient-to-r from-blue-500/90 to-blue-600/90 
+                     shadow-lg hover:shadow-blue-500/50 transition-all duration-300"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        </motion.a>
+      </div>
+
       <GradientBackground />
       <ParticlesBackground />
 
       {/* Hero Section */}
-      <div id="home" className="relative overflow-hidden">
-        <header className="container mx-auto px-4 py-24 text-center relative z-10">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="relative w-40 h-40 mx-auto mb-8">
-              <Image
-                src="/profile.jpg"
-                alt="Sun's profile"
-                width={160}
-                height={160}
-                className="rounded-full mx-auto border-4 border-blue-400/50 shadow-lg shadow-blue-500/30"
-                priority
-              />
-              <div className="absolute inset-0 rounded-full bg-blue-500/20 animate-pulse"></div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <h1 className="text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-300 via-blue-400 to-blue-500">
-              {translations[lang].hero.title}
-            </h1>
-            <p className="text-xl text-blue-200 mb-10">
-              {translations[lang].hero.subtitle}
-            </p>
-
-            <div className="flex justify-center gap-6">
-              <GlowingButton
-                href="https://github.com/SunZhi-Will"
-                className="bg-gradient-to-r from-purple-600 to-indigo-800 border border-purple-400/30 shadow-[0_0_15px_rgba(147,51,234,0.5)] hover:shadow-[0_0_25px_rgba(147,51,234,0.7)]"
-              >
+      <div id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <header className="container mx-auto px-4 py-24 text-center relative z-10 flex flex-col min-h-screen">
+          <div className="flex-1 flex flex-col justify-center">
+            {/* 個人照片動畫 */}
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{
+                type: "spring",
+                stiffness: 260,
+                damping: 20
+              }}
+            >
+              <div className="relative w-40 h-40 mx-auto mb-8 group">
                 <Image
-                  src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
-                  alt="GitHub"
-                  width={20}
-                  height={20}
-                  className="[filter:invert(1)]"
+                  src="/profile.jpg"
+                  alt="Sun's profile"
+                  width={160}
+                  height={160}
+                  className="rounded-full mx-auto border-4 border-blue-400/50 shadow-lg shadow-blue-500/30
+                             transition-transform duration-300 group-hover:scale-105"
+                  priority
                 />
-                GitHub
-              </GlowingButton>
+                {/* 發光效果 */}
+                <div className="absolute inset-0 rounded-full bg-blue-500/20 animate-pulse" />
+                {/* 裝飾性圓環 */}
+                <div className="absolute -inset-4 rounded-full border-2 border-dashed border-blue-400/30 
+                               animate-[spin_20s_linear_infinite]" />
+                <div className="absolute -inset-8 rounded-full border-2 border-dashed border-blue-400/20 
+                               animate-[spin_25s_linear_infinite_reverse]" />
+              </div>
+            </motion.div>
+
+            {/* 標題和副標題動畫 */}
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="relative"
+            >
+              <motion.h1
+                className="text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r 
+                           from-blue-300 via-blue-400 to-blue-500"
+                animate={{
+                  backgroundPosition: ["0%", "100%"],
+                  transition: {
+                    duration: 8,
+                    repeat: Infinity,
+                    repeatType: "reverse"
+                  }
+                }}
+              >
+                {translations[lang].hero.title}
+              </motion.h1>
+
+              {/* 打字機效果的副標題 */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="relative"
+                key={lang}
+              >
+                <p className="text-xl text-blue-200 mb-10 relative min-h-[2em]">
+                  <span>{typedSubtitle}</span>
+                  <span className="absolute -right-4 top-0 w-1 h-full bg-blue-400 animate-blink" />
+                </p>
+              </motion.div>
+
+              {/* 互動按鈕組 */}
+              <div className="flex justify-center gap-6">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <GlowingButton
+                    href="https://github.com/SunZhi-Will"
+                    className="bg-gradient-to-r from-purple-600 to-indigo-800 border border-purple-400/30 
+                              shadow-[0_0_15px_rgba(147,51,234,0.5)] hover:shadow-[0_0_25px_rgba(147,51,234,0.7)]
+                              group relative overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 
+                                  transition-transform duration-300" />
+                    <div className="relative flex items-center gap-2">
+                      <Image
+                        src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
+                        alt="GitHub"
+                        width={20}
+                        height={20}
+                        className="[filter:invert(1)] group-hover:rotate-12 transition-transform duration-300"
+                      />
+                      <span>GitHub</span>
+                    </div>
+                  </GlowingButton>
+                </motion.div>
+
+                {/* LinkedIn 按鈕 */}
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <GlowingButton
+                    href="https://www.linkedin.com/in/sunzhi-will"
+                    className="bg-gradient-to-r from-blue-600 to-blue-800 border border-blue-400/30 
+                              shadow-[0_0_15px_rgba(59,130,246,0.5)] hover:shadow-[0_0_25px_rgba(59,130,246,0.7)]
+                              group relative overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 
+                                  transition-transform duration-300" />
+                    <div className="relative flex items-center gap-2">
+                      <Image
+                        src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg"
+                        alt="LinkedIn"
+                        width={20}
+                        height={20}
+                        className="group-hover:rotate-12 transition-transform duration-300"
+                      />
+                      <span>LinkedIn</span>
+                    </div>
+                  </GlowingButton>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* 向下滾動提示 */}
+          <motion.div
+            className="mt-16 mb-8" // 增加上方間距，減少下方間距
+            animate={{
+              y: [0, 10, 0],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+            }}
+          >
+            <div
+              className="inline-flex flex-col items-center text-blue-300/70 hover:text-blue-300 
+                         transition-colors duration-300 cursor-pointer px-4 py-2" // 縮小點擊範圍
+              onClick={() => scrollToSection('about')}
+            >
+              <span className="text-sm mb-1">{translations[lang].hero.scrollDown}</span>
+              <svg
+                className="w-5 h-5 animate-bounce" // 稍微縮小圖標
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                />
+              </svg>
             </div>
           </motion.div>
         </header>
+
+        {/* 背景裝飾 */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-blue-900/20 via-blue-800/10 to-transparent" />
+          <div className="absolute top-20 left-20 w-72 h-72 bg-blue-500/10 rounded-full filter blur-3xl animate-blob" />
+          <div className="absolute top-40 right-20 w-72 h-72 bg-purple-500/10 rounded-full filter blur-3xl animate-blob animation-delay-2000" />
+          <div className="absolute bottom-20 left-1/2 w-72 h-72 bg-pink-500/10 rounded-full filter blur-3xl animate-blob animation-delay-4000" />
+        </div>
       </div>
 
       {/* About Section */}
@@ -453,7 +664,7 @@ export default function Home() {
                     <div className="absolute top-4 right-4">
                       <span className="
                         px-4 py-2 
-                        bg-gradient-to-r from-blue-500/30 to-blue-600/30
+                        bg-gradient-to-r from-blue-500/50 to-blue-600/5u0
                         backdrop-blur-md 
                         border border-blue-400/20
                         rounded-full 
@@ -463,25 +674,19 @@ export default function Home() {
                         flex items-center gap-2
                       ">
                         {/* 根據類別添加對應圖標 */}
-                        {project.category === "AI 開發" && (
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
-                          </svg>
+                        {project.category === "AI 開發" || project.category === "AI Development" && (
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" className="w-4 h-4" fill="currentColor"><path d="M192-384q-40 0-68-28t-28-68q0-40 28-68t68-28v-72q0-29.7 21.15-50.85Q234.3-720 264-720h120q0-40 28-68t68-28q40 0 68 28t28 68h120q29.7 0 50.85 21.15Q768-677.7 768-648v72q40 0 68 28t28 68q0 40-28 68t-68 28v168q0 29.7-21.16 50.85Q725.68-144 695.96-144H263.72Q234-144 213-165.15T192-216v-168Zm168-72q20 0 34-14t14-34q0-20-14-34t-34-14q-20 0-34 14t-14 34q0 20 14 34t34 14Zm228 0q20 0 34-14t14-34q0-20-14-34t-34-14q-20 0-34 14t-14 34q0 20 14 34t34 14ZM336-312h288v-72H336v72Zm-72 96h432v-432H264v432Zm216-216Z" /></svg>
                         )}
-                        {project.category === "演講分享" && (
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2zm0-4H6V5h2v2zm4 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10z" />
-                          </svg>
+                        {project.category === "演講分享" || project.category === "Speaking" && (
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" className="w-4 h-4" fill="currentColor"><path d="M240-384h336v-72H240v72Zm0-132h480v-72H240v72Zm0-132h480v-72H240v72ZM96-96v-696q0-29.7 21.15-50.85Q138.3-864 168-864h624q29.7 0 50.85 21.15Q864-821.7 864-792v480q0 29.7-21.15 50.85Q821.7-240 792-240H240L96-96Zm114-216h582v-480H168v522l42-42Zm-42 0v-480 480Z" /></svg>
                         )}
-                        {project.category === "企業應用" && (
+                        {project.category === "企業應用" || project.category === "Enterprise Solutions" && (
                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10z" />
                           </svg>
                         )}
-                        {project.category === "遊戲開發" && (
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                          </svg>
+                        {project.category === "遊戲開發" || project.category === "Game Development" && (
+                          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 -960 960 960" fill="currentColor"><path d="M182-200q-51 0-79-35.5T82-322l42-300q9-60 53.5-99T282-760h396q60 0 104.5 39t53.5 99l42 300q7 51-21 86.5T778-200q-21 0-39-7.5T706-230l-90-90H344l-90 90q-15 15-33 22.5t-39 7.5Zm16-86 114-114h336l114 114q2 2 16 6 11 0 17.5-6.5T800-304l-44-308q-4-29-26-48.5T678-680H282q-30 0-52 19.5T204-612l-44 308q-2 11 4.5 17.5T182-280q2 0 16-6Zm482-154q17 0 28.5-11.5T720-480q0-17-11.5-28.5T680-520q-17 0-28.5 11.5T640-480q0 17 11.5 28.5T680-440Zm-80-120q17 0 28.5-11.5T640-600q0-17-11.5-28.5T600-640q-17 0-28.5 11.5T560-600q0 17 11.5 28.5T600-560ZM310-440h60v-70h70v-60h-70v-70h-60v70h-70v60h70v70Zm170-40Z" /></svg>
                         )}
                         {project.category}
                       </span>
@@ -616,33 +821,6 @@ export default function Home() {
           </a>
         </div>
       </footer>
-
-      {/* 右側即時聯絡按鈕 */}
-      <div className="fixed right-8 bottom-8 z-50 flex flex-col gap-4">
-        {/* <motion.a
-          href="https://line.me/ti/p/sun055676"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg hover:shadow-green-500/50 transition-all duration-300"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19.365 9.863c.349 0 .63.285.631.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.285.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
-          </svg>
-        </motion.a> */}
-
-        <motion.a
-          href="mailto:sun055676@gmail.com"
-          className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg hover:shadow-blue-500/50 transition-all duration-300"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
-        </motion.a>
-      </div>
     </div>
   );
 }
