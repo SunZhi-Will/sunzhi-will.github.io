@@ -1,7 +1,7 @@
 'use client'
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@nextui-org/react";
 import { useInView } from "react-intersection-observer";
 import ParticlesBackground from '@/components/ParticlesBackground';
@@ -14,6 +14,7 @@ import { NavDot } from '@/components/NavDot';
 import { ProjectMedia } from '@/components/ProjectMedia';
 import { Lang } from '@/types';
 import { translations } from '@/data/translations';
+import { AIChat } from '@/components/AIChat';
 
 // 在 CSS 中添加樣式
 const breakpointColumnsObj = {
@@ -207,6 +208,12 @@ export default function Home() {
 
   const typedSubtitle = useTypewriter(translations[lang].hero.subtitle, 50);
 
+  // 添加狀態
+  const [isAIChatOpen, setIsAIChatOpen] = useState(false);
+
+  // 添加主按鈕控制展開/收起
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <div className="min-h-screen text-white">
       <LanguageToggle />
@@ -224,59 +231,155 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* 右下角社群按鈕 */}
-      <div className={`fixed right-8 bottom-8 z-50 flex flex-col gap-3 transition-all duration-500
-                      ${showSocialButtons ? 'translate-x-0 opacity-100' : 'translate-x-12 opacity-0'}`}>
-        <motion.a
-          href="https://github.com/SunZhi-Will"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-10 h-10 rounded-full flex items-center justify-center
-                     bg-gradient-to-r from-purple-600/90 to-indigo-800/90 
-                     shadow-lg hover:shadow-purple-500/50 transition-all duration-300"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <Image
-            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
-            alt="GitHub"
-            width={20}
-            height={20}
-            className="[filter:invert(1)]"
-          />
-        </motion.a>
-
-        <motion.a
-          href="https://www.linkedin.com/in/sunzhi-will"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-10 h-10 rounded-full flex items-center justify-center
+      {/* 右下角按鈕組 */}
+      <div className={`fixed right-8 bottom-8 z-50 transition-all duration-500
+                    ${showSocialButtons ? 'translate-x-0 opacity-100' : 'translate-x-12 opacity-0'}`}>
+        {/* 主按鈕 */}
+        <motion.button
+          onClick={() => setIsMenuOpen(prev => !prev)}
+          className={`w-12 h-12 rounded-full flex items-center justify-center
                      bg-gradient-to-r from-blue-600/90 to-blue-800/90 
-                     shadow-lg hover:shadow-blue-500/50 transition-all duration-300"
+                     shadow-lg hover:shadow-blue-500/50 transition-all duration-300
+                     relative z-50`}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
-          <Image
-            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg"
-            alt="LinkedIn"
-            width={20}
-            height={20}
-          />
-        </motion.a>
-
-        <motion.a
-          href="mailto:sun055676@gmail.com"
-          className="w-10 h-10 rounded-full flex items-center justify-center
-                     bg-gradient-to-r from-blue-500/90 to-blue-600/90 
-                     shadow-lg hover:shadow-blue-500/50 transition-all duration-300"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
           </svg>
-        </motion.a>
+        </motion.button>
+
+        {/* 花瓣式展開的按鈕組 */}
+        <AnimatePresence mode="wait">
+          {isMenuOpen && (
+            <div className="absolute inset-0">
+              {/* AI Chat 按鈕 - 左下 */}
+              <motion.button
+                initial={{ scale: 0, x: 6, y: 6 }}
+                animate={{ scale: 1, x: -40, y: 35 }}
+                exit={{
+                  scale: 0,
+                  x: 6,
+                  y: 6,
+                  transition: { duration: 0.1 }  // 確保退出動畫有足夠時間
+                }}
+                transition={{
+                  duration: 0.1,
+                  ease: [1, 1, 1, 1]
+                }}
+                onClick={() => {
+                  setIsAIChatOpen(true);
+                  setIsMenuOpen(false);
+                }}
+                className="w-10 h-10 rounded-full flex items-center justify-center
+                           bg-gradient-to-r from-emerald-600/90 to-teal-800/90 
+                           shadow-lg hover:shadow-emerald-500/50 transition-all duration-300
+                           absolute"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+              </motion.button>
+
+              {/* GitHub 按鈕 - 左上 */}
+              <motion.a
+                initial={{ scale: 0, x: 6, y: 6 }}
+                animate={{ scale: 1, x: -45, y: -10 }}
+                exit={{
+                  scale: 0,
+                  x: 6,
+                  y: 6,
+                  transition: { duration: 0.1 }  // 確保退出動畫有足夠時間
+                }}
+                transition={{
+                  duration: 0.1,
+                  ease: [1, 1, 1, 1]
+                }}
+                href="https://github.com/SunZhi-Will"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full flex items-center justify-center
+                           bg-gradient-to-r from-purple-600/90 to-indigo-800/90 
+                           shadow-lg hover:shadow-purple-500/50 transition-all duration-300
+                           absolute"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <Image
+                  src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
+                  alt="GitHub"
+                  width={20}
+                  height={20}
+                  className="[filter:invert(1)]"
+                />
+              </motion.a>
+
+              {/* LinkedIn 按鈕 - 上方 */}
+              <motion.a
+                initial={{ scale: 0, x: 6, y: 6 }}
+                animate={{ scale: 1, x: -10, y: -45 }}
+                exit={{
+                  scale: 0,
+                  x: 6,
+                  y: 6,
+                  transition: { duration: 0.1 }  // 確保退出動畫有足夠時間
+                }}
+                transition={{
+                  duration: 0.1,
+                  ease: [1, 1, 1, 1]
+                }}
+                href="https://www.linkedin.com/in/sunzhi-will"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full flex items-center justify-center
+                           bg-gradient-to-r from-blue-600/90 to-blue-800/90 
+                           shadow-lg hover:shadow-blue-500/50 transition-all duration-300
+                           absolute"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <Image
+                  src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg"
+                  alt="LinkedIn"
+                  width={20}
+                  height={20}
+                />
+              </motion.a>
+
+              {/* Email 按鈕 - 右上 */}
+              <motion.a
+                initial={{ scale: 0, x: 6, y: 6 }}
+                animate={{ scale: 1, x: 35, y: -35 }}
+                exit={{
+                  scale: 0,
+                  x: 6,
+                  y: 6,
+                  transition: { duration: 0.1 }  // 確保退出動畫有足夠時間
+                }}
+                transition={{
+                  duration: 0.1,
+                  ease: [1, 1, 1, 1]
+                }}
+                href="mailto:sun055676@gmail.com"
+                className="w-10 h-10 rounded-full flex items-center justify-center
+                           bg-gradient-to-r from-blue-500/90 to-blue-600/90 
+                           shadow-lg hover:shadow-blue-500/50 transition-all duration-300
+                           absolute"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </motion.a>
+            </div>
+          )}
+        </AnimatePresence>
       </div>
 
       <GradientBackground />
@@ -821,6 +924,13 @@ export default function Home() {
           </a>
         </div>
       </footer>
+
+      {/* 添加 AI Chat 組件 */}
+      <AIChat
+        isOpen={isAIChatOpen}
+        onClose={() => setIsAIChatOpen(false)}
+        lang={lang}
+      />
     </div>
   );
 }

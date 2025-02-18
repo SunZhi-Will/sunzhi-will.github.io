@@ -10,6 +10,7 @@
     "deploy": "next build && next export && gh-pages -d out"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
     "@heroicons/react": "^2.2.0",
     "@nextui-org/react": "^2.6.11",
     "framer-motion": "^12.4.2",
