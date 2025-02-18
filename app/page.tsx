@@ -734,7 +734,7 @@ export default function Home() {
 
       {/* Projects Section */}
       <section id="projects" className="py-24 relative">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 flex flex-col items-center">
           <div className="flex flex-col items-center mb-12">
             <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-300 to-blue-500 bg-clip-text text-transparent">
               {translations[lang].projects.title}
@@ -744,17 +744,19 @@ export default function Home() {
 
           <Masonry
             breakpointCols={breakpointColumnsObj}
-            className="max-w-5xl mx-auto flex -ml-8 w-auto"
-            columnClassName="pl-8 bg-clip-padding"
+            className="my-masonry-grid w-full max-w-5xl"
+            columnClassName="my-masonry-grid_column"
           >
-            {projects.map((project) => (
+            {projects.map((project, index) => (
               <motion.div
                 key={project.title}
-                whileHover={{ scale: 1.02 }}
-                className="mb-8 transform transition-all duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: index * 0.1 }}
+                className="w-full"
               >
                 <Card className="bg-blue-950/40 backdrop-blur-md border border-blue-500/20 
-                              shadow-lg hover:shadow-blue-500/30 transition-all duration-300 overflow-hidden">
+                              shadow-xl hover:shadow-blue-500/10 transition-all duration-300">
                   <div className="relative">
                     <div className="aspect-video relative overflow-hidden group">
                       <ProjectMedia

@@ -47,3 +47,16 @@ body {
     background-position: 200% 0;
   }
 }
+
+.my-masonry-grid {
+  display: flex;
+  margin-left: -32px;
+  /* 調整間距 */
+  width: auto;
+}
+
+.my-masonry-grid_column {
+  padding-left: 32px;
+  /* 調整間距 */
+  background-clip: padding-box;
+}

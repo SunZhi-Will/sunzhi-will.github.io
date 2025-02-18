@@ -24,11 +24,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-blue-950`}
       >
-        <Providers>{children}</Providers>
+        <main className="min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Providers>{children}</Providers>
+        </main>
       </body>
     </html>
   );
