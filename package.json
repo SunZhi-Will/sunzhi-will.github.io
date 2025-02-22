@@ -13,6 +13,8 @@
     "@google/generative-ai": "^0.21.0",
     "@heroicons/react": "^2.2.0",
     "@nextui-org/react": "^2.6.11",
+    "@tsparticles/react": "^3.0.0",
+    "@tsparticles/slim": "^3.8.1",
     "framer-motion": "^12.4.2",
     "next": "15.1.7",
     "react": "^19.0.0",
@@ -21,9 +23,7 @@
     "react-iframe": "^1.8.5",
     "react-intersection-observer": "^9.15.1",
     "react-masonry-css": "^1.0.16",
-    "react-tsparticles": "^2.12.2",
-    "tsparticles": "^3.8.1",
-    "tsparticles-slim": "^2.12.0"
+    "tsparticles": "^3.8.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

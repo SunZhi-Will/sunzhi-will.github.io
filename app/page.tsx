@@ -1,7 +1,7 @@
 'use client'
 
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Card } from "@nextui-org/react";
 import { useInView } from "react-intersection-observer";
 import ParticlesBackground from '@/components/ParticlesBackground';
@@ -9,12 +9,13 @@ import GradientBackground from '@/components/GradientBackground';
 import { useState, useEffect, useMemo } from "react";
 import Masonry from 'react-masonry-css';
 import { GlowingButton } from '@/components/GlowingButton';
-import { TechIcon } from '@/components/TechIcon';
 import { NavDot } from '@/components/NavDot';
 import { ProjectMedia } from '@/components/ProjectMedia';
 import { Lang } from '@/types';
 import { translations } from '@/data/translations';
 import Head from 'next/head';
+import { TechStackGrid } from '@/components/TechStackGrid';
+import FloatingButtons from '@/components/FloatingButtons';
 
 // 在 CSS 中添加樣式
 const breakpointColumnsObj = {
@@ -165,21 +166,10 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [sections]);
 
-  // 添加分類過濾狀態
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  // 獲取所有技能
-  const allSkills = techStacks.flatMap(category =>
-    category.items.map(item => ({
-      ...item,
-      category: category.category
-    }))
-  );
 
-  // 過濾技能
-  const filteredSkills = selectedCategory
-    ? allSkills.filter(skill => skill.category === selectedCategory)
-    : allSkills;
+
+
 
   // 在其他 useState 宣告附近添加
   const [currentSlides, setCurrentSlides] = useState<Record<string, number>>({});
@@ -214,10 +204,6 @@ export default function Home() {
   const typedSubtitle = useTypewriter(translations[lang].hero.subtitle, 50);
 
 
-
-  // 添加主按鈕控制展開/收起
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   return (
     <div className="min-h-screen text-white">
       <Head>
@@ -238,125 +224,7 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* 右下角按鈕組 */}
-      <div className={`fixed right-4 sm:right-8 bottom-8 z-50 transition-all duration-500
-                ${showSocialButtons ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
-        {/* 主按鈕 */}
-        <motion.button
-          onClick={() => setIsMenuOpen(prev => !prev)}
-          className={`w-12 h-12 rounded-full flex items-center justify-center
-                     bg-gradient-to-r from-blue-600/90 to-blue-800/90 
-                     shadow-lg hover:shadow-blue-500/50 transition-all duration-300
-                     relative z-50`}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-              d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
-          </svg>
-        </motion.button>
-
-        {/* 花瓣式展開的按鈕組 */}
-        <AnimatePresence mode="wait">
-          {isMenuOpen && (
-            <div className="absolute inset-0">
-              {/* GitHub 按鈕 - 左上 */}
-              <motion.a
-                initial={{ scale: 0, x: 6, y: 6 }}
-                animate={{ scale: 1, x: -60, y: -0 }}
-                exit={{
-                  scale: 0,
-                  x: 6,
-                  y: 6,
-                  transition: { duration: 0.1 }
-                }}
-                transition={{
-                  duration: 0.1,
-                  ease: [1, 1, 1, 1]
-                }}
-                href="https://github.com/SunZhi-Will"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full flex items-center justify-center
-                           bg-gradient-to-r from-purple-600/90 to-indigo-800/90 
-                           shadow-lg hover:shadow-purple-500/50 transition-all duration-300
-                           absolute"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <Image
-                  src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
-                  alt="GitHub"
-                  width={20}
-                  height={20}
-                  className="[filter:invert(1)]"
-                />
-              </motion.a>
-
-              {/* LinkedIn 按鈕 - 上方 */}
-              <motion.a
-                initial={{ scale: 0, x: 6, y: 6 }}
-                animate={{ scale: 1, x: -42, y: -42 }}
-                exit={{
-                  scale: 0,
-                  x: 6,
-                  y: 6,
-                  transition: { duration: 0.1 }
-                }}
-                transition={{
-                  duration: 0.1,
-                  ease: [1, 1, 1, 1]
-                }}
-                href="https://www.linkedin.com/in/sunzhi-will"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full flex items-center justify-center
-                           bg-gradient-to-r from-blue-600/90 to-blue-800/90 
-                           shadow-lg hover:shadow-blue-500/50 transition-all duration-300
-                           absolute"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <Image
-                  src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg"
-                  alt="LinkedIn"
-                  width={20}
-                  height={20}
-                />
-              </motion.a>
-
-              {/* Email 按鈕 - 右上 */}
-              <motion.a
-                initial={{ scale: 0, x: 6, y: 6 }}
-                animate={{ scale: 1, x: 0, y: -60 }}
-                exit={{
-                  scale: 0,
-                  x: 6,
-                  y: 6,
-                  transition: { duration: 0.1 }
-                }}
-                transition={{
-                  duration: 0.1,
-                  ease: [1, 1, 1, 1]
-                }}
-                href="mailto:sun055676@gmail.com"
-                className="w-10 h-10 rounded-full flex items-center justify-center
-                           bg-gradient-to-r from-blue-500/90 to-blue-600/90 
-                           shadow-lg hover:shadow-blue-500/50 transition-all duration-300
-                           absolute"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              </motion.a>
-            </div>
-          )}
-        </AnimatePresence>
-      </div>
+      <FloatingButtons show={showSocialButtons} />
 
       <GradientBackground />
       <ParticlesBackground />
@@ -662,52 +530,15 @@ export default function Home() {
       {/* Tech Stack Section */}
       <section id="skills" className="py-24 overflow-hidden">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col items-center mb-16">
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-300 to-blue-500 bg-clip-text text-transparent">
-              {translations[lang].skills.title}
-            </h2>
-            <div className="mt-2 w-24 h-1 bg-gradient-to-r from-blue-300 to-blue-500 rounded-full" />
-          </div>
-
-          {/* 分類過濾按鈕 */}
-          <div className="flex justify-center gap-4 mb-12 flex-wrap">
-            <button
-              onClick={() => setSelectedCategory(null)}
-              className={`px-4 py-2 rounded-full transition-all duration-300
-                ${!selectedCategory
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-blue-500/20 text-blue-300 hover:bg-blue-500/30'}`}
-            >
-              {translations[lang].categories.all}
-            </button>
-            {techStacks.map(category => (
-              <button
-                key={category.category}
-                onClick={() => setSelectedCategory(category.category)}
-                className={`px-4 py-2 rounded-full transition-all duration-300
-                  ${selectedCategory === category.category
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-blue-500/20 text-blue-300 hover:bg-blue-500/30'}`}
-              >
-                {category.category}
-              </button>
-            ))}
-          </div>
-
-          {/* 技能展示 */}
-          <motion.div
-            className="flex flex-wrap justify-center gap-6"
-            layout
-          >
-            {filteredSkills.map((tech, index) => (
-              <TechIcon
-                key={tech.name}
-                name={tech.name}
-                icon={tech.icon}
-                delay={index * 0.1}
-              />
-            ))}
-          </motion.div>
+          <TechStackGrid
+            techStacks={techStacks}
+            translations={{
+              title: translations[lang].skills.title,
+              categories: {
+                all: translations[lang].categories.all
+              }
+            }}
+          />
         </div>
       </section>
 
