@@ -103,6 +103,33 @@ export const translations: Translations = {
                     link: "https://synvize.com/"
                 },
                 {
+                    title: "Snapraze",
+                    description: "提供圖片雲端儲存、編輯標記以及原圖比對功能的平台。使用者可以上傳、管理、編輯和比較圖片，支援多種圖片格式，並提供完整的圖片管理系統。",
+                    category: "全端開發",
+                    achievements: [
+                        "雲端圖片儲存與管理系統",
+                        "圖片編輯與標記工具",
+                        "原圖與編輯圖即時比對",
+                        "支援多種圖片格式",
+                        "完整的修改記錄追蹤",
+                        "使用者權限管理"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/snapraze/logo.png", alt: "Snapraze Logo" }
+                    ],
+                    technologies: [
+                        "Next.js",
+                        "TypeScript",
+                        "Tailwind CSS",
+                        "Shadcn/ui",
+                        "Cloudinary",
+                        "PostgreSQL",
+                        "Prisma",
+                        "Fabric.js"
+                    ],
+                    link: "https://github.com/SunZhi-Will/snapraze"
+                },
+                {
                     title: "TED × AI創新應用講座",
                     description: "受邀擔任 TED 講座講師，分享 AI 技術的創新應用與未來展望",
                     category: "演講分享",
@@ -436,6 +463,33 @@ export const translations: Translations = {
                         "Web Scraping",
                     ],
                     link: "https://synvize.com/"
+                },
+                {
+                    title: "Snapraze",
+                    description: "A platform providing cloud image storage, editing, annotation, and original image comparison features. Users can upload, manage, edit, and compare images, supporting multiple image formats with a comprehensive image management system.",
+                    category: "Full Stack Development",
+                    achievements: [
+                        "Cloud image storage and management system",
+                        "Image editing and annotation tools",
+                        "Real-time comparison between original and edited images",
+                        "Support for multiple image formats",
+                        "Complete modification history tracking",
+                        "User permission management"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/snapraze/logo.png", alt: "Snapraze Logo" }
+                    ],
+                    technologies: [
+                        "Next.js",
+                        "TypeScript",
+                        "Tailwind CSS",
+                        "Shadcn/ui",
+                        "Cloudinary",
+                        "PostgreSQL",
+                        "Prisma",
+                        "Fabric.js"
+                    ],
+                    link: "https://github.com/SunZhi-Will/snapraze"
                 },
                 {
                     title: "TED × AI Innovation Applications",
