@@ -85,11 +85,16 @@
 Chrome 擴充功能，使用 Google Gemini AI 分析英文網頁內容，提供 CEFR 等級評估、單字解析、AI 互動對話與語音發音功能。
 
 <div align="center">
-  <img src="public/projects/lexitechly/unnamed.png" alt="LexiTechly 主介面" width="600"/>
-  <br/>
-  <img src="public/projects/lexitechly/analysis.png" alt="內容分析" width="300"/>
-  <img src="public/projects/lexitechly/vocabulary.png" alt="詞彙分析" width="300"/>
-  <img src="public/projects/lexitechly/chat.png" alt="AI 對話" width="300"/>
+  <img src="public/projects/lexitechly/unnamed.png" alt="LexiTechly 主介面" width="800"/>
+</div>
+
+<div align="center" style="display: flex; justify-content: center; gap: 10px;">
+  <img src="public/projects/lexitechly/analysis.png" alt="內容分析" width="400"/>
+  <img src="public/projects/lexitechly/vocabulary.png" alt="詞彙分析" width="400"/>
+</div>
+
+<div align="center">
+  <img src="public/projects/lexitechly/chat.png" alt="AI 對話" width="600"/>
 </div>
 
 - 網頁英文內容的 CEFR 等級分析
@@ -101,10 +106,9 @@ Chrome 擴充功能，使用 Google Gemini AI 分析英文網頁內容，提供 
 ### [Synvize](https://synvize.com/)
 AI 驅動的內容生成平台，能夠自動整合網站、YouTube、新聞和文本等多元資料來源。
 
-<div align="center">
-  <img src="public/projects/synvize/home.png" alt="Synvize 首頁" width="600"/>
-  <br/>
-  <img src="public/projects/synvize/edit.png" alt="編輯介面" width="600"/>
+<div align="center" style="display: flex; justify-content: center; gap: 10px;">
+  <img src="public/projects/synvize/home.png" alt="Synvize 首頁" width="400"/>
+  <img src="public/projects/synvize/edit.png" alt="編輯介面" width="400"/>
 </div>
 
 - 多源數據自動蒐集與整合
@@ -118,9 +122,13 @@ AI 驅動的內容生成平台，能夠自動整合網站、YouTube、新聞和�
 
 <div align="center">
   <img src="public/projects/snapraze/logo.png" alt="Snapraze Logo" width="300"/>
-  <br/>
-  <img src="public/projects/snapraze/page1.png" alt="Snapraze 主頁面" width="600"/>
-  <br/>
+</div>
+
+<div align="center" style="display: flex; justify-content: center; gap: 10px;">
+  <img src="public/projects/snapraze/page1.png" alt="Snapraze 主頁面" width="800"/>
+</div>
+
+<div align="center" style="display: flex; justify-content: center; gap: 10px;">
   <img src="public/projects/snapraze/page2.png" alt="Snapraze 圖片編輯" width="400"/>
   <img src="public/projects/snapraze/page3.png" alt="Snapraze 圖片比對" width="400"/>
 </div>
@@ -135,7 +143,7 @@ AI 驅動的內容生成平台，能夠自動整合網站、YouTube、新聞和�
 
 ### TED × AI 創新應用講座
 
-<div align="center">
+<div align="center" style="display: flex; justify-content: center; gap: 10px;">
   <img src="public/projects/ted/594732_0.jpg" alt="演講" width="400"/>
   <img src="public/projects/ted/594733_0.jpg" alt="演講" width="400"/>
 </div>

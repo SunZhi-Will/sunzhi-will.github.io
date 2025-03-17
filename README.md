@@ -85,11 +85,16 @@ Currently focused on enterprise application development and AI technology integr
 Chrome extension that analyzes English web content using Google Gemini AI, providing CEFR level assessment, vocabulary analysis, AI interactive dialogue, and pronunciation features.
 
 <div align="center">
-  <img src="public/projects/lexitechly/unnamed.png" alt="LexiTechly Main Interface" width="600"/>
-  <br/>
-  <img src="public/projects/lexitechly/analysis.png" alt="Content Analysis" width="300"/>
-  <img src="public/projects/lexitechly/vocabulary.png" alt="Vocabulary Analysis" width="300"/>
-  <img src="public/projects/lexitechly/chat.png" alt="AI Chat" width="300"/>
+  <img src="public/projects/lexitechly/unnamed.png" alt="LexiTechly Main Interface" width="800"/>
+</div>
+
+<div align="center" style="display: flex; justify-content: center; gap: 10px;">
+  <img src="public/projects/lexitechly/analysis.png" alt="Content Analysis" width="400"/>
+  <img src="public/projects/lexitechly/vocabulary.png" alt="Vocabulary Analysis" width="400"/>
+</div>
+
+<div align="center">
+  <img src="public/projects/lexitechly/chat.png" alt="AI Chat" width="600"/>
 </div>
 
 - CEFR level analysis of web English content
@@ -101,10 +106,9 @@ Chrome extension that analyzes English web content using Google Gemini AI, provi
 ### [Synvize](https://synvize.com/)
 AI-powered content generation platform that automatically integrates data from websites, YouTube, news, and text sources.
 
-<div align="center">
-  <img src="public/projects/synvize/home.png" alt="Synvize Homepage" width="600"/>
-  <br/>
-  <img src="public/projects/synvize/edit.png" alt="Edit Interface" width="600"/>
+<div align="center" style="display: flex; justify-content: center; gap: 10px;">
+  <img src="public/projects/synvize/home.png" alt="Synvize Homepage" width="400"/>
+  <img src="public/projects/synvize/edit.png" alt="Edit Interface" width="400"/>
 </div>
 
 - Multi-source data collection and integration
@@ -118,9 +122,13 @@ A platform providing cloud image storage, editing, annotation, and original imag
 
 <div align="center">
   <img src="public/projects/snapraze/logo.png" alt="Snapraze Logo" width="300"/>
-  <br/>
-  <img src="public/projects/snapraze/page1.png" alt="Snapraze Main Page" width="600"/>
-  <br/>
+</div>
+
+<div align="center" style="display: flex; justify-content: center; gap: 10px;">
+  <img src="public/projects/snapraze/page1.png" alt="Snapraze Main Page" width="800"/>
+</div>
+
+<div align="center" style="display: flex; justify-content: center; gap: 10px;">
   <img src="public/projects/snapraze/page2.png" alt="Snapraze Image Editor" width="400"/>
   <img src="public/projects/snapraze/page3.png" alt="Snapraze Image Comparison" width="400"/>
 </div>
@@ -135,7 +143,7 @@ A platform providing cloud image storage, editing, annotation, and original imag
 
 ### TED × AI Innovation Applications
 
-<div align="center">
+<div align="center" style="display: flex; justify-content: center; gap: 10px;">
   <img src="public/projects/ted/594732_0.jpg" alt="Speaking" width="400"/>
   <img src="public/projects/ted/594733_0.jpg" alt="Speaking" width="400"/>
 </div>
