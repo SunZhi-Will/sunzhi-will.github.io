@@ -1,0 +1,38 @@
+name: Sync Profile Repository
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'README.md'
+      - 'README_zh.md'
+      - 'public/projects/**'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source repository
+        uses: actions/checkout@v4
+
+      - name: Checkout target repository
+        uses: actions/checkout@v4
+        with:
+          repository: SunZhi-Will/SunZhi-Will
+          path: profile-repo
+          token: ${{ secrets.PROFILE_TOKEN }}
+
+      - name: Copy files
+        run: |
+          cp README.md README_zh.md profile-repo/
+          mkdir -p profile-repo/public/projects
+          cp -r public/projects/* profile-repo/public/projects/
+
+      - name: Commit and push changes
+        run: |
+          cd profile-repo
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "更新個人檔案 README 和圖片" || echo "No changes to commit"
+          git push 

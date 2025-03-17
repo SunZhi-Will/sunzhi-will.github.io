@@ -1,5 +1,3 @@
-
-
 // 更新專案類型
 type MediaContent = {
     type: 'image' | 'youtube';
@@ -20,4 +18,5 @@ type Project = {
         ios?: string;
         android?: string;
     };
+    buttonText?: string;  // 添加可選的按鈕文字屬性
 };

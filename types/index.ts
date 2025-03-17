@@ -44,6 +44,7 @@ export interface Translations {
             items: Array<{
                 title: string;
                 description: string;
+                buttonText?: string;
                 category: string;
                 achievements: string[];
                 technologies: string[];

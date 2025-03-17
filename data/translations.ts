@@ -50,6 +50,7 @@ export const translations: Translations = {
             items: [
                 {
                     title: "LexiTechly - 智慧英文內容分析",
+                    buttonText: "Chrome擴充功能",
                     description: "使用 Google Gemini AI 分析英文網頁內容，提供 CEFR 等級評估、單字解析、AI 互動對話與語音發音功能，提升您的英文閱讀與學習體驗！",
                     category: "AI 開發",
                     achievements: [
@@ -115,7 +116,10 @@ export const translations: Translations = {
                         "使用者權限管理"
                     ],
                     media: [
-                        { type: 'image', src: "/projects/snapraze/logo.png", alt: "Snapraze Logo" }
+                        { type: 'image', src: "/projects/snapraze/logo.png", alt: "Snapraze Logo" },
+                        { type: 'image', src: "/projects/snapraze/page1.png", alt: "Snapraze 主頁面" },
+                        { type: 'image', src: "/projects/snapraze/page2.png", alt: "Snapraze 圖片編輯" },
+                        { type: 'image', src: "/projects/snapraze/page3.png", alt: "Snapraze 圖片比對" }
                     ],
                     technologies: [
                         "Next.js",
@@ -412,6 +416,7 @@ export const translations: Translations = {
             items: [
                 {
                     title: "LexiTechly - Smart English Content Analysis",
+                    buttonText: "Chrome Extension",
                     description: "Analyze English web content using Google Gemini AI, providing CEFR level assessment, vocabulary analysis, AI interactive dialogue, and pronunciation features to enhance your English reading and learning experience!",
                     category: "AI Development",
                     achievements: [
@@ -477,7 +482,10 @@ export const translations: Translations = {
                         "User permission management"
                     ],
                     media: [
-                        { type: 'image', src: "/projects/snapraze/logo.png", alt: "Snapraze Logo" }
+                        { type: 'image', src: "/projects/snapraze/logo.png", alt: "Snapraze Logo" },
+                        { type: 'image', src: "/projects/snapraze/page1.png", alt: "Snapraze Main Page" },
+                        { type: 'image', src: "/projects/snapraze/page2.png", alt: "Snapraze Image Editor" },
+                        { type: 'image', src: "/projects/snapraze/page3.png", alt: "Snapraze Image Comparison" }
                     ],
                     technologies: [
                         "Next.js",
