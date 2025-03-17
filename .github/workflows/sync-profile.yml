@@ -10,6 +10,8 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout source repository
         uses: actions/checkout@v4
@@ -29,7 +31,7 @@ jobs:
         with:
           repository: SunZhi-Will/SunZhi-Will
           path: profile-repo
-          token: ${{ github.token }}
+          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Debug target repository
         run: |
@@ -54,4 +56,4 @@ jobs:
           git add .
           git status
           git commit -m "更新個人檔案 README 和圖片" || echo "No changes to commit"
-          git push || echo "Failed to push changes" 
+          git push origin main || echo "Failed to push changes" 
