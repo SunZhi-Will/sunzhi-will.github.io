@@ -48,10 +48,10 @@ export const TechStackGrid: React.FC<TechStackGridProps> = ({
         <div className={`w-full ${className}`}>
             {showTitle && (
                 <div className="flex flex-col items-center mb-16">
-                    <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-300 to-blue-500 bg-clip-text text-transparent">
+                    <h2 className="text-4xl font-bold bg-gradient-to-br from-primary via-primary-dark to-primary bg-clip-text text-transparent">
                         {translations.title}
                     </h2>
-                    <div className="mt-2 w-24 h-1 bg-gradient-to-r from-blue-300 to-blue-500 rounded-full" />
+                    <div className="mt-2 w-24 h-1 bg-gradient-to-br from-primary via-primary-dark to-primary rounded-full" />
                 </div>
             )}
 
@@ -61,8 +61,8 @@ export const TechStackGrid: React.FC<TechStackGridProps> = ({
                     onClick={() => setSelectedCategory(null)}
                     className={`px-4 py-2 rounded-full transition-all duration-300
             ${!selectedCategory
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-blue-500/20 text-blue-300 hover:bg-blue-500/30'}`}
+                            ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                            : 'bg-primary/30 text-white hover:bg-primary/50'}`}
                 >
                     {translations.categories.all}
                 </button>
@@ -72,8 +72,8 @@ export const TechStackGrid: React.FC<TechStackGridProps> = ({
                         onClick={() => setSelectedCategory(category.category)}
                         className={`px-4 py-2 rounded-full transition-all duration-300
               ${selectedCategory === category.category
-                                ? 'bg-blue-500 text-white'
-                                : 'bg-blue-500/20 text-blue-300 hover:bg-blue-500/30'}`}
+                                ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                                : 'bg-primary/30 text-white hover:bg-primary/50'}`}
                     >
                         {category.category}
                     </button>

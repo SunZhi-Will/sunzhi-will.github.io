@@ -42,21 +42,21 @@ const ParticlesBackground = memo(() => {
                     },
                     particles: {
                         color: {
-                            value: ["#3b82f6", "#60a5fa", "#93c5fd"],
+                            value: ["#FDB813", "#FFE5B4", "#FF9D00"],
                         },
                         links: {
-                            color: "#3b82f6",
+                            color: "#FDB813",
                             distance: 180,
                             enable: true,
-                            opacity: 0.3,
-                            width: 1.5,
+                            opacity: 0.15,
+                            width: 1,
                         },
                         collisions: {
                             enable: false,
                         },
                         move: {
                             enable: true,
-                            speed: 0.8,
+                            speed: 0.5,
                             direction: "none",
                             random: true,
                             straight: false,
@@ -77,13 +77,13 @@ const ParticlesBackground = memo(() => {
                                 height: 800,
                                 width: 800
                             },
-                            value: 48,
+                            value: 36,
                         },
                         opacity: {
-                            value: 0.5,
+                            value: 0.3,
                             animation: {
                                 enable: true,
-                                speed: 0.3,
+                                speed: 0.2,
                                 count: 0,
                                 decay: 0,
                                 delay: 0,

@@ -14,9 +14,9 @@ export default function FloatingButtons({ show = true }) {
             <motion.button
                 onClick={() => setIsMenuOpen(prev => !prev)}
                 className="w-12 h-12 rounded-full flex items-center justify-center
-                    bg-gradient-to-r from-blue-600/90 to-blue-800/90 
-                    shadow-lg hover:shadow-blue-500/50 transition-all duration-300
-                    relative z-50"
+                    bg-gradient-to-r from-primary/90 to-primary-dark/90 
+                    shadow-lg hover:shadow-primary/50 transition-all duration-300
+                    text-white relative z-50"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
             >
@@ -35,8 +35,9 @@ export default function FloatingButtons({ show = true }) {
                             href="https://github.com/SunZhi-Will"
                             icon="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
                             position={{ x: -60, y: -0 }}
-                            className="from-purple-600/90 to-indigo-800/90 hover:shadow-purple-500/50"
+                            className="from-[#6e40c9]/90 to-[#4c2889]/90 hover:shadow-[#6e40c9]/50"
                             iconClassName="[filter:invert(1)]"
+                            label="GitHub"
                         />
 
                         {/* LinkedIn 按鈕 */}
@@ -44,7 +45,8 @@ export default function FloatingButtons({ show = true }) {
                             href="https://www.linkedin.com/in/sunzhi-will"
                             icon="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg"
                             position={{ x: -42, y: -42 }}
-                            className="from-blue-600/90 to-blue-800/90 hover:shadow-blue-500/50"
+                            className="from-[#0077b5]/90 to-[#0a66c2]/90 hover:shadow-[#0077b5]/50"
+                            label="LinkedIn"
                         />
 
                         {/* Email 按鈕 */}
@@ -65,9 +67,10 @@ interface SocialButtonProps {
     position: { x: number; y: number };
     className: string;
     iconClassName?: string;
+    label?: string;
 }
 
-const SocialButton = ({ href, icon, position, className, iconClassName }: SocialButtonProps) => (
+const SocialButton = ({ href, icon, position, className, iconClassName, label }: SocialButtonProps) => (
     <motion.a
         initial={{ scale: 0, x: 6, y: 6 }}
         animate={{ scale: 1, x: position.x, y: position.y }}
@@ -78,17 +81,22 @@ const SocialButton = ({ href, icon, position, className, iconClassName }: Social
         rel="noopener noreferrer"
         className={`w-10 h-10 rounded-full flex items-center justify-center
             bg-gradient-to-r ${className} shadow-lg transition-all duration-300
-            absolute`}
+            absolute text-white group`}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
     >
         <Image
             src={icon}
-            alt=""
+            alt={label || ""}
             width={20}
             height={20}
-            className={iconClassName}
+            className={`${iconClassName} group-hover:rotate-12 transition-transform duration-300`}
         />
+        {label && (
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-text/90 text-bg text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                {label}
+            </span>
+        )}
     </motion.a>
 );
 
@@ -100,9 +108,9 @@ const EmailButton = ({ href, position }: { href: string; position: { x: number; 
         transition={{ duration: 0.1, ease: [1, 1, 1, 1] }}
         href={href}
         className="w-10 h-10 rounded-full flex items-center justify-center
-            bg-gradient-to-r from-blue-500/90 to-blue-600/90 
-            shadow-lg hover:shadow-blue-500/50 transition-all duration-300
-            absolute"
+            bg-gradient-to-r from-primary/90 to-primary-dark/90 
+            shadow-lg hover:shadow-primary/50 transition-all duration-300
+            absolute text-white"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
     >
