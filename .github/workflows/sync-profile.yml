@@ -15,114 +15,16 @@ jobs:
     steps:
       - name: Checkout source repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: Install dependencies
+      - name: Debug Info
         run: |
-          python -m pip install --upgrade pip
-          pip install google-genai
-
-      - name: Generate README with Gemini
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: |
-          cat > generate_readme.py << 'EOF'
-          import base64
-          import os
-          from google import genai
-          from google.genai import types
-          import json
-          import re
-
-          def parse_ts_to_dict(content):
-              # 移除 TypeScript 相關語法
-              content = content.replace('export const translations = ', '')
-              # 將 template literals 轉換為一般字串
-              content = re.sub(r'`([^`]*)`', lambda m: json.dumps(m.group(1), ensure_ascii=False), content)
-              # 將內容轉換為 Python 字典
-              return eval(content)
-
-          def generate_readme():
-              # 讀取 translations.ts 內容
-              with open('data/translations.ts', 'r', encoding='utf-8') as f:
-                  content = f.read()
-                  translations = parse_ts_to_dict(content)
-
-              # 準備資料
-              zh = translations['zh-TW']
-              prompt = f"""
-              請幫我生成一個簡潔的 GitHub 個人檔案 README，包含以下資訊：
-
-              個人資訊：
-              - 名字：{zh['hero']['title']}
-              - 職稱：{zh['hero']['subtitle']}
-              - 簡介：{zh['aboutContent']['intro'].split('.')[0]}
-
-              主要技能：
-              {json.dumps(zh['techCategories'], ensure_ascii=False, indent=2)}
-
-              精選專案（前三個）：
-              {json.dumps([{
-                  'title': p.get('title', ''),
-                  'description': p.get('description', '').split('.')[0] if p.get('description') else '',
-                  'link': p.get('link', '')
-              } for p in zh['projects']['items'][:3]], ensure_ascii=False, indent=2)}
-
-              要求：
-              1. 使用簡潔有力的語言
-              2. 加入適當的 emoji
-              3. 使用 Markdown 格式
-              4. 生成中英文兩個版本
-              5. 確保內容專業但不過於冗長
-              6. 包含 GitHub 統計圖表
-              7. 使用徽章來展示技能
-              8. 添加社交媒體連結
-              """
-
-              client = genai.Client(
-                  api_key=os.environ.get("GEMINI_API_KEY"),
-              )
-
-              model = "gemini-2.0-flash"
-              contents = [
-                  types.Content(
-                      role="user",
-                      parts=[
-                          types.Part.from_text(text=prompt),
-                      ],
-                  ),
-              ]
-              generate_content_config = types.GenerateContentConfig(
-                  temperature=1,
-                  top_p=0.95,
-                  top_k=40,
-                  max_output_tokens=8192,
-                  response_mime_type="text/plain",
-              )
-
-              readme_content = ""
-              for chunk in client.models.generate_content_stream(
-                  model=model,
-                  contents=contents,
-                  config=generate_content_config,
-              ):
-                  readme_content += chunk.text
-
-              # 寫入文件
-              with open('README.md', 'w', encoding='utf-8') as f:
-                  f.write(readme_content)
-
-          if __name__ == "__main__":
-              generate_readme()
-          EOF
-
-          python generate_readme.py
+          echo "Current branch: $(git branch --show-current)"
+          echo "Git status:"
+          git status
+          echo "Repository contents:"
+          ls -la
+          echo "Workspace directory:"
+          pwd
 
       - name: Checkout target repository
         uses: actions/checkout@v4
@@ -130,20 +32,18 @@ jobs:
           repository: SunZhi-Will/SunZhi-Will
           path: profile-repo
           token: ${{ secrets.PAT_TOKEN }}
-          fetch-depth: 0
 
       - name: Debug target repository
         run: |
           cd profile-repo
           echo "Target repository contents:"
           ls -la
-          git branch -a
           cd ..
 
       - name: Copy files
         run: |
           echo "Copying files..."
-          cp README.md profile-repo/ || echo "Failed to copy README files"
+          cp README.md README_zh.md profile-repo/ || echo "Failed to copy README files"
           mkdir -p profile-repo/public/projects
           cp -r public/projects/* profile-repo/public/projects/ || echo "Failed to copy project files"
           echo "Files copied successfully"
@@ -151,9 +51,9 @@ jobs:
       - name: Commit and push changes
         run: |
           cd profile-repo
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
           git add .
           git status
-          git commit -m "自動更新個人檔案 README 和圖片" || echo "No changes to commit"
-          git push origin HEAD:main || echo "Failed to push changes" 
+          git commit -m "更新個人檔案 README 和圖片" || echo "No changes to commit"
+          git push origin main || echo "Failed to push changes" 
