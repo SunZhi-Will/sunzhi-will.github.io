@@ -38,14 +38,21 @@ jobs:
           from google import genai
           from google.genai import types
           import json
+          import re
+
+          def parse_ts_to_dict(content):
+              # 移除 TypeScript 相關語法
+              content = content.replace('export const translations = ', '')
+              # 將 template literals 轉換為一般字串
+              content = re.sub(r'`([^`]*)`', lambda m: json.dumps(m.group(1), ensure_ascii=False), content)
+              # 將內容轉換為 Python 字典
+              return eval(content)
 
           def generate_readme():
               # 讀取 translations.ts 內容
               with open('data/translations.ts', 'r', encoding='utf-8') as f:
                   content = f.read()
-                  # 移除 export 語句並轉換為 JSON
-                  content = content.replace('export const translations = ', '')
-                  translations = eval(content)
+                  translations = parse_ts_to_dict(content)
 
               # 準備資料
               zh = translations['zh-TW']
@@ -53,19 +60,19 @@ jobs:
               請幫我生成一個簡潔的 GitHub 個人檔案 README，包含以下資訊：
 
               個人資訊：
-              - 名字：{zh.hero.title}
-              - 職稱：{zh.hero.subtitle}
-              - 簡介：{zh.aboutContent.intro.split('.')[0]}
+              - 名字：{zh['hero']['title']}
+              - 職稱：{zh['hero']['subtitle']}
+              - 簡介：{zh['aboutContent']['intro'].split('.')[0]}
 
               主要技能：
-              {json.dumps(zh.techCategories, ensure_ascii=False, indent=2)}
+              {json.dumps(zh['techCategories'], ensure_ascii=False, indent=2)}
 
               精選專案（前三個）：
               {json.dumps([{
                   'title': p.get('title', ''),
-                  'description': p.get('description', '').split('.')[0],
+                  'description': p.get('description', '').split('.')[0] if p.get('description') else '',
                   'link': p.get('link', '')
-              } for p in zh.projects.items[:3]], ensure_ascii=False, indent=2)}
+              } for p in zh['projects']['items'][:3]], ensure_ascii=False, indent=2)}
 
               要求：
               1. 使用簡潔有力的語言
