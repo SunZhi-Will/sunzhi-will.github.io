@@ -41,6 +41,7 @@ export interface Translations {
             viewProject: string;
             mainAchievements: string;
             video: string;
+            liveDemo: string;
             items: Array<{
                 title: string;
                 description: string;
@@ -58,6 +59,7 @@ export interface Translations {
                     ios?: string;
                     android?: string;
                 };
+                demo?: string;
             }>;
         };
         footer: {
@@ -111,4 +113,5 @@ export type Project = {
         ios?: string;
         android?: string;
     };
+    demo?: string;
 }; 

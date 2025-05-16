@@ -47,7 +47,59 @@ export const translations: Translations = {
             viewProject: '查看專案',
             mainAchievements: '主要成果：',
             video: '影片',
+            liveDemo: '體驗網站',
             items: [
+                {
+                    title: "Sun UI Design",
+                    description: "一個具有精美動畫效果的現代 React UI 組件庫，使用 React、TailwindCSS 和 TypeScript 構建。提供現代化且可自定義的組件，支持 Tree-shaking 導出。",
+                    category: "前端開發",
+                    achievements: [
+                        "設計並實現多個現代化 UI 組件",
+                        "支持獨立包或整體打包安裝",
+                        "完整的 TypeScript 類型支持",
+                        "TailwindCSS 整合優化",
+                        "Storybook 文檔與展示",
+                        "優化的打包與發佈流程"
+                    ],
+                    technologies: [
+                        "React",
+                        "TypeScript",
+                        "TailwindCSS",
+                        "Storybook",
+                        "Lerna",
+                        "npm"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/sunui/preview.png", alt: "Sun UI Design Logo" }
+                    ],
+                    link: "https://github.com/SunZhi-Will/sunui-design",
+                    demo: "https://sunui.vercel.app/"
+                },
+                {
+                    title: "Google Form AI 自動填寫工具",
+                    description: "使用 Google Gemini AI 來自動填寫 Google Form 的智能工具，只需提供表單網址和基本資訊，即可自動生成填寫用的網址",
+                    category: "AI 開發",
+                    achievements: [
+                        "使用 Gemini AI 智能生成答案",
+                        "自動解析 Google Form 結構",
+                        "支援多種題型：簡答題、詳答題、選擇題、下拉式選單等",
+                        "同時提供純前端應用與 Python 後端版本",
+                        "完整的使用說明與錯誤處理"
+                    ],
+                    technologies: [
+                        "HTML",
+                        "CSS",
+                        "JavaScript",
+                        "Python",
+                        "Google Gemini AI",
+                        "RESTful API"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/gform_ai/preview.png", alt: "Google Form AI 自動填寫工具" }
+                    ],
+                    link: "https://github.com/SunZhi-Will/AutoFormAI",
+                    demo: "https://auto-form-ai.vercel.app/"
+                },
                 {
                     title: "LexiTechly - 智慧英文內容分析",
                     buttonText: "Chrome擴充功能",
@@ -77,6 +129,30 @@ export const translations: Translations = {
                         { type: 'image', src: "/projects/lexitechly/chat.png", alt: "AI 對話" }
                     ],
                     link: "https://chromewebstore.google.com/detail/lexitechly-%E6%99%BA%E6%85%A7%E8%8B%B1%E6%96%87%E5%85%A7%E5%AE%B9%E5%88%86%E6%9E%90/lnfheajgimgpheflgjgknhnppanfenmk"
+                },
+                {
+                    title: "DeepCrawlAI",
+                    description: "一個結合網頁爬蟲和 AI 分析的智能爬蟲工具，能夠深度爬取網頁內容並使用 Gemini AI 進行智能分析。",
+                    category: "AI 開發",
+                    achievements: [
+                        "智能網頁爬蟲，支援多層次深度爬取",
+                        "使用 Google Gemini AI 進行內容分析",
+                        "支援動態網頁爬取（Selenium）和靜態網頁爬取",
+                        "自動提取相關連結並遞迴爬取",
+                        "將網頁內容轉換為結構化的 Markdown 格式",
+                        "防止重複爬取相同網頁"
+                    ],
+                    technologies: [
+                        "Python",
+                        "Google Gemini AI",
+                        "BeautifulSoup",
+                        "Selenium",
+                        "Cloudscraper"
+                    ],
+                    media: [
+                        { type: 'image', src: "https://opengraph.githubassets.com/1/SunZhi-Will/DeepCrawlAI", alt: "DeepCrawlAI Screenshot" }
+                    ],
+                    link: "https://github.com/SunZhi-Will/DeepCrawlAI"
                 },
                 {
                     title: "Synvize",
@@ -132,6 +208,35 @@ export const translations: Translations = {
                         "Fabric.js"
                     ],
                     link: "https://github.com/SunZhi-Will/snapraze"
+                },
+                {
+                    title: "MemoryLane",
+                    description: "優雅的 LINE 聊天記錄回顧網站，讓您以全新方式重溫珍貴對話與回憶。支援上傳 LINE 聊天紀錄並以時間軸方式呈現，提供彈幕特效與完全本地處理機制保護隱私。",
+                    category: "前端開發",
+                    achievements: [
+                        "簡易上傳 LINE 匯出的聊天記錄檔案",
+                        "精美的按月份時間軸顯示",
+                        "瀏覽特定月份時顯示隨機對話彈幕特效",
+                        "所有處理皆在本地完成，保護隱私",
+                        "響應式設計，支援多裝置體驗",
+                        "簡潔直觀的用戶界面"
+                    ],
+                    technologies: [
+                        "Next.js 15.2",
+                        "React 19",
+                        "TypeScript 5",
+                        "Tailwind CSS 4",
+                        "Framer Motion",
+                        "date-fns 4",
+                        "localStorage"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/memory_lane/preview.png", alt: "MemoryLane Logo" },
+                        { type: 'image', src: "/projects/memory_lane/home.png", alt: "MemoryLane Home" },
+                        { type: 'youtube', src: "CPTTjLaydVU", alt: "MemoryLane 演示" }
+                    ],
+                    link: "https://github.com/SunZhi-Will/memory-lane",
+                    demo: "https://memorylane-nine.vercel.app/"
                 },
                 {
                     title: "TED × AI創新應用講座",
@@ -258,7 +363,6 @@ export const translations: Translations = {
                     ],
                     technologies: ["Unity", "SteamVR", "VR 開發"]
                 },
-
             ]
         },
         footer: {
@@ -413,7 +517,59 @@ export const translations: Translations = {
             viewProject: 'View Project',
             mainAchievements: 'Main Achievements:',
             video: 'Video',
+            liveDemo: 'Live Demo',
             items: [
+                {
+                    title: "Sun UI Design",
+                    description: "A modern React UI component library with beautiful animation effects, built with React, TailwindCSS and TypeScript. Offers modern, customizable components with tree-shaking support.",
+                    category: "Frontend Development",
+                    achievements: [
+                        "Designed and implemented multiple modern UI components",
+                        "Support for independent packages or all-in-one installation",
+                        "Complete TypeScript type support",
+                        "TailwindCSS integration and optimization",
+                        "Storybook documentation and showcase",
+                        "Optimized packaging and publishing workflow"
+                    ],
+                    technologies: [
+                        "React",
+                        "TypeScript",
+                        "TailwindCSS",
+                        "Storybook",
+                        "Lerna",
+                        "npm"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/sunui/preview.png", alt: "Sun UI Design Logo" }
+                    ],
+                    link: "https://github.com/SunZhi-Will/sunui-design",
+                    demo: "https://sunui.vercel.app/"
+                },
+                {
+                    title: "Google Form AI Auto-Filler",
+                    description: "An intelligent tool using Google Gemini AI to automatically fill in Google Forms. Simply provide the form URL and basic information to generate a pre-filled form URL",
+                    category: "AI Development",
+                    achievements: [
+                        "Smart answer generation with Gemini AI",
+                        "Automatic Google Form structure parsing",
+                        "Support for multiple question types: short, paragraph, multiple choice, dropdown, etc.",
+                        "Both pure frontend and Python backend versions available",
+                        "Comprehensive documentation and error handling"
+                    ],
+                    technologies: [
+                        "HTML",
+                        "CSS",
+                        "JavaScript",
+                        "Python",
+                        "Google Gemini AI",
+                        "RESTful API"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/gform_ai/preview.png", alt: "Google Form AI Auto-Filler" }
+                    ],
+                    link: "https://github.com/SunZhi-Will/AutoFormAI",
+                    demo: "https://auto-form-ai.vercel.app/"
+                },
                 {
                     title: "LexiTechly - Smart English Content Analysis",
                     buttonText: "Chrome Extension",
@@ -443,6 +599,30 @@ export const translations: Translations = {
                         { type: 'image', src: "/projects/lexitechly/chat.png", alt: "AI Chat" }
                     ],
                     link: "https://chromewebstore.google.com/detail/lexitechly-%E6%99%BA%E6%85%A7%E8%8B%B1%E6%96%87%E5%85%A7%E5%AE%B9%E5%88%86%E6%9E%90/lnfheajgimgpheflgjgknhnppanfenmk"
+                },
+                {
+                    title: "DeepCrawlAI",
+                    description: "An intelligent crawler tool that combines web scraping and AI analysis, capable of deep crawling web content and performing intelligent analysis using Gemini AI.",
+                    category: "AI Development",
+                    achievements: [
+                        "Intelligent web crawler supporting multi-level deep crawling",
+                        "Content analysis using Google Gemini AI",
+                        "Support for dynamic (Selenium) and static web scraping",
+                        "Automatic extraction of related links and recursive crawling",
+                        "Conversion of web content to structured Markdown format",
+                        "Prevention of duplicate page crawling"
+                    ],
+                    technologies: [
+                        "Python",
+                        "Google Gemini AI",
+                        "BeautifulSoup",
+                        "Selenium",
+                        "Cloudscraper"
+                    ],
+                    media: [
+                        { type: 'image', src: "https://opengraph.githubassets.com/1/SunZhi-Will/DeepCrawlAI", alt: "DeepCrawlAI Screenshot" }
+                    ],
+                    link: "https://github.com/SunZhi-Will/DeepCrawlAI"
                 },
                 {
                     title: "Synvize",
@@ -498,6 +678,35 @@ export const translations: Translations = {
                         "Fabric.js"
                     ],
                     link: "https://github.com/SunZhi-Will/snapraze"
+                },
+                {
+                    title: "MemoryLane",
+                    description: "An elegant LINE chat history review website that lets you relive precious conversations and memories in a brand new way. Upload your LINE chat exports and view them on a beautiful timeline with danmaku effect, all while processing data locally to protect your privacy.",
+                    category: "Frontend Development",
+                    achievements: [
+                        "Easy upload of LINE chat history export files",
+                        "Beautiful timeline display organized by month",
+                        "Dynamic danmaku effect showing random conversations",
+                        "Complete local processing for privacy protection",
+                        "Responsive design for optimal experience on any device",
+                        "Clean and intuitive user interface"
+                    ],
+                    technologies: [
+                        "Next.js 15.2",
+                        "React 19",
+                        "TypeScript 5",
+                        "Tailwind CSS 4",
+                        "Framer Motion",
+                        "date-fns 4",
+                        "localStorage"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/memory_lane/preview.png", alt: "MemoryLane Logo" },
+                        { type: 'image', src: "/projects/memory_lane/home.png", alt: "MemoryLane Home" },
+                        { type: 'youtube', src: "CPTTjLaydVU", alt: "MemoryLane Demo" }
+                    ],
+                    link: "https://github.com/SunZhi-Will/memory-lane",
+                    demo: "https://memorylane-nine.vercel.app/"
                 },
                 {
                     title: "TED × AI Innovation Applications",
@@ -624,7 +833,6 @@ export const translations: Translations = {
                     ],
                     technologies: ["Unity", "SteamVR", "VR Development"]
                 },
-
             ]
         },
         footer: {

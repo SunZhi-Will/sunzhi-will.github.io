@@ -18,7 +18,6 @@ export const ProjectMedia = ({
 }) => {
     const [selectedVideo, setSelectedVideo] = useState<MediaContent>();
     const [direction, setDirection] = useState(0);
-    const [isHovered, setIsHovered] = useState(false);
 
     if (!media || media.length === 0) return null;
 
@@ -44,8 +43,6 @@ export const ProjectMedia = ({
         <>
             <div
                 className="relative"
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
             >
                 <div className="aspect-video relative overflow-hidden">
                     <div className="absolute inset-0 bg-blue-950">
@@ -72,7 +69,7 @@ export const ProjectMedia = ({
                     </div>
 
                     {/* 左右箭頭 */}
-                    {images.length > 1 && isHovered && (
+                    {images.length > 1 && (
                         <>
                             <button
                                 onClick={handlePrevSlide}
@@ -95,7 +92,7 @@ export const ProjectMedia = ({
                 </div>
 
                 {/* 輪播指示器和影片按鈕 */}
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center items-center gap-4">
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center items-center gap-3 p-2">
                     {images.length > 1 && (
                         <div className="flex gap-2">
                             {images.map((_, idx) => (
@@ -129,11 +126,14 @@ export const ProjectMedia = ({
                 </div>
             </div>
 
-            <VideoModal
-                video={selectedVideo}
-                isOpen={!!selectedVideo}
-                onClose={() => setSelectedVideo(undefined)}
-            />
+            {/* 影片播放視窗 */}
+            {selectedVideo && (
+                <VideoModal
+                    video={selectedVideo}
+                    isOpen={!!selectedVideo}
+                    onClose={() => setSelectedVideo(undefined)}
+                />
+            )}
         </>
     );
 };

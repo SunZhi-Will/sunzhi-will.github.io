@@ -45,7 +45,13 @@ const useTypewriter = (text: string, speed: number = 100) => {
 };
 
 export default function Home() {
-  const [ref, inView] = useInView({
+  const [aboutRef, aboutInView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  // 為專案區塊添加獨立的 useInView
+  const [projectsRef, projectsInView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
@@ -115,15 +121,30 @@ export default function Home() {
   // 在 projects 定義之前添加 useMemo
   const projects = useMemo(() => translations[lang].projects.items, [lang]);
 
-  // 更新 useEffect
+  // 初始化專案輪播狀態
+  const initialSlides = useMemo(() => {
+    if (projects && projects.length > 0) {
+      return projects.reduce((acc, project) => ({
+        ...acc,
+        [project.title]: 0
+      }), {});
+    }
+    return {};
+  }, [projects]);
+
+  // 使用 memo 初始化的值
+  const [currentSlides, setCurrentSlides] = useState<Record<string, number>>(initialSlides);
+
+  // 更新當前幻燈片（如果需要）
   useEffect(() => {
-    // 初始化專案輪播
-    const initialSlides = projects.reduce((acc, project) => ({
-      ...acc,
-      [project.title]: 0
-    }), {});
-    setCurrentSlides(initialSlides);
-  }, [projects]); // 現在 projects 是 memoized 的，不會在每次渲染時改變
+    if (Object.keys(currentSlides).length === 0 && projects && projects.length > 0) {
+      const newSlides = projects.reduce((acc, project) => ({
+        ...acc,
+        [project.title]: 0
+      }), {});
+      setCurrentSlides(newSlides);
+    }
+  }, [projects, currentSlides]);
 
   // 添加當前區塊追蹤
   const [activeSection, setActiveSection] = useState('home');
@@ -166,14 +187,6 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [sections]);
 
-
-
-
-
-
-  // 在其他 useState 宣告附近添加
-  const [currentSlides, setCurrentSlides] = useState<Record<string, number>>({});
-
   // 添加狀態來控制按鈕顯示
   const [showSocialButtons, setShowSocialButtons] = useState(false);
 
@@ -202,7 +215,6 @@ export default function Home() {
   );
 
   const typedSubtitle = useTypewriter(translations[lang].hero.subtitle, 50);
-
 
   return (
     <div className="min-h-screen text-white">
@@ -400,9 +412,9 @@ export default function Home() {
 
       {/* About Section */}
       <motion.section
-        ref={ref}
+        ref={aboutRef}
         initial={{ opacity: 0, y: 50 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
+        animate={aboutInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.5 }}
         id="about"
         className="py-12 sm:py-24 relative"
@@ -429,7 +441,7 @@ export default function Home() {
                       <motion.div
                         key={exp.title}
                         initial={{ x: -50, opacity: 0 }}
-                        animate={inView ? { x: 0, opacity: 1 } : {}}
+                        animate={aboutInView ? { x: 0, opacity: 1 } : {}}
                         transition={{ delay: index * 0.2 }}
                         className="relative pl-6 sm:pl-8 pb-6 sm:pb-8 last:pb-0"
                       >
@@ -467,7 +479,7 @@ export default function Home() {
                   </h3>
                   <motion.div
                     initial={{ y: 20, opacity: 0 }}
-                    animate={inView ? { y: 0, opacity: 1 } : {}}
+                    animate={aboutInView ? { y: 0, opacity: 1 } : {}}
                     className="bg-blue-900/20 rounded-lg p-6 border border-blue-500/10"
                   >
                     <div className="flex justify-between items-center mb-4">
@@ -543,7 +555,7 @@ export default function Home() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="py-24 relative">
+      <section id="projects" className="py-24 relative" ref={projectsRef}>
         <div className="container mx-auto px-4 flex flex-col items-center">
           <div className="flex flex-col items-center mb-12">
             <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-300 to-blue-500 bg-clip-text text-transparent">
@@ -561,7 +573,7 @@ export default function Home() {
               <motion.div
                 key={project.title}
                 initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
+                animate={projectsInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: index * 0.1 }}
                 className="mb-8 w-full"
               >
@@ -672,6 +684,23 @@ export default function Home() {
                                 </svg>
                               )}
                               {project.buttonText || translations[lang].projects.viewProject}
+                            </motion.a>
+                          )}
+
+                          {/* Demo 連結 */}
+                          {project.demo && (
+                            <motion.a
+                              href={project.demo}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-indigo-500/20 text-purple-300 hover:from-purple-500/30 hover:to-indigo-500/30 transition-all duration-300"
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                              </svg>
+                              {translations[lang].projects.liveDemo}
                             </motion.a>
                           )}
 
