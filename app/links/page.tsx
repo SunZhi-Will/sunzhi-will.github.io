@@ -79,7 +79,7 @@ export default function LinksPage() {
       description: lang === 'zh-TW' ? '關注我的日常思考和觀點' : 'Follow my daily thoughts and perspectives'
     },
     {
-      title: 'LINE 社群',
+      title: lang === 'zh-TW' ? 'LINE 社群' : 'LINE Community',
       url: 'https://line.me/ti/p/~sunzhi',
       icon: '/icons/line-white.svg',
       bgColor: 'from-[#00B900]/80 to-[#00B900]/80',
