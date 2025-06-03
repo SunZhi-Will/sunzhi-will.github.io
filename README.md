@@ -47,8 +47,17 @@ I am a passionate software engineer specializing in .NET development, AI applica
 
 ## 💼 Work Experience
 - **Inventec Corporation** - Software Engineer (Dec 2023 - Present)
+  - Developing and maintaining enterprise internal systems
+  - Integrating AI technologies to optimize workflows
+  - Developing automated testing tools to improve efficiency
 - **Yubay Industrial** - Software Engineer (Feb 2023 - Oct 2023)
+  - Developing Enterprise Resource Planning (ERP) system
+  - Designing and implementing production scheduling system
+  - Setting up automated deployment processes
 - **Field Technology** - Game Engineer (Apr 2022 - Feb 2023)
+  - Unity AR/VR game development
+  - Mobile game development and optimization
+  - Third-party SDK and service integration
 
 ## 🚀 Featured Projects
 ### [Sun UI Design](https://github.com/SunZhi-Will/sunui-design)
