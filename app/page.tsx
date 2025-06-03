@@ -20,7 +20,9 @@ import FloatingButtons from '@/components/FloatingButtons';
 // 在 CSS 中添加樣式
 const breakpointColumnsObj = {
   default: 2,
-  992: 1
+  992: 1,
+  768: 1,
+  480: 1
 };
 
 const useTypewriter = (text: string, speed: number = 100) => {
@@ -566,7 +568,7 @@ export default function Home() {
 
           <Masonry
             breakpointCols={breakpointColumnsObj}
-            className="my-masonry-grid w-full max-w-5xl"
+            className="my-masonry-grid w-full max-w-5xl px-0 sm:px-4"
             columnClassName="my-masonry-grid_column"
           >
             {projects.map((project, index) => (
@@ -578,7 +580,7 @@ export default function Home() {
                 className="mb-8 w-full"
               >
                 <Card className="bg-blue-950/40 backdrop-blur-md border border-blue-500/20 
-                              shadow-xl hover:shadow-blue-500/10 transition-all duration-300">
+                              shadow-xl hover:shadow-blue-500/10 transition-all duration-300 overflow-hidden">
                   <div className="relative">
                     <div className="aspect-video relative overflow-hidden group">
                       <ProjectMedia
@@ -619,23 +621,23 @@ export default function Home() {
                       </span>
                     </div>
                   </div>
-                  <div className="p-6 flex flex-col gap-4">
-                    <h3 className="text-2xl font-bold text-blue-300">
+                  <div className="p-4 sm:p-6 flex flex-col gap-3 sm:gap-4">
+                    <h3 className="text-xl sm:text-2xl font-bold text-blue-300">
                       {project.title}
                     </h3>
-                    <p className="text-blue-200">{project.description}</p>
+                    <p className="text-sm sm:text-base text-blue-200">{project.description}</p>
 
                     {/* 成就列表 */}
                     {project.achievements && (
                       <div>
-                        <h4 className="text-blue-300 font-semibold mb-2">
+                        <h4 className="text-blue-300 font-semibold mb-1 sm:mb-2 text-sm sm:text-base">
                           {translations[lang].projects.mainAchievements}
                         </h4>
-                        <ul className="space-y-1">
+                        <ul className="space-y-0.5 sm:space-y-1">
                           {project.achievements.map((achievement, i) => (
-                            <li key={i} className="flex items-center text-blue-200 text-sm">
-                              <span className="text-blue-400 mr-2">▹</span>
-                              {achievement}
+                            <li key={i} className="flex items-start text-blue-200 text-xs sm:text-sm">
+                              <span className="text-blue-400 mr-1 sm:mr-2 mt-0.5">▹</span>
+                              <span>{achievement}</span>
                             </li>
                           ))}
                         </ul>
@@ -644,14 +646,14 @@ export default function Home() {
 
                     {/* 技術標籤和連結區域 */}
                     {(project.technologies || project.link || project.links) && (
-                      <div className="flex flex-col gap-4 mt-auto pt-4">
+                      <div className="flex flex-col gap-3 sm:gap-4 mt-auto pt-3 sm:pt-4">
                         {/* 技術標籤 */}
                         {project.technologies && (
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex flex-wrap gap-1.5 sm:gap-2">
                             {project.technologies.map((tech, i) => (
                               <span
                                 key={i}
-                                className="px-2 py-1 bg-blue-500/10 rounded-md text-xs text-blue-200"
+                                className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-blue-500/10 rounded-md text-xs text-blue-200"
                               >
                                 {tech}
                               </span>
@@ -660,14 +662,14 @@ export default function Home() {
                         )}
 
                         {/* 連結按鈕區域 */}
-                        <div className="flex flex-wrap gap-3">
+                        <div className="flex flex-wrap gap-2 sm:gap-3">
                           {/* 專案連結 */}
                           {project.link && (
                             <motion.a
                               href={project.link}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 transition-all duration-300"
+                              className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-blue-500/20 text-blue-300 text-xs sm:text-sm hover:bg-blue-500/30 transition-all duration-300"
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
                             >
@@ -675,11 +677,12 @@ export default function Home() {
                                 <Image
                                   src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/chrome/chrome-original.svg"
                                   alt="Chrome"
-                                  width={16}
-                                  height={16}
+                                  width={14}
+                                  height={14}
+                                  className="sm:w-4 sm:h-4"
                                 />
                               ) : (
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                 </svg>
                               )}
@@ -693,11 +696,11 @@ export default function Home() {
                               href={project.demo}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-indigo-500/20 text-purple-300 hover:from-purple-500/30 hover:to-indigo-500/30 transition-all duration-300"
+                              className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-indigo-500/20 text-purple-300 text-xs sm:text-sm hover:from-purple-500/30 hover:to-indigo-500/30 transition-all duration-300"
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
                             >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                               </svg>
                               {translations[lang].projects.liveDemo}
@@ -710,16 +713,16 @@ export default function Home() {
                               href={project.links.ios}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/20 to-blue-600/20 text-blue-300 hover:from-blue-500/30 hover:to-blue-600/30 transition-all duration-300"
+                              className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-blue-500/20 to-blue-600/20 text-blue-300 text-xs sm:text-sm hover:from-blue-500/30 hover:to-blue-600/30 transition-all duration-300"
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
                             >
                               <Image
                                 src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg"
                                 alt="App Store"
-                                width={16}
-                                height={16}
-                                className="[filter:invert(1)]"
+                                width={14}
+                                height={14}
+                                className="[filter:invert(1)] sm:w-4 sm:h-4"
                               />
                               App Store
                             </motion.a>
@@ -731,15 +734,16 @@ export default function Home() {
                               href={project.links.android}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 hover:from-green-500/30 hover:to-emerald-500/30 transition-all duration-300"
+                              className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 text-xs sm:text-sm hover:from-green-500/30 hover:to-emerald-500/30 transition-all duration-300"
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
                             >
                               <Image
                                 src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg"
                                 alt="Play Store"
-                                width={16}
-                                height={16}
+                                width={14}
+                                height={14}
+                                className="sm:w-4 sm:h-4"
                               />
                               Play Store
                             </motion.a>
@@ -761,6 +765,17 @@ export default function Home() {
           <p className="text-blue-300">
             {translations[lang].footer.portfolio}
           </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <a
+              href="/links"
+              className="inline-flex items-center gap-2 px-3 py-1.5 text-xs text-blue-300 hover:text-blue-200 transition-colors"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.172 13.828a4 4 0 015.656 0l4 4a4 4 0 01-5.656 5.656l-1.102-1.101" />
+              </svg>
+              {lang === 'zh-TW' ? '個人連結集合' : 'Link in Bio'}
+            </a>
           <a
             href="https://sites.google.com/view/shangzhistime"
             target="_blank"
@@ -772,6 +787,7 @@ export default function Home() {
             </svg>
             {translations[lang].footer.oldWebsite}
           </a>
+          </div>
         </div>
       </footer>
     </div>
