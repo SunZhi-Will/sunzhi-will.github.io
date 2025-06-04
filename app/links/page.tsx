@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lang } from '@/types';
 import ParticlesBackground from '@/components/ParticlesBackground';
+import QRCode from 'qrcode';
 
 // 定義連結項目的類型
 type LinkItem = {
@@ -19,6 +20,7 @@ export default function LinksPage() {
   const [lang, setLang] = useState<Lang>('zh-TW');
   const [showQR, setShowQR] = useState(false);
   const [currentUrl, setCurrentUrl] = useState('');
+  const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [copySuccess, setCopySuccess] = useState(false);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid');
@@ -32,6 +34,25 @@ export default function LinksPage() {
     // 獲取當前頁面 URL
     setCurrentUrl(window.location.href);
   }, []);
+
+  useEffect(() => {
+    if (currentUrl && showQR) {
+      QRCode.toDataURL(currentUrl, {
+        width: 200,
+        margin: 2,
+        color: {
+          dark: '#000',
+          light: '#fff'
+        }
+      })
+      .then((url: string) => {
+        setQrCodeUrl(url);
+      })
+      .catch((err: Error) => {
+        console.error(err);
+      });
+    }
+  }, [currentUrl, showQR]);
 
   // 複製連結到剪貼簿
   const copyToClipboard = () => {
@@ -202,15 +223,26 @@ export default function LinksPage() {
                 transition={{ duration: 0.3 }}
               >
                 {currentUrl && (
-                  <div className="relative w-[200px] h-[200px] rounded-md overflow-hidden">
-                    <iframe
-                      title="QR Code"
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentUrl)}&format=svg`}
-                      width="200"
-                      height="200"
-                      className="border-0 absolute inset-0"
-                      loading="lazy"
-                    />
+                  <div className="relative w-[200px] h-[200px] rounded-md overflow-hidden flex items-center justify-center">
+                    {qrCodeUrl ? (
+                      <img
+                        src={qrCodeUrl}
+                        alt="QR Code"
+                        className="w-full h-full"
+                        style={{
+                          opacity: 1,
+                          transition: 'opacity 0.3s'
+                        }}
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center bg-white">
+                        <motion.div
+                          className="w-8 h-8 border-4 border-purple-500 rounded-full border-t-transparent"
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
               </motion.div>
@@ -298,68 +330,82 @@ export default function LinksPage() {
         </motion.header>
 
         {/* 連結列表/網格 */}
-        <div className={`${viewMode === 'grid' ? 'grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4' : 'space-y-3'}`}>
+        <div className={`${viewMode === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4' : 'space-y-3'}`}>
           {links.map((link, index) => (
             <motion.div
               key={link.url}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.08 + 0.2 }}
+              transition={{ delay: index * 0.1, duration: 0.5, ease: "easeOut" }}
               onHoverStart={() => setHoveredLink(link.url)}
               onHoverEnd={() => setHoveredLink(null)}
               className="relative group"
             >
               <motion.div
-                className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-xl opacity-0 group-hover:opacity-100 blur-xl transition-all duration-500"
+                className="absolute -inset-1.5 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-xl opacity-0 group-hover:opacity-100 blur-xl transition-all duration-500"
                 layoutId={`bg-${link.url}`}
               />
               <motion.a
                 href={link.url}
                 target={link.url.startsWith('http') || link.url.startsWith('mailto') ? '_blank' : '_self'}
                 rel={link.url.startsWith('http') ? 'noopener noreferrer' : ''}
-                className={`block p-3 rounded-xl bg-gradient-to-r ${link.bgColor} hover:shadow-lg 
+                className={`block p-4 rounded-xl bg-gradient-to-r ${link.bgColor} hover:shadow-lg 
                            hover:scale-[1.02] transition-all duration-300 backdrop-blur-sm border border-white/10
                            relative z-10 h-full ${viewMode === 'grid' ? 'text-center' : ''}`}
                 whileHover={{ 
                   y: -5, 
-                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2)"
+                  boxShadow: "0 15px 30px -5px rgba(0, 0, 0, 0.3)",
+                  scale: 1.02
                 }}
                 whileTap={{ scale: 0.98 }}
               >
                 {viewMode === 'grid' ? (
-                  <div className="flex flex-col items-center gap-2">
+                  <div className="flex flex-col items-center gap-3">
                     {link.icon && (
                       <motion.div 
-                        className="w-12 h-12 flex items-center justify-center bg-white/20 rounded-full p-3 shadow-inner"
-                        whileHover={{ rotate: 5 }}
-                        animate={hoveredLink === link.url ? { scale: [1, 1.1, 1] } : {}}
+                        className="w-14 h-14 flex items-center justify-center bg-white/20 rounded-full p-3.5 shadow-inner
+                                 group-hover:bg-white/30 transition-colors duration-300"
+                        whileHover={{ rotate: 5, scale: 1.1 }}
+                        animate={hoveredLink === link.url ? { 
+                          scale: [1, 1.1, 1],
+                          rotate: [0, 5, 0]
+                        } : {}}
                         transition={{ duration: 0.5 }}
                       >
                         <Image
                           src={link.icon}
                           alt={link.title}
-                          width={24}
-                          height={24}
+                          width={28}
+                          height={28}
                           className={`${link.url.includes('github') || link.icon.includes('mail.svg') || link.icon.includes('youtube.svg') || link.icon.includes('medium.svg') ? 'invert' : ''}`}
                         />
                       </motion.div>
                     )}
-                    <h2 className="text-sm font-medium text-white">{link.title}</h2>
+                    <div>
+                      <h2 className="text-sm font-medium text-white mb-1">{link.title}</h2>
+                      {link.description && viewMode === 'grid' && (
+                        <p className="text-[10px] text-white/70 line-clamp-2">{link.description}</p>
+                      )}
+                    </div>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     {link.icon && (
                       <motion.div 
-                        className="w-9 h-9 flex-shrink-0 flex items-center justify-center bg-white/20 rounded-full p-2 shadow-inner"
+                        className="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-white/20 rounded-full p-2.5 shadow-inner
+                                 group-hover:bg-white/30 transition-colors duration-300"
                         whileHover={{ rotate: 5 }}
-                        animate={hoveredLink === link.url ? { scale: [1, 1.1, 1] } : {}}
+                        animate={hoveredLink === link.url ? { 
+                          scale: [1, 1.1, 1],
+                          rotate: [0, 5, 0]
+                        } : {}}
                         transition={{ duration: 0.5 }}
                       >
                         <Image
                           src={link.icon}
                           alt={link.title}
-                          width={20}
-                          height={20}
+                          width={22}
+                          height={22}
                           className={`${link.url.includes('github') || link.icon.includes('mail.svg') || link.icon.includes('youtube.svg') || link.icon.includes('medium.svg') ? 'invert' : ''}`}
                         />
                       </motion.div>
@@ -381,7 +427,7 @@ export default function LinksPage() {
                         )}
                       </h2>
                       {link.description && (
-                        <p className="text-xs text-white/70">{link.description}</p>
+                        <p className="text-xs text-white/70 mt-0.5">{link.description}</p>
                       )}
                     </div>
                     <motion.div 
@@ -390,7 +436,7 @@ export default function LinksPage() {
                       transition={{ duration: 0.5 }}
                     >
                       {viewMode === 'list' && (
-                        <svg className="w-4 h-4 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                       )}
@@ -403,31 +449,34 @@ export default function LinksPage() {
         </div>
 
         {/* QR 碼按鈕 */}
-        <div className="mt-6 flex justify-center">
+        <motion.div 
+          className="mt-8 flex justify-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
           <motion.button
             onClick={() => setShowQR(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-full bg-purple-600/30 text-purple-200 hover:bg-purple-600/50 
+            className="p-3 rounded-full bg-purple-600/30 text-purple-200 hover:bg-purple-600/50 
                       transition-all border border-purple-500/20 shadow-md hover:shadow-purple-500/30"
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
             </svg>
-            {lang === 'zh-TW' ? '顯示 QR 碼' : 'Show QR Code'}
           </motion.button>
-        </div>
+        </motion.div>
 
-        <footer className="mt-8 text-center text-purple-300/60 text-xs">
+        <footer className="mt-12 text-center text-purple-300/60 text-xs">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
+            transition={{ delay: 1 }}
           >
-            <p>
-              {lang === 'zh-TW' ? '© 2025 謝上智. 保留所有權利.' : '© 2024 Sun. All rights reserved.'}
+            <p className="mb-2">
+              {lang === 'zh-TW' ? '© 2024 謝上智. 保留所有權利.' : '© 2024 Sun. All rights reserved.'}
             </p>
-            
           </motion.div>
         </footer>
       </div>
