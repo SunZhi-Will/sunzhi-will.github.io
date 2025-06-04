@@ -7,6 +7,8 @@ export interface Translations {
             about: string;
             skills: string;
             projects: string;
+            activities: string;
+            links: string;
         };
         categories: {
             all: string;
@@ -61,6 +63,54 @@ export interface Translations {
                 };
                 demo?: string;
             }>;
+        };
+        activities: {
+            title: string;
+            hackathons: {
+                title: string;
+                items: Array<{
+                    title: string;
+                    description: string;
+                    category: string;
+                    achievements: string[];
+                    technologies: string[];
+                    media: Array<{
+                        type: 'image' | 'youtube';
+                        src: string;
+                        alt: string;
+                    }>;
+                }>;
+            };
+            speaking: {
+                title: string;
+                items: Array<{
+                    title: string;
+                    description: string;
+                    category: string;
+                    achievements: string[];
+                    technologies: string[];
+                    media: Array<{
+                        type: 'image' | 'youtube';
+                        src: string;
+                        alt: string;
+                    }>;
+                }>;
+            };
+            teaching: {
+                title: string;
+                items: Array<{
+                    title: string;
+                    description: string;
+                    category: string;
+                    achievements: string[];
+                    technologies: string[];
+                    media: Array<{
+                        type: 'image' | 'youtube';
+                        src: string;
+                        alt: string;
+                    }>;
+                }>;
+            };
         };
         footer: {
             portfolio: string;

@@ -21,7 +21,7 @@ export default function LinksPage() {
   const [currentUrl, setCurrentUrl] = useState('');
   const [copySuccess, setCopySuccess] = useState(false);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid');
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -389,9 +389,11 @@ export default function LinksPage() {
                       animate={hoveredLink === link.url ? { x: [0, 5, 0] } : {}}
                       transition={{ duration: 0.5 }}
                     >
-                      <svg className="w-4 h-4 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
+                      {viewMode === 'list' && (
+                        <svg className="w-4 h-4 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      )}
                     </motion.div>
                   </div>
                 )}

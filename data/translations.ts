@@ -6,7 +6,9 @@ export const translations: Translations = {
             home: '首頁',
             about: '關於我',
             skills: '技術能力',
-            projects: '專案作品'
+            projects: '專案作品',
+            activities: '活動分享',
+            links: '個人連結'
         },
         categories: {
             all: '全部',
@@ -239,115 +241,6 @@ export const translations: Translations = {
                     demo: "https://memorylane-nine.vercel.app/"
                 },
                 {
-                    title: "TED × AI創新應用講座",
-                    description: "受邀擔任 TED 講座講師，分享 AI 技術的創新應用與未來展望",
-                    category: "演講分享",
-                    achievements: [
-                        "分享 AI 技術在各領域的實際應用案例",
-                        "探討 AI 發展趨勢與未來機會",
-                        "與聽眾互動討論 AI 創新想法"
-                    ],
-                    media: [
-                        { type: 'image', src: "/projects/ted/594732_0.jpg", alt: "演講" },
-                        { type: 'image', src: "/projects/ted/594733_0.jpg", alt: "演講" }
-                    ],
-                    technologies: ["AI 應用", "ChatGPT", "NotebookLM"]
-                },
-                {
-                    title: "Unity 影像辨識課程",
-                    description: "在屏東科技大學碩士班擔任 Unity 結合 MediaPipe 影像辨識課程講師，分享實務經驗與技術整合",
-                    category: "教學分享",
-                    achievements: [
-                        "教授 Unity 與 MediaPipe 整合技術",
-                        "人體姿態估測在遊戲中的應用",
-                        "手部追蹤與手勢識別實作",
-                        "指導學生專案開發",
-                        "分享業界實務經驗"
-                    ],
-                    technologies: ["Unity", "MediaPipe", "Computer Vision", "影像辨識", "人體姿態估測"],
-                    media: [
-                        { type: 'image', src: "/projects/teaching/unity-cv.png", alt: "Unity 影像辨識課程" }
-                    ]
-                },
-                {
-                    title: "工廠自動化系統",
-                    description: "開發工廠生產線監控與管理系統",
-                    category: "企業應用",
-                    achievements: [
-                        "生產數據即時監控",
-                        "自動化報表生成",
-                        "供料防呆系統"
-                    ],
-                    media: [
-                        { type: 'image', src: "/projects/factory/594729.jpg", alt: "供料防呆系統" }
-                    ],
-                    technologies: [".NET", "SQL Server", "PHP"]
-                },
-                {
-                    title: "LINE BOT 應用系列",
-                    description: "開發多款實用的 LINE BOT 應用，整合企業需求與使用者體驗，打造便利的自動化服務系統。",
-                    category: "企業應用",
-                    achievements: [
-                        "人事管理系統：上下班打卡、請假申請與簽核、發票上傳分類存檔",
-                        "揪團系統：創辦活動、活動參與、即時通知",
-                        "虛擬貨幣追蹤：即時匯率查看、價格波動通知",
-                        "AI 末日文字遊戲：互動式文字冒險遊戲，結合 AI 生成內容"
-                    ],
-                    technologies: [
-                        "LINE Messaging API",
-                        "Node.js",
-                        "Python",
-                        "Azure OpenAI",
-                        "MongoDB",
-                        "Docker"
-                    ],
-                    media: [
-                        { type: 'image', src: "/projects/linebot/hr-bot.jpg", alt: "人事管理 LINE BOT" }
-                    ]
-                },
-                {
-                    title: "打擊垃圾⾞",
-                    description: "體感格鬥遊戲，透過體感偵測玩家的揮拳與踢擊動作，實現真實的格鬥體驗",
-                    category: "遊戲開發",
-                    achievements: [
-                        "實現精準的體感動作偵測系統",
-                        "開發部位打擊判定機制",
-                        "設計可切換角色系統",
-                        "優化遊戲流程與操作體驗",
-                        "成功上架 iOS 和 Android 平台"
-                    ],
-                    media: [
-                        { type: 'image', src: '/projects/games/unnamed.webp', alt: "打擊垃圾車遊戲畫面" }
-                    ],
-                    technologies: ["Unity", "Computer Vision", "動作識別", "跨平台開發"],
-                    links: {
-                        ios: "https://apps.apple.com/tw/app/%E6%89%93%E6%93%8A%E5%9E%83%E5%9C%BE%E8%BB%8A/id6444556663",
-                        android: "https://play.google.com/store/apps/details?id=com.FTL.BlowGame"
-                    }
-                },
-                {
-                    title: "垃圾車等等我",
-                    description: "結合體感技術的互動遊戲，參加 DIGI 展覽，完整負責程式開發。現已上架 App Store 和 Play Store",
-                    category: "遊戲開發",
-                    achievements: [
-                        "開發人體掃描系統",
-                        "設計動作行為判定邏輯",
-                        "實現完整遊戲流程",
-                        "優化展覽場域的互動體驗",
-                        "成功上架 iOS 和 Android 平台"
-                    ],
-                    media: [
-                        { type: 'image', src: "/projects/games/garbage.png", alt: "垃圾車等等我遊戲畫面" },
-                        { type: 'youtube', src: 'H3ZRj114cQ4', alt: "遊戲展示影片 1" },
-                        { type: 'youtube', src: 'ILhiUjDvkEw', alt: "遊戲展示影片 2" }
-                    ],
-                    technologies: ["Unity", "人體識別", "互動設計", "跨平台開發"],
-                    links: {
-                        ios: "https://apps.apple.com/tw/app/%E5%9E%83%E5%9C%BE%E8%BB%8A%E7%AD%89%E7%AD%89%E6%88%91/id6444548706",
-                        android: "https://play.google.com/store/apps/details?id=com.FTL.GarbageTruckWaitForMe"
-                    }
-                },
-                {
                     title: "VR 恐龍射擊",
                     description: "VR 射擊遊戲，整合不同專案架構，實現流暢的 VR 射擊體驗",
                     category: "遊戲開發",
@@ -362,8 +255,103 @@ export const translations: Translations = {
                         { type: 'youtube', src: "tvRp9Dz0hQA", alt: "VR 恐龍射擊遊戲畫面" }
                     ],
                     technologies: ["Unity", "SteamVR", "VR 開發"]
-                },
+                }
             ]
+        },
+        activities: {
+            title: '活動與分享',
+            hackathons: {
+                title: '黑客松',
+                items: [
+                    {
+                        title: "2025 DIGITIMES AWS 生成式 AI 黑客松",
+                        description: "參加 DIGITIMES 和 AWS 合作舉辦的生成式 AI 應用黑客松，專注於開發創新的生成式 AI 解決方案",
+                        category: "AI 開發",
+                        achievements: [
+                            "使用 AWS 生成式 AI 服務開發創新應用",
+                            "整合 Amazon Bedrock 和 Anthropic Claude",
+                            "實現多代理協作系統",
+                            "開發多模態 AI 模型應用",
+                            "建立具推理能力的大型語言模型應用"
+                        ],
+                        media: [
+                            { type: 'image', src: "/projects/hackathon/digitimes2025_1.jpg", alt: "DIGITIMES AWS 黑客松團隊合照" },
+                            { type: 'image', src: "/projects/hackathon/digitimes2025_2.jpg", alt: "DIGITIMES AWS 黑客松競賽照片" }
+                        ],
+                        technologies: [
+                            "AWS Bedrock",
+                            "Anthropic Claude",
+                            "Amazon CodeWhisperer",
+                            "Amazon SageMaker",
+                            "React",
+                            "Node.js"
+                        ]
+                    },
+                    {
+                        title: "2025 雙北設計節 黑客松",
+                        description: "參加台北市政府主辦的雙北設計節黑客松，專注於開發長照資料整合與儀表板組件優化",
+                        category: "全端開發",
+                        achievements: [
+                            "開發長照數據視覺化儀表板",
+                            "整合雙北市長照開放資料",
+                            "優化儀表板組件效能",
+                            "建立資料自動更新機制"
+                        ],
+                        media: [
+                            { type: 'image', src: "/projects/hackathon/codefest2025_1.jpg", alt: "雙北設計節黑客松團隊合照" },
+                            { type: 'image', src: "/projects/hackathon/codefest2025_2.jpg", alt: "雙北設計節黑客松競賽照片" }
+                        ],
+                        technologies: [
+                            "Vue.js",
+                            "Docker",
+                            "PostgreSQL",
+                            "Node.js",
+                            "TailwindCSS"
+                        ]
+                    }
+                ]
+            },
+            speaking: {
+                title: '演講分享',
+                items: [
+                    {
+                        title: "TED × AI創新應用講座",
+                        description: "受邀擔任 TED 講座講師，分享 AI 技術的創新應用與未來展望",
+                        category: "演講分享",
+                        achievements: [
+                            "分享 AI 技術在各領域的實際應用案例",
+                            "探討 AI 發展趨勢與未來機會",
+                            "與聽眾互動討論 AI 創新想法"
+                        ],
+                        media: [
+                            { type: 'image', src: "/projects/ted/594732_0.jpg", alt: "演講" },
+                            { type: 'image', src: "/projects/ted/594733_0.jpg", alt: "演講" }
+                        ],
+                        technologies: ["AI 應用", "ChatGPT", "NotebookLM"]
+                    }
+                ]
+            },
+            teaching: {
+                title: '教學活動',
+                items: [
+                    {
+                        title: "Unity 影像辨識課程",
+                        description: "在屏東科技大學碩士班擔任 Unity 結合 MediaPipe 影像辨識課程講師，分享實務經驗與技術整合",
+                        category: "教學分享",
+                        achievements: [
+                            "教授 Unity 與 MediaPipe 整合技術",
+                            "人體姿態估測在遊戲中的應用",
+                            "手部追蹤與手勢識別實作",
+                            "指導學生專案開發",
+                            "分享業界實務經驗"
+                        ],
+                        technologies: ["Unity", "MediaPipe", "Computer Vision", "影像辨識", "人體姿態估測"],
+                        media: [
+                            { type: 'image', src: "/projects/teaching/unity-cv.png", alt: "Unity 影像辨識課程" }
+                        ]
+                    }
+                ]
+            }
         },
         footer: {
             portfolio: '謝上智 作品集',
@@ -476,7 +464,9 @@ export const translations: Translations = {
             home: 'Home',
             about: 'About',
             skills: 'Skills',
-            projects: 'Projects'
+            projects: 'Projects',
+            activities: 'Activities',
+            links: 'Links'
         },
         categories: {
             all: 'All',
@@ -709,115 +699,6 @@ export const translations: Translations = {
                     demo: "https://memorylane-nine.vercel.app/"
                 },
                 {
-                    title: "TED × AI Innovation Applications",
-                    description: "Invited as a TED speaker to share innovative AI applications and future prospects",
-                    category: "Speaking",
-                    achievements: [
-                        "Share real-world AI application cases across various fields",
-                        "Discuss AI development trends and future opportunities",
-                        "Interactive discussions on AI innovation ideas"
-                    ],
-                    media: [
-                        { type: 'image', src: "/projects/ted/594732_0.jpg", alt: "Speaking" },
-                        { type: 'image', src: "/projects/ted/594733_0.jpg", alt: "Speaking" }
-                    ],
-                    technologies: ["AI Applications", "ChatGPT", "NotebookLM"]
-                },
-                {
-                    title: "Unity Computer Vision Course",
-                    description: "Served as instructor for Unity with MediaPipe computer vision course at NPUST graduate school, sharing practical experience and technical integration",
-                    category: "Teaching",
-                    achievements: [
-                        "Teach Unity and MediaPipe integration",
-                        "Human pose estimation in games",
-                        "Hand tracking and gesture recognition",
-                        "Guide student projects",
-                        "Share industry experience"
-                    ],
-                    technologies: ["Unity", "MediaPipe", "Computer Vision", "Image Recognition", "Pose Estimation"],
-                    media: [
-                        { type: 'image', src: "/projects/teaching/unity-cv.png", alt: "Unity CV Course" }
-                    ]
-                },
-                {
-                    title: "Factory Automation System",
-                    description: "Develop factory production line monitoring and management system",
-                    category: "Enterprise Solutions",
-                    achievements: [
-                        "Real-time production data monitoring",
-                        "Automated report generation",
-                        "Material feeding error prevention system"
-                    ],
-                    media: [
-                        { type: 'image', src: "/projects/factory/594729.jpg", alt: "Error Prevention System" }
-                    ],
-                    technologies: [".NET", "SQL Server", "PHP"]
-                },
-                {
-                    title: "LINE BOT Applications",
-                    description: "Develop multiple practical LINE BOT applications, integrating enterprise requirements and user experience to create convenient automated service systems.",
-                    category: "Enterprise Solutions",
-                    achievements: [
-                        "HR Management: Clock in/out, leave applications, invoice management",
-                        "Event System: Create events, participation, real-time notifications",
-                        "Crypto Tracking: Real-time exchange rates, price fluctuation alerts",
-                        "AI Apocalypse Text Game: Interactive text adventure with AI-generated content"
-                    ],
-                    technologies: [
-                        "LINE Messaging API",
-                        "Node.js",
-                        "Python",
-                        "Azure OpenAI",
-                        "MongoDB",
-                        "Docker"
-                    ],
-                    media: [
-                        { type: 'image', src: "/projects/linebot/hr-bot.jpg", alt: "HR Management LINE BOT" }
-                    ]
-                },
-                {
-                    title: "Garbage Truck Fighter",
-                    description: "Motion-sensing fighting game that detects player's punches and kicks for a realistic combat experience",
-                    category: "Game Development",
-                    achievements: [
-                        "Implement precise motion detection system",
-                        "Develop hit detection mechanics",
-                        "Design character switching system",
-                        "Optimize gameplay and controls",
-                        "Successfully launched on iOS and Android"
-                    ],
-                    media: [
-                        { type: 'image', src: '/projects/games/unnamed.webp', alt: "Game Screenshot" }
-                    ],
-                    technologies: ["Unity", "Computer Vision", "Motion Detection", "Cross-platform Development"],
-                    links: {
-                        ios: "https://apps.apple.com/tw/app/%E6%89%93%E6%93%8A%E5%9E%83%E5%9C%BE%E8%BB%8A/id6444556663",
-                        android: "https://play.google.com/store/apps/details?id=com.FTL.BlowGame"
-                    }
-                },
-                {
-                    title: "Wait For Me, Garbage Truck",
-                    description: "Interactive motion-sensing game showcased at DIGI exhibition, fully responsible for development. Now available on App Store and Play Store",
-                    category: "Game Development",
-                    achievements: [
-                        "Develop body scanning system",
-                        "Design motion behavior detection logic",
-                        "Implement complete game flow",
-                        "Optimize exhibition venue interaction",
-                        "Successfully launched on iOS and Android"
-                    ],
-                    media: [
-                        { type: 'image', src: "/projects/games/garbage.png", alt: "Game Screenshot" },
-                        { type: 'youtube', src: 'H3ZRj114cQ4', alt: "Game Demo 1" },
-                        { type: 'youtube', src: 'ILhiUjDvkEw', alt: "Game Demo 2" }
-                    ],
-                    technologies: ["Unity", "Body Detection", "Interactive Design", "Cross-platform Development"],
-                    links: {
-                        ios: "https://apps.apple.com/tw/app/%E5%9E%83%E5%9C%BE%E8%BB%8A%E7%AD%89%E7%AD%89%E6%88%91/id6444548706",
-                        android: "https://play.google.com/store/apps/details?id=com.FTL.GarbageTruckWaitForMe"
-                    }
-                },
-                {
                     title: "VR Dinosaur Shooter",
                     description: "VR shooting game that integrates different project architectures for a smooth VR shooting experience",
                     category: "Game Development",
@@ -832,8 +713,103 @@ export const translations: Translations = {
                         { type: 'youtube', src: "tvRp9Dz0hQA", alt: "VR Game Footage" }
                     ],
                     technologies: ["Unity", "SteamVR", "VR Development"]
-                },
+                }
             ]
+        },
+        activities: {
+            title: 'Activities & Sharing',
+            hackathons: {
+                title: 'Hackathons',
+                items: [
+                    {
+                        title: "2025 DIGITIMES AWS Generative AI Hackathon",
+                        description: "Participated in the DIGITIMES and AWS Generative AI Hackathon, focusing on developing innovative AI-driven solutions",
+                        category: "AI Development",
+                        achievements: [
+                            "Developed innovative applications using AWS Generative AI services",
+                            "Integrated Amazon Bedrock and Anthropic Claude",
+                            "Implemented multi-agent collaboration system",
+                            "Developed multi-modal AI model applications",
+                            "Built applications with reasoning-capable large language models"
+                        ],
+                        media: [
+                            { type: 'image', src: "/projects/hackathon/digitimes2025_1.jpg", alt: "DIGITIMES AWS Hackathon Team Photo" },
+                            { type: 'image', src: "/projects/hackathon/digitimes2025_2.jpg", alt: "DIGITIMES AWS Hackathon Competition" }
+                        ],
+                        technologies: [
+                            "AWS Bedrock",
+                            "Anthropic Claude",
+                            "Amazon CodeWhisperer",
+                            "Amazon SageMaker",
+                            "React",
+                            "Node.js"
+                        ]
+                    },
+                    {
+                        title: "2025 Taipei Design Festival Hackathon",
+                        description: "Participated in the Taipei Design Festival Hackathon, focusing on developing long-term care data integration and dashboard component optimization",
+                        category: "Full Stack Development",
+                        achievements: [
+                            "Developed long-term care data visualization dashboard",
+                            "Integrated open data from Taipei and New Taipei City",
+                            "Optimized dashboard component performance",
+                            "Implemented automatic data update mechanism"
+                        ],
+                        media: [
+                            { type: 'image', src: "/projects/hackathon/codefest2025_1.jpg", alt: "Taipei Design Festival Hackathon Team Photo" },
+                            { type: 'image', src: "/projects/hackathon/codefest2025_2.jpg", alt: "Taipei Design Festival Hackathon Competition" }
+                        ],
+                        technologies: [
+                            "Vue.js",
+                            "Docker",
+                            "PostgreSQL",
+                            "Node.js",
+                            "TailwindCSS"
+                        ]
+                    }
+                ]
+            },
+            speaking: {
+                title: 'Speaking',
+                items: [
+                    {
+                        title: "TED × AI Innovation Applications",
+                        description: "Invited as a TED speaker to share innovative AI applications and future prospects",
+                        category: "Speaking",
+                        achievements: [
+                            "Share real-world AI application cases across various fields",
+                            "Discuss AI development trends and future opportunities",
+                            "Interactive discussions on AI innovation ideas"
+                        ],
+                        media: [
+                            { type: 'image', src: "/projects/ted/594732_0.jpg", alt: "Speaking" },
+                            { type: 'image', src: "/projects/ted/594733_0.jpg", alt: "Speaking" }
+                        ],
+                        technologies: ["AI Applications", "ChatGPT", "NotebookLM"]
+                    }
+                ]
+            },
+            teaching: {
+                title: 'Teaching',
+                items: [
+                    {
+                        title: "Unity Computer Vision Course",
+                        description: "Served as instructor for Unity with MediaPipe computer vision course at NPUST graduate school, sharing practical experience and technical integration",
+                        category: "Teaching",
+                        achievements: [
+                            "Teach Unity and MediaPipe integration",
+                            "Human pose estimation in games",
+                            "Hand tracking and gesture recognition",
+                            "Guide student projects",
+                            "Share industry experience"
+                        ],
+                        technologies: ["Unity", "MediaPipe", "Computer Vision", "Image Recognition", "Pose Estimation"],
+                        media: [
+                            { type: 'image', src: "/projects/teaching/unity-cv.png", alt: "Unity CV Course" }
+                        ]
+                    }
+                ]
+            }
         },
         footer: {
             portfolio: 'Sun\'s Portfolio',
