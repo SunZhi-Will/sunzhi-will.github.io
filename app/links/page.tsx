@@ -87,21 +87,21 @@ export default function LinksPage() {
     },
     {
       title: 'Instagram',
-      url: 'https://www.instagram.com/sunzhi.will',
+      url: 'https://www.instagram.com/bing_sunzhi',
       icon: '/icons/instagram-color.svg',
       bgColor: 'from-yellow-400/80 via-red-500/80 to-purple-500/80',
       description: lang === 'zh-TW' ? '查看我的生活和工作照片' : 'Check out my life and work photos'
     },
     {
       title: 'Threads',
-      url: 'https://www.threads.net/@sunzhi.will',
+      url: 'https://www.threads.net/@bing_sunzhi',
       icon: '/icons/threads.svg',
       bgColor: 'from-black/80 to-gray-900/80',
       description: lang === 'zh-TW' ? '關注我的日常思考和觀點' : 'Follow my daily thoughts and perspectives'
     },
     {
       title: lang === 'zh-TW' ? 'LINE 社群' : 'LINE Community',
-      url: 'https://line.me/ti/p/~sunzhi',
+      url: 'https://line.me/ti/g2/b47YJlzPu89JxQ5yOu1r2hvupywQvXNUlGn4wA',
       icon: '/icons/line-white.svg',
       bgColor: 'from-[#00B900]/80 to-[#00B900]/80',
       description: lang === 'zh-TW' ? '分享交流群（密碼：SunAI）' : 'Join the "Extreme Engineer Sun Community" (Password: SunAI)'
@@ -475,7 +475,7 @@ export default function LinksPage() {
             transition={{ delay: 1 }}
           >
             <p className="mb-2">
-              {lang === 'zh-TW' ? '© 2024 謝上智. 保留所有權利.' : '© 2024 Sun. All rights reserved.'}
+              {lang === 'zh-TW' ? '© 2025 謝上智. 保留所有權利.' : '© 2025 Sun. All rights reserved.'}
             </p>
           </motion.div>
         </footer>
