@@ -94,6 +94,12 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
                       {(project.category === "遊戲開發" || project.category === "Game Development") && (
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 -960 960 960" fill="currentColor"><path d="M182-200q-51 0-79-35.5T82-322l42-300q9-60 53.5-99T282-760h396q60 0 104.5 39t53.5 99l42 300q7 51-21 86.5T778-200q-21 0-39-7.5T706-230l-90-90H344l-90 90q-15 15-33 22.5t-39 7.5Zm16-86 114-114h336l114 114q2 2 16 6 11 0 17.5-6.5T800-304l-44-308q-4-29-26-48.5T678-680H282q-30 0-52 19.5T204-612l-44 308q-2 11 4.5 17.5T182-280q2 0 16-6Zm482-154q17 0 28.5-11.5T720-480q0-17-11.5-28.5T680-520q-17 0-28.5 11.5T640-480q0 17 11.5 28.5T680-440Zm-80-120q17 0 28.5-11.5T640-600q0-17-11.5-28.5T600-640q-17 0-28.5 11.5T560-600q0 17 11.5 28.5T600-560ZM310-440h60v-70h70v-60h-70v-70h-60v70h-70v60h70v70Zm170-40Z" /></svg>
                       )}
+                      {(project.category === "移動應用開發" || project.category === "Mobile App Development") && (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 -960 960 960" fill="currentColor"><path d="M280-40q-33 0-56.5-23.5T200-120v-720q0-33 23.5-56.5T280-920h400q33 0 56.5 23.5T760-840v720q0 33-23.5 56.5T680-40H280Zm0-200v120h400v-120H280Zm0-80h400v-400H280v400Zm0-480h400v-40H280v40Zm0 0v-40 40Zm0 560v120-120Z" /></svg>
+                      )}
+                      {(project.category === "後端開發" || project.category === "Backend Development") && (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 -960 960 960" fill="currentColor"><path d="M160-120q-33 0-56.5-23.5T80-200v-240q0-33 23.5-56.5T160-520h160v-80q0-33 23.5-56.5T400-680h160q33 0 56.5 23.5T640-600v80h160q33 0 56.5 23.5T880-440v240q0 33-23.5 56.5T800-120H160Zm240-400h160v-80H400v80ZM160-200h640v-240H160v240Zm240-120q17 0 28.5-11.5T440-360q0-17-11.5-28.5T400-400q-17 0-28.5 11.5T360-360q0 17 11.5 28.5T400-320Zm160 0q17 0 28.5-11.5T600-360q0-17-11.5-28.5T560-400q-17 0-28.5 11.5T520-360q0 17 11.5 28.5T560-320ZM160-200v-240 240Z" /></svg>
+                      )}
                       {project.category}
                     </span>
                   </div>

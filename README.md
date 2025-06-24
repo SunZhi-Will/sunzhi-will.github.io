@@ -12,7 +12,19 @@
 </div>
 
 ## 🚀 About Me
-I am a passionate software engineer specializing in .NET development, AI applications, and Unity game development. I excel at rapidly adopting new technologies and integrating them into practical solutions. Currently focused on enterprise application development and AI technology integration, while continuing to innovate in AR/VR game development.
+Sun is a software engineer with a strong focus on product implementation, user experience, and practical AI integration. He specializes in building scalable tools that combine frontend excellence with AI-driven intelligence.
+
+Sun currently leads several core projects:
+
+**Synvize**: An AI-powered publishing platform that aggregates news, performs semantic synthesis, and auto-generates articles and newsletters. It streamlines the entire content pipeline from web scraping to structured publishing.
+
+**Sun UI Design**: A modern, animated React UI component library built with TypeScript and TailwindCSS. It supports modular or full-package installation, complete type safety, tree-shaking exports, and interactive Storybook documentation.
+
+**LexiTechly**: An AI-assisted English reading and learning platform using Google Gemini. It provides CEFR-level assessments, vocabulary analysis, interactive AI conversation, word/sentence audio, and unlimited local storage.
+
+In addition to development, Sun Zhi actively shares his expertise through workshops and enterprise tech sessions, covering topics like OpenAI, Gemini APIs, and Notion integrations. His experience spans Unity game development, .NET systems, full-stack apps, and AI-driven tools.
+
+Sun believes great technology isn't just about algorithms—it's about building intuitive tools that people trust, understand, and enjoy using.
 
 ## 🛠️ Tech Stack
 <div align="center">
@@ -60,6 +72,10 @@ I am a passionate software engineer specializing in .NET development, AI applica
   - Third-party SDK and service integration
 
 ## 🚀 Featured Projects
+### [Postly - Reflection Sharing Community Platform](https://github.com/SunZhi-Will/Postly)
+A community platform focused on personal growth and reflection sharing, allowing users to record and share their daily reflections and insights. Built with Next.js 15, React 19, and modern web technologies.  
+[Try it live](https://postly-gilt.vercel.app)
+
 ### [Sun UI Design](https://github.com/SunZhi-Will/sunui-design)
 A modern React UI component library with beautiful animation effects, built with React, TailwindCSS and TypeScript.  
 [View Documentation](https://sunui.vercel.app/)
@@ -84,165 +100,18 @@ An elegant LINE chat history review website that lets you relive precious conver
 ### [Snapraze](https://github.com/SunZhi-Will/snapraze)
 A platform for cloud image storage, editing, tagging, and original image comparison. Users can upload, manage, edit, and compare images, supporting various image formats and providing a complete image management system.
 
+### CoinHub - Cryptocurrency Trading and Portfolio Management
+A comprehensive Flutter-based cryptocurrency trading and portfolio management application that provides users with a complete platform for managing their digital assets. Features real-time price tracking, portfolio management, wallet connectivity, and secure data storage with Web3 integration.
+
+### AR Garbage Truck Motion Game
+An AR motion-sensing game with garbage truck theme, featuring 'Chase the Garbage Truck' pursuit mode and 'Attack the Garbage Truck' combat mode. Players use body movements to control game characters and complete missions of chasing and attacking garbage trucks. Integrates Unity, AR Foundation, and MediaPipe technologies to deliver innovative mobile AR motion-sensing interactive experiences.
+
+### Automotive Factory Material Anti-Error System
+A .NET-based automotive factory material monitoring website that integrates with manufacturing equipment for error prevention. The system displays real-time errors and error codes when material supply doesn't match work orders, ensuring smooth production line operations. This comprehensive legacy system renovation includes real-time monitoring, error tracking, and equipment integration functionalities.
+
 ## 📊 GitHub Stats
 <div align="center">
   <img height="150" src="https://github-readme-stats.vercel.app/api?username=SunZhi-Will&show_icons=true&theme=radical"/>
   <img height="150" src="https://github-readme-stats.vercel.app/api/top-langs/?username=SunZhi-Will&layout=compact&theme=radical"/>
 </div>
 
----
-<div align="center">
-  ⭐️ From <a href="https://github.com/SunZhi-Will">SunZhi-Will</a>
-</div>
-
-<div align="center">
-
-# 🤖 Google Form AI Auto Filler
-
-[English](#english) | [繁體中文](README.zh-TW.md)
-
-[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
-[![Python](https://img.shields.io/badge/Python-3.7%2B-blue)](https://www.python.org/)
-[![Gemini](https://img.shields.io/badge/AI-Gemini-orange)](https://deepmind.google/technologies/gemini/)
-
-An intelligent tool that uses Google Gemini AI to automatically fill out Google Forms  
-Just provide a form URL and basic information to generate a prefilled form URL
-
-[Features](#features) •
-[Getting Started](#getting-started) •
-[Usage](#usage) •
-[Contributing](#contributing)
-
-</div>
-
----
-
-## ✨ Features
-
-- 🧠 Smart answer generation using Gemini AI
-- 🔍 Automatic Google Form structure parsing
-- 📝 Support for various question types:
-  - Short / Paragraph answers
-  - Multiple choice / Dropdown menus
-  - Checkboxes / Linear scales
-  - Grid questions
-  - Date / Time questions
-
-## 🚀 Getting Started
-
-This tool can be used in two ways: as a pure frontend application or with a Python backend.
-
-### Option A: Frontend Version (No Installation)
-
-#### Prerequisites
-- Modern web browser (Chrome, Firefox, Edge, etc.)
-- Valid [Google AI Studio](https://makersuite.google.com/app/apikey) API key
-
-#### Running the App
-Simply download this repository and open the `index.html` file in your browser. No server required.
-
-You can also use:
-- Visual Studio Code's "Live Server" extension
-- Any static file server (like Python's `python -m http.server`)
-
-### Option B: Python Version
-
-#### Prerequisites
-- Python 3.7 or higher
-- Valid [Google AI Studio](https://makersuite.google.com/app/apikey) API key
-
-#### Setup
-1. Install required packages:
-   ```bash
-   cd python
-   pip install -r requirements.txt
-   ```
-
-2. Configure the Python script:
-   - Open `python/ai_form.py` with a text editor
-   - Set your Google Form URL and personal information in the script
-   - Create a `.env` file in the python directory and add your API key:
-     ```
-     GEMINI_API_KEY=your_api_key_here
-     ```
-
-3. Run the script:
-   ```bash
-   python ai_form.py
-   ```
-
-## 📖 Usage
-
-### Frontend Version
-
-1. Enter your Gemini API key
-2. Paste the Google Form URL
-3. Wait for the form structure to be detected
-4. Enter your personal information
-5. Click "Generate Prefilled URL" to get a URL with your answers
-
-### Python Version
-
-You can customize the script by modifying:
-- The `URL` variable to set your Google Form URL
-- The `PROMPT_PARTS` list to set your personal information
-
-### Custom Information Format
-You can format your personal information however you prefer. For example:
-```
-Name: John Doe
-Gender: Male
-Email: example@email.com
-Birth Date: {"year": 1990, "month": 5, "day": 15}
-Interests: Music, Hiking, Reading
-```
-
-## ⚠️ Notes
-
-- Your Gemini API key is used locally only and is never stored or transmitted to any server
-- The web version requires successful form structure detection before generating a link
-- This tool is for educational and research purposes only
-- Please respect Google Form's terms of service
-
-## 🤝 Contributing
-
-Contributions are welcome to improve this tool:
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Areas for Improvement
-- Support for more question types
-- Improved AI response accuracy
-- Enhanced form detection error handling
-- UI/UX improvements
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
-
-## 📢 Disclaimer
-
-This tool is for educational and research purposes only. Users should use it at their own risk and comply with applicable laws and regulations.
-
-## 📮 Contact
-
-For any questions or suggestions:
-- 🐛 [Open an Issue](../../issues)
-- 🔀 [Submit a PR](../../pulls)
-- 📧 Email to [sun055676@gmail.com]
-
-## 🙏 Acknowledgements
-
-- [Google Gemini AI](https://deepmind.google/technologies/gemini/)
-- Various CORS proxy services for form detection
-- Modern web technologies (HTML, CSS, JavaScript)
-
----
-
-<div align="center">
-Made with ❤️ by Sun
-</div>

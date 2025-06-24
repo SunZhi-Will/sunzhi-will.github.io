@@ -30,7 +30,7 @@ export default function LinksPage() {
     // 在瀏覽器端檢查語言
     const browserLang = navigator.language;
     setLang(browserLang.includes('zh') ? 'zh-TW' : 'en');
-    
+
     // 獲取當前頁面 URL
     setCurrentUrl(window.location.href);
   }, []);
@@ -45,12 +45,12 @@ export default function LinksPage() {
           light: '#fff'
         }
       })
-      .then((url: string) => {
-        setQrCodeUrl(url);
-      })
-      .catch((err: Error) => {
-        console.error(err);
-      });
+        .then((url: string) => {
+          setQrCodeUrl(url);
+        })
+        .catch((err: Error) => {
+          console.error(err);
+        });
     }
   }, [currentUrl, showQR]);
 
@@ -147,8 +147,8 @@ export default function LinksPage() {
                   transition-all duration-300"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        title={viewMode === 'list' ? 
-          (lang === 'zh-TW' ? '切換為網格視圖' : 'Switch to Grid View') : 
+        title={viewMode === 'list' ?
+          (lang === 'zh-TW' ? '切換為網格視圖' : 'Switch to Grid View') :
           (lang === 'zh-TW' ? '切換為列表視圖' : 'Switch to List View')
         }
       >
@@ -184,7 +184,7 @@ export default function LinksPage() {
       {/* QR 碼彈窗 */}
       <AnimatePresence>
         {showQR && (
-          <motion.div 
+          <motion.div
             className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -217,7 +217,7 @@ export default function LinksPage() {
                   </svg>
                 </motion.button>
               </div>
-              <motion.div 
+              <motion.div
                 className="bg-white p-3 rounded-lg flex items-center justify-center"
                 whileHover={{ boxShadow: "0 0 15px rgba(147, 51, 234, 0.5)" }}
                 transition={{ duration: 0.3 }}
@@ -225,7 +225,7 @@ export default function LinksPage() {
                 {currentUrl && (
                   <div className="relative w-[200px] h-[200px] rounded-md overflow-hidden flex items-center justify-center">
                     {qrCodeUrl ? (
-                      <img
+                      <Image
                         src={qrCodeUrl}
                         alt="QR Code"
                         className="w-full h-full"
@@ -273,7 +273,7 @@ export default function LinksPage() {
                 </div>
                 <AnimatePresence>
                   {copySuccess && (
-                    <motion.span 
+                    <motion.span
                       className="text-xs text-green-400 block"
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -290,7 +290,7 @@ export default function LinksPage() {
       </AnimatePresence>
 
       <div className="container max-w-2xl w-full mx-auto px-4 py-6 relative z-10">
-        <motion.header 
+        <motion.header
           className="flex flex-col items-center mb-8 sticky top-0 z-30 pt-8 pb-6 backdrop-blur-sm"
         >
           <div
@@ -307,7 +307,7 @@ export default function LinksPage() {
                          group-hover:border-purple-400/70 transition-none"
                 priority
               />
-              <motion.div 
+              <motion.div
                 className="absolute -inset-2 rounded-full border-2 border-dashed border-purple-400/30"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
@@ -352,8 +352,8 @@ export default function LinksPage() {
                 className={`block p-4 rounded-xl bg-gradient-to-r ${link.bgColor} hover:shadow-lg 
                            hover:scale-[1.02] transition-all duration-300 backdrop-blur-sm border border-white/10
                            relative z-10 h-full ${viewMode === 'grid' ? 'text-center' : ''}`}
-                whileHover={{ 
-                  y: -5, 
+                whileHover={{
+                  y: -5,
                   boxShadow: "0 15px 30px -5px rgba(0, 0, 0, 0.3)",
                   scale: 1.02
                 }}
@@ -362,11 +362,11 @@ export default function LinksPage() {
                 {viewMode === 'grid' ? (
                   <div className="flex flex-col items-center gap-3">
                     {link.icon && (
-                      <motion.div 
+                      <motion.div
                         className="w-14 h-14 flex items-center justify-center bg-white/20 rounded-full p-3.5 shadow-inner
                                  group-hover:bg-white/30 transition-colors duration-300"
                         whileHover={{ rotate: 5, scale: 1.1 }}
-                        animate={hoveredLink === link.url ? { 
+                        animate={hoveredLink === link.url ? {
                           scale: [1, 1.1, 1],
                           rotate: [0, 5, 0]
                         } : {}}
@@ -391,11 +391,11 @@ export default function LinksPage() {
                 ) : (
                   <div className="flex items-center gap-4">
                     {link.icon && (
-                      <motion.div 
+                      <motion.div
                         className="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-white/20 rounded-full p-2.5 shadow-inner
                                  group-hover:bg-white/30 transition-colors duration-300"
                         whileHover={{ rotate: 5 }}
-                        animate={hoveredLink === link.url ? { 
+                        animate={hoveredLink === link.url ? {
                           scale: [1, 1.1, 1],
                           rotate: [0, 5, 0]
                         } : {}}
@@ -419,8 +419,8 @@ export default function LinksPage() {
                             animate={{ opacity: 1, x: 0 }}
                             className="ml-2 text-white/60 text-xs"
                           >
-                            {link.url.startsWith('http') ? 
-                              (lang === 'zh-TW' ? '(點擊開啟)' : '(click to open)') : 
+                            {link.url.startsWith('http') ?
+                              (lang === 'zh-TW' ? '(點擊開啟)' : '(click to open)') :
                               (lang === 'zh-TW' ? '(點擊前往)' : '(click to go)')
                             }
                           </motion.span>
@@ -430,7 +430,7 @@ export default function LinksPage() {
                         <p className="text-xs text-white/70 mt-0.5">{link.description}</p>
                       )}
                     </div>
-                    <motion.div 
+                    <motion.div
                       className="ml-auto"
                       animate={hoveredLink === link.url ? { x: [0, 5, 0] } : {}}
                       transition={{ duration: 0.5 }}
@@ -449,7 +449,7 @@ export default function LinksPage() {
         </div>
 
         {/* QR 碼按鈕 */}
-        <motion.div 
+        <motion.div
           className="mt-8 flex justify-center"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

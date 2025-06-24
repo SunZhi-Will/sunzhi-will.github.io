@@ -52,6 +52,60 @@ export const translations: Translations = {
             liveDemo: '體驗網站',
             items: [
                 {
+                    title: "Postly - 反思分享社群平台",
+                    description: "專注於個人成長和反思分享的社群平台，讓使用者能夠記錄並分享他們的日常反思和見解。提供每日反思提示、社群互動、個人成就追蹤等功能，使用現代化的 Next.js 和 React 技術構建。",
+                    category: "全端開發",
+                    achievements: [
+                        "每日精選反思主題與深度思考引導",
+                        "完整的社群互動系統（按讚、評論、分享）",
+                        "個人成就追蹤與連續反思紀錄",
+                        "即時互動通知與參與度分析",
+                        "Google OAuth 認證與安全的使用者管理",
+                        "響應式設計與無障礙功能支援"
+                    ],
+                    technologies: [
+                        "Next.js 15",
+                        "React 19",
+                        "TypeScript",
+                        "Tailwind CSS 4",
+                        "NextAuth.js",
+                        "TanStack Query",
+                        "Headless UI"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/postly/logo.png", alt: "Postly Logo" },
+                        { type: 'video', src: "/projects/postly/Postly.mp4", alt: "Postly 演示影片" }
+                    ],
+                    link: "https://github.com/SunZhi-Will/Postly",
+                    demo: "https://postly-gilt.vercel.app"
+                },
+                {
+                    title: "CoinHub - 加密貨幣交易與投資組合管理",
+                    description: "基於 Flutter 開發的綜合加密貨幣交易和投資組合管理應用程式，提供用戶完整的數位資產管理平台。透過 Web3 和 API 整合，支援多種區塊鏈網路和加密貨幣交易所。",
+                    category: "移動應用開發",
+                    achievements: [
+                        "實現即時加密貨幣價格追蹤",
+                        "建立完整的投資組合管理系統",
+                        "整合多個區塊鏈網路與交易所 API",
+                        "實現錢包連結與交易功能",
+                        "開發圖表視覺化與技術分析工具",
+                        "建立安全的資料儲存與加密機制"
+                    ],
+                    technologies: [
+                        "Flutter",
+                        "Dart",
+                        "web3dart",
+                        "WalletConnect",
+                        "fl_chart",
+                        "shared_preferences",
+                        "crypto",
+                        "WebSocket"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/coinhub/logo.png", alt: "CoinHub App Logo" }
+                    ]
+                },
+                {
                     title: "Sun UI Design",
                     description: "一個具有精美動畫效果的現代 React UI 組件庫，使用 React、TailwindCSS 和 TypeScript 構建。提供現代化且可自定義的組件，支持 Tree-shaking 導出。",
                     category: "前端開發",
@@ -241,6 +295,56 @@ export const translations: Translations = {
                     demo: "https://memorylane-nine.vercel.app/"
                 },
                 {
+                    title: "汽車工廠供料防呆系統",
+                    description: "使用 .NET 開發的汽車工廠供料監控網站，整合工料機制進行防呆檢測。當供料與工單不對應時，系統會即時顯示錯誤並提供錯誤編號，確保生產線正常運作。這是舊系統的全面翻新專案，由我獨自負責開發與工廠端對接。",
+                    category: "後端開發",
+                    achievements: [
+                        "設計並實現供料與工單對應檢核機制",
+                        "建立即時錯誤監控與通報系統",
+                        "開發錯誤編號管理與追蹤功能",
+                        "完成舊系統架構全面翻新",
+                        "建立與工廠設備的串接介面",
+                        "優化防呆檢測算法提升準確度"
+                    ],
+                    technologies: [
+                        ".NET Framework",
+                        "ASP.NET MVC",
+                        "SQL Server",
+                        "C#",
+                        "JavaScript",
+                        "Bootstrap",
+                        "AJAX"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/factory/screenshot.jpg", alt: "汽車工廠供料防呆系統監控介面" }
+                    ]
+                },
+                {
+                    title: "AR 垃圾車體感遊戲",
+                    description: "結合 AR 與影像辨識技術的垃圾車主題體感遊戲，包含「垃圾車等等我」追逐模式和「打擊垃圾車」戰鬥模式。運用身體動作控制遊戲角色，完成追趕垃圾車和攻擊垃圾車的任務挑戰。",
+                    category: "遊戲開發",
+                    achievements: [
+                        "開發雙模式體感遊戲系統",
+                        "整合 AR 影像辨識與人體姿態追蹤",
+                        "實現身體動作控制機制",
+                        "設計垃圾車追逐與戰鬥玩法",
+                        "建立 3D 城市場景與垃圾車模型",
+                        "優化手機端 AR 效能與體驗"
+                    ],
+                    technologies: [
+                        "Unity",
+                        "AR Foundation",
+                        "MediaPipe",
+                        "Computer Vision",
+                        "C#",
+                        "3D Modeling",
+                        "Mobile Development"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/games/garbage.png", alt: "AR 垃圾車體感遊戲介紹" }
+                    ]
+                },
+                {
                     title: "VR 恐龍射擊",
                     description: "VR 射擊遊戲，整合不同專案架構，實現流暢的 VR 射擊體驗",
                     category: "遊戲開發",
@@ -362,6 +466,7 @@ export const translations: Translations = {
             framework: '開發框架',
             game: '遊戲開發',
             ai: 'AI 技術',
+            mobile: '移動應用開發',
             other: '其他技能'
         },
         aboutContent: {
@@ -509,6 +614,60 @@ export const translations: Translations = {
             video: 'Video',
             liveDemo: 'Live Demo',
             items: [
+                {
+                    title: "Postly - Reflection Sharing Community Platform",
+                    description: "A community platform focused on personal growth and reflection sharing, allowing users to record and share their daily reflections and insights. Features daily reflection prompts, community interaction, personal achievements tracking, built with modern Next.js and React technologies.",
+                    category: "Full Stack Development",
+                    achievements: [
+                        "Daily curated reflection topics with deep thinking guidance",
+                        "Complete community interaction system (likes, comments, sharing)",
+                        "Personal achievement tracking and reflection streak records",
+                        "Real-time engagement notifications and analytics",
+                        "Google OAuth authentication and secure user management",
+                        "Responsive design with accessibility features"
+                    ],
+                    technologies: [
+                        "Next.js 15",
+                        "React 19",
+                        "TypeScript",
+                        "Tailwind CSS 4",
+                        "NextAuth.js",
+                        "TanStack Query",
+                        "Headless UI"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/postly/logo.png", alt: "Postly Logo" },
+                        { type: 'video', src: "/projects/postly/Postly.mp4", alt: "Postly Demo Video" }
+                    ],
+                    link: "https://github.com/SunZhi-Will/Postly",
+                    demo: "https://postly-gilt.vercel.app"
+                },
+                {
+                    title: "CoinHub - Cryptocurrency Trading and Portfolio Management",
+                    description: "A comprehensive Flutter-based cryptocurrency trading and portfolio management application that provides users with a complete platform for managing their digital assets. Integrates with various blockchain networks and cryptocurrency exchanges through Web3 and API integrations.",
+                    category: "Mobile App Development",
+                    achievements: [
+                        "Real-time cryptocurrency price tracking",
+                        "Complete portfolio management system",
+                        "Integration with multiple blockchain networks and exchange APIs",
+                        "Wallet connectivity and trading functionality",
+                        "Chart visualization and technical analysis tools",
+                        "Secure data storage and encryption mechanisms"
+                    ],
+                    technologies: [
+                        "Flutter",
+                        "Dart",
+                        "web3dart",
+                        "WalletConnect",
+                        "fl_chart",
+                        "shared_preferences",
+                        "crypto",
+                        "WebSocket"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/coinhub/logo.png", alt: "CoinHub App Logo" }
+                    ]
+                },
                 {
                     title: "Sun UI Design",
                     description: "A modern React UI component library with beautiful animation effects, built with React, TailwindCSS and TypeScript. Offers modern, customizable components with tree-shaking support.",
@@ -699,6 +858,56 @@ export const translations: Translations = {
                     demo: "https://memorylane-nine.vercel.app/"
                 },
                 {
+                    title: "Automotive Factory Material Anti-Error System",
+                    description: "A .NET-based automotive factory material monitoring website that integrates with manufacturing equipment for error prevention. The system displays real-time errors and error codes when material supply doesn't match work orders, ensuring smooth production line operations. This was a complete legacy system renovation project that I handled independently, including factory equipment integration.",
+                    category: "Backend Development",
+                    achievements: [
+                        "Designed and implemented material-to-work-order validation mechanism",
+                        "Built real-time error monitoring and notification system",
+                        "Developed error code management and tracking functionality",
+                        "Completed comprehensive legacy system architecture renovation",
+                        "Established integration interfaces with factory equipment",
+                        "Optimized error detection algorithms for improved accuracy"
+                    ],
+                    technologies: [
+                        ".NET Framework",
+                        "ASP.NET MVC",
+                        "SQL Server",
+                        "C#",
+                        "JavaScript",
+                        "Bootstrap",
+                        "AJAX"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/factory/screenshot.jpg", alt: "Automotive Factory Material Anti-Error System Dashboard" }
+                    ]
+                },
+                {
+                    title: "AR Garbage Truck Motion Game",
+                    description: "An AR motion-sensing game with garbage truck theme, featuring 'Chase the Garbage Truck' pursuit mode and 'Attack the Garbage Truck' combat mode. Players use body movements to control game characters and complete missions of chasing and attacking garbage trucks.",
+                    category: "Game Development",
+                    achievements: [
+                        "Developed dual-mode motion-sensing game system",
+                        "Integrated AR computer vision with human pose tracking",
+                        "Implemented body movement control mechanisms",
+                        "Designed garbage truck chase and combat gameplay",
+                        "Built 3D city scenes and garbage truck models",
+                        "Optimized mobile AR performance and experience"
+                    ],
+                    technologies: [
+                        "Unity",
+                        "AR Foundation",
+                        "MediaPipe",
+                        "Computer Vision",
+                        "C#",
+                        "3D Modeling",
+                        "Mobile Development"
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/games/garbage.png", alt: "AR Garbage Truck Motion Game Introduction" }
+                    ]
+                },
+                {
                     title: "VR Dinosaur Shooter",
                     description: "VR shooting game that integrates different project architectures for a smooth VR shooting experience",
                     category: "Game Development",
@@ -713,7 +922,8 @@ export const translations: Translations = {
                         { type: 'youtube', src: "tvRp9Dz0hQA", alt: "VR Game Footage" }
                     ],
                     technologies: ["Unity", "SteamVR", "VR Development"]
-                }
+                },
+
             ]
         },
         activities: {
@@ -820,6 +1030,7 @@ export const translations: Translations = {
             framework: 'Frameworks',
             game: 'Game Development',
             ai: 'AI Technology',
+            mobile: 'Mobile App Development',
             other: 'Other Skills'
         },
         aboutContent: {

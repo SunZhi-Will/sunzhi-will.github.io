@@ -1,6 +1,6 @@
 // 更新專案類型
 type MediaContent = {
-    type: 'image' | 'youtube';
+    type: 'image' | 'youtube' | 'video';
     src: string;
     alt?: string;
 };

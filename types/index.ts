@@ -52,7 +52,7 @@ export interface Translations {
                 achievements: string[];
                 technologies: string[];
                 media: Array<{
-                    type: 'image' | 'youtube';
+                    type: 'image' | 'youtube' | 'video';
                     src: string;
                     alt: string;
                 }>;
@@ -75,7 +75,7 @@ export interface Translations {
                     achievements: string[];
                     technologies: string[];
                     media: Array<{
-                        type: 'image' | 'youtube';
+                        type: 'image' | 'youtube' | 'video';
                         src: string;
                         alt: string;
                     }>;
@@ -90,7 +90,7 @@ export interface Translations {
                     achievements: string[];
                     technologies: string[];
                     media: Array<{
-                        type: 'image' | 'youtube';
+                        type: 'image' | 'youtube' | 'video';
                         src: string;
                         alt: string;
                     }>;
@@ -105,7 +105,7 @@ export interface Translations {
                     achievements: string[];
                     technologies: string[];
                     media: Array<{
-                        type: 'image' | 'youtube';
+                        type: 'image' | 'youtube' | 'video';
                         src: string;
                         alt: string;
                     }>;
@@ -121,6 +121,7 @@ export interface Translations {
             framework: string;
             game: string;
             ai: string;
+            mobile: string;
             other: string;
         };
         aboutContent: {
@@ -146,7 +147,7 @@ export interface Translations {
 }
 
 export type MediaContent = {
-    type: 'image' | 'youtube';
+    type: 'image' | 'youtube' | 'video';
     src: string;
     alt?: string;
 };
