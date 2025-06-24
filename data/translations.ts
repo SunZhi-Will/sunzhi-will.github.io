@@ -359,6 +359,27 @@ export const translations: Translations = {
                         { type: 'youtube', src: "tvRp9Dz0hQA", alt: "VR 恐龍射擊遊戲畫面" }
                     ],
                     technologies: ["Unity", "SteamVR", "VR 開發"]
+                },
+                {
+                    title: "LINE BOT 人事管理系統",
+                    description: "基於 LINE BOT 開發的企業人力資源管理系統，整合員工日常工作流程，提供便捷的行動化辦公體驗。透過 LINE 介面實現打卡、請假、簽核、發票上傳等核心人事功能，大幅提升企業內部作業效率。",
+                    category: "後端開發",
+                    achievements: [
+                        "設計並實現 LINE BOT 對話流程",
+                        "建立員工打卡與考勤管理系統",
+                        "開發請假申請與審核流程",
+                        "實現多層級簽核機制",
+                        "整合發票上傳與報帳功能",
+                        "建立人事資料管理與權限控制"
+                    ],
+                    technologies: [
+                        "LINE Bot SDK",
+                        "JavaScript",
+                        "Webhook",
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/linebot/hr-bot.jpg", alt: "LINE BOT 人事管理系統介面" }
+                    ]
                 }
             ]
         },
@@ -470,14 +491,19 @@ export const translations: Translations = {
             other: '其他技能'
         },
         aboutContent: {
-            intro: `我是一名充滿熱情的軟體工程師，專注於 .NET、AI 應用開發與 Unity 遊戲開發。
-                    從 Minecraft 模組開發啟發了我的程式熱情，到現在已累積豐富的實務經驗。
-                    
-                    擅長快速掌握新技術並整合應用，將複雜的技術需求轉化為實用的解決方案。
-                    特別在 AI 應用整合、企業系統開發與遊戲互動體驗設計方面有深入研究。
-                    
-                    目前專注於企業應用系統開發與 AI 技術整合，同時持續在 AR/VR 遊戲開發領域探索創新。
-                    期待能為產業帶來更多創新應用，同時也能協助更多人學習與成長。`,
+            intro: `Sun 是一位專注於產品實現、使用者體驗和實用 AI 整合的軟體工程師。他專精於建構結合前端卓越技術與 AI 驅動智能的可擴展工具。
+
+Sun 目前主導多個核心專案：
+
+**Synvize**：AI 驅動的發布平台，能夠聚合新聞、執行語義合成，並自動生成文章和電子報。它簡化了從網頁爬取到結構化發布的整個內容流程。
+
+**Sun UI Design**：使用 TypeScript 和 TailwindCSS 構建的現代動畫 React UI 組件庫。支援模組化或完整套件安裝、完整型別安全、Tree-shaking 導出，以及互動式 Storybook 文檔。
+
+**LexiTechly**：使用 Google Gemini 的 AI 輔助英語閱讀學習平台。提供 CEFR 等級評估、詞彙分析、互動式 AI 對話、單字/句子音頻，以及無限本地儲存。
+
+除了開發工作，謝上智積極透過工作坊和企業技術分享會分享他的專業知識，涵蓋 OpenAI、Gemini API 和 Notion 整合等主題。他的經驗涵蓋 Unity 遊戲開發、.NET 系統、全端應用程式和 AI 驅動工具。
+
+Sun 相信偉大的技術不僅僅是演算法——而是要建構人們信任、理解並樂於使用的直觀工具。`,
             experiences: [
                 {
                     title: "英業達股份有限公司 - 軟體工程師",
@@ -923,6 +949,27 @@ export const translations: Translations = {
                     ],
                     technologies: ["Unity", "SteamVR", "VR Development"]
                 },
+                {
+                    title: "LINE BOT HR Management System",
+                    description: "An enterprise human resource management system built on LINE BOT platform, integrating daily employee workflows to provide convenient mobile office experience. Implements core HR functions including clock-in/out, leave requests, approval workflows, and expense receipt uploads through LINE interface, significantly improving internal operational efficiency.",
+                    category: "Backend Development",
+                    achievements: [
+                        "Designed and implemented LINE BOT conversation flows",
+                        "Built employee attendance and time tracking system",
+                        "Developed leave application and approval processes",
+                        "Implemented multi-level approval mechanisms",
+                        "Integrated receipt upload and expense reporting features",
+                        "Established HR data management with access control"
+                    ],
+                    technologies: [
+                        "LINE Bot SDK",
+                        "JavaScript",
+                        "Webhook",
+                    ],
+                    media: [
+                        { type: 'image', src: "/projects/linebot/hr-bot.jpg", alt: "LINE BOT HR Management System Interface" }
+                    ]
+                },
 
             ]
         },
@@ -1034,15 +1081,19 @@ export const translations: Translations = {
             other: 'Other Skills'
         },
         aboutContent: {
-            intro: `I am a passionate software engineer specializing in .NET development, AI applications, and Unity game development.
-                   My journey in programming began with Minecraft mod development, which has evolved into extensive professional experience.
-                   
-                   I excel at rapidly adopting new technologies and integrating them into practical solutions.
-                   My expertise lies in AI integration, enterprise system development, and interactive game design.
-                   
-                   Currently focused on enterprise application development and AI technology integration,
-                   while continuing to innovate in AR/VR game development. I am dedicated to bringing
-                   cutting-edge solutions to the industry while mentoring others in their technical growth.`,
+            intro: `Sun is a software engineer with a strong focus on product implementation, user experience, and practical AI integration. He specializes in building scalable tools that combine frontend excellence with AI-driven intelligence.
+
+Sun currently leads several core projects:
+
+**Synvize**: An AI-powered publishing platform that aggregates news, performs semantic synthesis, and auto-generates articles and newsletters. It streamlines the entire content pipeline from web scraping to structured publishing.
+
+**Sun UI Design**: A modern, animated React UI component library built with TypeScript and TailwindCSS. It supports modular or full-package installation, complete type safety, tree-shaking exports, and interactive Storybook documentation.
+
+**LexiTechly**: An AI-assisted English reading and learning platform using Google Gemini. It provides CEFR-level assessments, vocabulary analysis, interactive AI conversation, word/sentence audio, and unlimited local storage.
+
+In addition to development, Sun Zhi actively shares his expertise through workshops and enterprise tech sessions, covering topics like OpenAI, Gemini APIs, and Notion integrations. His experience spans Unity game development, .NET systems, full-stack apps, and AI-driven tools.
+
+Sun believes great technology isn't just about algorithms—it's about building intuitive tools that people trust, understand, and enjoy using.`,
             experiences: [
                 {
                     title: "Inventec Corporation - Software Engineer",
