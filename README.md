@@ -3,7 +3,7 @@
 </div>
 
 <div align="center">
-  <h1>👋 Hi, I'm Sun (謝上智)</h1>
+  <h1>👋 Hi, I'm Sun (Xie ShangZhi)</h1>
   <p>Software Engineer | AI Developer | Unity Expert</p>
   
   [![Personal Website](https://img.shields.io/badge/Website-shangzhistime-blue?style=flat-square)](https://sites.google.com/view/shangzhistime)
@@ -22,7 +22,7 @@ Sun currently leads several core projects:
 
 **LexiTechly**: An AI-assisted English reading and learning platform using Google Gemini. It provides CEFR-level assessments, vocabulary analysis, interactive AI conversation, word/sentence audio, and unlimited local storage.
 
-In addition to development, Sun Zhi actively shares his expertise through workshops and enterprise tech sessions, covering topics like OpenAI, Gemini APIs, and Notion integrations. His experience spans Unity game development, .NET systems, full-stack apps, and AI-driven tools.
+In addition to development, Sun actively shares his expertise through workshops and enterprise tech sessions, covering topics like OpenAI, Gemini APIs, and Notion integrations. His experience spans Unity game development, .NET systems, full-stack apps, and AI-driven tools.
 
 Sun believes great technology isn't just about algorithms—it's about building intuitive tools that people trust, understand, and enjoy using.
 
