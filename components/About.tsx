@@ -24,7 +24,7 @@ export const About = forwardRef<HTMLElement, AboutProps>(({ lang, aboutInView },
               <div className="mt-2 w-24 h-1 bg-gradient-to-r from-blue-300 to-blue-500 rounded-full" />
             </div>
             <div className="max-w-3xl mx-auto space-y-6 sm:space-y-8">
-              <p className={`text-blue-100 text-base sm:text-lg leading-relaxed ${lang === 'zh-TW' ? 'text-justify' : ''}`}>
+              <p className={`text-blue-100 text-base sm:text-lg leading-relaxed whitespace-pre-line ${lang === 'zh-TW' ? 'text-justify' : ''}`}>
                 {translations[lang].aboutContent.intro}
               </p>
 
