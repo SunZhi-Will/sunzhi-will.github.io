@@ -156,7 +156,7 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                           >
-                            {project.title.includes("LexiTechly") ? (
+                            {project.buttonText === "Chrome擴充功能" || project.buttonText === "Chrome Extension" ? (
                               <Image
                                 src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/chrome/chrome-original.svg"
                                 alt="Chrome"
