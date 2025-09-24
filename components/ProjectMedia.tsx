@@ -18,6 +18,7 @@ export const ProjectMedia = ({
 }) => {
     const [selectedVideo, setSelectedVideo] = useState<{ src: string; alt?: string; type: 'youtube' | 'video' }>();
     const [direction, setDirection] = useState(0);
+    const [isHovered, setIsHovered] = useState(false);
 
     if (!media || media.length === 0) return null;
 
@@ -63,6 +64,8 @@ export const ProjectMedia = ({
         <>
             <div
                 className="relative"
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
             >
                 <div className="aspect-video relative overflow-hidden">
                     <div className="absolute inset-0 bg-blue-950">
@@ -148,25 +151,37 @@ export const ProjectMedia = ({
                         </motion.div>
                     </div>
 
-                    {/* 左右箭頭 */}
+                    {/* 左右箭頭 - 只在 hover 時顯示 */}
                     {totalSlides > 1 && (
                         <>
-                            <button
+                            <motion.button
                                 onClick={handlePrevSlide}
                                 className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition-all z-10"
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{
+                                    opacity: isHovered ? 1 : 0,
+                                    scale: isHovered ? 1 : 0.8
+                                }}
+                                transition={{ duration: 0.2 }}
                             >
                                 <svg className="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                                 </svg>
-                            </button>
-                            <button
+                            </motion.button>
+                            <motion.button
                                 onClick={handleNextSlide}
                                 className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition-all z-10"
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{
+                                    opacity: isHovered ? 1 : 0,
+                                    scale: isHovered ? 1 : 0.8
+                                }}
+                                transition={{ duration: 0.2 }}
                             >
                                 <svg className="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                 </svg>
-                            </button>
+                            </motion.button>
                         </>
                     )}
                 </div>

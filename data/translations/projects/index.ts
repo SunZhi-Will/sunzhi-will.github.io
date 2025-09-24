@@ -12,10 +12,12 @@ import { factory } from './factory';
 import { arGame } from './ar-game';
 import { vrGame } from './vr-game';
 import { linebot } from './linebot';
+import { ithomeHelper } from './ithome-helper';
 
 // 專案列表 - 按顯示順序排列
 export const projects = {
     'zh-TW': [
+        ithomeHelper['zh-TW'],
         threadsSaver['zh-TW'],
         postly['zh-TW'],
         lexitechly['zh-TW'],
@@ -32,6 +34,7 @@ export const projects = {
         linebot['zh-TW']
     ],
     'en': [
+        ithomeHelper['en'],
         threadsSaver['en'],
         postly['en'],
         lexitechly['en'],
