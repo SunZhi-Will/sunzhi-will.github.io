@@ -6,7 +6,8 @@ export const common = {
             skills: '技術能力',
             projects: '專案作品',
             activities: '活動分享',
-            links: '個人連結'
+            links: '個人連結',
+            blog: '部落格'
         },
         categories: {
             all: '全部',
@@ -171,7 +172,8 @@ Sun 相信偉大的技術不僅僅是演算法——而是要建構人們信任�
             skills: 'Skills',
             projects: 'Projects',
             activities: 'Activities',
-            links: 'Links'
+            links: 'Links',
+            blog: 'Blog'
         },
         categories: {
             all: 'All',

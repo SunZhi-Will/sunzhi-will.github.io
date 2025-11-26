@@ -4,7 +4,6 @@ import { useInView } from "react-intersection-observer";
 import ParticlesBackground from '@/components/ParticlesBackground';
 import GradientBackground from '@/components/GradientBackground';
 import { useState, useEffect, useMemo } from "react";
-import { motion } from "framer-motion";
 import { Lang } from '@/types';
 import { translations } from '@/data/translations';
 import Head from 'next/head';

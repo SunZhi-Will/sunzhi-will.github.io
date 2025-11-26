@@ -151,6 +151,31 @@ export const Hero = ({ lang, typedSubtitle, scrollToSection }: HeroProps) => {
                     </div>
                   </GlowingButton>
                 </motion.div>
+
+                {/* 部落格按鈕 */}
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <GlowingButton
+                    href="/blog"
+                    className="bg-gradient-to-r from-blue-500 via-indigo-400 to-blue-300 
+                              border border-blue-400/50 
+                              shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)]
+                              group relative overflow-hidden glow-button
+                              backdrop-blur-sm !px-0 !py-0"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-white/10 to-transparent 
+                                  translate-x-[-100%] group-hover:translate-x-[100%] 
+                                  transition-transform duration-700" />
+                    <div className="relative flex items-center gap-2 px-4 py-2 text-sm font-medium">
+                      <svg className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                      <span>{translations[lang].nav.blog}</span>
+                    </div>
+                  </GlowingButton>
+                </motion.div>
               </motion.div>
             </motion.div>
           </div>

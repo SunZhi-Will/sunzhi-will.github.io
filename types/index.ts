@@ -9,6 +9,7 @@ export interface Translations {
             projects: string;
             activities: string;
             links: string;
+            blog: string;
         };
         categories: {
             all: string;
