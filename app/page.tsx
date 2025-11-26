@@ -4,6 +4,7 @@ import { useInView } from "react-intersection-observer";
 import ParticlesBackground from '@/components/ParticlesBackground';
 import GradientBackground from '@/components/GradientBackground';
 import { useState, useEffect, useMemo } from "react";
+import { motion } from "framer-motion";
 import { Lang } from '@/types';
 import { translations } from '@/data/translations';
 import Head from 'next/head';
@@ -184,14 +185,18 @@ export default function Home() {
   }, []);
 
   const LanguageToggle = () => (
-    <button
+    <motion.button
       onClick={() => setLang(prev => prev === 'zh-TW' ? 'en' : 'zh-TW')}
-      className="fixed top-4 right-4 z-50 px-3 py-1.5 rounded-full 
-                 bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 
+      className="fixed top-4 right-4 z-50 px-4 py-2 rounded-full 
+                 bg-slate-500/20 hover:bg-slate-500/30 border border-slate-400/30
+                 text-slate-100 hover:text-white font-semibold text-sm
+                 backdrop-blur-sm shadow-lg hover:shadow-glow
                  transition-all duration-300"
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
     >
       {lang === 'zh-TW' ? 'EN' : '中文'}
-    </button>
+    </motion.button>
   );
 
   const typedSubtitle = useTypewriter(translations[lang].hero.subtitle, 50);

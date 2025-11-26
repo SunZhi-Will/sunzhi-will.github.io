@@ -5,6 +5,39 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  
+  /* 銀色系配色系統 - 2025 設計趨勢 */
+  --primary-50: #f8fafc;
+  --primary-100: #f1f5f9;
+  --primary-200: #e2e8f0;
+  --primary-300: #cbd5e1;
+  --primary-400: #94a3b8;
+  --primary-500: #64748b;
+  --primary-600: #475569;
+  --primary-700: #334155;
+  --primary-800: #1e293b;
+  --primary-900: #0f172a;
+  --primary-950: #020617;
+  
+  /* 銀色強調色 */
+  --accent-silver: #c0c0c0;
+  --accent-platinum: #e5e4e2;
+  --accent-steel: #71797e;
+  --accent-chrome: #e8e8e8;
+  
+  /* 背景漸層 - 銀色系 */
+  --gradient-primary: linear-gradient(135deg, #020617 0%, #1e293b 50%, #334155 100%);
+  --gradient-accent: linear-gradient(135deg, #64748b 0%, #94a3b8 50%, #cbd5e1 100%);
+  
+  /* 文字顏色 */
+  --text-primary: #f8fafc;
+  --text-secondary: #e2e8f0;
+  --text-tertiary: #cbd5e1;
+  
+  /* 卡片背景 - 銀色系 */
+  --card-bg: rgba(15, 23, 42, 0.6);
+  --card-border: rgba(148, 163, 184, 0.3);
+  --card-hover: rgba(148, 163, 184, 0.15);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,8 +50,10 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 html {
@@ -33,7 +68,7 @@ html {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(45deg, transparent 25%, rgba(59, 130, 246, 0.1) 50%, transparent 75%);
+  background: linear-gradient(45deg, transparent 25%, rgba(148, 163, 184, 0.2) 50%, transparent 75%);
   animation: shine 3s infinite linear;
   opacity: 0;
   transition: opacity 0.3s;
@@ -51,6 +86,205 @@ html {
   100% {
     background-position: 200% 0;
   }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin 20s linear infinite;
+}
+
+/* Pokemon 卡片風格閃光效果 */
+.card-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-shine::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 70%
+  );
+  transform: rotate(45deg);
+  animation: shine-sweep 3s infinite;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.card-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    linear-gradient(225deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 9;
+}
+
+.card-shine:hover::after {
+  opacity: 1;
+}
+
+@keyframes shine-sweep {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+/* 銀色系彩虹光澤效果 */
+.card-holographic {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-holographic::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(
+    135deg,
+    rgba(148, 163, 184, 0.4) 0%,
+    rgba(203, 213, 225, 0.4) 25%,
+    rgba(148, 163, 184, 0.4) 50%,
+    rgba(203, 213, 225, 0.4) 75%,
+    rgba(148, 163, 184, 0.4) 100%
+  );
+  background-size: 200% 200%;
+  animation: holographic-shift 4s ease infinite;
+  border-radius: inherit;
+  z-index: 1;
+  opacity: 0.6;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+@keyframes holographic-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* 光澤反射效果 */
+.card-gloss {
+  position: relative;
+}
+
+.card-gloss::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: gloss-sweep 2.5s infinite;
+  pointer-events: none;
+  z-index: 11;
+}
+
+@keyframes gloss-sweep {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* 現代化卡片樣式 - 優化性能 */
+.card-modern {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px) saturate(150%);
+  border: 1px solid var(--card-border);
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(59, 130, 246, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow;
+}
+
+.card-modern:hover {
+  border-color: rgba(148, 163, 184, 0.5);
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 0 20px rgba(148, 163, 184, 0.3);
+  transform: translateY(-2px);
+}
+
+/* 漸層文字效果 - 銀色系 */
+.gradient-text {
+  background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 50%, #64748b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% auto;
+  animation: gradient-shift 3s ease infinite;
+  will-change: background-position;
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* 發光按鈕效果 */
+.glow-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.glow-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.glow-button:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
 .my-masonry-grid {
