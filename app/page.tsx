@@ -15,7 +15,7 @@ import { Hero } from '@/components/Hero';
 import { About } from '@/components/About';
 import { Projects } from '@/components/Projects';
 import { Footer } from '@/components/Footer';
-import { NavDot } from '@/components/NavDot';
+import { DynamicIslandNav } from '@/components/DynamicIslandNav';
 
 const useTypewriter = (text: string, speed: number = 100) => {
   const [displayText, setDisplayText] = useState('');
@@ -184,20 +184,6 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const LanguageToggle = () => (
-    <motion.button
-      onClick={() => setLang(prev => prev === 'zh-TW' ? 'en' : 'zh-TW')}
-      className="fixed top-4 right-4 z-50 px-4 py-2 rounded-full 
-                 bg-slate-500/20 hover:bg-slate-500/30 border border-slate-400/30
-                 text-slate-100 hover:text-white font-semibold text-sm
-                 backdrop-blur-sm shadow-lg hover:shadow-glow
-                 transition-all duration-300"
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-    >
-      {lang === 'zh-TW' ? 'EN' : '中文'}
-    </motion.button>
-  );
 
   const typedSubtitle = useTypewriter(translations[lang].hero.subtitle, 50);
 
@@ -206,20 +192,13 @@ export default function Home() {
       <Head>
         <title>{lang === 'zh-TW' ? '謝上智 - 軟體工程師 | AI 開發者' : 'Sun Zhi - Software Engineer | AI Developer'}</title>
       </Head>
-      <LanguageToggle />
-      {/* 側邊導航 */}
-      <nav className="fixed right-8 top-1/2 -translate-y-1/2 z-50 hidden lg:block">
-        <div className="space-y-6">
-          {sections.map(({ id }) => (
-            <NavDot
-              key={id}
-              active={activeSection === id}
-              name={translations[lang].nav[id]}
-              onClick={() => scrollToSection(id)}
-            />
-          ))}
-        </div>
-      </nav>
+      {/* 動態島導覽列 */}
+      <DynamicIslandNav
+        lang={lang}
+        activeSection={activeSection}
+        scrollToSection={scrollToSection}
+        setLang={setLang}
+      />
 
       <FloatingButtons show={showSocialButtons} />
 

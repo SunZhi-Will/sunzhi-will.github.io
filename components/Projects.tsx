@@ -45,14 +45,14 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
   };
 
   return (
-    <section ref={ref} id="projects" className="py-24 relative">
-      <div className="container mx-auto px-4 flex flex-col items-center">
-        <div className="flex flex-col items-center mb-16">
+    <section ref={ref} id="projects" className="py-12 sm:py-16 md:py-20 lg:py-24 relative">
+      <div className="container mx-auto px-4 sm:px-6 flex flex-col items-center">
+        <div className="flex flex-col items-center mb-8 sm:mb-12 md:mb-16">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={projectsInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-4xl md:text-5xl font-bold gradient-text mb-4"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text mb-3 sm:mb-4"
           >
             {translations[lang].projects.title}
           </motion.h2>

@@ -310,3 +310,17 @@ html {
     padding-left: 16px; /* 減少手機版間距 */
   }
 }
+
+/* 響應式斷點優化 */
+@media (max-width: 640px) {
+  .card-modern {
+    backdrop-filter: blur(12px) saturate(120%);
+  }
+}
+
+/* 超小螢幕優化 */
+@media (max-width: 375px) {
+  .gradient-text {
+    font-size: 1.5rem;
+  }
+}

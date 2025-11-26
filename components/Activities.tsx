@@ -20,14 +20,14 @@ export const Activities = ({ lang, currentSlides, setCurrentSlides }: Activities
   });
 
   return (
-    <section ref={activitiesRef} id="activities" className="py-24 relative">
-      <div className="container mx-auto px-4 flex flex-col items-center">
-        <div className="flex flex-col items-center mb-16">
+    <section ref={activitiesRef} id="activities" className="py-12 sm:py-16 md:py-20 lg:py-24 relative">
+      <div className="container mx-auto px-4 sm:px-6 flex flex-col items-center">
+        <div className="flex flex-col items-center mb-8 sm:mb-12 md:mb-16">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             animate={activitiesInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
-            className="text-4xl md:text-5xl font-bold gradient-text mb-4"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text mb-3 sm:mb-4"
           >
             {translations[lang].activities.title}
           </motion.h2>
@@ -40,11 +40,11 @@ export const Activities = ({ lang, currentSlides, setCurrentSlides }: Activities
         </div>
 
         {/* Hackathons */}
-        <div className="w-full max-w-5xl mb-16">
-          <h3 className="text-2xl font-bold text-slate-300 mb-8">
+        <div className="w-full max-w-5xl mb-12 sm:mb-16">
+          <h3 className="text-xl sm:text-2xl font-bold text-slate-300 mb-6 sm:mb-8">
             {translations[lang].activities.hackathons.title}
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             {translations[lang].activities.hackathons.items.map((hackathon, index) => (
               <motion.div
                 key={hackathon.title}
@@ -112,11 +112,11 @@ export const Activities = ({ lang, currentSlides, setCurrentSlides }: Activities
         </div>
 
         {/* Speaking */}
-        <div className="w-full max-w-5xl mb-16">
-          <h3 className="text-2xl font-bold text-slate-300 mb-8">
+        <div className="w-full max-w-5xl mb-12 sm:mb-16">
+          <h3 className="text-xl sm:text-2xl font-bold text-slate-300 mb-6 sm:mb-8">
             {translations[lang].activities.speaking.title}
           </h3>
-          <div className="grid grid-cols-1 gap-8">
+          <div className="grid grid-cols-1 gap-6 sm:gap-8">
             {translations[lang].activities.speaking.items.map((speaking, index) => (
               <motion.div
                 key={speaking.title}
@@ -183,10 +183,10 @@ export const Activities = ({ lang, currentSlides, setCurrentSlides }: Activities
 
         {/* Teaching */}
         <div className="w-full max-w-5xl">
-          <h3 className="text-2xl font-bold text-slate-300 mb-8">
+          <h3 className="text-xl sm:text-2xl font-bold text-slate-300 mb-6 sm:mb-8">
             {translations[lang].activities.teaching.title}
           </h3>
-          <div className="grid grid-cols-1 gap-8">
+          <div className="grid grid-cols-1 gap-6 sm:gap-8">
             {translations[lang].activities.teaching.items.map((teaching, index) => (
               <motion.div
                 key={teaching.title}

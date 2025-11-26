@@ -56,10 +56,10 @@ export const TechStackGrid: React.FC<TechStackGridProps> = ({
             )}
 
             {/* 分類過濾按鈕 */}
-            <div className="flex justify-center gap-4 mb-12 flex-wrap">
+            <div className="flex justify-center gap-2 sm:gap-3 md:gap-4 mb-8 sm:mb-10 md:mb-12 flex-wrap px-2">
                 <button
                     onClick={() => setSelectedCategory(null)}
-                    className={`px-5 py-2.5 rounded-full transition-all duration-300 font-semibold
+                    className={`px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2.5 rounded-full transition-all duration-300 text-xs sm:text-sm font-semibold
             ${!selectedCategory
                             ? 'bg-gradient-to-r from-slate-500 to-gray-400 text-white shadow-glow border border-slate-400/50'
                             : 'bg-slate-500/20 text-slate-200 hover:bg-slate-500/30 border border-slate-400/20 hover:border-slate-400/40 backdrop-blur-sm'}`}
@@ -70,7 +70,7 @@ export const TechStackGrid: React.FC<TechStackGridProps> = ({
                     <button
                         key={category.category}
                         onClick={() => setSelectedCategory(category.category)}
-                        className={`px-5 py-2.5 rounded-full transition-all duration-300 font-semibold
+                        className={`px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2.5 rounded-full transition-all duration-300 text-xs sm:text-sm font-semibold
               ${selectedCategory === category.category
                                 ? 'bg-gradient-to-r from-slate-500 to-gray-400 text-white shadow-glow border border-slate-400/50'
                                 : 'bg-slate-500/20 text-slate-200 hover:bg-slate-500/30 border border-slate-400/20 hover:border-slate-400/40 backdrop-blur-sm'}`}
@@ -82,7 +82,7 @@ export const TechStackGrid: React.FC<TechStackGridProps> = ({
 
             {/* 技能展示 */}
             <motion.div
-                className="flex flex-wrap justify-center gap-6"
+                className="flex flex-wrap justify-center gap-4 sm:gap-5 md:gap-6 px-2"
                 layout
             >
                 {filteredSkills.map((tech, index) => (
