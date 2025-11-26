@@ -20,16 +20,7 @@ export function BlogSearchIsland({
     setSearchQuery,
 }: BlogSearchIslandProps) {
     const [isFocused, setIsFocused] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
     const t = blogTranslations[lang];
-
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
 
     const isExpanded = isFocused || searchQuery.length > 0;
 

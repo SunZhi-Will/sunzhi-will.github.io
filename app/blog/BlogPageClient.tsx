@@ -15,7 +15,7 @@ interface BlogPageClientProps {
     tags: string[];
 }
 
-export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
+export default function BlogPageClient({ posts, tags: _tags }: BlogPageClientProps) {
     const [searchQuery, setSearchQuery] = useState('');
     const [lang, setLang] = useState<Lang>('zh-TW');
 

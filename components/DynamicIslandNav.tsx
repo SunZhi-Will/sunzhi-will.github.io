@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { Lang } from '@/types';
 import { translations } from '@/data/translations';
 

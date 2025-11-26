@@ -1,5 +1,3 @@
-import { Lang } from '@/types';
-
 export const blogTranslations = {
     'zh-TW': {
         title: '部落格',

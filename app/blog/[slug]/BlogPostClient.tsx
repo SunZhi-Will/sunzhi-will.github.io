@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
@@ -81,10 +82,12 @@ export default function BlogPostClient({ post, htmlContent }: BlogPostClientProp
                                         className="aspect-[21/9] overflow-hidden relative group"
                                     >
                                         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent z-10"></div>
-                                        <img
+                                        <Image
                                             src={post.coverImage}
                                             alt={post.title}
-                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                            fill
+                                            className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                            priority
                                         />
                                     </motion.div>
                                 </div>
