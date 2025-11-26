@@ -84,6 +84,9 @@ A modern React UI component library with beautiful animation effects, built with
 An intelligent tool using Google Gemini AI to automatically fill in Google Forms. Simply provide the form URL and basic information to generate a pre-filled form URL.  
 [Try it online](https://auto-form-ai.vercel.app/)
 
+### [iT邦幫忙輔助工具](https://chromewebstore.google.com/detail/it%E9%82%A6%E5%B9%AB%E5%BF%99%E8%BC%94%E5%8A%A9%E5%B7%A5%E5%85%B7/paedeejpideeiefggglnckdepolohefa?utm_source=item-share-cb)
+A Chrome extension designed specifically for iT邦幫忙, providing better editing experience and writing assistance features. Includes vertical toolbar, floating positioning, drag and drop, quick Notion import, and drag-and-drop image upload functionality.
+
 ### [LexiTechly - Smart English Content Analysis](https://chromewebstore.google.com/detail/lexitechly-%E6%99%BA%E6%85%A7%E8%8B%B1%E6%96%87%E5%85%A7%E5%AE%B9%E5%88%86%E6%9E%90/lnfheajgimgpheflgjgknhnppanfenmk)
 Chrome extension that analyzes English web content using Google Gemini AI, providing CEFR level assessment, vocabulary analysis, and AI interactive dialogue features.
 

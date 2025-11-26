@@ -84,6 +84,9 @@ Sun 相信偉大的技術不僅僅是演算法——而是要建構人們信任�
 使用 Google Gemini AI 來自動填寫 Google Form 的智能工具，只需提供表單網址和基本資訊，即可自動生成填寫用的網址。  
 [線上體驗](https://auto-form-ai.vercel.app/)
 
+### [iT邦幫忙輔助工具](https://chromewebstore.google.com/detail/it%E9%82%A6%E5%B9%AB%E5%BF%99%E8%BC%94%E5%8A%A9%E5%B7%A5%E5%85%B7/paedeejpideeiefggglnckdepolohefa?utm_source=item-share-cb)
+專為 iT邦幫忙設計的 Chrome 擴充工具，提供更好的編輯體驗和寫作輔助功能。包含垂直工具列、懸浮定位、拖拽移動、快速匯入 Notion 以及拖拉上傳圖片等功能。
+
 ### [LexiTechly - 智慧英文內容分析](https://chromewebstore.google.com/detail/lexitechly-%E6%99%BA%E6%85%A7%E8%8B%B1%E6%96%87%E5%85%A7%E5%AE%B9%E5%88%86%E6%9E%90/lnfheajgimgpheflgjgknhnppanfenmk)
 Chrome 擴充功能，使用 Google Gemini AI 分析英文網頁內容，提供 CEFR 等級評估、單字解析與 AI 互動對話功能。
 
