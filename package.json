@@ -13,9 +13,11 @@
     "@google/generative-ai": "^0.21.0",
     "@heroicons/react": "^2.2.0",
     "@nextui-org/react": "^2.6.11",
+    "@tailwindcss/typography": "^0.5.19",
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.8.1",
     "framer-motion": "^12.4.2",
+    "gray-matter": "^4.0.3",
     "next": "15.1.7",
     "qrcode": "^1.5.4",
     "react": "^19.0.0",
@@ -24,6 +26,8 @@
     "react-iframe": "^1.8.5",
     "react-intersection-observer": "^9.15.1",
     "react-masonry-css": "^1.0.16",
+    "remark": "^15.0.1",
+    "remark-html": "^16.0.1",
     "tsparticles": "^3.8.1"
   },
   "devDependencies": {

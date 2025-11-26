@@ -14,7 +14,7 @@ import { Hero } from '@/components/Hero';
 import { About } from '@/components/About';
 import { Projects } from '@/components/Projects';
 import { Footer } from '@/components/Footer';
-import { NavDot } from '@/components/NavDot';
+import { DynamicIslandNav } from '@/components/DynamicIslandNav';
 
 const useTypewriter = (text: string, speed: number = 100) => {
   const [displayText, setDisplayText] = useState('');
@@ -183,16 +183,6 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const LanguageToggle = () => (
-    <button
-      onClick={() => setLang(prev => prev === 'zh-TW' ? 'en' : 'zh-TW')}
-      className="fixed top-4 right-4 z-50 px-3 py-1.5 rounded-full 
-                 bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 
-                 transition-all duration-300"
-    >
-      {lang === 'zh-TW' ? 'EN' : '中文'}
-    </button>
-  );
 
   const typedSubtitle = useTypewriter(translations[lang].hero.subtitle, 50);
 
@@ -201,20 +191,13 @@ export default function Home() {
       <Head>
         <title>{lang === 'zh-TW' ? '謝上智 - 軟體工程師 | AI 開發者' : 'Sun Zhi - Software Engineer | AI Developer'}</title>
       </Head>
-      <LanguageToggle />
-      {/* 側邊導航 */}
-      <nav className="fixed right-8 top-1/2 -translate-y-1/2 z-50 hidden lg:block">
-        <div className="space-y-6">
-          {sections.map(({ id }) => (
-            <NavDot
-              key={id}
-              active={activeSection === id}
-              name={translations[lang].nav[id]}
-              onClick={() => scrollToSection(id)}
-            />
-          ))}
-        </div>
-      </nav>
+      {/* 動態島導覽列 */}
+      <DynamicIslandNav
+        lang={lang}
+        activeSection={activeSection}
+        scrollToSection={scrollToSection}
+        setLang={setLang}
+      />
 
       <FloatingButtons show={showSocialButtons} />
 

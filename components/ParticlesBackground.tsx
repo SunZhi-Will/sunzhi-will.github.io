@@ -20,7 +20,7 @@ const ParticlesBackground = memo(() => {
             {init && <Particles
                 id="tsparticles"
                 options={{
-                    fpsLimit: 120,
+                    fpsLimit: 60, // 降低 FPS 限制以提升性能
                     interactivity: {
                         events: {
                             onHover: {
@@ -56,7 +56,7 @@ const ParticlesBackground = memo(() => {
                         },
                         move: {
                             enable: true,
-                            speed: 0.8,
+                            speed: 0.5, // 降低移動速度以提升性能
                             direction: "none",
                             random: true,
                             straight: false,
@@ -77,7 +77,7 @@ const ParticlesBackground = memo(() => {
                                 height: 800,
                                 width: 800
                             },
-                            value: 48,
+                            value: 30, // 減少粒子數量以提升性能
                         },
                         opacity: {
                             value: 0.5,

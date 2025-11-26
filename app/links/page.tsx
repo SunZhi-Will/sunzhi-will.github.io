@@ -142,8 +142,8 @@ export default function LinksPage() {
       <motion.button
         onClick={() => setViewMode(prev => prev === 'list' ? 'grid' : 'list')}
         className="px-3 py-1.5 rounded-full 
-                  bg-purple-500/20 text-purple-200 hover:bg-purple-500/30 
-                  backdrop-blur-sm border border-purple-400/20
+                  bg-slate-500/20 text-slate-200 hover:bg-slate-500/30 
+                  backdrop-blur-sm border border-slate-400/20
                   transition-all duration-300"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -165,8 +165,8 @@ export default function LinksPage() {
       <motion.button
         onClick={() => setLang(prev => prev === 'zh-TW' ? 'en' : 'zh-TW')}
         className="px-3 py-1.5 rounded-full 
-                  bg-purple-500/20 text-purple-200 hover:bg-purple-500/30 
-                  backdrop-blur-sm border border-purple-400/20
+                  bg-slate-500/20 text-slate-200 hover:bg-slate-500/30 
+                  backdrop-blur-sm border border-slate-400/20
                   transition-all duration-300"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -200,15 +200,15 @@ export default function LinksPage() {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              className="bg-purple-900/90 p-6 rounded-xl max-w-xs w-full mx-4 border border-purple-400/30 shadow-xl backdrop-blur-md"
+              className="bg-slate-900/90 p-6 rounded-xl max-w-xs w-full mx-4 border border-slate-400/30 shadow-xl backdrop-blur-md"
             >
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-semibold text-purple-200">
+                <h3 className="text-xl font-semibold text-slate-200">
                   {lang === 'zh-TW' ? '掃描 QR 碼' : 'Scan QR Code'}
                 </h3>
                 <motion.button
                   onClick={() => setShowQR(false)}
-                  className="text-purple-300 hover:text-purple-100 p-1 rounded-full hover:bg-purple-800/50"
+                  className="text-slate-300 hover:text-slate-100 p-1 rounded-full hover:bg-slate-800/50"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                 >
@@ -237,7 +237,7 @@ export default function LinksPage() {
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center bg-white">
                         <motion.div
-                          className="w-8 h-8 border-4 border-purple-500 rounded-full border-t-transparent"
+                          className="w-8 h-8 border-4 border-slate-500 rounded-full border-t-transparent"
                           animate={{ rotate: 360 }}
                           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                         />
@@ -246,14 +246,14 @@ export default function LinksPage() {
                   </div>
                 )}
               </motion.div>
-              <p className="text-center text-purple-200 mt-4 text-sm">
+              <p className="text-center text-slate-200 mt-4 text-sm">
                 {lang === 'zh-TW' ? '分享此連結頁面' : 'Share this links page'}
               </p>
-              <div className="mt-4 pt-4 border-t border-purple-700/30 text-center">
+              <div className="mt-4 pt-4 border-t border-slate-700/30 text-center">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <a
                     href={currentUrl}
-                    className="text-xs text-purple-300 truncate max-w-[180px]"
+                    className="text-xs text-slate-300 truncate max-w-[180px]"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -261,7 +261,7 @@ export default function LinksPage() {
                   </a>
                   <motion.button
                     onClick={copyToClipboard}
-                    className="text-purple-300 hover:text-purple-200 transition-colors p-1 rounded-full hover:bg-purple-800/50"
+                    className="text-slate-300 hover:text-slate-200 transition-colors p-1 rounded-full hover:bg-slate-800/50"
                     title={lang === 'zh-TW' ? '複製連結' : 'Copy link'}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
@@ -303,16 +303,16 @@ export default function LinksPage() {
                 alt="Sun Zhi"
                 width={140}
                 height={140}
-                className="rounded-full border-4 border-purple-400/50 shadow-lg shadow-purple-500/30
-                         group-hover:border-purple-400/70 transition-none"
+                className="rounded-full border-4 border-slate-400/50 shadow-lg shadow-slate-400/30
+                         group-hover:border-slate-400/70 transition-none"
                 priority
               />
               <motion.div
-                className="absolute -inset-2 rounded-full border-2 border-dashed border-purple-400/30"
+                className="absolute -inset-2 rounded-full border-2 border-dashed border-slate-400/30"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               />
-              <div className="absolute inset-0 bg-purple-500/10 rounded-full opacity-0 group-hover:opacity-100 transition-none" />
+              <div className="absolute inset-0 bg-slate-500/10 rounded-full opacity-0 group-hover:opacity-100 transition-none" />
             </div>
           </div>
 
@@ -320,10 +320,10 @@ export default function LinksPage() {
             className="text-center mt-3"
             style={{ transformOrigin: 'center center' }}
           >
-            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-300 to-indigo-300">
+            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-200 to-gray-200">
               {lang === 'zh-TW' ? '謝上智' : 'Sun Zhi'}
             </h1>
-            <p className="text-purple-200 text-base mt-1">
+            <p className="text-slate-200 text-base mt-1">
               {lang === 'zh-TW' ? '軟體工程師 | AI 開發者' : 'Software Engineer | AI Developer'}
             </p>
           </div>
@@ -342,7 +342,7 @@ export default function LinksPage() {
               className="relative group"
             >
               <motion.div
-                className="absolute -inset-1.5 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-xl opacity-0 group-hover:opacity-100 blur-xl transition-all duration-500"
+                className="absolute -inset-1.5 bg-gradient-to-r from-slate-500/20 to-gray-500/20 rounded-xl opacity-0 group-hover:opacity-100 blur-xl transition-all duration-500"
                 layoutId={`bg-${link.url}`}
               />
               <motion.a
@@ -457,8 +457,8 @@ export default function LinksPage() {
         >
           <motion.button
             onClick={() => setShowQR(true)}
-            className="p-3 rounded-full bg-purple-600/30 text-purple-200 hover:bg-purple-600/50 
-                      transition-all border border-purple-500/20 shadow-md hover:shadow-purple-500/30"
+            className="p-3 rounded-full bg-slate-600/30 text-slate-200 hover:bg-slate-600/50 
+                      transition-all border border-slate-500/20 shadow-md hover:shadow-glow"
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -468,7 +468,7 @@ export default function LinksPage() {
           </motion.button>
         </motion.div>
 
-        <footer className="mt-12 text-center text-purple-300/60 text-xs">
+        <footer className="mt-12 text-center text-slate-300/60 text-xs">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

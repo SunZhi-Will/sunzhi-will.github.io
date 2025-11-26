@@ -26,6 +26,17 @@ const breakpointColumnsObj = {
 export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projectsInView, currentSlides, setCurrentSlides }, ref) => {
   const projects = translations[lang].projects.items;
 
+  // 確保 projects 存在且為數組
+  if (!projects || !Array.isArray(projects) || projects.length === 0) {
+    return (
+      <section ref={ref} id="projects" className="py-24 relative">
+        <div className="container mx-auto px-4 flex flex-col items-center">
+          <p className="text-slate-400">No projects available</p>
+        </div>
+      </section>
+    );
+  }
+
   const handleSlideChange = (title: string, index: number) => {
     setCurrentSlides({
       ...currentSlides,
@@ -34,13 +45,23 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
   };
 
   return (
-    <section ref={ref} id="projects" className="py-24 relative">
-      <div className="container mx-auto px-4 flex flex-col items-center">
-        <div className="flex flex-col items-center mb-12">
-          <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-300 to-blue-500 bg-clip-text text-transparent">
+    <section ref={ref} id="projects" className="py-12 sm:py-16 md:py-20 lg:py-24 relative">
+      <div className="container mx-auto px-4 sm:px-6 flex flex-col items-center">
+        <div className="flex flex-col items-center mb-8 sm:mb-12 md:mb-16">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={projectsInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text mb-3 sm:mb-4"
+          >
             {translations[lang].projects.title}
-          </h2>
-          <div className="mt-2 w-24 h-1 bg-gradient-to-r from-blue-300 to-blue-500 rounded-full" />
+          </motion.h2>
+          <motion.div
+            initial={{ width: 0 }}
+            animate={projectsInView ? { width: 120 } : { width: 120 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="h-1 bg-gradient-to-r from-slate-400 via-gray-300 to-slate-200 rounded-full shadow-glow"
+          />
         </div>
 
         <Masonry
@@ -52,12 +73,11 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
             <motion.div
               key={project.title}
               initial={{ opacity: 0, y: 20 }}
-              animate={projectsInView ? { opacity: 1, y: 0 } : {}}
+              animate={projectsInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
               className="mb-8 w-full"
             >
-              <Card className="bg-blue-950/40 backdrop-blur-md border border-blue-500/20 
-                            shadow-xl hover:shadow-blue-500/10 transition-all duration-300 overflow-hidden">
+              <Card className="card-modern overflow-hidden group">
                 <div className="relative">
                   <div className="aspect-video relative overflow-hidden group">
                     <ProjectMedia
@@ -70,14 +90,16 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
                   <div className="absolute top-4 right-4">
                     <span className="
                       px-4 py-2 
-                      bg-gradient-to-r from-blue-500/50 to-blue-600/50
+                      bg-gradient-to-r from-slate-500/60 to-gray-400/60
                       backdrop-blur-md 
-                      border border-blue-400/20
+                      border border-slate-400/30
                       rounded-full 
-                      text-sm font-medium
-                      text-blue-100
-                      shadow-lg shadow-blue-500/20
+                      text-sm font-semibold
+                      text-white
+                      shadow-glow
                       flex items-center gap-2
+                      transition-all duration-300
+                      group-hover:scale-105
                     ">
                       {/* 根據類別添加對應圖標 */}
                       {(project.category === "AI 開發" || project.category === "AI Development") && (
@@ -105,22 +127,23 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
                   </div>
                 </div>
                 <div className="p-4 sm:p-6 flex flex-col gap-3 sm:gap-4">
-                  <h3 className="text-xl sm:text-2xl font-bold text-blue-300">
+                  <h3 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-slate-200 via-gray-200 to-slate-100 bg-clip-text text-transparent">
                     {project.title}
                   </h3>
-                  <p className="text-sm sm:text-base text-blue-200">{project.description}</p>
+                  <p className="text-sm sm:text-base text-slate-100 leading-relaxed">{project.description}</p>
 
                   {/* 成就列表 */}
                   {project.achievements && (
                     <div>
-                      <h4 className="text-blue-300 font-semibold mb-1 sm:mb-2 text-sm sm:text-base">
+                      <h4 className="text-slate-200 font-semibold mb-2 sm:mb-3 text-sm sm:text-base flex items-center gap-2">
+                        <span className="w-1 h-4 bg-gradient-to-b from-slate-400 to-gray-300 rounded-full"></span>
                         {translations[lang].projects.mainAchievements}
                       </h4>
-                      <ul className="space-y-0.5 sm:space-y-1">
+                      <ul className="space-y-1.5 sm:space-y-2">
                         {project.achievements.map((achievement, i) => (
-                          <li key={i} className="flex items-start text-blue-200 text-xs sm:text-sm">
-                            <span className="text-blue-400 mr-1 sm:mr-2 mt-0.5">▹</span>
-                            <span>{achievement}</span>
+                          <li key={i} className="flex items-start text-slate-100 text-xs sm:text-sm group/item">
+                            <span className="text-slate-400 mr-2 mt-0.5 group-hover/item:text-gray-300 transition-colors">▹</span>
+                            <span className="leading-relaxed">{achievement}</span>
                           </li>
                         ))}
                       </ul>
@@ -136,7 +159,11 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
                           {project.technologies.map((tech, i) => (
                             <span
                               key={i}
-                              className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-blue-500/10 rounded-md text-xs text-blue-200"
+                              className="px-2 sm:px-3 py-1 sm:py-1.5 bg-slate-500/15 hover:bg-slate-500/25 
+                                         border border-slate-400/20 hover:border-slate-400/40
+                                         rounded-lg text-xs text-slate-100 font-medium
+                                         transition-all duration-300 cursor-default
+                                         backdrop-blur-sm"
                             >
                               {tech}
                             </span>
@@ -152,8 +179,14 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
                             href={project.link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-blue-500/20 text-blue-300 text-xs sm:text-sm hover:bg-blue-500/30 transition-all duration-300"
-                            whileHover={{ scale: 1.05 }}
+                            className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 
+                                       rounded-full bg-gradient-to-r from-slate-500/30 to-slate-600/30 
+                                       border border-slate-400/30
+                                       text-slate-100 text-xs sm:text-sm font-semibold 
+                                       hover:from-slate-500/40 hover:to-slate-600/40
+                                       hover:border-slate-400/50 hover:shadow-glow
+                                       backdrop-blur-sm transition-all duration-300"
+                            whileHover={{ scale: 1.05, y: -2 }}
                             whileTap={{ scale: 0.95 }}
                           >
                             {project.buttonText === "Chrome擴充功能" || project.buttonText === "Chrome Extension" ? (
@@ -179,8 +212,14 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
                             href={project.demo}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-indigo-500/20 text-purple-300 text-xs sm:text-sm hover:from-purple-500/30 hover:to-indigo-500/30 transition-all duration-300"
-                            whileHover={{ scale: 1.05 }}
+                            className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 
+                                       rounded-full bg-gradient-to-r from-gray-500/30 to-slate-500/30 
+                                       border border-gray-400/30
+                                       text-gray-100 text-xs sm:text-sm font-semibold 
+                                       hover:from-gray-500/40 hover:to-slate-500/40
+                                       hover:border-gray-400/50 hover:shadow-glow
+                                       backdrop-blur-sm transition-all duration-300"
+                            whileHover={{ scale: 1.05, y: -2 }}
                             whileTap={{ scale: 0.95 }}
                           >
                             <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -196,8 +235,14 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
                             href={project.links.ios}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-blue-500/20 to-blue-600/20 text-blue-300 text-xs sm:text-sm hover:from-blue-500/30 hover:to-blue-600/30 transition-all duration-300"
-                            whileHover={{ scale: 1.05 }}
+                            className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 
+                                       rounded-full bg-gradient-to-r from-gray-700/30 to-gray-800/30 
+                                       border border-gray-600/30
+                                       text-gray-100 text-xs sm:text-sm font-semibold 
+                                       hover:from-gray-700/40 hover:to-gray-800/40
+                                       hover:border-gray-600/50 hover:shadow-glow
+                                       backdrop-blur-sm transition-all duration-300"
+                            whileHover={{ scale: 1.05, y: -2 }}
                             whileTap={{ scale: 0.95 }}
                           >
                             <Image
@@ -217,8 +262,14 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
                             href={project.links.android}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 text-xs sm:text-sm hover:from-green-500/30 hover:to-emerald-500/30 transition-all duration-300"
-                            whileHover={{ scale: 1.05 }}
+                            className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 
+                                       rounded-full bg-gradient-to-r from-slate-500/30 to-gray-500/30 
+                                       border border-slate-400/30
+                                       text-slate-100 text-xs sm:text-sm font-semibold 
+                                       hover:from-slate-500/40 hover:to-gray-500/40
+                                       hover:border-slate-400/50 hover:shadow-glow
+                                       backdrop-blur-sm transition-all duration-300"
+                            whileHover={{ scale: 1.05, y: -2 }}
                             whileTap={{ scale: 0.95 }}
                           >
                             <Image
