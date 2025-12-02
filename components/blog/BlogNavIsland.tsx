@@ -17,7 +17,6 @@ export function BlogNavIsland({ lang, selectedTag, setSelectedTag }: BlogNavIsla
     const [isHovered, setIsHovered] = useState(false);
     const pathname = usePathname();
     const router = useRouter();
-    const t = blogTranslations[lang];
     
     // 判斷是否在文章詳情頁面（路徑格式：/blog/[slug]）
     const isPostPage = pathname?.startsWith('/blog/') && pathname !== '/blog';

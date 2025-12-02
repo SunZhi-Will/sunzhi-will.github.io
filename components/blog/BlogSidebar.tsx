@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { formatDate } from '@/lib/blog-utils';
 import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
 import { blogTranslations } from '@/lib/blog-translations';
@@ -14,7 +13,7 @@ interface BlogSidebarProps {
     readingTime?: number;
 }
 
-export function BlogSidebar({ lang, setLang, post, readingTime }: BlogSidebarProps) {
+export function BlogSidebar({ lang, setLang, post }: BlogSidebarProps) {
     const t = blogTranslations[lang];
     const isPostPage = !!post;
 

@@ -33,7 +33,6 @@ interface DisqusConfig {
 }
 
 export function CommentSection({ postSlug, postTitle, lang }: CommentSectionProps) {
-    const t = blogTranslations[lang];
     const disqusRef = useRef<HTMLDivElement>(null);
 
     // Disqus shortname - 從環境變數取得

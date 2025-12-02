@@ -15,8 +15,6 @@ interface RelatedPostsProps {
 }
 
 export function RelatedPosts({ posts, currentSlug, lang }: RelatedPostsProps) {
-    const t = blogTranslations[lang];
-
     // 找到當前文章
     const currentPost = posts.find(post => post.slug === currentSlug);
 
