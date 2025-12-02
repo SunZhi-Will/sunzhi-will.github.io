@@ -6,9 +6,12 @@ import BlogPageClient from './BlogPageClient';
 export const dynamic = 'force-static';
 
 export default function BlogPage() {
-    // 在建置時取得所有文章和標籤
-    const posts: BlogPost[] = getAllPosts();
+    // 在建置時取得所有文章（包含所有語言版本）和標籤
+    // 客戶端會根據當前語言過濾顯示對應版本
+    const postsZhTW: BlogPost[] = getAllPosts('zh-TW');
+    const postsEn: BlogPost[] = getAllPosts('en');
+    const allPosts: BlogPost[] = [...postsZhTW, ...postsEn];
     const tags: string[] = getAllTags();
 
-    return <BlogPageClient posts={posts} tags={tags} />;
+    return <BlogPageClient posts={allPosts} tags={tags} />;
 }

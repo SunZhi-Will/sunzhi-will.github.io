@@ -4,6 +4,7 @@ import matter from 'gray-matter';
 import { remark } from 'remark';
 import html from 'remark-html';
 import type { BlogPost } from '@/types/blog';
+import type { Lang } from '@/types';
 
 // 部落格文章存放目錄
 const postsDirectory = path.join(process.cwd(), 'content/blog');
@@ -39,8 +40,9 @@ export function getPostSlugs(): string[] {
                     // 使用資料夾名稱作為 slug
                     slugs.push(entry.name);
                 }
-            } else if (entry.isFile() && entry.name.endsWith('.md')) {
+            } else if (entry.isFile() && entry.name.endsWith('.md') && entry.name !== 'README.md') {
                 // 向後兼容：如果直接有 .md 文件，使用文件名作為 slug
+                // 忽略 README.md 文件
                 slugs.push(entry.name.replace(/\.md$/, ''));
             }
         }
@@ -52,19 +54,84 @@ export function getPostSlugs(): string[] {
 }
 
 /**
- * 根據 slug 取得單篇文章資料
- * 現在支援資料夾結構：content/blog/[日期時間]/文章.md
+ * 取得文章可用的語言版本
  */
-export function getPostBySlug(slug: string): BlogPost | null {
+function getAvailableLangs(folderPath: string): Lang[] {
+    const availableLangs: Lang[] = [];
+    const files = fs.readdirSync(folderPath);
+    
+    // 檢查是否有語言特定的文件
+    files.forEach((file) => {
+        if (file.match(/\.(zh-TW|en)\.md$/)) {
+            const lang = file.includes('.zh-TW.') ? 'zh-TW' : 'en';
+            if (!availableLangs.includes(lang)) {
+                availableLangs.push(lang);
+            }
+        } else if (file.endsWith('.md') && !file.includes('.')) {
+            // 如果只有 article.md（沒有語言後綴），認為是預設語言
+            // 這裡我們假設是 zh-TW，但也可以根據內容判斷
+            if (!availableLangs.includes('zh-TW')) {
+                availableLangs.push('zh-TW');
+            }
+        }
+    });
+    
+    return availableLangs.length > 0 ? availableLangs : ['zh-TW']; // 預設至少有一個語言
+}
+
+/**
+ * 根據 slug 和語言取得單篇文章資料
+ * 現在支援資料夾結構：content/blog/[日期時間]/文章.[lang].md
+ * 如果指定語言不存在，會嘗試回退到其他可用語言
+ */
+export function getPostBySlug(slug: string, lang?: Lang): BlogPost | null {
     ensurePostsDirectory();
     
     try {
         // 先嘗試在資料夾中尋找（新結構）
         const folderPath = path.join(postsDirectory, slug);
         if (fs.existsSync(folderPath) && fs.statSync(folderPath).isDirectory()) {
-            // 在資料夾內尋找 .md 文件
             const files = fs.readdirSync(folderPath);
-            const mdFile = files.find((file) => file.endsWith('.md'));
+            const availableLangs = getAvailableLangs(folderPath);
+            
+            // 決定要讀取的語言
+            let targetLang: Lang | null = null;
+            let mdFile: string | null = null;
+            
+            if (lang) {
+                // 嘗試讀取指定語言的文件
+                const langFile = files.find((file) => 
+                    file.endsWith(`.${lang}.md`) || 
+                    (lang === 'zh-TW' && file === 'article.md' && !file.includes('.'))
+                );
+                if (langFile) {
+                    targetLang = lang;
+                    mdFile = langFile;
+                }
+            }
+            
+            // 如果指定語言不存在，嘗試其他可用語言
+            if (!mdFile) {
+                for (const availableLang of availableLangs) {
+                    const langFile = files.find((file) => 
+                        file.endsWith(`.${availableLang}.md`) ||
+                        (availableLang === 'zh-TW' && file === 'article.md' && !file.includes('.'))
+                    );
+                    if (langFile) {
+                        targetLang = availableLang;
+                        mdFile = langFile;
+                        break;
+                    }
+                }
+            }
+            
+            // 如果還是找不到，嘗試任何 .md 文件（向後兼容）
+            if (!mdFile) {
+                mdFile = files.find((file) => file.endsWith('.md')) || null;
+                if (mdFile && !targetLang) {
+                    targetLang = 'zh-TW'; // 預設語言
+                }
+            }
             
             if (mdFile) {
                 const fullPath = path.join(folderPath, mdFile);
@@ -95,6 +162,8 @@ export function getPostBySlug(slug: string): BlogPost | null {
                     tags: data.tags || [],
                     coverImage,
                     content,
+                    lang: targetLang || undefined,
+                    availableLangs,
                 };
             }
         }
@@ -124,11 +193,12 @@ export function getPostBySlug(slug: string): BlogPost | null {
 
 /**
  * 取得所有部落格文章（按日期排序）
+ * @param lang 可選，指定語言，如果指定則只返回該語言版本的文章
  */
-export function getAllPosts(): BlogPost[] {
+export function getAllPosts(lang?: Lang): BlogPost[] {
     const slugs = getPostSlugs();
     const posts = slugs
-        .map((slug) => getPostBySlug(slug))
+        .map((slug) => getPostBySlug(slug, lang))
         .filter((post): post is BlogPost => post !== null)
         .sort((a, b) => (new Date(b.date).getTime() - new Date(a.date).getTime()));
 

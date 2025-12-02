@@ -43,11 +43,32 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
         return tagMap[tag] || [tag];
     };
 
-    // 根據搜尋和標籤過濾文章
+    // 根據語言、搜尋和標籤過濾文章
     const filteredPosts = useMemo(() => {
-        let filtered = posts;
+        // 先根據語言過濾：對於每個 slug，優先顯示當前語言版本
+        const postsBySlug = new Map<string, BlogPost>();
+        
+        posts.forEach((post) => {
+            const existing = postsBySlug.get(post.slug);
+            
+            // 如果這個 slug 還沒有文章，或者當前文章是目標語言，則使用當前文章
+            if (!existing || post.lang === lang) {
+                postsBySlug.set(post.slug, post);
+            }
+            // 如果已有文章但不是目標語言，且當前文章是目標語言，則替換
+            else if (existing.lang !== lang && post.lang === lang) {
+                postsBySlug.set(post.slug, post);
+            }
+        });
+        
+        let filtered = Array.from(postsBySlug.values());
+        
+        // 過濾：只保留當前語言版本或沒有語言信息的文章（向後兼容）
+        filtered = filtered.filter((post) => {
+            return post.lang === undefined || post.lang === lang;
+        });
 
-        // 先根據標籤篩選
+        // 再根據標籤篩選
         if (selectedTag) {
             const matchingTags = getMatchingTags(selectedTag);
             filtered = filtered.filter((post) =>
@@ -55,7 +76,7 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
             );
         }
 
-        // 再根據搜尋關鍵字篩選
+        // 最後根據搜尋關鍵字篩選
         if (searchQuery.trim()) {
             const query = searchQuery.toLowerCase();
             filtered = filtered.filter((post) =>
@@ -66,7 +87,7 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
         }
 
         return filtered;
-    }, [posts, searchQuery, selectedTag]);
+    }, [posts, lang, searchQuery, selectedTag]);
 
     return (
         <div className="h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 overflow-hidden">
