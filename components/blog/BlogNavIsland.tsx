@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Lang } from '@/types';
-import { blogTranslations } from '@/lib/blog-translations';
 
 interface BlogNavIslandProps {
     lang: Lang;

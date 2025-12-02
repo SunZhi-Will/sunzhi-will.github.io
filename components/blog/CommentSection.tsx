@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react';
 import Script from 'next/script';
 import { Lang } from '@/types';
-import { blogTranslations } from '@/lib/blog-translations';
 
 interface CommentSectionProps {
     postSlug: string;

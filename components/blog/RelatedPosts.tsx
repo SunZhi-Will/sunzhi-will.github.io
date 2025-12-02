@@ -6,7 +6,6 @@ import { motion } from 'framer-motion';
 import { formatDate } from '@/lib/blog-utils';
 import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
-import { blogTranslations } from '@/lib/blog-translations';
 
 interface RelatedPostsProps {
     posts: BlogPost[];
