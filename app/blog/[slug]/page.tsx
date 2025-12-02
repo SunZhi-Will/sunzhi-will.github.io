@@ -1,4 +1,4 @@
-import { getPostBySlug, getPostSlugs, markdownToHtml } from '@/lib/blog';
+import { getPostBySlug, getPostSlugs, markdownToHtml, getAllPosts } from '@/lib/blog';
 import { notFound } from 'next/navigation';
 import BlogPostClient from './BlogPostClient';
 
@@ -28,6 +28,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     // 將 Markdown 轉換為 HTML
     const htmlContent = post.content ? await markdownToHtml(post.content) : '';
 
+    // 取得所有文章（用於推薦）
+    const allPosts = getAllPosts();
+
     // 移除 content 欄位，只傳遞需要的資料
     const postData = {
         slug: post.slug,
@@ -38,5 +41,5 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         coverImage: post.coverImage,
     };
 
-    return <BlogPostClient post={postData} htmlContent={htmlContent} />;
+    return <BlogPostClient post={postData} htmlContent={htmlContent} allPosts={allPosts} />;
 }

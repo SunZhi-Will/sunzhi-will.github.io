@@ -34,17 +34,17 @@ export function BlogCard({ post, lang, index }: BlogCardProps) {
                                   group-hover:from-blue-500/5 group-hover:via-indigo-500/5 group-hover:to-purple-500/5
                                   transition-all duration-500 opacity-0 group-hover:opacity-100" />
 
-                    <div className="relative p-4 md:p-6 flex flex-row gap-4 md:gap-6 items-center">
-                        {/* 封面圖片 - 總是顯示 */}
-                        <div className="relative w-32 md:w-48 flex-shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-slate-800/80 via-slate-700/60 to-slate-800/80 border border-slate-700/30 self-center">
-                            <div className="aspect-[16/9] relative overflow-hidden">
+                    <div className="relative p-4 md:p-6 flex flex-row gap-4 md:gap-6">
+                        {/* 封面圖片 - 保持 16:9 等比例 */}
+                        <div className="relative w-40 md:w-56 lg:w-64 flex-shrink-0">
+                            <div className="relative w-full aspect-[16/9] overflow-hidden rounded-lg bg-gradient-to-br from-slate-800/80 via-slate-700/60 to-slate-800/80 border border-slate-700/30">
                                 {post.coverImage ? (
                                     <Image
                                         src={post.coverImage}
                                         alt={post.title}
                                         fill
                                         className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                                        sizes="(max-width: 768px) 128px, 192px"
+                                        sizes="(max-width: 768px) 160px, (max-width: 1024px) 224px, 256px"
                                     />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800">
@@ -59,11 +59,11 @@ export function BlogCard({ post, lang, index }: BlogCardProps) {
                             </div>
                         </div>
 
-                        {/* 內容區域 */}
+                        {/* 內容區域 - 緊湊排列，無空白 */}
                         <div className="flex flex-col flex-1 min-w-0 space-y-3">
                             {/* 日期和標籤 */}
-                            <div className="flex items-center flex-wrap gap-2 text-xs text-slate-400 flex-shrink-0">
-                                <time className="flex items-center gap-1">
+                            <div className="flex items-center flex-wrap gap-2 text-xs text-slate-400">
+                                <time className="flex items-center gap-1 whitespace-nowrap">
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
@@ -88,20 +88,20 @@ export function BlogCard({ post, lang, index }: BlogCardProps) {
                             </div>
 
                             {/* 標題 */}
-                            <h2 className="text-xl md:text-2xl font-bold text-slate-100 
+                            <h2 className="text-lg md:text-xl font-bold text-slate-100 
                                          group-hover:text-transparent group-hover:bg-clip-text 
                                          group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:via-indigo-400 group-hover:to-purple-400
-                                         transition-all duration-300 leading-tight line-clamp-2 flex-shrink-0">
+                                         transition-all duration-300 leading-tight line-clamp-2">
                                 {post.title}
                             </h2>
 
                             {/* 描述 */}
-                            <p className="text-slate-300 text-base leading-relaxed line-clamp-2 flex-1">
+                            <p className="text-sm md:text-base text-slate-300 leading-relaxed line-clamp-2 flex-1">
                                 {post.description}
                             </p>
 
                             {/* 閱讀更多 */}
-                            <div className="flex items-center pt-1 flex-shrink-0">
+                            <div className="flex items-center pt-1">
                                 <span className="inline-flex items-center gap-1.5 text-xs font-medium 
                                               text-blue-400 group-hover:text-blue-300 
                                               transition-colors duration-200">

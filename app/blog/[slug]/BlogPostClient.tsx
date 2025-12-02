@@ -7,14 +7,18 @@ import { motion } from 'framer-motion';
 import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
 import { blogTranslations } from '@/lib/blog-translations';
-import { BlogSidebar } from '@/components/blog/BlogSidebar';
+import { BlogNavIsland } from '@/components/blog/BlogNavIsland';
+import { formatDate } from '@/lib/blog-utils';
+import { RelatedPosts } from '@/components/blog/RelatedPosts';
+import { CommentSection } from '@/components/blog/CommentSection';
 
 interface BlogPostClientProps {
     post: Omit<BlogPost, 'content'>;
     htmlContent: string;
+    allPosts: BlogPost[];
 }
 
-export default function BlogPostClient({ post, htmlContent }: BlogPostClientProps) {
+export default function BlogPostClient({ post, htmlContent, allPosts }: BlogPostClientProps) {
     const [lang, setLang] = useState<Lang>('zh-TW');
     const t = blogTranslations[lang];
 
@@ -28,85 +32,84 @@ export default function BlogPostClient({ post, htmlContent }: BlogPostClientProp
     }, []);
 
     return (
-        <div className="h-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 relative overflow-hidden">
-            {/* 背景裝飾效果 */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-0 -left-4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"></div>
-                <div className="absolute bottom-0 -right-4 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl"></div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/3 rounded-full blur-3xl"></div>
-            </div>
+        <div className="h-screen bg-slate-950 text-slate-100 overflow-hidden">
+            {/* 左側導航動態島 - 在文章詳情頁面會自動隱藏 */}
+            <BlogNavIsland lang={lang} />
 
-            <div className="flex h-full relative z-10">
-                {/* 左側邊欄 */}
-                <BlogSidebar
-                    lang={lang}
-                    setLang={setLang}
-                    post={post}
-                    readingTime={readingTime}
-                />
-
-                {/* 右側主要內容區域 */}
-                <main className="flex-1 overflow-y-auto scrollbar-hide">
-                    <article className="relative">
-                        {/* 文章頭部 */}
-                        <header className="relative border-b border-slate-800/50 backdrop-blur-sm bg-gradient-to-b from-slate-900/80 to-transparent">
-                            <div className="max-w-4xl mx-auto px-6 py-16 md:py-20 lg:py-24">
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.6, ease: "easeOut" }}
-                                >
-                                    {/* 標題 */}
-                                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-slate-100 mb-6 leading-tight tracking-tight bg-gradient-to-r from-slate-100 via-slate-200 to-slate-300 bg-clip-text text-transparent">
+            {/* 主要內容區域 - 全寬 */}
+            <main className="overflow-y-auto h-full scrollbar-custom">
+                <article className="relative">
+                        {/* 文章內容 - 統一的內容區域 */}
+                        <div className="max-w-3xl mx-auto px-6 md:px-8 lg:px-12 py-16 md:py-20" style={{ paddingTop: '5.5rem' }}>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.6, ease: "easeOut" }}
+                                className="space-y-8"
+                            >
+                                {/* 標題 - 直接放在內容開頭 */}
+                                <header className="space-y-4">
+                                    <h1 className="text-2xl md:text-3xl font-normal text-slate-100 leading-tight tracking-tight">
                                         {post.title}
                                     </h1>
 
-                                    {/* 描述 */}
-                                    {post.description && (
-                                        <p className="text-lg md:text-xl lg:text-2xl text-slate-400 font-light leading-relaxed max-w-3xl">
-                                            {post.description}
-                                        </p>
-                                    )}
-                                </motion.div>
-                            </div>
-                        </header>
+                                    {/* 元資訊 - 簡潔的單行顯示 */}
+                                    <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500">
+                                        <time>
+                                            {formatDate(post.date, lang === 'zh-TW' ? 'zh-TW' : 'en-US')}
+                                        </time>
+                                        {readingTime && (
+                                            <>
+                                                <span>·</span>
+                                                <span>{readingTime} {t.readTime}</span>
+                                            </>
+                                        )}
+                                        {post.tags.length > 0 && (
+                                            <>
+                                                <span>·</span>
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {post.tags.map((tag) => (
+                                                        <span
+                                                            key={tag}
+                                                            className="text-slate-500"
+                                                        >
+                                                            {tag}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
+                                </header>
 
-                        {/* 封面圖片 */}
-                        {post.coverImage && (
-                            <div className="relative border-b border-slate-800/50 overflow-hidden">
-                                <div className="max-w-5xl mx-auto">
-                                    <motion.div
-                                        initial={{ opacity: 0, scale: 1.05 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        transition={{ duration: 0.8, ease: "easeOut" }}
-                                        className="aspect-[21/9] overflow-hidden relative group"
-                                    >
-                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent z-10"></div>
+                                {/* 封面圖片 - 整合到內容流中 */}
+                                {post.coverImage && (
+                                    <div className="relative w-full aspect-[16/9] overflow-hidden rounded-lg bg-slate-900/50">
                                         <Image
                                             src={post.coverImage}
                                             alt={post.title}
                                             fill
-                                            className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                            className="object-cover"
                                             priority
                                         />
-                                    </motion.div>
-                                </div>
-                            </div>
-                        )}
+                                    </div>
+                                )}
 
-                        {/* 文章內容 */}
-                        <div className="max-w-4xl mx-auto px-6 py-16 md:py-20">
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-                                className="prose prose-lg prose-slate max-w-none prose-invert
-                                    prose-headings:font-light prose-headings:tracking-tight prose-headings:text-slate-100
-                                    prose-h1:text-4xl prose-h1:mt-16 prose-h1:mb-6 prose-h1:font-light
-                                    prose-h2:text-3xl prose-h2:mt-16 prose-h2:mb-6 prose-h2:pb-3 prose-h2:border-b prose-h2:border-slate-800/50 prose-h2:font-light
-                                    prose-h3:text-2xl prose-h3:mt-12 prose-h3:mb-4 prose-h3:font-light
-                                    prose-h4:text-xl prose-h4:mt-8 prose-h4:mb-3 prose-h4:font-light
-                                    prose-p:text-slate-300 prose-p:leading-relaxed prose-p:font-light prose-p:text-base prose-p:mb-6
+                                {/* 文章描述 */}
+                                {post.description && (
+                                    <p className="text-base text-slate-400 leading-relaxed">
+                                        {post.description}
+                                    </p>
+                                )}
+
+                                {/* 文章正文 */}
+                                <div className="prose prose-base prose-slate max-w-none prose-invert
+                                    prose-headings:font-normal prose-headings:tracking-tight prose-headings:text-slate-100
+                                    prose-h1:text-2xl prose-h1:mt-12 prose-h1:mb-4 prose-h1:font-normal
+                                    prose-h2:text-xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:font-normal
+                                    prose-h3:text-lg prose-h3:mt-8 prose-h3:mb-3 prose-h3:font-normal
+                                    prose-h4:text-base prose-h4:mt-6 prose-h4:mb-2 prose-h4:font-normal
+                                    prose-p:text-slate-300 prose-p:leading-relaxed prose-p:font-normal prose-p:text-[15px] prose-p:mb-5
                                     prose-a:text-blue-400 prose-a:no-underline prose-a:border-b prose-a:border-blue-500/50 hover:prose-a:border-blue-400 hover:prose-a:text-blue-300 prose-a:transition-all prose-a:font-medium
                                     prose-strong:text-slate-100 prose-strong:font-semibold
                                     prose-code:text-blue-300 prose-code:bg-slate-800/80 prose-code:px-2 prose-code:py-1 prose-code:text-sm prose-code:font-mono prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-code:border prose-code:border-slate-700/50
@@ -119,43 +122,31 @@ export default function BlogPostClient({ post, htmlContent }: BlogPostClientProp
                                     prose-hr:border-slate-800/50 prose-hr:my-12
                                     prose-table:text-slate-300 prose-th:border prose-th:border-slate-800/50 prose-th:bg-slate-800/30 prose-th:px-4 prose-th:py-2
                                     prose-td:border prose-td:border-slate-800/50 prose-td:px-4 prose-td:py-2"
-                                dangerouslySetInnerHTML={{ __html: htmlContent }}
-                            />
+                                    dangerouslySetInnerHTML={{ __html: htmlContent }}
+                                />
+                            </motion.div>
                         </div>
 
                         {/* 文章底部 */}
-                        <footer className="border-t border-slate-800/50 backdrop-blur-sm bg-gradient-to-b from-transparent to-slate-900/50">
-                            <div className="max-w-4xl mx-auto px-6 py-12 md:py-16">
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    transition={{ duration: 0.6, delay: 0.4 }}
-                                >
-                                    {/* 返回連結 */}
-                                    <Link
-                                        href="/blog"
-                                        className="group inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-slate-100 
-                                                 bg-gradient-to-r from-slate-800/50 to-slate-700/50 hover:from-slate-700/70 hover:to-slate-600/70
-                                                 border border-slate-700/50 hover:border-slate-600/70 rounded-lg
-                                                 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10
-                                                 backdrop-blur-sm"
-                                    >
-                                        <svg
-                                            className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
-                                        </svg>
-                                        <span>{t.moreArticles}</span>
-                                    </Link>
-                                </motion.div>
+                        <div className="max-w-3xl mx-auto px-6 md:px-8 lg:px-12 pb-16">
+                            <div className="space-y-12 pt-8">
+                                {/* 推薦文章 */}
+                                <RelatedPosts
+                                    posts={allPosts}
+                                    currentSlug={post.slug}
+                                    lang={lang}
+                                />
+
+                                {/* 留言區 */}
+                                <CommentSection
+                                    postSlug={post.slug}
+                                    postTitle={post.title}
+                                    lang={lang}
+                                />
                             </div>
-                        </footer>
-                    </article>
-                </main>
-            </div>
+                        </div>
+                </article>
+            </main>
         </div>
     );
 }

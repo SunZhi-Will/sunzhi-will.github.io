@@ -110,52 +110,16 @@ export function BlogSidebar({ lang, setLang, post, readingTime }: BlogSidebarPro
             {/* 文章詳情頁面的額外內容 */}
             {isPostPage && post && (
                 <>
-                    {/* 文章元資訊 */}
+                    {/* 全部文章按鈕 */}
                     <div className="p-4 border-b border-slate-800/50">
-                        {/* 全部文章按鈕 */}
-                        <div className="mb-4">
-                            <Link
-                                href="/blog"
-                                className="block px-2.5 py-1.5 text-xs text-left transition-all duration-200 rounded-lg border 
-                                         text-slate-100 font-medium bg-gradient-to-r from-blue-500/20 to-indigo-500/20 border-blue-500/30
-                                         hover:from-blue-500/30 hover:to-indigo-500/30"
-                            >
-                                {t.allPosts}
-                            </Link>
-                        </div>
-
-                        <div className="flex flex-col gap-3 text-xs">
-                            <div>
-                                <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">
-                                    {t.published}
-                                </div>
-                                <time className="text-slate-300">{formatDate(post.date)}</time>
-                            </div>
-                            {readingTime && (
-                                <div>
-                                    <div className="text-slate-400">
-                                        {readingTime} {t.readTime}
-                                    </div>
-                                </div>
-                            )}
-                            {post.tags.length > 0 && (
-                                <div className="flex flex-col gap-1.5">
-                                    <div className="text-xs text-slate-400 uppercase tracking-wider">
-                                        {t.tags}
-                                    </div>
-                                    <div className="flex flex-wrap gap-1.5">
-                                        {post.tags.map((tag) => (
-                                            <span
-                                                key={tag}
-                                                className="px-2 py-0.5 text-xs text-slate-400 bg-slate-800 uppercase tracking-wider border border-slate-700 rounded"
-                                            >
-                                                {tag}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                        <Link
+                            href="/blog"
+                            className="block px-2.5 py-1.5 text-xs text-left transition-all duration-200 rounded-lg border 
+                                     text-slate-100 font-medium bg-gradient-to-r from-blue-500/20 to-indigo-500/20 border-blue-500/30
+                                     hover:from-blue-500/30 hover:to-indigo-500/30"
+                        >
+                            {t.allPosts}
+                        </Link>
                     </div>
                 </>
             )}
@@ -171,7 +135,7 @@ export function BlogSidebar({ lang, setLang, post, readingTime }: BlogSidebarPro
                         {t.home}
                     </Link>
                 )}
-                
+
                 {/* 語言切換按鈕 - 只在文章詳情頁面顯示 */}
                 {isPostPage && setLang && (
                     <button
@@ -181,7 +145,7 @@ export function BlogSidebar({ lang, setLang, post, readingTime }: BlogSidebarPro
                         {t.langSwitch}
                     </button>
                 )}
-                
+
                 <div className="text-xs text-slate-500 text-center">
                     © {new Date().getFullYear()} Sun
                 </div>

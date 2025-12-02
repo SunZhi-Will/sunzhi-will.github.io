@@ -5,7 +5,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  
+
   /* 銀色系配色系統 - 2025 設計趨勢 */
   --primary-50: #f8fafc;
   --primary-100: #f1f5f9;
@@ -18,22 +18,22 @@
   --primary-800: #1e293b;
   --primary-900: #0f172a;
   --primary-950: #020617;
-  
+
   /* 銀色強調色 */
   --accent-silver: #c0c0c0;
   --accent-platinum: #e5e4e2;
   --accent-steel: #71797e;
   --accent-chrome: #e8e8e8;
-  
+
   /* 背景漸層 - 銀色系 */
   --gradient-primary: linear-gradient(135deg, #020617 0%, #1e293b 50%, #334155 100%);
   --gradient-accent: linear-gradient(135deg, #64748b 0%, #94a3b8 50%, #cbd5e1 100%);
-  
+
   /* 文字顏色 */
   --text-primary: #f8fafc;
   --text-secondary: #e2e8f0;
   --text-tertiary: #cbd5e1;
-  
+
   /* 卡片背景 - 銀色系 */
   --card-bg: rgba(15, 23, 42, 0.6);
   --card-border: rgba(148, 163, 184, 0.3);
@@ -92,6 +92,7 @@ html {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -114,12 +115,10 @@ html {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: linear-gradient(
-    45deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.3) 50%,
-    transparent 70%
-  );
+  background: linear-gradient(45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.3) 50%,
+      transparent 70%);
   transform: rotate(45deg);
   animation: shine-sweep 3s infinite;
   pointer-events: none;
@@ -130,7 +129,7 @@ html {
   content: '';
   position: absolute;
   inset: 0;
-  background: 
+  background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
     linear-gradient(225deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
@@ -148,6 +147,7 @@ html {
   0% {
     transform: translateX(-100%) translateY(-100%) rotate(45deg);
   }
+
   100% {
     transform: translateX(100%) translateY(100%) rotate(45deg);
   }
@@ -163,14 +163,12 @@ html {
   content: '';
   position: absolute;
   inset: -2px;
-  background: linear-gradient(
-    135deg,
-    rgba(148, 163, 184, 0.4) 0%,
-    rgba(203, 213, 225, 0.4) 25%,
-    rgba(148, 163, 184, 0.4) 50%,
-    rgba(203, 213, 225, 0.4) 75%,
-    rgba(148, 163, 184, 0.4) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(148, 163, 184, 0.4) 0%,
+      rgba(203, 213, 225, 0.4) 25%,
+      rgba(148, 163, 184, 0.4) 50%,
+      rgba(203, 213, 225, 0.4) 75%,
+      rgba(148, 163, 184, 0.4) 100%);
   background-size: 200% 200%;
   animation: holographic-shift 4s ease infinite;
   border-radius: inherit;
@@ -181,9 +179,12 @@ html {
 }
 
 @keyframes holographic-shift {
-  0%, 100% {
+
+  0%,
+  100% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
@@ -201,12 +202,10 @@ html {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.4),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent);
   animation: gloss-sweep 2.5s infinite;
   pointer-events: none;
   z-index: 11;
@@ -216,6 +215,7 @@ html {
   0% {
     left: -100%;
   }
+
   100% {
     left: 100%;
   }
@@ -226,7 +226,7 @@ html {
   background: var(--card-bg);
   backdrop-filter: blur(16px) saturate(150%);
   border: 1px solid var(--card-border);
-  box-shadow: 
+  box-shadow:
     0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06),
     0 0 0 1px rgba(59, 130, 246, 0.05);
@@ -236,7 +236,7 @@ html {
 
 .card-modern:hover {
   border-color: rgba(148, 163, 184, 0.5);
-  box-shadow: 
+  box-shadow:
     0 20px 25px -5px rgba(0, 0, 0, 0.1),
     0 10px 10px -5px rgba(0, 0, 0, 0.04),
     0 0 20px rgba(148, 163, 184, 0.3);
@@ -255,9 +255,12 @@ html {
 }
 
 @keyframes gradient-shift {
-  0%, 100% {
+
+  0%,
+  100% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
@@ -303,11 +306,13 @@ html {
 /* 添加手機版響應式樣式 */
 @media (max-width: 768px) {
   .my-masonry-grid {
-    margin-left: -16px; /* 減少手機版間距 */
+    margin-left: -16px;
+    /* 減少手機版間距 */
   }
-  
+
   .my-masonry-grid_column {
-    padding-left: 16px; /* 減少手機版間距 */
+    padding-left: 16px;
+    /* 減少手機版間距 */
   }
 }
 
@@ -333,6 +338,65 @@ html {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* 自定義滾動條樣式 - 優雅設計 */
+.scrollbar-custom {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.3) rgba(15, 23, 42, 0.1);
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.1);
+  border-radius: 10px;
+  margin: 4px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, rgba(148, 163, 184, 0.4) 0%, rgba(100, 116, 139, 0.4) 100%);
+  border-radius: 10px;
+  border: 2px solid rgba(15, 23, 42, 0.1);
+  transition: all 0.3s ease;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, rgba(148, 163, 184, 0.6) 0%, rgba(100, 116, 139, 0.6) 100%);
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(135deg, rgba(148, 163, 184, 0.8) 0%, rgba(100, 116, 139, 0.8) 100%);
+}
+
+/* 橫向滾動條 */
+.scrollbar-custom::-webkit-scrollbar:horizontal {
+  height: 8px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track:horizontal {
+  background: rgba(15, 23, 42, 0.1);
+  border-radius: 10px;
+  margin: 4px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:horizontal {
+  background: linear-gradient(90deg, rgba(148, 163, 184, 0.4) 0%, rgba(100, 116, 139, 0.4) 100%);
+  border-radius: 10px;
+  border: 2px solid rgba(15, 23, 42, 0.1);
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:horizontal:hover {
+  background: linear-gradient(90deg, rgba(148, 163, 184, 0.6) 0%, rgba(100, 116, 139, 0.6) 100%);
+}
+
+/* 角落樣式 */
+.scrollbar-custom::-webkit-scrollbar-corner {
+  background: rgba(15, 23, 42, 0.1);
 }
 
 /* 部落格文章樣式優化 */
@@ -361,6 +425,7 @@ html {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -369,4 +434,22 @@ html {
 
 .animate-fade-in-up {
   animation: fade-in-up 0.5s ease-out forwards;
+}
+
+/* Disqus 樣式優化 */
+.disqus-container {
+  margin-top: 2rem;
+}
+
+/* 確保 Disqus 在深色模式下可讀 */
+#disqus_thread {
+  color: #cbd5e1;
+}
+
+#disqus_thread a {
+  color: #60a5fa;
+}
+
+#disqus_thread a:hover {
+  color: #93c5fd;
 }
