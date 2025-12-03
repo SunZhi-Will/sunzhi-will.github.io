@@ -22,7 +22,6 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
     void tags;
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedTag, setSelectedTag] = useState<string | null>(null);
-    const [mounted, setMounted] = useState(false);
     const [lang, setLang] = useState<Lang>('zh-TW');
     const { theme } = useTheme();
 
@@ -30,7 +29,6 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
 
     // 從 localStorage 讀取語言選擇，如果沒有則偵測瀏覽器語言
     useEffect(() => {
-        setMounted(true);
         const savedLang = localStorage.getItem('blog-lang') as Lang | null;
         if (savedLang && (savedLang === 'zh-TW' || savedLang === 'en')) {
             setLang(savedLang);

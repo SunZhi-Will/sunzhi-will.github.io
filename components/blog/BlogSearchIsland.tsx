@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Lang } from '@/types';
 import { blogTranslations } from '@/lib/blog-translations';
+import { useTheme } from '@/app/blog/ThemeProvider';
 
 interface BlogSearchIslandProps {
     lang: Lang;
@@ -69,7 +70,7 @@ export function BlogSearchIsland({
                                         }
                                     }}
                                     autoFocus
-                                    className="w-full pl-9 pr-8 py-1.5 text-sm bg-transparent border-0 
+                                    className={`w-full pl-9 pr-8 py-1.5 text-sm bg-transparent border-0 
                                              focus:outline-none ${
                                                 isDark
                                                     ? 'text-gray-200 placeholder-gray-500'

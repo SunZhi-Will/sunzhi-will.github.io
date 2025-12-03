@@ -155,7 +155,7 @@ export function translateTag(tag: string, lang: 'zh-TW' | 'en'): string {
     }
     
     // 反向查找
-    for (const [key, value] of Object.entries(tagTranslations)) {
+    for (const [, value] of Object.entries(tagTranslations)) {
         if (value['zh-TW'].includes(tag) || value['en'].includes(tag)) {
             if (value[lang].length > 0) {
                 return value[lang][0];
@@ -178,7 +178,7 @@ function isTagInLanguage(tag: string, lang: 'zh-TW' | 'en'): boolean {
     }
     
     // 反向查找：檢查標籤是否在映射表的該語言組中
-    for (const [key, value] of Object.entries(tagTranslations)) {
+    for (const [, value] of Object.entries(tagTranslations)) {
         if (value[lang].includes(tag)) {
             return true;
         }

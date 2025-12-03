@@ -2,6 +2,7 @@ import { getPostBySlug, getPostSlugs, markdownToHtml, getAllPosts } from '@/lib/
 import { notFound } from 'next/navigation';
 import BlogPostClient from './BlogPostClient';
 import type { Lang } from '@/types';
+import type { BlogPost } from '@/types/blog';
 
 // 強制靜態生成
 export const dynamic = 'force-static';

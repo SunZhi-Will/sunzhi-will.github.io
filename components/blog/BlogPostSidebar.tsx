@@ -6,6 +6,7 @@ import { formatDate } from '@/lib/blog-utils';
 import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
 import { blogTranslations, filterTagsByLanguage } from '@/lib/blog-translations';
+import { useTheme } from '@/app/blog/ThemeProvider';
 
 interface BlogPostSidebarProps {
     lang: Lang;
