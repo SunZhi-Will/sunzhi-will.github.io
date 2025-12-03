@@ -2,7 +2,7 @@
 title: "About This Website"
 date: "2025-12-02"
 description: "Welcome to my personal website, where I share my thoughts, learning journey, and life experiences. This is my digital space and a bridge to share thoughts with the world."
-tags: ["About", "Website Introduction", "Personal"]
+tags: ["Sun", "About", "Website Introduction", "Personal"]
 coverImage: "chrome-capture-2025-12-02.png"
 ---
 

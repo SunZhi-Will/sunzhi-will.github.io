@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Lang } from '@/types';
+import { useTheme } from '@/app/blog/ThemeProvider';
 
 interface BlogNavIslandProps {
     lang: Lang;
@@ -16,6 +17,8 @@ export function BlogNavIsland({ lang, selectedTag, setSelectedTag }: BlogNavIsla
     const [isHovered, setIsHovered] = useState(false);
     const pathname = usePathname();
     const router = useRouter();
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
 
     // 判斷是否在文章詳情頁面（路徑格式：/blog/[slug]）
     const isPostPage = pathname?.startsWith('/blog/') && pathname !== '/blog';
@@ -33,17 +36,17 @@ export function BlogNavIsland({ lang, selectedTag, setSelectedTag }: BlogNavIsla
         {
             id: 'sun',
             tag: 'Sun',
-            label: lang === 'zh-TW' ? 'Sun日常' : 'Sun Daily',
+            label: lang === 'zh-TW' ? '日常' : 'Daily',
         },
         {
             id: 'ai',
             tag: 'AI',
-            label: lang === 'zh-TW' ? 'AI科技報' : 'AI Tech Report',
+            label: lang === 'zh-TW' ? 'AI' : 'AI',
         },
         {
             id: 'blockchain',
             tag: '區塊鏈',
-            label: lang === 'zh-TW' ? '區塊鏈報' : 'Blockchain Report',
+            label: lang === 'zh-TW' ? '區塊鏈' : 'Blockchain',
         },
     ];
 
@@ -57,7 +60,11 @@ export function BlogNavIsland({ lang, selectedTag, setSelectedTag }: BlogNavIsla
             onMouseLeave={() => setIsHovered(false)}
         >
             <motion.div
-                className="relative overflow-hidden mt-4 ml-4 rounded-3xl bg-slate-900/95 backdrop-blur-2xl border border-slate-400/40 shadow-2xl"
+                className={`relative overflow-hidden mt-4 ml-4 rounded-3xl backdrop-blur-2xl shadow-2xl transition-colors duration-300 ${
+                    isDark
+                        ? 'bg-gray-900/95 border border-gray-700/60'
+                        : 'bg-white/90 border border-gray-300/60'
+                }`}
                 animate={{
                     borderRadius: shouldExpand ? '1.5rem' : '9999px',
                     width: shouldExpand ? 'auto' : '2.875rem',
@@ -75,8 +82,11 @@ export function BlogNavIsland({ lang, selectedTag, setSelectedTag }: BlogNavIsla
                     <Link
                         href="/blog"
                         className={`flex items-center ${shouldExpand ? 'gap-2' : 'gap-0'}
-                        text-slate-100 hover:text-white
-                        transition-all duration-200 group flex-shrink-0`}
+                        transition-all duration-200 group flex-shrink-0 ${
+                            isDark
+                                ? 'text-gray-200 hover:text-gray-300'
+                                : 'text-gray-900 hover:text-gray-700'
+                        }`}
                     >
                         {/* LOGO 圖標 */}
                         <div className="flex items-center justify-center
@@ -107,7 +117,7 @@ export function BlogNavIsland({ lang, selectedTag, setSelectedTag }: BlogNavIsla
                     {/* 分隔線和導航項目 - 只在展開時顯示 */}
                     {shouldExpand && (
                         <>
-                            <div className="w-px h-6 bg-slate-600/50" />
+                            <div className={`w-px h-6 ${isDark ? 'bg-gray-600/50' : 'bg-gray-400/50'}`} />
 
                             {/* 導航項目 */}
                             <div className="flex items-center gap-2">
@@ -130,14 +140,16 @@ export function BlogNavIsland({ lang, selectedTag, setSelectedTag }: BlogNavIsla
                                                 relative px-3 py-1.5 rounded-xl text-xs font-medium
                                                 transition-all duration-200 whitespace-nowrap
                                                 ${active
-                                                    ? 'text-white bg-slate-700/70 shadow-lg'
-                                                    : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                                                    ? isDark ? 'text-gray-200 font-semibold' : 'text-gray-900 font-semibold'
+                                                    : isDark ? 'text-gray-400 hover:text-gray-300' : 'text-gray-600 hover:text-gray-800'
                                                 }
                                             `}
                                         >
                                             {active && (
                                                 <motion.div
-                                                    className="absolute inset-0 rounded-xl bg-gradient-to-r from-slate-500/50 to-gray-500/50"
+                                                    className={`absolute bottom-0 left-0 right-0 h-0.5 rounded-full ${
+                                                        isDark ? 'bg-gray-400' : 'bg-gray-700'
+                                                    }`}
                                                     layoutId="activeNavItem"
                                                     transition={{ duration: 0.2, ease: "easeOut" }}
                                                 />

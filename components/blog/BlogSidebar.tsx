@@ -5,6 +5,7 @@ import Image from 'next/image';
 import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
 import { blogTranslations } from '@/lib/blog-translations';
+import { useTheme } from '@/app/blog/ThemeProvider';
 
 interface BlogSidebarProps {
     lang: Lang;
@@ -15,17 +16,27 @@ interface BlogSidebarProps {
 
 export function BlogSidebar({ lang, setLang, post }: BlogSidebarProps) {
     const t = blogTranslations[lang];
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
     const isPostPage = !!post;
 
     return (
-        <aside className="w-56 lg:w-64 border-r border-slate-800/50 bg-slate-900/30 backdrop-blur-sm flex flex-col overflow-y-auto h-screen">
+        <aside className={`w-56 lg:w-64 border-r backdrop-blur-sm flex flex-col overflow-y-auto h-screen transition-colors duration-300 ${
+            isDark
+                ? 'border-gray-700/50 bg-gray-800/60'
+                : 'border-gray-300/50 bg-white/60'
+        }`}>
             {/* 個人資訊區域 */}
-            <div className="p-4 border-b border-slate-800/50">
+            <div className="p-4 border-b border-gray-300/50">
                 {/* 返回首頁連結 - 只在列表頁面顯示 */}
                 {!isPostPage && (
                     <Link
                         href="/"
-                        className="inline-flex items-center text-xs text-slate-400 hover:text-slate-100 transition-colors mb-4"
+                        className={`inline-flex items-center text-xs transition-colors mb-4 ${
+                            isDark
+                                ? 'text-gray-400 hover:text-gray-300'
+                                : 'text-gray-600 hover:text-gray-900'
+                        }`}
                     >
                         <svg className="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -43,17 +54,25 @@ export function BlogSidebar({ lang, setLang, post }: BlogSidebarProps) {
                             alt={lang === 'zh-TW' ? '謝上智' : 'Sun Zhi'}
                             width={48}
                             height={48}
-                            className="rounded-full border-2 border-slate-700 shadow-md group-hover:border-slate-600 transition-colors"
+                            className={`rounded-full border-2 shadow-md transition-colors ${
+                                isDark
+                                    ? 'border-gray-600 group-hover:border-gray-500'
+                                    : 'border-gray-400 group-hover:border-gray-500'
+                            }`}
                             priority
                         />
                     </div>
 
                     {/* 姓名和職稱 */}
                     <div className="flex-1 min-w-0">
-                        <h1 className="text-sm font-semibold text-slate-100 mb-0.5 truncate">
+                        <h1 className={`text-sm font-semibold mb-0.5 truncate ${
+                            isDark ? 'text-gray-200' : 'text-gray-900'
+                        }`}>
                             {lang === 'zh-TW' ? '謝上智' : 'Sun Zhi'}
                         </h1>
-                        <p className="text-xs text-slate-400 line-clamp-2">
+                        <p className={`text-xs line-clamp-2 ${
+                            isDark ? 'text-gray-400' : 'text-gray-600'
+                        }`}>
                             {lang === 'zh-TW' ? '軟體工程師 | AI 開發者' : 'Software Engineer | AI Developer'}
                         </p>
                     </div>
@@ -65,7 +84,11 @@ export function BlogSidebar({ lang, setLang, post }: BlogSidebarProps) {
                         href="https://github.com/SunZhi-Will"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-100 transition-all"
+                        className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all ${
+                            isDark
+                                ? 'bg-gray-700/70 hover:bg-gray-600/80 text-gray-300 hover:text-gray-200'
+                                : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900'
+                        }`}
                         aria-label="GitHub"
                     >
                         <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
@@ -76,7 +99,11 @@ export function BlogSidebar({ lang, setLang, post }: BlogSidebarProps) {
                         href="https://www.linkedin.com/in/sunzhi-will"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-100 transition-all"
+                        className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all ${
+                            isDark
+                                ? 'bg-gray-700/70 hover:bg-gray-600/80 text-gray-300 hover:text-gray-200'
+                                : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900'
+                        }`}
                         aria-label="LinkedIn"
                     >
                         <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
@@ -85,7 +112,11 @@ export function BlogSidebar({ lang, setLang, post }: BlogSidebarProps) {
                     </a>
                     <a
                         href="mailto:sun055676@gmail.com"
-                        className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-100 transition-all"
+                        className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all ${
+                            isDark
+                                ? 'bg-gray-700/70 hover:bg-gray-600/80 text-gray-300 hover:text-gray-200'
+                                : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900'
+                        }`}
                         aria-label="Email"
                     >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -96,7 +127,11 @@ export function BlogSidebar({ lang, setLang, post }: BlogSidebarProps) {
                         href="https://www.instagram.com/bing_sunzhi"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-100 transition-all"
+                        className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all ${
+                            isDark
+                                ? 'bg-gray-700/70 hover:bg-gray-600/80 text-gray-300 hover:text-gray-200'
+                                : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900'
+                        }`}
                         aria-label="Instagram"
                     >
                         <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
@@ -110,12 +145,16 @@ export function BlogSidebar({ lang, setLang, post }: BlogSidebarProps) {
             {isPostPage && post && (
                 <>
                     {/* 全部文章按鈕 */}
-                    <div className="p-4 border-b border-slate-800/50">
+                    <div className={`p-4 border-b ${
+                        isDark ? 'border-gray-700/50' : 'border-gray-300/50'
+                    }`}>
                         <Link
                             href="/blog"
-                            className="block px-2.5 py-1.5 text-xs text-left transition-all duration-200 rounded-lg border 
-                                     text-slate-100 font-medium bg-gradient-to-r from-blue-500/20 to-indigo-500/20 border-blue-500/30
-                                     hover:from-blue-500/30 hover:to-indigo-500/30"
+                            className={`block px-2.5 py-1.5 text-xs text-left transition-all duration-200 rounded-lg border font-medium ${
+                                isDark
+                                    ? 'text-gray-200 bg-gradient-to-r from-gray-700/50 to-gray-600/50 border-gray-600/60 hover:from-gray-600/60 hover:to-gray-500/60'
+                                    : 'text-gray-900 bg-gradient-to-r from-gray-300/50 to-gray-400/50 border-gray-400/60 hover:from-gray-400/60 hover:to-gray-500/60'
+                            }`}
                         >
                             {t.allPosts}
                         </Link>
@@ -124,12 +163,18 @@ export function BlogSidebar({ lang, setLang, post }: BlogSidebarProps) {
             )}
 
             {/* 頁尾 */}
-            <div className="mt-auto p-4 border-t border-slate-800/50">
+            <div className={`mt-auto p-4 border-t ${
+                isDark ? 'border-gray-700/50' : 'border-gray-300/50'
+            }`}>
                 {/* 返回個人頁按鈕 - 只在文章詳情頁面顯示 */}
                 {isPostPage && (
                     <Link
                         href="/"
-                        className="block w-full px-2.5 py-1.5 text-xs text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-colors rounded-lg text-left mb-3"
+                        className={`block w-full px-2.5 py-1.5 text-xs transition-colors rounded-lg text-left mb-3 ${
+                            isDark
+                                ? 'text-gray-300 hover:text-gray-200 hover:bg-gray-700/70'
+                                : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200/70'
+                        }`}
                     >
                         {t.home}
                     </Link>
@@ -139,13 +184,15 @@ export function BlogSidebar({ lang, setLang, post }: BlogSidebarProps) {
                 {isPostPage && setLang && (
                     <button
                         onClick={() => setLang(lang === 'zh-TW' ? 'en' : 'zh-TW')}
-                        className="w-full px-2.5 py-1.5 text-xs text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-colors rounded-lg text-left mb-3"
+                        className="w-full px-2.5 py-1.5 text-xs text-gray-700 hover:text-gray-900 hover:bg-gray-200/70 transition-colors rounded-lg text-left mb-3"
                     >
                         {t.langSwitch}
                     </button>
                 )}
 
-                <div className="text-xs text-slate-500 text-center">
+                <div className={`text-xs text-center ${
+                    isDark ? 'text-gray-500' : 'text-gray-600'
+                }`}>
                     © {new Date().getFullYear()} Sun
                 </div>
             </div>

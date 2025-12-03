@@ -20,6 +20,8 @@ export function BlogSearchIsland({
     setSearchQuery,
 }: BlogSearchIslandProps) {
     const [isFocused, setIsFocused] = useState(false);
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
     const t = blogTranslations[lang];
 
     const isExpanded = isFocused || searchQuery.length > 0;
@@ -32,7 +34,11 @@ export function BlogSearchIsland({
             transition={{ duration: 0.5, delay: 0.2 }}
         >
             <motion.div
-                className="relative overflow-hidden mt-4 mr-4 md:mr-6 rounded-3xl bg-slate-900/95 backdrop-blur-2xl border border-slate-400/40 shadow-2xl"
+                className={`relative overflow-hidden mt-4 mr-4 md:mr-6 rounded-3xl backdrop-blur-2xl shadow-2xl transition-colors duration-300 ${
+                    isDark
+                        ? 'bg-gray-800/95 border border-gray-700/60'
+                        : 'bg-white/90 border border-gray-300/60'
+                }`}
                 animate={{
                     minWidth: isExpanded ? '320px' : '180px',
                 }}
@@ -41,7 +47,9 @@ export function BlogSearchIsland({
                 <div className="flex items-center gap-2 px-4 py-2.5">
                     {/* 搜尋框 */}
                     <div className="relative flex-1 min-w-0">
-                        <MagnifyingGlassIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10" />
+                        <MagnifyingGlassIcon className={`absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 z-10 ${
+                            isDark ? 'text-gray-400' : 'text-gray-500'
+                        }`} />
                         <AnimatePresence mode="wait">
                             {isExpanded ? (
                                 <motion.input
@@ -62,7 +70,11 @@ export function BlogSearchIsland({
                                     }}
                                     autoFocus
                                     className="w-full pl-9 pr-8 py-1.5 text-sm bg-transparent border-0 
-                                             focus:outline-none text-slate-100 placeholder-slate-500"
+                                             focus:outline-none ${
+                                                isDark
+                                                    ? 'text-gray-200 placeholder-gray-500'
+                                                    : 'text-gray-900 placeholder-gray-400'
+                                            }`}
                                 />
                             ) : (
                                 <motion.button
@@ -71,7 +83,11 @@ export function BlogSearchIsland({
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
                                     onClick={() => setIsFocused(true)}
-                                    className="w-full pl-9 pr-4 py-1.5 text-sm text-slate-400 text-left hover:text-slate-300 transition-colors"
+                                    className={`w-full pl-9 pr-4 py-1.5 text-sm text-left transition-colors ${
+                                        isDark
+                                            ? 'text-gray-400 hover:text-gray-300'
+                                            : 'text-gray-500 hover:text-gray-700'
+                                    }`}
                                 >
                                     {t.searchPlaceholder}
                                 </motion.button>
@@ -85,7 +101,11 @@ export function BlogSearchIsland({
                                     setSearchQuery('');
                                     setIsFocused(false);
                                 }}
-                                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-100 transition-colors z-10"
+                                className={`absolute right-2 top-1/2 -translate-y-1/2 transition-colors z-10 ${
+                                    isDark
+                                        ? 'text-gray-400 hover:text-gray-300'
+                                        : 'text-gray-500 hover:text-gray-900'
+                                }`}
                             >
                                 <XMarkIcon className="w-4 h-4" />
                             </motion.button>
@@ -94,7 +114,7 @@ export function BlogSearchIsland({
 
                     {/* 分隔線 */}
                     <motion.div
-                        className="w-px h-6 bg-slate-600/50"
+                        className={`w-px h-6 ${isDark ? 'bg-gray-600/50' : 'bg-gray-400/50'}`}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.1 }}
@@ -107,7 +127,10 @@ export function BlogSearchIsland({
                         transition={{ delay: 0.15 }}
                         onClick={() => setLang(lang === 'zh-TW' ? 'en' : 'zh-TW')}
                         className="px-3 py-1.5 rounded-xl text-sm font-medium
-                        text-slate-300 hover:text-white hover:bg-slate-800/50
+                        ${isDark
+                            ? 'text-gray-300 hover:text-gray-200 hover:bg-gray-700/70'
+                            : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200/70'
+                        }
                         transition-all duration-200 whitespace-nowrap flex-shrink-0"
                         whileHover={{ scale: 1.05, y: -1 }}
                         whileTap={{ scale: 0.95 }}

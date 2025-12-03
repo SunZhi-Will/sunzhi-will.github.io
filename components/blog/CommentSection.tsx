@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import Script from 'next/script';
 import { Lang } from '@/types';
+import { useTheme } from '@/app/blog/ThemeProvider';
 
 interface CommentSectionProps {
     postSlug: string;
@@ -32,6 +33,8 @@ interface DisqusConfig {
 }
 
 export function CommentSection({ postSlug, postTitle, lang }: CommentSectionProps) {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
     const disqusRef = useRef<HTMLDivElement>(null);
 
     // Disqus shortname - 從環境變數取得
@@ -79,17 +82,27 @@ export function CommentSection({ postSlug, postTitle, lang }: CommentSectionProp
     if (!disqusShortname) {
         return (
             <section>
-                <h2 className="text-lg font-normal text-slate-100 mb-6">
+                <h2 className={`text-lg font-normal mb-6 ${
+                    isDark ? 'text-gray-200' : 'text-gray-900'
+                }`}>
                     {lang === 'zh-TW' ? '留言' : 'Comments'}
                 </h2>
-                <div className="p-4 bg-slate-900/20 border border-slate-800/20 rounded-lg">
-                    <p className="text-sm text-slate-500 mb-2">
+                <div className={`p-4 rounded-lg border ${
+                    isDark
+                        ? 'bg-gray-800/60 border-gray-700/50'
+                        : 'bg-white/60 border-gray-300/50'
+                }`}>
+                    <p className={`text-sm mb-2 ${
+                        isDark ? 'text-gray-400' : 'text-gray-600'
+                    }`}>
                         {lang === 'zh-TW'
                             ? '💡 提示：請設置環境變數 NEXT_PUBLIC_DISQUS_SHORTNAME 來啟用 Disqus 留言系統。'
                             : '💡 Tip: Please set the NEXT_PUBLIC_DISQUS_SHORTNAME environment variable to enable Disqus comments.'
                         }
                     </p>
-                    <p className="text-xs text-slate-600">
+                    <p className={`text-xs ${
+                        isDark ? 'text-gray-500' : 'text-gray-700'
+                    }`}>
                         {lang === 'zh-TW'
                             ? '前往 Disqus 註冊並取得您的 shortname：https://disqus.com/admin/create/'
                             : 'Register at Disqus and get your shortname: https://disqus.com/admin/create/'
@@ -102,7 +115,9 @@ export function CommentSection({ postSlug, postTitle, lang }: CommentSectionProp
 
     return (
         <section>
-            <h2 className="text-lg font-normal text-slate-100 mb-6">
+            <h2 className={`text-lg font-normal mb-6 ${
+                isDark ? 'text-gray-200' : 'text-gray-900'
+            }`}>
                 {lang === 'zh-TW' ? '留言' : 'Comments'}
             </h2>
 

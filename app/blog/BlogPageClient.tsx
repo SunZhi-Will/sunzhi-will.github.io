@@ -5,11 +5,13 @@ import { motion } from 'framer-motion';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
-import { blogTranslations } from '@/lib/blog-translations';
+import { blogTranslations, getTagVariants } from '@/lib/blog-translations';
 import { ProfileCard } from '@/components/blog/ProfileCard';
 import { BlogCard } from '@/components/blog/BlogCard';
 import { BlogDynamicIsland } from '@/components/blog/BlogDynamicIsland';
 import { BlogNavIsland } from '@/components/blog/BlogNavIsland';
+import { BlogMobileNav } from '@/components/blog/BlogMobileNav';
+import { useTheme } from './ThemeProvider';
 
 interface BlogPageClientProps {
     posts: BlogPost[];
@@ -20,12 +22,15 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
     void tags;
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedTag, setSelectedTag] = useState<string | null>(null);
+    const [mounted, setMounted] = useState(false);
     const [lang, setLang] = useState<Lang>('zh-TW');
+    const { theme } = useTheme();
 
     const t = blogTranslations[lang];
 
     // 從 localStorage 讀取語言選擇，如果沒有則偵測瀏覽器語言
     useEffect(() => {
+        setMounted(true);
         const savedLang = localStorage.getItem('blog-lang') as Lang | null;
         if (savedLang && (savedLang === 'zh-TW' || savedLang === 'en')) {
             setLang(savedLang);
@@ -47,13 +52,8 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
     const getMatchingTags = (tag: string | null): string[] => {
         if (!tag) return [];
 
-        const tagMap: Record<string, string[]> = {
-            'Sun': ['Sun', 'sun', '日常', 'Daily'],
-            'AI': ['AI', 'ai', '人工智能', 'Artificial Intelligence'],
-            '區塊鏈': ['區塊鏈', 'Blockchain', 'blockchain', '區塊鏈技術'],
-        };
-
-        return tagMap[tag] || [tag];
+        // 使用統一的標籤變體查找
+        return getTagVariants(tag);
     };
 
     // 根據語言、搜尋和標籤過濾文章
@@ -102,30 +102,57 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
         return filtered;
     }, [posts, lang, searchQuery, selectedTag]);
 
-    return (
-        <div className="h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 overflow-hidden">
-            {/* 左側導航動態島 */}
-            <BlogNavIsland
-                lang={lang}
-                selectedTag={selectedTag}
-                setSelectedTag={setSelectedTag}
-            />
+    const isDark = theme === 'dark';
 
-            {/* 右側動態島 - 搜尋和語言切換 */}
-            <BlogDynamicIsland
+    return (
+        <div
+            className="h-screen overflow-hidden relative transition-colors duration-300"
+            style={{
+                backgroundColor: isDark ? '#111827' : '#f9fafb',
+                backgroundImage: isDark
+                    ? `radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(to bottom right, #111827, #1f2937, #111827)`
+                    : `radial-gradient(circle, rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(to bottom right, #f9fafb, #f3f4f6, #f9fafb)`,
+                backgroundSize: '20px 20px, 100% 100%',
+                backgroundPosition: '0 0, 0 0',
+                color: isDark ? '#e5e7eb' : '#111827',
+            } as React.CSSProperties}
+        >
+            {/* 手機版單一導覽列 */}
+            <BlogMobileNav
                 lang={lang}
                 setLang={handleLangChange}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
+                selectedTag={selectedTag}
+                setSelectedTag={setSelectedTag}
             />
+
+            {/* 電腦版左側導航動態島 */}
+            <div className="hidden md:block">
+                <BlogNavIsland
+                    lang={lang}
+                    selectedTag={selectedTag}
+                    setSelectedTag={setSelectedTag}
+                />
+            </div>
+
+            {/* 電腦版右側動態島 - 搜尋和語言切換 */}
+            <div className="hidden md:block">
+                <BlogDynamicIsland
+                    lang={lang}
+                    setLang={handleLangChange}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                />
+            </div>
 
             <div className="flex h-full">
                 {/* 左側個人資料卡片 */}
                 <ProfileCard lang={lang} />
 
-                {/* 右側主要內容區域 */}
+                {/* 主要內容區域 */}
                 <main className="flex-1 overflow-y-auto h-full relative scrollbar-custom">
-                    <div className="max-w-5xl mx-auto px-6 py-6 lg:py-8" style={{ paddingTop: '5.5rem' }}>
+                    <div className="max-w-5xl mx-auto px-4 pb-4 md:px-6 md:pb-6 lg:pb-8 pt-[5.5rem] md:pt-24">
                         {/* 文章列表 */}
                         {filteredPosts.length > 0 ? (
                             <div className="space-y-4">
@@ -139,11 +166,14 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
                                 animate={{ opacity: 1 }}
                                 className="py-24 text-center"
                             >
-                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-800/50 mb-4">
-                                    <MagnifyingGlassIcon className="w-8 h-8 text-slate-400" />
+                                <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full backdrop-blur-sm border mb-4 ${isDark
+                                    ? 'bg-gray-800/80 border-gray-700/50'
+                                    : 'bg-gray-200/80 border-gray-300/50'
+                                    }`}>
+                                    <MagnifyingGlassIcon className={`w-8 h-8 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
                                 </div>
-                                <p className="text-slate-300 text-lg font-medium mb-2">{t.noResults}</p>
-                                <p className="text-sm text-slate-500">{t.noResultsDesc}</p>
+                                <p className={`text-lg font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{t.noResults}</p>
+                                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t.noResultsDesc}</p>
                             </motion.div>
                         ) : (
                             <motion.div
@@ -151,13 +181,16 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
                                 animate={{ opacity: 1 }}
                                 className="py-24 text-center"
                             >
-                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-800/50 mb-4">
-                                    <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full backdrop-blur-sm border mb-4 ${isDark
+                                    ? 'bg-gray-800/80 border-gray-700/50'
+                                    : 'bg-gray-200/80 border-gray-300/50'
+                                    }`}>
+                                    <svg className={`w-8 h-8 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
                                 </div>
-                                <p className="text-slate-300 text-lg font-medium mb-2">{t.noPosts}</p>
-                                <p className="text-sm text-slate-500">{t.noPostsDesc}</p>
+                                <p className={`text-lg font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{t.noPosts}</p>
+                                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t.noPostsDesc}</p>
                             </motion.div>
                         )}
                     </div>
