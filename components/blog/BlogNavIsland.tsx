@@ -16,10 +16,10 @@ export function BlogNavIsland({ lang, selectedTag, setSelectedTag }: BlogNavIsla
     const [isHovered, setIsHovered] = useState(false);
     const pathname = usePathname();
     const router = useRouter();
-    
+
     // 判斷是否在文章詳情頁面（路徑格式：/blog/[slug]）
     const isPostPage = pathname?.startsWith('/blog/') && pathname !== '/blog';
-    
+
     // 在文章詳情頁面時，導覽列保持收縮狀態，但懸停時展開
     // 在列表頁面時，始終展開
     const shouldExpand = !isPostPage && !!setSelectedTag ? true : (isPostPage && isHovered);

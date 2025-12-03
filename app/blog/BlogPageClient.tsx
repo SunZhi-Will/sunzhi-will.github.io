@@ -24,22 +24,35 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
 
     const t = blogTranslations[lang];
 
-    // 偵測瀏覽器語言
+    // 從 localStorage 讀取語言選擇，如果沒有則偵測瀏覽器語言
     useEffect(() => {
-        const browserLang = navigator.language;
-        setLang(browserLang.includes('zh') ? 'zh-TW' : 'en');
+        const savedLang = localStorage.getItem('blog-lang') as Lang | null;
+        if (savedLang && (savedLang === 'zh-TW' || savedLang === 'en')) {
+            setLang(savedLang);
+        } else {
+            const browserLang = navigator.language;
+            const detectedLang = browserLang.includes('zh') ? 'zh-TW' : 'en';
+            setLang(detectedLang);
+            localStorage.setItem('blog-lang', detectedLang);
+        }
     }, []);
+
+    // 當語言改變時，保存到 localStorage
+    const handleLangChange = (newLang: Lang) => {
+        setLang(newLang);
+        localStorage.setItem('blog-lang', newLang);
+    };
 
     // 標籤匹配規則
     const getMatchingTags = (tag: string | null): string[] => {
         if (!tag) return [];
-        
+
         const tagMap: Record<string, string[]> = {
             'Sun': ['Sun', 'sun', '日常', 'Daily'],
             'AI': ['AI', 'ai', '人工智能', 'Artificial Intelligence'],
             '區塊鏈': ['區塊鏈', 'Blockchain', 'blockchain', '區塊鏈技術'],
         };
-        
+
         return tagMap[tag] || [tag];
     };
 
@@ -47,10 +60,10 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
     const filteredPosts = useMemo(() => {
         // 先根據語言過濾：對於每個 slug，優先顯示當前語言版本
         const postsBySlug = new Map<string, BlogPost>();
-        
+
         posts.forEach((post) => {
             const existing = postsBySlug.get(post.slug);
-            
+
             // 如果這個 slug 還沒有文章，或者當前文章是目標語言，則使用當前文章
             if (!existing || post.lang === lang) {
                 postsBySlug.set(post.slug, post);
@@ -60,9 +73,9 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
                 postsBySlug.set(post.slug, post);
             }
         });
-        
+
         let filtered = Array.from(postsBySlug.values());
-        
+
         // 過濾：只保留當前語言版本或沒有語言信息的文章（向後兼容）
         filtered = filtered.filter((post) => {
             return post.lang === undefined || post.lang === lang;
@@ -92,16 +105,16 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
     return (
         <div className="h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 overflow-hidden">
             {/* 左側導航動態島 */}
-            <BlogNavIsland 
-                lang={lang} 
+            <BlogNavIsland
+                lang={lang}
                 selectedTag={selectedTag}
                 setSelectedTag={setSelectedTag}
             />
-            
+
             {/* 右側動態島 - 搜尋和語言切換 */}
             <BlogDynamicIsland
                 lang={lang}
-                setLang={setLang}
+                setLang={handleLangChange}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
             />
