@@ -47,11 +47,27 @@ GitHub Actions 會每天 UTC 時間 00:00（台灣時間 08:00）自動執行，
 ai-daily-report-YYYY-MM-DD.md
 ```
 
+## 技術說明
+
+- **SDK**: 使用最新的官方 SDK `@google/genai`（已取代已棄用的 `@google/generative-ai`）
+- **模型選擇**: 腳本會自動嘗試多個模型，按優先順序：
+  - `gemini-2.0-flash-exp` (最新實驗版)
+  - `gemini-1.5-flash-latest` (穩定最新版)
+  - `gemini-1.5-pro-latest` (Pro 最新版)
+  - `gemini-pro` (穩定版)
+- **錯誤處理**: 如果某個模型不可用，會自動嘗試下一個模型
+- **注意**: `@google/generative-ai` 已於 2025 年 11 月 30 日停止支援，請使用新的 `@google/genai` SDK
+
 ## 注意事項
 
 - 腳本會檢查當天是否已經生成過日報，避免重複生成
 - 如果 API 調用失敗，workflow 會顯示錯誤訊息
 - 生成的日報會自動提交到 repository
+- 腳本使用 Node.js 內建的 `fetch` API（Node.js 18+），無需額外依賴
+
+
+
+
 
 
 
