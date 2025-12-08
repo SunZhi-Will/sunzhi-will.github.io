@@ -11,7 +11,7 @@
     "deploy": "next build && next export && gh-pages -d out"
   },
   "dependencies": {
-    "@google/genai": "^1.0.0",
+    "@google/genai": "1.31.0",
     "@heroicons/react": "^2.2.0",
     "@nextui-org/react": "^2.6.11",
     "@tailwindcss/typography": "^0.5.19",
