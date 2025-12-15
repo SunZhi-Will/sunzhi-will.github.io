@@ -27,8 +27,28 @@ const postFolder = path.join(blogDir, slug);
 const articlePathZh = path.join(postFolder, 'article.zh-TW.md');
 const articlePathEn = path.join(postFolder, 'article.en.md');
 
+// 檢查今天是否已經有生成過（依資料夾日期或檔名含今日日期）
+function isTodayGenerated() {
+    const todayKey = dateStr.replace(/-/g, ''); // YYYYMMDD
+    try {
+        const entries = fs.readdirSync(blogDir, { withFileTypes: true });
+        return entries.some((entry) => {
+            if (entry.isDirectory()) {
+                return entry.name.startsWith(todayKey); // 新結構：YYYYMMDD-HHMMSS
+            }
+            if (entry.isFile()) {
+                // 舊結構：ai-daily-report-YYYY-MM-DD.md 或其他含今日日期的檔名
+                return entry.name.includes(dateStr) && entry.name.endsWith('.md');
+            }
+            return false;
+        });
+    } catch {
+        return false;
+    }
+}
+
 // 檢查今天是否已經生成過日報（檢查資料夾是否存在）
-if (fs.existsSync(postFolder)) {
+if (isTodayGenerated()) {
     console.log(`Daily report for ${dateStr} already exists. Skipping...`);
     process.exit(0);
 }
