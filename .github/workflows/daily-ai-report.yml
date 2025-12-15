@@ -17,6 +17,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: main  # 確保在 main 分支上操作，便於後續觸發 deploy CI/CD
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -41,7 +42,7 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "chore: auto-generate daily AI report [skip ci]"
-            git push origin HEAD:$(git branch --show-current)
+            git push origin HEAD:main
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
