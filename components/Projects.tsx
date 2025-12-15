@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from "framer-motion";
-import { Card } from "@nextui-org/react";
+import { Card } from "@heroui/react";
 import Image from "next/image";
 import Masonry from 'react-masonry-css';
 import { ProjectMedia } from '@/components/ProjectMedia';

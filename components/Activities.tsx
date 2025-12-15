@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from "framer-motion";
-import { Card } from "@nextui-org/react";
+import { Card } from "@heroui/react";
 import { ProjectMedia } from '@/components/ProjectMedia';
 import { Lang } from '@/types';
 import { translations } from '@/data/translations';
