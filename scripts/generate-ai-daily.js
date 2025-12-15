@@ -151,7 +151,8 @@ const articlePromptZh = `你是一位專業的 AI 領域新聞編輯，請生成
 
 4. **格式要求**：
    - 使用 Markdown 格式
-   - 標題使用 ## 和 ###
+   - 不要產生任何主標題或文章標題行；直接從內容章節開始
+   - 標題層級使用 ##, ###
    - 重要資訊可以使用 **粗體** 強調
    - 每則新聞前使用 - 或 * 作為列表項
    - 不需要包含 frontmatter（我會另外加上）
@@ -201,7 +202,8 @@ const articlePromptEn = `You are a professional AI news editor. Please write tod
 **Reminder**:
 - Every item must be from today (${dateStr}); skip if unsure.
 - Prefer fewer items over outdated info.
-- Output Markdown only.`;
+- Output Markdown only.
+- Do NOT include any article title or headline; start directly with sections.`;
 
 // 生成封面圖片描述的 Prompt
 const imagePrompt = `請為 ${dateFormatted} AI 每日日報生成「RPG 遊戲風格的資訊圖表」封面描述，使用繁體中文：
@@ -238,6 +240,16 @@ async function callGeminiAPI(modelName, prompt) {
         // 重新拋出錯誤以便上層處理
         throw error;
     }
+}
+
+/**
+ * 簡單清理模型輸出：移除開頭的標題/空白
+ */
+function cleanContent(raw) {
+    let c = (raw || '').trim();
+    // 移除最前面的標題行（# / ## 開頭）
+    c = c.replace(/^(#{1,3}\s.+\n)+/g, '').trimStart();
+    return c;
 }
 
 /**
@@ -334,8 +346,8 @@ async function generateDailyReport() {
     for (const modelName of modelNames) {
         try {
             console.log(`Trying model: ${modelName}...`);
-            const contentZh = await callGeminiAPI(modelName, articlePromptZh);
-            const contentEn = await callGeminiAPI(modelName, articlePromptEn);
+            const contentZh = cleanContent(await callGeminiAPI(modelName, articlePromptZh));
+            const contentEn = cleanContent(await callGeminiAPI(modelName, articlePromptEn));
 
             // 成功生成文章！先處理圖片，再寫雙語檔案
             const coverImage = await generateCoverImage(contentZh);
