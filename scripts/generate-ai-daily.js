@@ -66,7 +66,7 @@ async function getGenAIClient() {
                 );
             }
 
-            const client = new ClientClass({ apiKey });
+            const client = new ClientClass({ apiKey, apiVersion: 'v1' });
             // 新版 SDK 以 ai.models.* 提供存取
             if (!client.models || typeof client.models.generateContent !== 'function') {
                 const keys = Object.keys(client || {});
@@ -86,7 +86,10 @@ const modelNames = [
     'gemini-2.5-flash',          // Gemini 2.5 Flash - 快速版本
     'gemini-2.5-pro-latest',     // Gemini 2.5 Pro Latest（備用命名）
     'gemini-2.5-flash-latest',   // Gemini 2.5 Flash Latest（備用命名）
+    'gemini-2.0-pro-exp',        // 2.0 Pro Experimental
     'gemini-2.0-flash-exp',      // Gemini 2.0 Flash Experimental（後備）
+    'gemini-1.5-pro',            // 1.5 Pro baseline
+    'gemini-1.5-flash',          // 1.5 Flash baseline
     'gemini-1.5-flash-latest',   // Gemini 1.5 Flash Latest（後備）
     'gemini-1.5-pro-latest',     // Gemini 1.5 Pro Latest（後備）
     'gemini-pro',                // Gemini Pro 穩定版（最後後備）
