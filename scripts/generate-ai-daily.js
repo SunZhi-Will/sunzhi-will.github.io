@@ -50,12 +50,17 @@ async function getGenAIClient() {
         genAIClientPromise = import('@google/genai').then((mod) => {
             const GoogleAIClass =
                 mod.GoogleAI ||
-                mod.default?.GoogleAI ||
                 mod.GoogleGenerativeAI ||
-                mod.default?.GoogleGenerativeAI;
+                mod.default?.GoogleAI ||
+                mod.default?.GoogleGenerativeAI ||
+                // 某些版本可能直接將建構子作為 default export
+                (typeof mod.default === 'function' ? mod.default : null);
 
             if (!GoogleAIClass) {
-                throw new Error('Cannot find GoogleAI/GoogleGenerativeAI in @google/genai');
+                const availableKeys = Object.keys(mod || {}).concat(Object.keys(mod?.default || {}));
+                throw new Error(
+                    `Cannot find GoogleAI/GoogleGenerativeAI in @google/genai. Export keys: ${availableKeys.join(', ')}`
+                );
             }
 
             return new GoogleAIClass({ apiKey });
