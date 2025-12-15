@@ -66,8 +66,10 @@ async function getGenAIClient() {
             }
 
             const client = new ClientClass({ apiKey });
-            if (typeof client.getGenerativeModel !== 'function') {
-                throw new Error('Loaded client does not have getGenerativeModel');
+            // 新版 SDK 以 ai.models.* 提供存取
+            if (!client.models || typeof client.models.generateContent !== 'function') {
+                const keys = Object.keys(client || {});
+                throw new Error(`Loaded client does not expose models.generateContent. Client keys: ${keys.join(', ')}`);
             }
             return client;
         });
@@ -158,11 +160,20 @@ const imagePrompt = `請為一份關於 ${dateFormatted} AI 領域每日日報�
  */
 async function callGeminiAPI(modelName, prompt) {
     try {
-        const modelsClient = await getGenAIClient();
-        const model = modelsClient.getGenerativeModel({ model: modelName });
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        return response.text();
+        const ai = await getGenAIClient();
+        const result = await ai.models.generateContent({
+            model: modelName,
+            contents: prompt,
+        });
+
+        const text =
+            result.text ||
+            result.response?.candidates?.[0]?.content?.parts
+                ?.map((p) => p.text || '')
+                .join('')
+                .trim() ||
+            '';
+        return text;
     } catch (error) {
         // 重新拋出錯誤以便上層處理
         throw error;
