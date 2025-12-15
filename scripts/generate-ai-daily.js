@@ -48,25 +48,20 @@ if (!apiKey) {
 async function getGenAIClient() {
     if (!genAIClientPromise) {
         genAIClientPromise = import('@google/genai').then((mod) => {
-            // 新版 @google/genai 匯出名稱為 GoogleGenAI
-            const GoogleAIClass =
-                mod.GoogleGenAI ||
-                mod.GoogleAI ||
-                mod.GoogleGenerativeAI ||
-                mod.default?.GoogleGenAI ||
-                mod.default?.GoogleAI ||
-                mod.default?.GoogleGenerativeAI ||
-                // 某些版本可能直接將建構子作為 default export
-                (typeof mod.default === 'function' ? mod.default : null);
+            // 新版 SDK 匯出 Models 類別，透過它取得 generative model
+            const ModelsClass =
+                mod.Models ||
+                mod.default?.Models ||
+                (typeof mod.default === 'function' && mod.default);
 
-            if (!GoogleAIClass) {
+            if (!ModelsClass) {
                 const availableKeys = Object.keys(mod || {}).concat(Object.keys(mod?.default || {}));
                 throw new Error(
-                    `Cannot find GoogleAI/GoogleGenerativeAI in @google/genai. Export keys: ${availableKeys.join(', ')}`
+                    `Cannot find Models in @google/genai. Export keys: ${availableKeys.join(', ')}`
                 );
             }
 
-            return new GoogleAIClass({ apiKey });
+            return new ModelsClass({ apiKey });
         });
     }
 
@@ -155,8 +150,8 @@ const imagePrompt = `請為一份關於 ${dateFormatted} AI 領域每日日報�
  */
 async function callGeminiAPI(modelName, prompt) {
     try {
-        const genAI = await getGenAIClient();
-        const model = genAI.getGenerativeModel({ model: modelName });
+        const modelsClient = await getGenAIClient();
+        const model = modelsClient.getGenerativeModel({ model: modelName });
         const result = await model.generateContent(prompt);
         const response = await result.response;
         return response.text();
