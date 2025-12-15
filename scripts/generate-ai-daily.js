@@ -48,20 +48,28 @@ if (!apiKey) {
 async function getGenAIClient() {
     if (!genAIClientPromise) {
         genAIClientPromise = import('@google/genai').then((mod) => {
-            // 新版 SDK 匯出 Models 類別，透過它取得 generative model
-            const ModelsClass =
-                mod.Models ||
-                mod.default?.Models ||
-                (typeof mod.default === 'function' && mod.default);
+            // 優先使用 GoogleGenAI（新 SDK 主要入口）
+            const ClientClass =
+                mod.GoogleGenAI ||
+                mod.GoogleAI ||
+                mod.GoogleGenerativeAI ||
+                mod.default?.GoogleGenAI ||
+                mod.default?.GoogleAI ||
+                mod.default?.GoogleGenerativeAI ||
+                (typeof mod.default === 'function' ? mod.default : null);
 
-            if (!ModelsClass) {
+            if (!ClientClass) {
                 const availableKeys = Object.keys(mod || {}).concat(Object.keys(mod?.default || {}));
                 throw new Error(
-                    `Cannot find Models in @google/genai. Export keys: ${availableKeys.join(', ')}`
+                    `Cannot find GoogleGenAI/GoogleAI/GoogleGenerativeAI in @google/genai. Export keys: ${availableKeys.join(', ')}`
                 );
             }
 
-            return new ModelsClass({ apiKey });
+            const client = new ClientClass({ apiKey });
+            if (typeof client.getGenerativeModel !== 'function') {
+                throw new Error('Loaded client does not have getGenerativeModel');
+            }
+            return client;
         });
     }
 
