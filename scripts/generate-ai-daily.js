@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const { GoogleAI } = require('@google/genai');
+// @google/genai 為 ESM 套件，使用動態 import 取得類別
+let genAIClientPromise = null;
 
 // 確保目錄存在
 const blogDir = path.join(process.cwd(), 'content/blog');
@@ -43,8 +44,26 @@ if (!apiKey) {
     process.exit(1);
 }
 
-// 初始化新的 Google Gen AI SDK（@google/genai 使用 GoogleAI 入口）
-const genAI = new GoogleAI({ apiKey });
+// 動態建立 Gen AI Client（處理 ESM 匯入）
+async function getGenAIClient() {
+    if (!genAIClientPromise) {
+        genAIClientPromise = import('@google/genai').then((mod) => {
+            const GoogleAIClass =
+                mod.GoogleAI ||
+                mod.default?.GoogleAI ||
+                mod.GoogleGenerativeAI ||
+                mod.default?.GoogleGenerativeAI;
+
+            if (!GoogleAIClass) {
+                throw new Error('Cannot find GoogleAI/GoogleGenerativeAI in @google/genai');
+            }
+
+            return new GoogleAIClass({ apiKey });
+        });
+    }
+
+    return genAIClientPromise;
+}
 
 // 模型列表按優先順序排列（優先使用 Gemini 2.5）
 // Gemini 2.5 是 Google 發布的 AI 模型，具備強大的推理能力和多模態理解
@@ -128,6 +147,7 @@ const imagePrompt = `請為一份關於 ${dateFormatted} AI 領域每日日報�
  */
 async function callGeminiAPI(modelName, prompt) {
     try {
+        const genAI = await getGenAIClient();
         const model = genAI.getGenerativeModel({ model: modelName });
         const result = await model.generateContent(prompt);
         const response = await result.response;
