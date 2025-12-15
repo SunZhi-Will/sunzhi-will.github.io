@@ -8,22 +8,32 @@ if (!fs.existsSync(blogDir)) {
     fs.mkdirSync(blogDir, { recursive: true });
 }
 
-// 取得今天的日期
+// 取得今天的日期和時間戳
 const today = new Date();
 const dateStr = today.toISOString().split('T')[0]; // YYYY-MM-DD
+const timeStr = today.toISOString().split('T')[1].split('.')[0].replace(/:/g, ''); // HHMMSS
+const timestamp = `${dateStr.replace(/-/g, '')}-${timeStr}`; // YYYYMMDD-HHMMSS
 const dateFormatted = new Intl.DateTimeFormat('zh-TW', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
     weekday: 'long'
 }).format(today);
-const slug = `ai-daily-report-${dateStr}`;
-const filePath = path.join(blogDir, `${slug}.md`);
 
-// 檢查今天是否已經生成過日報
-if (fs.existsSync(filePath)) {
+// 使用時間戳作為資料夾名稱（符合資料結構：content/blog/[日期時間]/）
+const slug = timestamp;
+const postFolder = path.join(blogDir, slug);
+const articlePath = path.join(postFolder, 'article.zh-TW.md');
+
+// 檢查今天是否已經生成過日報（檢查資料夾是否存在）
+if (fs.existsSync(postFolder)) {
     console.log(`Daily report for ${dateStr} already exists. Skipping...`);
     process.exit(0);
+}
+
+// 建立文章資料夾
+if (!fs.existsSync(postFolder)) {
+    fs.mkdirSync(postFolder, { recursive: true });
 }
 
 // 初始化 Google Gemini API
@@ -36,16 +46,21 @@ if (!apiKey) {
 // 初始化新的 Google Gen AI SDK
 const genAI = new GoogleGenerativeAI(apiKey);
 
-// 模型列表按優先順序排列（使用最新的模型名稱）
+// 模型列表按優先順序排列（優先使用 Gemini 2.5）
+// Gemini 2.5 是 Google 發布的 AI 模型，具備強大的推理能力和多模態理解
 const modelNames = [
-    'gemini-2.0-flash-exp',      // Gemini 2.0 Flash Experimental
-    'gemini-1.5-flash-latest',   // Gemini 1.5 Flash Latest
-    'gemini-1.5-pro-latest',     // Gemini 1.5 Pro Latest
-    'gemini-pro',                // Gemini Pro (穩定版)
+    'gemini-2.5-pro',            // Gemini 2.5 Pro - 專業版本（優先使用）
+    'gemini-2.5-flash',          // Gemini 2.5 Flash - 快速版本
+    'gemini-2.5-pro-latest',     // Gemini 2.5 Pro Latest（備用命名）
+    'gemini-2.5-flash-latest',   // Gemini 2.5 Flash Latest（備用命名）
+    'gemini-2.0-flash-exp',      // Gemini 2.0 Flash Experimental（後備）
+    'gemini-1.5-flash-latest',   // Gemini 1.5 Flash Latest（後備）
+    'gemini-1.5-pro-latest',     // Gemini 1.5 Pro Latest（後備）
+    'gemini-pro',                // Gemini Pro 穩定版（最後後備）
 ];
 
 // 生成 AI 日報的 Prompt（改進版，確保使用當天新聞）
-const prompt = `你是一位專業的 AI 領域新聞編輯，請生成一份 AI 領域的每日日報。
+const articlePrompt = `你是一位專業的 AI 領域新聞編輯，請生成一份 AI 領域的每日日報。
 
 **⚠️ 重要：當前日期資訊（請嚴格遵守）**
 - 今天的完整日期：${dateFormatted}
@@ -93,6 +108,18 @@ const prompt = `你是一位專業的 AI 領域新聞編輯，請生成一份 AI
 
 **請直接輸出 Markdown 格式的內容，確保所有內容都是 ${dateStr} 當天的新聞和動態。**`;
 
+// 生成封面圖片描述的 Prompt
+const imagePrompt = `請為一份關於 ${dateFormatted} AI 領域每日日報生成一個簡潔的封面圖片描述。
+
+要求：
+1. 圖片應該反映 AI 技術的主題
+2. 風格應該專業、現代、科技感
+3. 適合作為部落格文章的封面圖片
+4. 描述應該簡潔，約 50-100 字
+5. 使用繁體中文
+
+請只輸出圖片描述，不要包含其他文字。`;
+
 /**
  * 使用新的 @google/genai SDK 調用 Google Gemini API
  * @param {string} modelName - 模型名稱
@@ -111,17 +138,110 @@ async function callGeminiAPI(modelName, prompt) {
     }
 }
 
+/**
+ * 使用 OpenAI DALL-E API 生成圖片（如果可用）
+ * @param {string} prompt - 圖片描述
+ * @returns {Promise<string|null>} 圖片 URL 或 null
+ */
+async function generateImageWithDALLE(prompt) {
+    const openaiApiKey = process.env.OPENAI_API_KEY;
+    if (!openaiApiKey) {
+        console.log('⚠️  OPENAI_API_KEY not set, skipping image generation');
+        return null;
+    }
+
+    try {
+        const response = await fetch('https://api.openai.com/v1/images/generations', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${openaiApiKey}`
+            },
+            body: JSON.stringify({
+                model: 'dall-e-3',
+                prompt: prompt,
+                n: 1,
+                size: '1024x1024',
+                quality: 'standard'
+            })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            console.error('⚠️  DALL-E API error:', error);
+            return null;
+        }
+
+        const data = await response.json();
+        const imageUrl = data.data[0].url;
+
+        // 下載圖片並保存到文章資料夾
+        const imageResponse = await fetch(imageUrl);
+        const imageBuffer = await imageResponse.arrayBuffer();
+        const imageFileName = `cover-${timestamp}.png`;
+        const imagePath = path.join(postFolder, imageFileName);
+
+        fs.writeFileSync(imagePath, Buffer.from(imageBuffer));
+        console.log(`✅ Cover image generated: ${imageFileName}`);
+
+        return imageFileName;
+    } catch (error) {
+        console.error('⚠️  Error generating image with DALL-E:', error.message);
+        return null;
+    }
+}
+
+/**
+ * 生成圖片描述並嘗試生成圖片
+ */
+async function generateCoverImage(articleContent) {
+    let lastError = null;
+
+    // 嘗試使用 Gemini 生成圖片描述
+    for (const modelName of modelNames) {
+        try {
+            console.log(`Generating image description with model: ${modelName}...`);
+            const imageDescription = await callGeminiAPI(modelName, imagePrompt);
+
+            // 嘗試使用 DALL-E 生成圖片
+            const imageFileName = await generateImageWithDALLE(imageDescription.trim());
+            return imageFileName;
+
+        } catch (error) {
+            lastError = error;
+            const isModelNotFound =
+                error.status === 404 ||
+                error.message?.includes('not found') ||
+                error.message?.includes('404') ||
+                error.message?.includes('Model') ||
+                error.code === 404;
+
+            if (isModelNotFound) {
+                console.log(`Model ${modelName} not available for image description, trying next...`);
+                continue;
+            } else {
+                console.error(`Error with model ${modelName}:`, error.message);
+                break;
+            }
+        }
+    }
+
+    console.log('⚠️  Could not generate cover image, continuing without it...');
+    return null;
+}
+
 async function generateDailyReport() {
     let lastError = null;
 
-    // 嘗試每個模型直到成功
+    // 嘗試每個模型直到成功生成文章
     for (const modelName of modelNames) {
         try {
             console.log(`Trying model: ${modelName}...`);
-            const content = await callGeminiAPI(modelName, prompt);
+            const content = await callGeminiAPI(modelName, articlePrompt);
 
-            // 成功！處理內容
-            processContent(content);
+            // 成功生成文章！現在處理內容和圖片
+            const coverImage = await generateCoverImage(content);
+            processContent(content, coverImage);
             return; // 成功退出
 
         } catch (error) {
@@ -149,13 +269,14 @@ async function generateDailyReport() {
     throw lastError || new Error('All models failed');
 }
 
-function processContent(content) {
+function processContent(content, coverImage) {
     // 生成 frontmatter（使用已計算的 dateFormatted）
     const frontmatter = `---
 title: "AI 每日日報 - ${dateFormatted}"
 date: "${dateStr}"
 description: "每日精選 AI 領域的最新動態、技術突破、開源專案與實用技巧，幫助你掌握 AI 發展趨勢。"
 tags: ["AI", "每日日報", "技術趨勢"]
+${coverImage ? `coverImage: "${coverImage}"` : ''}
 ---
 
 `;
@@ -163,11 +284,15 @@ tags: ["AI", "每日日報", "技術趨勢"]
     // 組合完整內容
     const fullContent = frontmatter + content;
 
-    // 寫入文件
-    fs.writeFileSync(filePath, fullContent, 'utf8');
+    // 寫入文件（符合資料結構：content/blog/[日期時間]/article.zh-TW.md）
+    fs.writeFileSync(articlePath, fullContent, 'utf8');
 
-    console.log(`✅ Daily report generated successfully: ${filePath}`);
-    console.log(`📝 File: ${slug}.md`);
+    console.log(`✅ Daily report generated successfully!`);
+    console.log(`📁 Folder: ${slug}/`);
+    console.log(`📝 File: article.zh-TW.md`);
+    if (coverImage) {
+        console.log(`🖼️  Cover image: ${coverImage}`);
+    }
 }
 
 generateDailyReport().catch((error) => {
