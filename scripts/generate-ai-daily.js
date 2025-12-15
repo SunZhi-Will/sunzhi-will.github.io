@@ -24,7 +24,8 @@ const dateFormatted = new Intl.DateTimeFormat('zh-TW', {
 // 使用時間戳作為資料夾名稱（符合資料結構：content/blog/[日期時間]/）
 const slug = timestamp;
 const postFolder = path.join(blogDir, slug);
-const articlePath = path.join(postFolder, 'article.zh-TW.md');
+const articlePathZh = path.join(postFolder, 'article.zh-TW.md');
+const articlePathEn = path.join(postFolder, 'article.en.md');
 
 // 檢查今天是否已經生成過日報（檢查資料夾是否存在）
 if (fs.existsSync(postFolder)) {
@@ -92,7 +93,7 @@ const modelNames = [
 ];
 
 // 生成 AI 日報的 Prompt（改進版，確保使用當天新聞）
-const articlePrompt = `你是一位專業的 AI 領域新聞編輯，請生成一份 AI 領域的每日日報。
+const articlePromptZh = `你是一位專業的 AI 領域新聞編輯，請生成一份 AI 領域的每日日報（繁體中文）。
 
 **⚠️ 重要：當前日期資訊（請嚴格遵守）**
 - 今天的完整日期：${dateFormatted}
@@ -140,17 +141,53 @@ const articlePrompt = `你是一位專業的 AI 領域新聞編輯，請生成�
 
 **請直接輸出 Markdown 格式的內容，確保所有內容都是 ${dateStr} 當天的新聞和動態。**`;
 
+const articlePromptEn = `You are a professional AI news editor. Please write today's AI daily report in English.
+
+**Date context (must be strictly followed)**
+- Full date today: ${dateFormatted}
+- ISO date (YYYY-MM-DD): ${dateStr}
+- Weekday: ${dateFormatted.split('，')[1] || 'Unknown'}
+
+**Strict rules**
+1) Freshness (most important):
+   - Only include news/events published or happened on ${dateStr}
+   - No items from previous days
+   - If few items today, include important items from the last 24h and label them clearly
+   - Each item must mention it is today (${dateStr}) or clearly give today’s timestamp
+
+2) Structure:
+   - Catchy title with the full date: ${dateFormatted}
+   - Sections (all must have content):
+     * Top Stories (2-3 items minimum)
+     * Technical Breakthroughs
+     * Open Source
+     * Dev Practices / Tips
+     * Trend Watch
+
+3) Quality:
+   - English, Markdown, with headings (##, ###)
+   - Professional but readable, 1000-1500 words
+   - Every item must have concrete source/event details; avoid vague or fabricated info
+   - If a section truly has nothing today, say “No major update today” but don’t invent
+
+4) Formatting:
+   - Markdown, headings with ##/###
+   - Use **bold** for emphasis; bullet with - or *
+   - No frontmatter (handled separately)
+
+**Reminder**:
+- Every item must be from today (${dateStr}); skip if unsure.
+- Prefer fewer items over outdated info.
+- Output Markdown only.`;
+
 // 生成封面圖片描述的 Prompt
-const imagePrompt = `請為一份關於 ${dateFormatted} AI 領域每日日報生成一個簡潔的封面圖片描述。
-
+const imagePrompt = `請為 ${dateFormatted} AI 領域每日日報生成封面圖片描述，使用繁體中文：
 要求：
-1. 圖片應該反映 AI 技術的主題
-2. 風格應該專業、現代、科技感
-3. 適合作為部落格文章的封面圖片
-4. 描述應該簡潔，約 50-100 字
-5. 使用繁體中文
-
-請只輸出圖片描述，不要包含其他文字。`;
+1. 主題：AI 技術 / 智能未來，重點在「今日」趨勢
+2. 風格：專業、現代、科技感，乾淨簡潔
+3. 構圖：可包含抽象電路/光線、地球數位網格、資料流
+4. 色調：深色系搭配亮色點綴（藍/紫/青）
+5. 請只輸出圖片描述，不要附帶其他文字。`;
 
 /**
  * 使用新的 @google/genai SDK 調用 Google Gemini API
@@ -185,52 +222,47 @@ async function callGeminiAPI(modelName, prompt) {
  * @param {string} prompt - 圖片描述
  * @returns {Promise<string|null>} 圖片 URL 或 null
  */
-async function generateImageWithDALLE(prompt) {
-    const openaiApiKey = process.env.OPENAI_API_KEY;
-    if (!openaiApiKey) {
-        console.log('⚠️  OPENAI_API_KEY not set, skipping image generation');
-        return null;
-    }
+async function generateImageWithGemini(prompt) {
+    const ai = await getGenAIClient();
+    const imageModelCandidates = [
+        'imagen-3.0-generate-001',
+        'gemini-2.0-flash-exp',
+        'gemini-1.5-flash-latest',
+    ];
 
-    try {
-        const response = await fetch('https://api.openai.com/v1/images/generations', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${openaiApiKey}`
-            },
-            body: JSON.stringify({
-                model: 'dall-e-3',
-                prompt: prompt,
-                n: 1,
-                size: '1024x1024',
-                quality: 'standard'
-            })
-        });
+    for (const model of imageModelCandidates) {
+        try {
+            console.log(`Generating cover image with model: ${model}...`);
+            const res = await ai.models.generateImages({
+                model,
+                prompt,
+            });
 
-        if (!response.ok) {
-            const error = await response.json();
-            console.error('⚠️  DALL-E API error:', error);
-            return null;
+            const img =
+                res?.data?.[0]?.b64Json ||
+                res?.data?.[0]?.bytesBase64Encoded ||
+                res?.data?.[0]?.image?.base64 ||
+                res?.data?.[0]?.imageBase64;
+
+            if (!img) {
+                console.error('⚠️  Image response missing base64 data');
+                continue;
+            }
+
+            const imageBuffer = Buffer.from(img, 'base64');
+            const imageFileName = `cover-${timestamp}.png`;
+            const imagePath = path.join(postFolder, imageFileName);
+            fs.writeFileSync(imagePath, imageBuffer);
+            console.log(`✅ Cover image generated: ${imageFileName}`);
+            return imageFileName;
+        } catch (error) {
+            console.error(`⚠️  Image model ${model} failed:`, error.message);
+            continue;
         }
-
-        const data = await response.json();
-        const imageUrl = data.data[0].url;
-
-        // 下載圖片並保存到文章資料夾
-        const imageResponse = await fetch(imageUrl);
-        const imageBuffer = await imageResponse.arrayBuffer();
-        const imageFileName = `cover-${timestamp}.png`;
-        const imagePath = path.join(postFolder, imageFileName);
-
-        fs.writeFileSync(imagePath, Buffer.from(imageBuffer));
-        console.log(`✅ Cover image generated: ${imageFileName}`);
-
-        return imageFileName;
-    } catch (error) {
-        console.error('⚠️  Error generating image with DALL-E:', error.message);
-        return null;
     }
+
+    console.log('⚠️  Could not generate cover image, continuing without it...');
+    return null;
 }
 
 /**
@@ -245,8 +277,8 @@ async function generateCoverImage(articleContent) {
             console.log(`Generating image description with model: ${modelName}...`);
             const imageDescription = await callGeminiAPI(modelName, imagePrompt);
 
-            // 嘗試使用 DALL-E 生成圖片
-            const imageFileName = await generateImageWithDALLE(imageDescription.trim());
+            // 嘗試使用 Gemini 生成圖片
+            const imageFileName = await generateImageWithGemini(imageDescription.trim());
             return imageFileName;
 
         } catch (error) {
@@ -275,15 +307,16 @@ async function generateCoverImage(articleContent) {
 async function generateDailyReport() {
     let lastError = null;
 
-    // 嘗試每個模型直到成功生成文章
+    // 嘗試每個模型直到成功生成文章（中英）
     for (const modelName of modelNames) {
         try {
             console.log(`Trying model: ${modelName}...`);
-            const content = await callGeminiAPI(modelName, articlePrompt);
+            const contentZh = await callGeminiAPI(modelName, articlePromptZh);
+            const contentEn = await callGeminiAPI(modelName, articlePromptEn);
 
-            // 成功生成文章！現在處理內容和圖片
-            const coverImage = await generateCoverImage(content);
-            processContent(content, coverImage);
+            // 成功生成文章！先處理圖片，再寫雙語檔案
+            const coverImage = await generateCoverImage(contentZh);
+            processContent(contentZh, contentEn, coverImage);
             return; // 成功退出
 
         } catch (error) {
@@ -311,10 +344,9 @@ async function generateDailyReport() {
     throw lastError || new Error('All models failed');
 }
 
-function processContent(content, coverImage) {
-    // 生成 frontmatter（使用已計算的 dateFormatted）
-    const frontmatter = `---
-title: "AI 每日日報 - ${dateFormatted}"
+function buildFrontmatter({ title, coverImage }) {
+    return `---
+title: "${title}"
 date: "${dateStr}"
 description: "每日精選 AI 領域的最新動態、技術突破、開源專案與實用技巧，幫助你掌握 AI 發展趨勢。"
 tags: ["AI", "每日日報", "技術趨勢"]
@@ -322,16 +354,21 @@ ${coverImage ? `coverImage: "${coverImage}"` : ''}
 ---
 
 `;
+}
 
-    // 組合完整內容
-    const fullContent = frontmatter + content;
+function processContent(contentZh, contentEn, coverImage) {
+    const fmZh = buildFrontmatter({ title: `AI 每日日報 - ${dateFormatted}`, coverImage });
+    const fmEn = buildFrontmatter({ title: `AI Daily Report - ${dateFormatted}`, coverImage });
 
-    // 寫入文件（符合資料結構：content/blog/[日期時間]/article.zh-TW.md）
-    fs.writeFileSync(articlePath, fullContent, 'utf8');
+    const fullZh = fmZh + contentZh;
+    const fullEn = fmEn + contentEn;
+
+    fs.writeFileSync(articlePathZh, fullZh, 'utf8');
+    fs.writeFileSync(articlePathEn, fullEn, 'utf8');
 
     console.log(`✅ Daily report generated successfully!`);
     console.log(`📁 Folder: ${slug}/`);
-    console.log(`📝 File: article.zh-TW.md`);
+    console.log(`📝 Files: article.zh-TW.md, article.en.md`);
     if (coverImage) {
         console.log(`🖼️  Cover image: ${coverImage}`);
     }
