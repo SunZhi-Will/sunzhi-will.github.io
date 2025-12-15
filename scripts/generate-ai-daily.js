@@ -48,9 +48,12 @@ if (!apiKey) {
 async function getGenAIClient() {
     if (!genAIClientPromise) {
         genAIClientPromise = import('@google/genai').then((mod) => {
+            // 新版 @google/genai 匯出名稱為 GoogleGenAI
             const GoogleAIClass =
+                mod.GoogleGenAI ||
                 mod.GoogleAI ||
                 mod.GoogleGenerativeAI ||
+                mod.default?.GoogleGenAI ||
                 mod.default?.GoogleAI ||
                 mod.default?.GoogleGenerativeAI ||
                 // 某些版本可能直接將建構子作為 default export
