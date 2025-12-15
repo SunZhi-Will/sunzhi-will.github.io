@@ -181,12 +181,12 @@ const articlePromptEn = `You are a professional AI news editor. Please write tod
 - Output Markdown only.`;
 
 // 生成封面圖片描述的 Prompt
-const imagePrompt = `請為 ${dateFormatted} AI 領域每日日報生成封面圖片描述，使用繁體中文：
+const imagePrompt = `請為 ${dateFormatted} AI 每日日報生成「RPG 遊戲風格的資訊圖表」封面描述，使用繁體中文：
 要求：
-1. 主題：AI 技術 / 智能未來，重點在「今日」趨勢
-2. 風格：專業、現代、科技感，乾淨簡潔
-3. 構圖：可包含抽象電路/光線、地球數位網格、資料流
-4. 色調：深色系搭配亮色點綴（藍/紫/青）
+1. 風格：RPG / 像素或手繪風格的資訊圖表，清晰易懂
+2. 內容：以角色面板/任務清單方式，快速展現今日 AI 重點（要聞、技術、開源、實務、趨勢）
+3. 構圖：可有簡化地圖或任務列表圖示，箭頭/圖示指向重點，避免過度複雜
+4. 色調：清爽易讀（可用深色底配亮色重點），保持專業與科技感
 5. 請只輸出圖片描述，不要附帶其他文字。`;
 
 /**
