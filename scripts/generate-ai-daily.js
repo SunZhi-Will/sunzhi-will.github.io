@@ -43,8 +43,8 @@ if (!apiKey) {
     process.exit(1);
 }
 
-// 初始化新的 Google Gen AI SDK
-const genAI = new GoogleGenerativeAI(apiKey);
+// 初始化新的 Google Gen AI SDK（@google/genai 需要使用物件參數）
+const genAI = new GoogleGenerativeAI({ apiKey });
 
 // 模型列表按優先順序排列（優先使用 Gemini 2.5）
 // Gemini 2.5 是 Google 發布的 AI 模型，具備強大的推理能力和多模態理解
