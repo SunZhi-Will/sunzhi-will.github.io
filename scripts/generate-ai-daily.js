@@ -321,16 +321,25 @@ async function generateDailyReport() {
 
         } catch (error) {
             lastError = error;
-            // 檢查是否為模型不存在的錯誤
+            // 檢查是否為模型不存在或暫時性錯誤
+            const msg = error?.message || '';
+            const code = error?.status || error?.code;
             const isModelNotFound =
-                error.status === 404 ||
-                error.message?.includes('not found') ||
-                error.message?.includes('404') ||
-                error.message?.includes('Model') ||
-                error.code === 404;
+                code === 404 ||
+                msg.includes('not found') ||
+                msg.includes('404') ||
+                msg.includes('Model');
+            const isTransient =
+                code === 429 ||
+                code === 503 ||
+                msg.includes('overloaded') ||
+                msg.includes('try again');
 
             if (isModelNotFound) {
                 console.log(`Model ${modelName} not available, trying next...`);
+                continue; // 嘗試下一個模型
+            } else if (isTransient) {
+                console.log(`Model ${modelName} temporarily unavailable (${msg}), trying next...`);
                 continue; // 嘗試下一個模型
             } else {
                 // 其他錯誤，重新拋出
