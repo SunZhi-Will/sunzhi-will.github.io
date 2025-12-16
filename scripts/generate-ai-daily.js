@@ -99,19 +99,11 @@ async function getGenAIClient() {
     return genAIClientPromise;
 }
 
-// 模型列表按優先順序排列（優先使用 Gemini 2.5）
+// 模型列表按優先順序排列（參考 trendpulse：優先使用 gemini-2.5-flash）
 const modelNames = [
-    'gemini-2.5-pro',
-    'gemini-2.5-flash',
-    'gemini-2.5-pro-latest',
-    'gemini-2.5-flash-latest',
-    'gemini-2.0-pro-exp',
-    'gemini-2.0-flash-exp',
-    'gemini-1.5-pro',
-    'gemini-1.5-flash',
-    'gemini-1.5-flash-latest',
-    'gemini-1.5-pro-latest',
-    'gemini-pro',
+    'gemini-2.5-flash',          // 參考專案主要使用的模型
+    'gemini-1.5-flash-latest',   // 備用
+    'gemini-1.5-pro-latest',     // 備用
 ];
 
 // 計算昨天的日期（用於搜尋過濾）
@@ -357,8 +349,24 @@ async function callGeminiAPI(modelName, prompt, useSearch = true, maxRetries = 3
             lastError = error;
             console.warn(`GenAI API Attempt ${i + 1} failed.`, error.message);
             if (i === maxRetries - 1) break;
-            // 指數退避：2秒、4秒、8秒
-            const delay = 2000 * Math.pow(2, i);
+            
+            // 處理配額錯誤（429）：解析重試時間
+            let delay = 2000 * Math.pow(2, i); // 預設指數退避
+            if (error.status === 429 || error.code === 429) {
+                const errorMessage = error.message || JSON.stringify(error);
+                // 嘗試從錯誤訊息中提取重試時間（例如 "Please retry in 51.052297373s"）
+                const retryMatch = errorMessage.match(/retry in ([\d.]+)s/i);
+                if (retryMatch) {
+                    const retrySeconds = parseFloat(retryMatch[1]);
+                    delay = Math.ceil(retrySeconds * 1000) + 1000; // 轉換為毫秒，加1秒緩衝
+                    console.log(`⏳ Quota exceeded, waiting ${retrySeconds.toFixed(1)}s before retry...`);
+                } else {
+                    // 如果無法解析，使用較長的等待時間
+                    delay = 60000; // 1分鐘
+                    console.log(`⏳ Quota exceeded, waiting 60s before retry...`);
+                }
+            }
+            
             await new Promise((resolve) => setTimeout(resolve, delay));
         }
     }
@@ -497,7 +505,8 @@ function parseStructuredOutput(text) {
  */
 async function generateImageWithGemini(prompt) {
     const ai = await getGenAIClient();
-    const imageModelCandidates = ['gemini-2.5-flash-image', 'imagen-3.0-generate-001', 'gemini-2.0-flash-exp'];
+    // 參考 trendpulse：使用 gemini-2.5-flash-image
+    const imageModelCandidates = ['gemini-2.5-flash-image'];
 
     // 優化 Prompt：強制使用「RPG 遊戲風格資訊圖表」（參考 trendpulse）
     const enhancedPrompt = `${prompt}, RPG game-style infographic, data visualization style, isometric 3d chart, concept map, business intelligence, clean vector art, white background, high contrast, professional, 8k, no text, textless, without words, no letters, no watermark, clean design, simple geometric shapes`;
@@ -644,12 +653,33 @@ async function generateArticles() {
 
             const isTemporaryError =
                 attemptError.status === 503 ||
-                attemptError.status === 429 ||
                 attemptError.message?.includes('overloaded') ||
                 attemptError.message?.includes('try again');
 
+            const isQuotaError =
+                attemptError.status === 429 ||
+                attemptError.code === 429 ||
+                attemptError.message?.includes('quota') ||
+                attemptError.message?.includes('RESOURCE_EXHAUSTED');
+
             if (isModelNotFound) {
                 console.log(`Model ${modelName} not available, trying next...`);
+                continue;
+            } else if (isQuotaError) {
+                // 配額錯誤：等待後再嘗試下一個模型，或直接失敗（因為所有模型可能都配額用完）
+                console.log(`⚠️  Model ${modelName} quota exceeded. Trying next model...`);
+                // 如果是最後一個模型，等待後再試一次
+                if (modelName === modelNames[modelNames.length - 1]) {
+                    const errorMessage = attemptError.message || JSON.stringify(attemptError);
+                    const retryMatch = errorMessage.match(/retry in ([\d.]+)s/i);
+                    if (retryMatch) {
+                        const retrySeconds = parseFloat(retryMatch[1]);
+                        console.log(`⏳ All models quota exceeded. Waiting ${retrySeconds.toFixed(1)}s before final attempt...`);
+                        await new Promise((resolve) => setTimeout(resolve, Math.ceil(retrySeconds * 1000) + 1000));
+                        // 最後一次嘗試
+                        continue;
+                    }
+                }
                 continue;
             } else if (isTemporaryError) {
                 console.log(`Model ${modelName} temporarily unavailable, trying next...`);
