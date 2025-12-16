@@ -12,6 +12,10 @@ import { BlogMobileNav } from '@/components/blog/BlogMobileNav';
 import { formatDate } from '@/lib/blog-utils';
 import { RelatedPosts } from '@/components/blog/RelatedPosts';
 import { CommentSection } from '@/components/blog/CommentSection';
+import { ReadingProgress } from '@/components/blog/ReadingProgress';
+import { EnhancedArticleContent } from '@/components/blog/EnhancedArticleContent';
+import { ShareButtons } from '@/components/blog/ShareButtons';
+import { ScrollReveal } from '@/components/blog/ScrollReveal';
 import { useTheme } from '../ThemeProvider';
 
 interface BlogPostClientProps {
@@ -20,6 +24,7 @@ interface BlogPostClientProps {
     defaultAllPosts: BlogPost[];
     postsByLang: Record<Lang, { post: Omit<BlogPost, 'content'>; htmlContent: string } | null>;
     allPostsByLang: Record<Lang, BlogPost[]>;
+    baseUrl: string;
 }
 
 export default function BlogPostClient({
@@ -28,14 +33,24 @@ export default function BlogPostClient({
     defaultAllPosts,
     postsByLang,
     allPostsByLang,
+    baseUrl,
 }: BlogPostClientProps) {
     const [lang, setLang] = useState<Lang>('zh-TW');
     const [currentPost, setCurrentPost] = useState<Omit<BlogPost, 'content'>>(defaultPost);
     const [currentHtmlContent, setCurrentHtmlContent] = useState<string>(defaultHtmlContent);
     const [currentAllPosts, setCurrentAllPosts] = useState<BlogPost[]>(defaultAllPosts);
+    // 使用服務端傳來的 baseUrl 作為初始值，避免 hydration mismatch
+    const [currentBaseUrl, setCurrentBaseUrl] = useState<string>(baseUrl);
     const { theme } = useTheme();
     const isDark = theme === 'dark';
     const t = blogTranslations[lang];
+
+    // 在客戶端更新 baseUrl（僅在客戶端執行，不影響 SSR）
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setCurrentBaseUrl(window.location.origin);
+        }
+    }, []);
 
     // 估算閱讀時間
     const readingTime = Math.max(1, Math.ceil(currentHtmlContent.length / 1500));
@@ -82,6 +97,13 @@ export default function BlogPostClient({
         switchToLang(newLang);
     };
 
+    // 當語言或文章標題改變時，更新頁面標題
+    useEffect(() => {
+        if (currentPost.title) {
+            document.title = `${currentPost.title} | Sun`;
+        }
+    }, [currentPost.title, lang]);
+
     return (
         <div
             className="h-screen overflow-hidden relative transition-colors duration-300"
@@ -114,6 +136,9 @@ export default function BlogPostClient({
                 />
             </div>
 
+            {/* 閱讀進度條 */}
+            <ReadingProgress />
+
             {/* 主要內容區域 - 全寬 */}
             <main className="overflow-y-auto h-full scrollbar-custom">
                 <article className="relative">
@@ -127,16 +152,14 @@ export default function BlogPostClient({
                         >
                             {/* 標題 - 直接放在內容開頭 */}
                             <header className="space-y-4">
-                                <h1 className={`text-2xl md:text-3xl font-normal leading-tight tracking-tight ${
-                                    isDark ? 'text-gray-200' : 'text-gray-900'
-                                }`}>
+                                <h1 className={`text-2xl md:text-3xl font-normal leading-tight tracking-tight ${isDark ? 'text-gray-200' : 'text-gray-900'
+                                    }`}>
                                     {currentPost.title}
                                 </h1>
 
                                 {/* 元資訊 - 簡潔的單行顯示 */}
-                                <div className={`flex flex-wrap items-center gap-3 text-sm ${
-                                    isDark ? 'text-gray-400' : 'text-gray-600'
-                                }`}>
+                                <div className={`flex flex-wrap items-center gap-3 text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'
+                                    }`}>
                                     <time>
                                         {formatDate(currentPost.date, lang === 'zh-TW' ? 'zh-TW' : 'en-US')}
                                     </time>
@@ -169,9 +192,8 @@ export default function BlogPostClient({
 
                             {/* 封面圖片 - 整合到內容流中 */}
                             {currentPost.coverImage && (
-                                <div className={`relative w-full overflow-hidden rounded-lg ${
-                                    isDark ? 'bg-gray-700/50' : 'bg-gray-200/50'
-                                }`}>
+                                <div className={`relative w-full overflow-hidden rounded-lg ${isDark ? 'bg-gray-700/50' : 'bg-gray-200/50'
+                                    }`}>
                                     <Image
                                         src={currentPost.coverImage}
                                         alt={currentPost.title}
@@ -185,61 +207,18 @@ export default function BlogPostClient({
 
                             {/* 文章描述 */}
                             {currentPost.description && (
-                                <p className={`text-base leading-relaxed ${
-                                    isDark ? 'text-gray-300' : 'text-gray-700'
-                                }`}>
+                                <p className={`text-base leading-relaxed ${isDark ? 'text-gray-300' : 'text-gray-700'
+                                    }`}>
                                     {currentPost.description}
                                 </p>
                             )}
 
-                            {/* 文章正文 */}
-                            <div className={`prose prose-base max-w-none
-                                    prose-h1:text-2xl prose-h1:mt-12 prose-h1:mb-4 prose-h1:font-normal
-                                    prose-h2:text-xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:font-normal
-                                    prose-h3:text-lg prose-h3:mt-8 prose-h3:mb-3 prose-h3:font-normal
-                                    prose-h4:text-base prose-h4:mt-6 prose-h4:mb-2 prose-h4:font-normal
-                                    prose-p:leading-relaxed prose-p:font-normal prose-p:text-[15px] prose-p:mb-5
-                                    prose-a:no-underline prose-a:border-b prose-a:transition-all prose-a:font-medium
-                                    prose-strong:font-semibold
-                                    prose-code:px-2 prose-code:py-1 prose-code:text-sm prose-code:font-mono prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-code:border
-                                    prose-pre:rounded-xl prose-pre:shadow-xl prose-pre:backdrop-blur-sm prose-pre:overflow-x-auto
-                                    prose-pre code:bg-transparent prose-pre code:px-0 prose-pre code:py-0 prose-pre code:border-0
-                                    prose-blockquote:border-l-4 prose-blockquote:py-4 prose-blockquote:pl-6 prose-blockquote:pr-6 prose-blockquote:rounded-r-lg prose-blockquote:font-light prose-blockquote:not-italic prose-blockquote:my-8
-                                    prose-ul:my-6 prose-ol:my-6
-                                    prose-li:my-2 prose-li:leading-relaxed
-                                    prose-img:rounded-xl prose-img:border prose-img:shadow-xl prose-img:my-8
-                                    prose-hr:my-12
-                                    prose-th:border prose-th:px-4 prose-th:py-2
-                                    prose-td:border prose-td:px-4 prose-td:py-2
-                                    ${isDark
-                                        ? `prose-headings:font-normal prose-headings:tracking-tight prose-headings:text-gray-200
-                                        prose-p:text-gray-300
-                                        prose-a:text-gray-400 prose-a:border-gray-600/50 hover:prose-a:border-gray-500 hover:prose-a:text-gray-300
-                                        prose-strong:text-gray-200
-                                        prose-code:text-gray-300 prose-code:bg-gray-700/80 prose-code:border-gray-600/50
-                                        prose-pre:bg-gray-800/80 prose-pre:border prose-pre:border-gray-700/50
-                                        prose-blockquote:border-gray-600/50 prose-blockquote:bg-gray-800/30 prose-blockquote:text-gray-300
-                                        prose-ul:text-gray-300 prose-ol:text-gray-300
-                                        prose-li:marker:text-gray-500
-                                        prose-img:border-gray-700/50
-                                        prose-hr:border-gray-700/50
-                                        prose-table:text-gray-300 prose-th:border-gray-700/50 prose-th:bg-gray-800/30
-                                        prose-td:border-gray-700/50`
-                                        : `prose-headings:font-normal prose-headings:tracking-tight prose-headings:text-gray-900
-                                        prose-p:text-gray-700
-                                        prose-a:text-gray-600 prose-a:border-gray-400/50 hover:prose-a:border-gray-600 hover:prose-a:text-gray-800
-                                        prose-strong:text-gray-900
-                                        prose-code:text-gray-800 prose-code:bg-gray-200/80 prose-code:border-gray-300/50
-                                        prose-pre:bg-gray-100/80 prose-pre:border prose-pre:border-gray-300/50
-                                        prose-blockquote:border-gray-400/50 prose-blockquote:bg-gray-200/30 prose-blockquote:text-gray-700
-                                        prose-ul:text-gray-700 prose-ol:text-gray-700
-                                        prose-li:marker:text-gray-600
-                                        prose-img:border-gray-300/50
-                                        prose-hr:border-gray-300/50
-                                        prose-table:text-gray-700 prose-th:border-gray-300/50 prose-th:bg-gray-200/30
-                                        prose-td:border-gray-300/50`
-                                    }`}
-                                dangerouslySetInnerHTML={{ __html: currentHtmlContent }}
+                            {/* 增強的文章正文 - 包含互動功能 */}
+                            <EnhancedArticleContent
+                                htmlContent={currentHtmlContent}
+                                postSlug={currentPost.slug}
+                                postTitle={currentPost.title}
+                                lang={lang}
                             />
                         </motion.div>
                     </div>
@@ -247,6 +226,15 @@ export default function BlogPostClient({
                     {/* 文章底部 */}
                     <div className="max-w-3xl mx-auto px-6 md:px-8 lg:px-12 pb-16">
                         <div className="space-y-12 pt-8">
+                            {/* 分享按鈕 */}
+                            <ScrollReveal direction="fade" delay={0.2}>
+                                <ShareButtons
+                                    title={currentPost.title}
+                                    url={`${currentBaseUrl}/blog/${currentPost.slug}`}
+                                    lang={lang}
+                                />
+                            </ScrollReveal>
+
                             {/* 推薦文章 */}
                             <RelatedPosts
                                 posts={currentAllPosts}
@@ -259,6 +247,7 @@ export default function BlogPostClient({
                                 postSlug={currentPost.slug}
                                 postTitle={currentPost.title}
                                 lang={lang}
+                                postUrl={`${currentBaseUrl}/blog/${currentPost.slug}`}
                             />
                         </div>
                     </div>

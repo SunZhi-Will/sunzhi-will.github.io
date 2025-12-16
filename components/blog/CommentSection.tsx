@@ -9,6 +9,7 @@ interface CommentSectionProps {
     postSlug: string;
     postTitle: string;
     lang: Lang;
+    postUrl: string;
 }
 
 declare global {
@@ -32,18 +33,13 @@ interface DisqusConfig {
     };
 }
 
-export function CommentSection({ postSlug, postTitle, lang }: CommentSectionProps) {
+export function CommentSection({ postSlug, postTitle, lang, postUrl }: CommentSectionProps) {
     const { theme } = useTheme();
     const isDark = theme === 'dark';
     const disqusRef = useRef<HTMLDivElement>(null);
 
     // Disqus shortname - 從環境變數取得
     const disqusShortname = process.env.NEXT_PUBLIC_DISQUS_SHORTNAME;
-
-    // 構建完整的文章 URL
-    const postUrl = typeof window !== 'undefined'
-        ? `${window.location.origin}/blog/${postSlug}`
-        : `https://sunzhi-will.github.io/blog/${postSlug}`;
 
     // Disqus identifier（使用 slug）
     const disqusIdentifier = postSlug;

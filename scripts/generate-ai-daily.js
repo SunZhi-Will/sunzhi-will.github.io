@@ -217,76 +217,53 @@ const articlePromptZh = `
 (來源列表，每行一個 URL)
 `;
 
-const articlePromptEn = `
-【System: Strict Investigative Journalist Agent】
-You are a senior investigative journalist with real-time fact-checking capabilities via Google Search.
+// 英文翻譯 Prompt（基於中文文章）
+function createEnglishTranslationPrompt(chineseContent, chineseTitle, chineseSummary, chineseImagePrompt, chineseSources) {
+    return `
+【System: Professional Translator & Content Adaptor】
+You are a professional translator and content adaptor. Your task is to translate and adapt a Chinese AI daily report article into English while maintaining the same structure, tone, and depth.
 
-【SECURITY PROTOCOL - STRICT MARKDOWN ONLY】
-- **CRITICAL**: You are FORBIDDEN from using HTML tags.
-- ❌ Incorrect: <h1>Title</h1>, <h4>Subtitle</h4>, <b>Bold</b>, <p>Text</p>
-- ✅ Correct: # Title, ### Subtitle, **Bold**, Text
-- Output **PURE MARKDOWN** only.
+【Source Article (Chinese)】
+Title: ${chineseTitle}
+Summary: ${chineseSummary}
 
-【Time Context】
-Today is: ${dateFormatted} (${dateStr})
+Content:
+${chineseContent}
 
-【Execution Strategy】
-1. **Search**:
-   【Multi-Keyword Split Logic】
-   Input Topic: "AI Latest Updates"
-   1. **Analyze input**: If the input contains multiple concepts, **DO NOT** search them as one long string.
-   2. **Split & Search**: You must split them into independent search queries.
-      - Query A: Search "AI latest news" after:${yesterdayISO}
-      - Query B: Search "artificial intelligence trends" after:${yesterdayISO}
-      - Query C: Search "machine learning updates" after:${yesterdayISO}
-      - Query D: Search for the combination/intersection of these topics.
-   3. **Comprehensive Coverage**: For tech/finance topics, search both English and localized keywords for comprehensive results.
-2. **Filter**:
-   【Time Filter Firewall】
-   - Your search queries must include after:${yesterdayISO}.
-   - If search results are dated before ${yesterdayISO}, ignore them and do not write them into the article.
-   - Only include news published or happened on ${dateStr} (today).
-3. **Length**: Approximately 1500+ words. Structure: 1. Today's Headlines (context) 2. Event Details & Tech Explanation 3. Industry Deep Dive & Business Analysis.
+【Translation Requirements】
+1. **Maintain Structure**: Keep the exact same section structure as the Chinese version:
+   - ### What Happened? (Like telling gossip)
+   - ### Simply Put, What Is This? (Metaphor time)
+   - ### According to Reports, Details Are as Follows
+   - ### What Does This Mean for Us?
+   - ### Insider's Deep Analysis
+   - ### One-Liner Summary
 
-【SOURCE OF TRUTH】
-- You **MUST** use information found via Google Search as the foundation
-- Extract specific numbers, names, and event details from search results
-- Write concrete details from search results, not vague theories
+2. **Preserve Tone**: Maintain the same friendly, conversational, humorous tone. Translate metaphors naturally, keeping the "brilliant metaphors" intact.
 
-【Visual Formatting】
-1. **Inline citations**: Use [1], [2] markers
-2. **Source list**: List URLs at end in <<<SOURCES>>>
-3. **Emphasis**: Use **bold** for key data or names
-4. **Blockquotes**: Use > for quotes or core insights
-5. **Real source images**:
-   - Extract real news image URLs from search results
-   - Format: \`![Source: Image Source Name](https://real-image-url.jpg)\`
-   - **FORBIDDEN** to use generate_inline
-   - **FORBIDDEN** to fabricate URLs
-   - If no real images found, omit images
+3. **Keep All Details**: Preserve all specific data, names, numbers, and facts from the Chinese version. Do not add or remove information.
 
-【Writing Style】
-- **Role**: Tech storyteller who explains complex AI concepts in plain language
-- **Tone**: Friendly, conversational, like chatting with a friend
-- **Approach**: Use vivid metaphors for technical terms, avoid marketing jargon
-- **Structure**: What happened? → What is it? (metaphor) → Details → Impact → Insider analysis → One-liner summary
+4. **Natural English**: Translate naturally into fluent English, not word-for-word. Adapt cultural references appropriately for English readers.
+
+5. **Maintain Formatting**: Keep the same Markdown formatting, bold text, lists, and structure.
+
+6. **Sources**: Use the same sources as the Chinese version, but translate source titles if needed.
 
 【Output Format】
 <<<TITLE>>>
-(Title: Only output the title content, do NOT include "【AI Daily】" prefix, the system will add it automatically. Title should be witty and interesting, no date)
+(Translate the title naturally. Only output the title content, do NOT include "【AI Daily】" prefix, the system will add it automatically. Title should be witty and interesting, no date)
 <<<SUMMARY>>>
-(Summary: ~100-150 words)
+(Translate the summary naturally, ~100-150 words)
 <<<SEARCH_QUERIES>>>
-(Search keywords, comma-separated)
+(Use the same search queries from Chinese version, or translate them to English)
 <<<IMAGE_PROMPT>>>
-(AI image generation prompt for cover: Design an "RPG game-style infographic".
-Goal: Visualize core logic through RPG character panel/task list style.
-Restriction: **NO TEXT**. Use symbols, icons, geometric shapes instead of text labels. Keep it clean, minimal, avoid information overload.)
+(${chineseImagePrompt})
 <<<CONTENT>>>
-(Main content, include real image links if found)
+(Translate the entire content, maintaining all sections and structure)
 <<<SOURCES>>>
-(Source list, one URL per line)
+(Use the same sources, translate titles if needed)
 `;
+}
 
 /**
  * 使用新的 @google/genai SDK 調用 Google Gemini API（帶重試機制）
@@ -633,12 +610,23 @@ async function generateArticles() {
                     parsedZh.sources = [...parsedZh.sources, ...resultZh.sources];
                 }
 
-                // 生成英文文章
-                const resultEn = await callGeminiAPI(modelName, articlePromptEn, true);
+                // 生成英文文章（基於中文文章翻譯）
+                console.log(`Translating Chinese article to English...`);
+                // 移除中文標題的前綴，只保留標題內容
+                let zhTitleForTranslation = parsedZh.title.replace(/^【AI日報】\s*/g, '').trim();
+                const translationPrompt = createEnglishTranslationPrompt(
+                    parsedZh.content,
+                    zhTitleForTranslation,
+                    parsedZh.summary,
+                    parsedZh.imagePrompt,
+                    parsedZh.sources.map(s => s.uri).join('\n')
+                );
+                
+                const resultEn = await callGeminiAPI(modelName, translationPrompt, false); // 翻譯不需要搜尋
                 
                 // 檢查 Hallucination
                 if (isHallucinated(resultEn.text)) {
-                    console.warn(`Attempt ${attempt + 1}: Hallucination detected in English content.`);
+                    console.warn(`Attempt ${attempt + 1}: Hallucination detected in English translation.`);
                     continue;
                 }
 
@@ -664,10 +652,9 @@ async function generateArticles() {
                     enTitle = "Today's Highlights";
                 }
                 parsedEn.title = `【AI Daily】${enTitle}`;
-                // 合併 API 回傳的來源
-                if (resultEn.sources && resultEn.sources.length > 0) {
-                    parsedEn.sources = [...parsedEn.sources, ...resultEn.sources];
-                }
+                
+                // 使用中文文章的來源（因為英文是翻譯版本）
+                parsedEn.sources = parsedZh.sources;
 
                 // 生成封面圖片
                 const coverImage = await generateImageWithGemini(parsedZh.imagePrompt || parsedEn.imagePrompt);

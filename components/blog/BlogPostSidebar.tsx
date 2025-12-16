@@ -167,7 +167,7 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                             }`}>
                                 {t.published}
                             </div>
-                            <time className={`font-light ${isDark ? 'text-gray-300' : 'text-gray-800'}`}>{formatDate(post.date)}</time>
+                            <time className={`font-light ${isDark ? 'text-gray-300' : 'text-gray-800'}`}>{formatDate(post.date, lang === 'zh-TW' ? 'zh-TW' : 'en-US')}</time>
                         </div>
                         <div className="space-y-1">
                             <div className={`text-xs uppercase tracking-wider mb-1.5 font-medium ${

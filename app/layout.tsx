@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: {
     default: "謝上智 - 軟體工程師 | AI 開發者",
-    template: "%s | Sun Zhi"
+    template: "%s | Sun"
   },
   description: "Full-stack engineer specializing in AI application development and Unity game development",
   alternates: {

@@ -12,7 +12,7 @@ export const dynamic = 'force-static';
 export async function generateStaticParams() {
     const slugs = getPostSlugs();
     const params: { slug: string; lang?: string }[] = [];
-    
+
     // 為每個文章生成所有可用語言的路徑
     for (const slug of slugs) {
         const post = getPostBySlug(slug);
@@ -24,7 +24,7 @@ export async function generateStaticParams() {
             params.push({ slug });
         }
     }
-    
+
     return params;
 }
 
@@ -35,28 +35,46 @@ interface BlogPostPageProps {
 // 生成頁面 metadata（標題）
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
     const { slug } = await params;
-    
-    // 嘗試取得中文版本，如果沒有則使用英文版本
+
+    // 取得所有語言版本的文章
     const postZhTW = getPostBySlug(slug, 'zh-TW');
     const postEn = getPostBySlug(slug, 'en');
-    const post = postZhTW || postEn;
-    
-    if (!post) {
+
+    // 預設使用中文版本，如果沒有則使用英文版本
+    const defaultPost = postZhTW || postEn;
+
+    if (!defaultPost) {
         return {
-            title: '文章 | Sun',
+            title: '文章',
         };
     }
-    
-    // 設定標題為「文章標題 | Sun」
+
+    // 構建多語言標題
+    const titles: Record<string, string> = {};
+    if (postZhTW) {
+        titles['zh-TW'] = postZhTW.title;
+    }
+    if (postEn) {
+        titles['en'] = postEn.title;
+    }
+
+    // 設定標題為「文章標題」，支援多語言
     return {
-        title: `${post.title} | Sun`,
-        description: post.description,
+        title: defaultPost.title,
+        description: defaultPost.description,
+        alternates: {
+            languages: titles,
+        },
     };
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const { slug } = await params;
-    
+
+    // 獲取正確的 base URL（用於分享連結）
+    // 對於靜態生成，使用環境變數或預設值
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://sunzhi-will.github.io';
+
     // 預先載入所有語言版本的文章數據
     const postsByLang: Record<Lang, { post: Omit<BlogPost, 'content'>; htmlContent: string } | null> = {
         'zh-TW': null,
@@ -115,6 +133,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             defaultAllPosts={allPostsByLang[defaultLang]}
             postsByLang={postsByLang}
             allPostsByLang={allPostsByLang}
+            baseUrl={baseUrl}
         />
     );
 }
