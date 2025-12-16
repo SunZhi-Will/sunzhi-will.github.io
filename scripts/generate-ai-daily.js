@@ -202,7 +202,7 @@ const articlePromptZh = `
 
 【輸出格式】
 <<<TITLE>>>
-(標題：格式為【AI日報】xxxx，幽默有趣，不包含日期)
+(標題：只輸出標題內容，不要包含「【AI日報】」前綴，系統會自動加上。標題要幽默有趣，不包含日期)
 <<<SUMMARY>>>
 (摘要：約 100-150 字)
 <<<SEARCH_QUERIES>>>
@@ -273,7 +273,7 @@ Today is: ${dateFormatted} (${dateStr})
 
 【Output Format】
 <<<TITLE>>>
-(Title: Format as 【AI Daily】xxxx, witty and interesting, no date)
+(Title: Only output the title content, do NOT include "【AI Daily】" prefix, the system will add it automatically. Title should be witty and interesting, no date)
 <<<SUMMARY>>>
 (Summary: ~100-150 words)
 <<<SEARCH_QUERIES>>>
@@ -470,13 +470,22 @@ function parseStructuredOutput(text) {
     }
 
     // 清理標題（移除 Markdown 標題符號和方括號）
-    let rawTitle = cleanStr(titlePart) || '【AI日報】今日精選';
-    rawTitle = rawTitle.replace(/[\[\]【】]/g, '').replace(/^#+\s*/, '').trim();
+    let rawTitle = cleanStr(titlePart) || '今日精選';
+    rawTitle = rawTitle.replace(/^#+\s*/, '').trim();
     rawTitle = cleanupHtmlTags(rawTitle);
-    // 確保標題格式為【AI日報】...
-    if (!rawTitle.startsWith('【AI日報】') && !rawTitle.startsWith('【AI Daily】')) {
-        rawTitle = `【AI日報】${rawTitle}`;
+    
+    // 移除所有可能的「【AI日報】」或「【AI Daily】」前綴（避免重複）
+    rawTitle = rawTitle.replace(/^【AI日報】\s*/g, '');
+    rawTitle = rawTitle.replace(/^【AI Daily】\s*/g, '');
+    rawTitle = rawTitle.replace(/^AI日報\s*/g, '');
+    rawTitle = rawTitle.replace(/^AI Daily\s*/g, '');
+    rawTitle = rawTitle.trim();
+    
+    // 統一加上【AI日報】前綴
+    if (!rawTitle) {
+        rawTitle = '今日精選';
     }
+    rawTitle = `【AI日報】${rawTitle}`;
 
     const summary = cleanupHtmlTags(cleanStr(summaryPart) || '本篇報導整合了多方來源的即時數據與分析...');
     const imagePrompt = cleanStr(imagePromptPart) || `AI daily report ${dateStr}, RPG game-style infographic, minimalist chart, no text`;
@@ -641,13 +650,20 @@ async function generateArticles() {
                     continue;
                 }
 
-                // 確保英文標題格式
-                if (!parsedEn.title.startsWith('【AI Daily】')) {
-                    parsedEn.title = parsedEn.title.replace(/^【AI日報】/, '【AI Daily】');
-                    if (!parsedEn.title.startsWith('【AI Daily】')) {
-                        parsedEn.title = `【AI Daily】${parsedEn.title}`;
-                    }
+                // 確保英文標題格式（移除重複前綴）
+                let enTitle = parsedEn.title;
+                // 移除所有可能的「【AI日報】」或「【AI Daily】」前綴（避免重複）
+                enTitle = enTitle.replace(/^【AI日報】\s*/g, '');
+                enTitle = enTitle.replace(/^【AI Daily】\s*/g, '');
+                enTitle = enTitle.replace(/^AI日報\s*/g, '');
+                enTitle = enTitle.replace(/^AI Daily\s*/g, '');
+                enTitle = enTitle.trim();
+                
+                // 統一加上【AI Daily】前綴
+                if (!enTitle) {
+                    enTitle = "Today's Highlights";
                 }
+                parsedEn.title = `【AI Daily】${enTitle}`;
                 // 合併 API 回傳的來源
                 if (resultEn.sources && resultEn.sources.length > 0) {
                     parsedEn.sources = [...parsedEn.sources, ...resultEn.sources];
