@@ -85,7 +85,8 @@ async function getGenAIClient() {
                 );
             }
 
-            const client = new ClientClass({ apiKey, apiVersion: 'v1' });
+            // 參考 trendpulse：不設定 apiVersion，使用預設（可能支援 tools）
+            const client = new ClientClass({ apiKey });
             // 新版 SDK 以 ai.models.* 提供存取
             if (!client.models || typeof client.models.generateContent !== 'function') {
                 const keys = Object.keys(client || {});
@@ -304,20 +305,24 @@ Restriction: **NO TEXT**. Use symbols, icons, geometric shapes instead of text l
  */
 async function callGeminiAPI(modelName, prompt, useSearch = true, maxRetries = 3) {
     const ai = await getGenAIClient();
-    const config = useSearch
-        ? {
-              tools: [{ googleSearch: {} }],
-          }
-        : {};
 
     let lastError;
     for (let i = 0; i < maxRetries; i++) {
         try {
-            const result = await ai.models.generateContent({
+            // 參考 trendpulse：將所有參數放在一個物件中
+            const params = {
                 model: modelName,
                 contents: prompt,
-                config,
-            });
+            };
+            
+            // 只有在需要搜尋時才加入 tools
+            if (useSearch) {
+                params.config = {
+                    tools: [{ googleSearch: {} }],
+                };
+            }
+
+            const result = await ai.models.generateContent(params);
 
             const text =
                 result.text ||
