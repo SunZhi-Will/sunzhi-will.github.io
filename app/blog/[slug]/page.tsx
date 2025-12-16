@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import BlogPostClient from './BlogPostClient';
 import type { Lang } from '@/types';
 import type { BlogPost } from '@/types/blog';
+import type { Metadata } from 'next';
 
 // 強制靜態生成
 export const dynamic = 'force-static';
@@ -29,6 +30,28 @@ export async function generateStaticParams() {
 
 interface BlogPostPageProps {
     params: Promise<{ slug: string; lang?: string }>;
+}
+
+// 生成頁面 metadata（標題）
+export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+    const { slug } = await params;
+    
+    // 嘗試取得中文版本，如果沒有則使用英文版本
+    const postZhTW = getPostBySlug(slug, 'zh-TW');
+    const postEn = getPostBySlug(slug, 'en');
+    const post = postZhTW || postEn;
+    
+    if (!post) {
+        return {
+            title: '文章 | Sun',
+        };
+    }
+    
+    // 設定標題為「文章標題 | Sun」
+    return {
+        title: `${post.title} | Sun`,
+        description: post.description,
+    };
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
