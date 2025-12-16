@@ -1,12 +1,12 @@
 ---
-title: "AI Daily Report - 2025年12月15日 星期一"
+title: "AI Daily Report — Breakthroughs for December 15, 2025"
 date: "2025-12-15"
-description: "每日精選 AI 領域的最新動態、技術突破、開源專案與實用技巧，幫助你掌握 AI 發展趨勢。"
-tags: ["AI", "每日日報", "技術趨勢"]
+description: "Daily curated AI breakthroughs, policy shifts, open-source drops, and practical tips to keep you ahead."
+tags: ["AI", "Daily Brief", "Tech Trends"]
 
 ---
 
-# AI Daily Report: Navigating the Future – Key Developments on 2025年12月15日 星期一
+# Today’s AI Briefing: Key Developments for Monday, December 15, 2025
 
 ## Top Stories
 

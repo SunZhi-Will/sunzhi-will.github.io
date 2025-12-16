@@ -79,39 +79,7 @@ export function CommentSection({ postSlug, postTitle, lang }: CommentSectionProp
         }
     };
 
-    if (!disqusShortname) {
-        return (
-            <section>
-                <h2 className={`text-lg font-normal mb-6 ${
-                    isDark ? 'text-gray-200' : 'text-gray-900'
-                }`}>
-                    {lang === 'zh-TW' ? '留言' : 'Comments'}
-                </h2>
-                <div className={`p-4 rounded-lg border ${
-                    isDark
-                        ? 'bg-gray-800/60 border-gray-700/50'
-                        : 'bg-white/60 border-gray-300/50'
-                }`}>
-                    <p className={`text-sm mb-2 ${
-                        isDark ? 'text-gray-400' : 'text-gray-600'
-                    }`}>
-                        {lang === 'zh-TW'
-                            ? '💡 提示：請設置環境變數 NEXT_PUBLIC_DISQUS_SHORTNAME 來啟用 Disqus 留言系統。'
-                            : '💡 Tip: Please set the NEXT_PUBLIC_DISQUS_SHORTNAME environment variable to enable Disqus comments.'
-                        }
-                    </p>
-                    <p className={`text-xs ${
-                        isDark ? 'text-gray-500' : 'text-gray-700'
-                    }`}>
-                        {lang === 'zh-TW'
-                            ? '前往 Disqus 註冊並取得您的 shortname：https://disqus.com/admin/create/'
-                            : 'Register at Disqus and get your shortname: https://disqus.com/admin/create/'
-                        }
-                    </p>
-                </div>
-            </section>
-        );
-    }
+    if (!disqusShortname) return null;
 
     return (
         <section>

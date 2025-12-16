@@ -205,6 +205,20 @@ const articlePromptEn = `You are a professional AI news editor. Please write tod
 - Output Markdown only.
 - Do NOT include any article title or headline; start directly with sections.`;
 
+// 生成幽默有趣的標題（無日期，格式「【AI日報】...」）
+const titlePromptZh = `請產生一個幽默有趣且精簡的標題，格式必須為：【AI日報】xxxx
+要求：
+1. 使用繁體中文
+2. 不要包含日期與時間
+3. 盡量在 20 字內
+4. 風格輕鬆有趣但專業`;
+
+const titlePromptEn = `Generate a short, witty title in English. Format: 【AI Daily】xxxx
+Rules:
+1) Do NOT include any date or time
+2) Keep within ~60 characters
+3) Light, playful, but still professional tone`;
+
 // 生成封面圖片描述的 Prompt
 const imagePrompt = `請為 ${dateFormatted} AI 每日日報生成「RPG 遊戲風格的資訊圖表」封面描述，使用繁體中文：
 要求：
@@ -250,6 +264,13 @@ function cleanContent(raw) {
     // 移除最前面的標題行（# / ## 開頭）
     c = c.replace(/^(#{1,3}\s.+\n)+/g, '').trimStart();
     return c;
+}
+
+function cleanTitle(raw) {
+    if (!raw) return '';
+    let t = raw.trim().split('\n')[0];
+    t = t.replace(/^["'“”]+|["'“”]+$/g, '').trim();
+    return t;
 }
 
 /**
@@ -341,6 +362,9 @@ async function generateCoverImage(articleContent) {
 
 async function generateDailyReport() {
     let lastError = null;
+    // 預設標題，若生成失敗仍有保底
+    titleZh = '【AI日報】今日精選';
+    titleEn = '【AI Daily】Today\'s Highlights';
 
     // 嘗試每個模型直到成功生成文章（中英）
     for (const modelName of modelNames) {
@@ -348,6 +372,9 @@ async function generateDailyReport() {
             console.log(`Trying model: ${modelName}...`);
             const contentZh = cleanContent(await callGeminiAPI(modelName, articlePromptZh));
             const contentEn = cleanContent(await callGeminiAPI(modelName, articlePromptEn));
+            // 生成幽默標題（不中斷主流程）
+            titleZh = cleanTitle(await callGeminiAPI(modelName, titlePromptZh)) || titleZh;
+            titleEn = cleanTitle(await callGeminiAPI(modelName, titlePromptEn)) || titleEn;
 
             // 成功生成文章！先處理圖片，再寫雙語檔案
             const coverImage = await generateCoverImage(contentZh);
@@ -401,8 +428,9 @@ ${coverImage ? `coverImage: "${coverImage}"` : ''}
 }
 
 function processContent(contentZh, contentEn, coverImage) {
-    const fmZh = buildFrontmatter({ title: `AI 每日日報 - ${dateFormatted}`, coverImage });
-    const fmEn = buildFrontmatter({ title: `AI Daily Report - ${dateFormatted}`, coverImage });
+    // 標題改為由模型生成的幽默標題
+    const fmZh = buildFrontmatter({ title: titleZh || '【AI日報】精彩摘要', coverImage });
+    const fmEn = buildFrontmatter({ title: titleEn || '【AI Daily】Highlights', coverImage });
 
     const fullZh = fmZh + contentZh;
     const fullEn = fmEn + contentEn;
