@@ -38,11 +38,14 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: node scripts/generate-ai-daily.js
 
+      - name: Copy blog images
+        run: node scripts/copy-blog-images.js
+
       - name: Commit and push changes
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add content/blog/
+          git add content/blog/ public/blog/
           if git diff --staged --quiet; then
             echo "No changes to commit"
             echo "changed=false" >> $GITHUB_OUTPUT
