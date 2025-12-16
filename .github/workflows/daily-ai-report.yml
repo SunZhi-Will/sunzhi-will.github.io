@@ -45,11 +45,21 @@ jobs:
           git add content/blog/
           if git diff --staged --quiet; then
             echo "No changes to commit"
+            echo "changed=false" >> $GITHUB_OUTPUT
           else
             git commit -m "chore: auto-generate daily AI report"
             BRANCH="${{ github.event.repository.default_branch }}"
+            echo "Pushing to branch: ${BRANCH}"
             git push origin HEAD:${BRANCH}
+            echo "changed=true" >> $GITHUB_OUTPUT
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: commit_push
+
+      - name: Verify push triggered deploy
+        if: steps.commit_push.outputs.changed == 'true'
+        run: |
+          echo "✅ Changes pushed successfully. Deploy workflow should be triggered automatically."
+          echo "   Check Actions tab to see if Deploy to GitHub Pages workflow is running."
 

@@ -3,6 +3,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main, master]  # 支援 main 和 master 分支
+    paths:
+      - 'content/blog/**'  # 當 blog 內容變更時觸發
   pull_request:
     branches: [main, master]
 
