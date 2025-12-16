@@ -5,6 +5,7 @@ on:
     branches: [main, master]  # 支援 main 和 master 分支
     paths:
       - 'content/blog/**'  # 當 blog 內容變更時觸發
+      - 'public/blog/**'    # 當 blog 圖片變更時觸發
   pull_request:
     branches: [main, master]
 
@@ -32,12 +33,29 @@ jobs:
         run: npm ci
 
       - name: Copy blog images
-        run: node scripts/copy-blog-images.js
+        run: |
+          echo "開始複製部落格圖片..."
+          node scripts/copy-blog-images.js
+          echo ""
+          echo "驗證 public/blog 目錄:"
+          ls -la public/blog/ || echo "public/blog 目錄不存在"
+          if [ -d "public/blog" ]; then
+            find public/blog -type f -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" | head -20
+          fi
 
       - name: Build
         run: npm run build
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: Verify images in build output
+        run: |
+          echo "檢查建置輸出中的圖片:"
+          if [ -d "out/blog" ]; then
+            find out/blog -type f -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" | head -20
+          else
+            echo "out/blog 目錄不存在"
+          fi
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4.6.4
