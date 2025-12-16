@@ -100,10 +100,11 @@ async function getGenAIClient() {
 }
 
 // 模型列表按優先順序排列（參考 trendpulse：優先使用 gemini-2.5-flash）
+// 注意：免費層 gemini-2.5-flash 限制 20 次/天
 const modelNames = [
-    'gemini-2.5-flash',          // 參考專案主要使用的模型
-    'gemini-1.5-flash-latest',   // 備用
-    'gemini-1.5-pro-latest',     // 備用
+    'gemini-2.5-flash',          // 參考專案主要使用的模型（免費層：20次/天）
+    'gemini-1.5-flash',          // 備用（如果可用）
+    'gemini-1.5-pro',            // 備用（如果可用）
 ];
 
 // 計算昨天的日期（用於搜尋過濾）
@@ -353,11 +354,35 @@ async function callGeminiAPI(modelName, prompt, useSearch = true, maxRetries = 3
             // 處理配額錯誤（429）：解析重試時間
             let delay = 2000 * Math.pow(2, i); // 預設指數退避
             if (error.status === 429 || error.code === 429) {
-                const errorMessage = error.message || JSON.stringify(error);
-                // 嘗試從錯誤訊息中提取重試時間（例如 "Please retry in 51.052297373s"）
-                const retryMatch = errorMessage.match(/retry in ([\d.]+)s/i);
-                if (retryMatch) {
-                    const retrySeconds = parseFloat(retryMatch[1]);
+                let retrySeconds = null;
+                
+                // 方法1：從錯誤的 details 中提取 retryDelay（優先）
+                if (error.details && Array.isArray(error.details)) {
+                    for (const detail of error.details) {
+                        if (detail['@type'] === 'type.googleapis.com/google.rpc.RetryInfo' && detail.retryDelay) {
+                            // retryDelay 可能是字串 "58s" 或物件
+                            const delayStr = typeof detail.retryDelay === 'string' 
+                                ? detail.retryDelay 
+                                : detail.retryDelay.seconds || detail.retryDelay;
+                            const match = String(delayStr).match(/([\d.]+)s?/);
+                            if (match) {
+                                retrySeconds = parseFloat(match[1]);
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                // 方法2：從錯誤訊息中提取（備用）
+                if (retrySeconds === null) {
+                    const errorMessage = error.message || JSON.stringify(error);
+                    const retryMatch = errorMessage.match(/retry in ([\d.]+)s/i);
+                    if (retryMatch) {
+                        retrySeconds = parseFloat(retryMatch[1]);
+                    }
+                }
+                
+                if (retrySeconds !== null) {
                     delay = Math.ceil(retrySeconds * 1000) + 1000; // 轉換為毫秒，加1秒緩衝
                     console.log(`⏳ Quota exceeded, waiting ${retrySeconds.toFixed(1)}s before retry...`);
                 } else {
@@ -666,21 +691,28 @@ async function generateArticles() {
                 console.log(`Model ${modelName} not available, trying next...`);
                 continue;
             } else if (isQuotaError) {
-                // 配額錯誤：等待後再嘗試下一個模型，或直接失敗（因為所有模型可能都配額用完）
-                console.log(`⚠️  Model ${modelName} quota exceeded. Trying next model...`);
-                // 如果是最後一個模型，等待後再試一次
-                if (modelName === modelNames[modelNames.length - 1]) {
-                    const errorMessage = attemptError.message || JSON.stringify(attemptError);
-                    const retryMatch = errorMessage.match(/retry in ([\d.]+)s/i);
-                    if (retryMatch) {
-                        const retrySeconds = parseFloat(retryMatch[1]);
-                        console.log(`⏳ All models quota exceeded. Waiting ${retrySeconds.toFixed(1)}s before final attempt...`);
-                        await new Promise((resolve) => setTimeout(resolve, Math.ceil(retrySeconds * 1000) + 1000));
-                        // 最後一次嘗試
+                // 配額錯誤：如果是免費層配額用完，應該優雅地失敗
+                const errorMessage = attemptError.message || JSON.stringify(attemptError);
+                const isFreeTierQuota = errorMessage.includes('free_tier') || errorMessage.includes('FreeTier');
+                
+                if (isFreeTierQuota) {
+                    console.log(`⚠️  Model ${modelName} free tier quota exceeded (20 requests/day limit).`);
+                    // 如果是第一個模型（主要模型）且是免費層配額，嘗試下一個模型
+                    if (modelName === modelNames[0]) {
+                        console.log(`   Trying next model...`);
                         continue;
+                    } else {
+                        // 如果所有模型的免費配額都用完，優雅地失敗
+                        console.error(`\n❌ All models have exceeded free tier quota.`);
+                        console.error(`   Free tier limit: 20 requests/day per model`);
+                        console.error(`   Please wait for quota reset or upgrade to paid plan.`);
+                        throw new Error('All models exceeded free tier quota. Please wait for quota reset or upgrade plan.');
                     }
+                } else {
+                    // 付費層配額錯誤，等待後重試
+                    console.log(`⚠️  Model ${modelName} quota exceeded. Trying next model...`);
+                    continue;
                 }
-                continue;
             } else if (isTemporaryError) {
                 console.log(`Model ${modelName} temporarily unavailable, trying next...`);
                 continue;
