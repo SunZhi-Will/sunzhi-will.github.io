@@ -13,7 +13,7 @@ if (!fs.existsSync(blogDir)) {
 const today = new Date();
 const dateStr = today.toISOString().split('T')[0]; // YYYY-MM-DD
 const timeStr = today.toISOString().split('T')[1].split('.')[0].replace(/:/g, ''); // HHMMSS
-const timestamp = `${dateStr.replace(/-/g, '')}-${timeStr}`; // YYYYMMDD-HHMMSS
+const timestamp = `${dateStr}-${timeStr}`; // YYYY-MM-DD-HHMMSS（與現有資料夾格式一致）
 const dateFormatted = new Intl.DateTimeFormat('zh-TW', {
     year: 'numeric',
     month: 'long',
@@ -29,12 +29,12 @@ const articlePathEn = path.join(postFolder, 'article.en.md');
 
 // 檢查今天是否已經有生成過（依資料夾日期或檔名含今日日期）
 function isTodayGenerated() {
-    const todayKey = dateStr.replace(/-/g, ''); // YYYYMMDD
     try {
         const entries = fs.readdirSync(blogDir, { withFileTypes: true });
         return entries.some((entry) => {
             if (entry.isDirectory()) {
-                return entry.name.startsWith(todayKey); // 新結構：YYYYMMDD-HHMMSS
+                // 新結構：YYYY-MM-DD-HHMMSS 或 YYYYMMDD-HHMMSS
+                return entry.name.startsWith(dateStr); // 以 YYYY-MM-DD 開頭
             }
             if (entry.isFile()) {
                 // 舊結構：ai-daily-report-YYYY-MM-DD.md 或其他含今日日期的檔名
@@ -47,7 +47,6 @@ function isTodayGenerated() {
     }
 }
 
-// 檢查今天是否已經生成過日報（檢查資料夾是否存在）
 if (isTodayGenerated()) {
     console.log(`Daily report for ${dateStr} already exists. Skipping...`);
     process.exit(0);
@@ -100,217 +99,447 @@ async function getGenAIClient() {
 }
 
 // 模型列表按優先順序排列（優先使用 Gemini 2.5）
-// Gemini 2.5 是 Google 發布的 AI 模型，具備強大的推理能力和多模態理解
 const modelNames = [
-    'gemini-2.5-pro',            // Gemini 2.5 Pro - 專業版本（優先使用）
-    'gemini-2.5-flash',          // Gemini 2.5 Flash - 快速版本
-    'gemini-2.5-pro-latest',     // Gemini 2.5 Pro Latest（備用命名）
-    'gemini-2.5-flash-latest',   // Gemini 2.5 Flash Latest（備用命名）
-    'gemini-2.0-pro-exp',        // 2.0 Pro Experimental
-    'gemini-2.0-flash-exp',      // Gemini 2.0 Flash Experimental（後備）
-    'gemini-1.5-pro',            // 1.5 Pro baseline
-    'gemini-1.5-flash',          // 1.5 Flash baseline
-    'gemini-1.5-flash-latest',   // Gemini 1.5 Flash Latest（後備）
-    'gemini-1.5-pro-latest',     // Gemini 1.5 Pro Latest（後備）
-    'gemini-pro',                // Gemini Pro 穩定版（最後後備）
+    'gemini-2.5-pro',
+    'gemini-2.5-flash',
+    'gemini-2.5-pro-latest',
+    'gemini-2.5-flash-latest',
+    'gemini-2.0-pro-exp',
+    'gemini-2.0-flash-exp',
+    'gemini-1.5-pro',
+    'gemini-1.5-flash',
+    'gemini-1.5-flash-latest',
+    'gemini-1.5-pro-latest',
+    'gemini-pro',
 ];
 
-// 生成 AI 日報的 Prompt（改進版，確保使用當天新聞）
-const articlePromptZh = `你是一位專業的 AI 領域新聞編輯，請生成一份 AI 領域的每日日報（繁體中文）。
+// 計算昨天的日期（用於搜尋過濾）
+const yesterday = new Date(today);
+yesterday.setDate(yesterday.getDate() - 1);
+const yesterdayISO = yesterday.toISOString().split('T')[0]; // YYYY-MM-DD
 
-**⚠️ 重要：當前日期資訊（請嚴格遵守）**
-- 今天的完整日期：${dateFormatted}
-- 今天的日期格式（YYYY-MM-DD）：${dateStr}
-- 今天是星期：${dateFormatted.split('，')[1] || '未知'}
+// Persona 風格（參考 trendpulse 的「AI 白話解讀專家」）
+const personaStyle = `請扮演一位『科技白話文說書人』。你的目標受眾是**完全不懂程式碼**的普羅大眾（如行銷人員、業務、或是家中長輩）。
 
-**嚴格要求：**
-1. **時效性要求（最重要）**：
-   - 只使用 ${dateStr}（今天）發布或發生的新聞和動態
-   - 絕對不要使用昨天或更早的新聞
-   - 如果今天沒有足夠的新聞，可以包含最近 24 小時內的重要動態
-   - 每則新聞必須明確標註時間或說明是「今日」或「${dateStr}」發生
-   - 如果某則新聞沒有明確的日期標註，請不要包含它
+【最高指導原則：像朋友聊天一樣說故事】
+1. **禁止行銷腔調**：不要用「引領未來」、「顛覆想像」、「全新篇章」這種空泛的詞。要說人話。
+2. **強制使用「神比喻」**：遇到技術名詞（如 LLM, Agent, RAG），**必須**用生活場景來比喻。例如：「AI Agent 就像是你請了一個會自己跑腿買咖啡的實習生，而不只是會回答問題的字典」。
+3. **資料引用鐵律**：內容細節（人名、數據、功能）必須嚴格基於搜尋結果，不能瞎掰。
+4. **排版規定**：請使用標準的 Markdown 標題 (###) 和列表 (-)，**嚴禁**使用 『・』 或其他特殊全形符號作為列表開頭。
 
-2. **內容結構**：
-   - 標題要吸引人，必須包含完整日期：${dateFormatted}
-   - 內容要包含以下部分（每個部分都要有實際內容）：
-     * **今日要聞**：${dateStr} 當天最重要的 AI 新聞（至少 2-3 則）
-     * **技術突破**：今天發布或公開的重要技術進展、研究論文、產品更新
-     * **開源專案**：今天發布、更新或熱門的開源專案和工具
-     * **開發實務**：實用的開發技巧、最佳實踐、工具推薦
-     * **趨勢觀察**：基於今日動態的短期趨勢分析
+【文章結構與撰寫口吻】：
 
-3. **內容品質**：
-   - 使用繁體中文撰寫
-   - 內容要有結構，使用 Markdown 格式
-   - 包含適當的標題層級（##, ###）
-   - 內容要專業但易懂，適合技術人員閱讀
-   - 長度約 1000-1500 字
-   - 每則新聞都要有具體來源或事件描述，避免模糊或虛構資訊
-   - 如果某個類別今天沒有相關內容，可以標註「今日無重大更新」但不要編造
+### 發生了什麼事？（像在講八卦）
+(用最白話的方式，告訴我這則新聞的重點。例如：「大家都在傳 Google 又出包了...」或是「OpenAI 昨天半夜突然丟出一個震撼彈...」。)
 
-4. **格式要求**：
-   - 使用 Markdown 格式
-   - 不要產生任何主標題或文章標題行；直接從內容章節開始
-   - 標題層級使用 ##, ###
-   - 重要資訊可以使用 **粗體** 強調
-   - 每則新聞前使用 - 或 * 作為列表項
-   - 不需要包含 frontmatter（我會另外加上）
+### 簡單說，這到底是什麼？（神比喻時間）
+(這是你的主場。請發揮創意，用一個**具體的生活比喻**來解釋這個技術或產品。讓讀者看完會發出「阿～原來是這樣！」的驚嘆。)
 
-**最後提醒：**
-- 所有新聞必須是 ${dateStr}（今天）發生或發布的
-- 如果無法確定某則新聞是否為今天，請不要包含它
-- 寧可內容少一些，也不要包含過時的新聞
-- 每則新聞都應該能夠明確說明是「今日」或「${dateStr}」的內容
+### 根據報導，細節是這樣的
+(這裡列出搜尋到的具體數據或功能。例如：「根據官方消息，它處理速度快了 2 倍...」)
 
-**請直接輸出 Markdown 格式的內容，確保所有內容都是 ${dateStr} 當天的新聞和動態。**`;
+### 這對我們有什麼影響？
+(跳過技術參數，直接講應用。這東西會讓我的工作變快嗎？會讓我失業嗎？還是會讓我追劇更爽？)
 
-const articlePromptEn = `You are a professional AI news editor. Please write today's AI daily report in English.
+### 內行人的深度點評
+(分析這件事背後的商業邏輯。這家公司在打什麼算盤？誰會因此倒大楣？誰會賺大錢？)
 
-**Date context (must be strictly followed)**
-- Full date today: ${dateFormatted}
-- ISO date (YYYY-MM-DD): ${dateStr}
-- Weekday: ${dateFormatted.split('，')[1] || 'Unknown'}
+### 一句話總結
+(用一句精闢、有力、甚至帶點幽默吐槽的話來收尾。)
 
-**Strict rules**
-1) Freshness (most important):
-   - Only include news/events published or happened on ${dateStr}
-   - No items from previous days
-   - If few items today, include important items from the last 24h and label them clearly
-   - Each item must mention it is today (${dateStr}) or clearly give today’s timestamp
+篇幅目標：1000 - 1500 字。請保持語氣輕鬆幽默，但觀點要有深度。`;
 
-2) Structure:
-   - Catchy title with the full date: ${dateFormatted}
-   - Sections (all must have content):
-     * Top Stories (2-3 items minimum)
-     * Technical Breakthroughs
-     * Open Source
-     * Dev Practices / Tips
-     * Trend Watch
+// 生成 AI 日報的 Prompt（參考 trendpulse 的結構）
+const articlePromptZh = `
+【System: Strict Investigative Journalist Agent】
+你是一位資深調查記者，擁有 Google Search 的即時查證能力。
 
-3) Quality:
-   - English, Markdown, with headings (##, ###)
-   - Professional but readable, 1000-1500 words
-   - Every item must have concrete source/event details; avoid vague or fabricated info
-   - If a section truly has nothing today, say “No major update today” but don’t invent
+【SECURITY PROTOCOL - STRICT MARKDOWN ONLY】
+- **CRITICAL**: You are FORBIDDEN from using HTML tags.
+- ❌ Incorrect: <h1>Title</h1>, <h4>Subtitle</h4>, <b>Bold</b>, <p>Text</p>
+- ✅ Correct: # Title, ### Subtitle, **Bold**, Text
+- Check your output before finishing: Did you use <h4>? If yes, replace it with ### immediately.
+- Output **PURE MARKDOWN** only.
 
-4) Formatting:
-   - Markdown, headings with ##/###
-   - Use **bold** for emphasis; bullet with - or *
-   - No frontmatter (handled separately)
+【基準時間】
+今天是：${dateFormatted} (${dateStr})
 
-**Reminder**:
-- Every item must be from today (${dateStr}); skip if unsure.
-- Prefer fewer items over outdated info.
-- Output Markdown only.
-- Do NOT include any article title or headline; start directly with sections.`;
+【執行策略】
+1. **搜尋**：
+   【多關鍵字拆解邏輯】
+   Input Topic: "AI 最新動態"
+   1. **Analyze input**: 如果輸入包含多個概念，**絕對不要**把它們當成一個長字串搜尋。
+   2. **Split & Search**: 你必須將其拆解為獨立的搜尋查詢。
+      - Query A: Search "AI latest news" after:${yesterdayISO}
+      - Query B: Search "artificial intelligence trends" after:${yesterdayISO}
+      - Query C: Search "人工智慧 最新消息" after:${yesterdayISO}
+      - Query D: Search for the combination/intersection of these topics.
+   3. **English Translation**: 對於科技/金融議題，務必搜尋英文關鍵字 (e.g. "AI", "Machine Learning", "LLM") 以獲得高品質來源。
+   (重要：針對國際或科技議題，請務必自主轉譯為英文關鍵字進行搜尋，以獲取最完整的國際資訊，不要只侷限於中文搜尋結果)
+2. **過濾**：
+   【時效性防火牆】
+   - 你的搜尋指令必須包含 after:${yesterdayISO}。
+   - 如果搜尋結果的日期早於 ${yesterdayISO}，請忽略它，不要寫入文章。
+   - 只使用 ${dateStr}（今天）發布或發生的新聞和動態。
+3. **篇幅**：約 1500 字以上。結構：1. 今日頭條快訊 (情境鋪陳) 2. 事件詳情與技術科普 3. 產業深度商機分析。
 
-// 生成幽默有趣的標題（無日期，格式「【AI日報】...」）
-const titlePromptZh = `請產生一個幽默有趣且精簡的標題，格式必須為：【AI日報】xxxx
-要求：
-1. 使用繁體中文
-2. 不要包含日期與時間
-3. 盡量在 20 字內
-4. 風格輕鬆有趣但專業`;
+【關鍵：SOURCE OF TRUTH (事實來源)】
+- 你**必須**使用工具 (Google Search) 找到的資訊作為文章的基礎
+- 仔細閱讀搜尋回傳的摘要。具體的數字、人名、事件發生經過，必須從搜尋結果中提取
+- 不要只寫空泛的理論，請寫出「搜尋到的具體細節」
 
-const titlePromptEn = `Generate a short, witty title in English. Format: 【AI Daily】xxxx
-Rules:
-1) Do NOT include any date or time
-2) Keep within ~60 characters
-3) Light, playful, but still professional tone`;
+【電子報視覺化排版指令 (Visual Formatting)】
+1. **行內引用**：使用 [1], [2] 標記
+2. **來源清單**：文章末尾 <<<SOURCES>>> 列出 URL
+3. **重點強調**：使用 **粗體** 標示關鍵數據或人名
+4. **引用區塊**：使用 > 引用區塊來展示金句或核心觀點
+5. **內文真實配圖 (Real Source Images)**：
+   - 請嘗試從搜尋到的來源內容中，提取**真實的新聞圖片網址 (URL)**
+   - 如果你在來源中發現有效的圖片連結 (結尾通常是 .jpg, .png, .webp)，請直接插入文章中
+   - 格式：\`![Source: 圖片來源名稱](https://真實圖片網址.jpg)\`
+   - **嚴禁**在內文使用 generate_inline 指令
+   - **嚴禁**捏造無法訪問的網址
+   - 如果找不到真實圖片，該段落就不要放圖片
 
-// 生成封面圖片描述的 Prompt
-const imagePrompt = `請為 ${dateFormatted} AI 每日日報生成「RPG 遊戲風格的資訊圖表」封面描述，使用繁體中文：
-要求：
-1. 風格：RPG / 像素或手繪風格的資訊圖表，清晰易懂
-2. 內容：以角色面板/任務清單方式，快速展現今日 AI 重點（要聞、技術、開源、實務、趨勢）
-3. 構圖：可有簡化地圖或任務列表圖示，箭頭/圖示指向重點，避免過度複雜
-4. 色調：清爽易讀（可用深色底配亮色重點），保持專業與科技感
-5. 請只輸出圖片描述，不要附帶其他文字。`;
+【撰寫設定】
+- **角色**：科技白話文說書人
+- **風格指令 (Persona Style)**：
+  ${personaStyle}
+
+【輸出格式】
+<<<TITLE>>>
+(標題：格式為【AI日報】xxxx，幽默有趣，不包含日期)
+<<<SUMMARY>>>
+(摘要：約 100-150 字)
+<<<SEARCH_QUERIES>>>
+(搜尋關鍵字，用逗號分隔)
+<<<IMAGE_PROMPT>>>
+(封面圖片的 AI 繪圖指令：請設計一張「RPG 遊戲風格的資訊圖表」。
+目標：透過 RPG 角色面板/任務清單的視覺化方式來呈現文章的核心邏輯。
+限制：**嚴禁包含文字 (No Text)**。請用符號、圖標、幾何圖形來代替文字標籤，保持畫面非常乾淨、極簡，避免資訊過載。)
+<<<CONTENT>>>
+(正文，若有找到真實圖片連結請包含在內)
+<<<SOURCES>>>
+(來源列表，每行一個 URL)
+`;
+
+const articlePromptEn = `
+【System: Strict Investigative Journalist Agent】
+You are a senior investigative journalist with real-time fact-checking capabilities via Google Search.
+
+【SECURITY PROTOCOL - STRICT MARKDOWN ONLY】
+- **CRITICAL**: You are FORBIDDEN from using HTML tags.
+- ❌ Incorrect: <h1>Title</h1>, <h4>Subtitle</h4>, <b>Bold</b>, <p>Text</p>
+- ✅ Correct: # Title, ### Subtitle, **Bold**, Text
+- Output **PURE MARKDOWN** only.
+
+【Time Context】
+Today is: ${dateFormatted} (${dateStr})
+
+【Execution Strategy】
+1. **Search**:
+   【Multi-Keyword Split Logic】
+   Input Topic: "AI Latest Updates"
+   1. **Analyze input**: If the input contains multiple concepts, **DO NOT** search them as one long string.
+   2. **Split & Search**: You must split them into independent search queries.
+      - Query A: Search "AI latest news" after:${yesterdayISO}
+      - Query B: Search "artificial intelligence trends" after:${yesterdayISO}
+      - Query C: Search "machine learning updates" after:${yesterdayISO}
+      - Query D: Search for the combination/intersection of these topics.
+   3. **Comprehensive Coverage**: For tech/finance topics, search both English and localized keywords for comprehensive results.
+2. **Filter**:
+   【Time Filter Firewall】
+   - Your search queries must include after:${yesterdayISO}.
+   - If search results are dated before ${yesterdayISO}, ignore them and do not write them into the article.
+   - Only include news published or happened on ${dateStr} (today).
+3. **Length**: Approximately 1500+ words. Structure: 1. Today's Headlines (context) 2. Event Details & Tech Explanation 3. Industry Deep Dive & Business Analysis.
+
+【SOURCE OF TRUTH】
+- You **MUST** use information found via Google Search as the foundation
+- Extract specific numbers, names, and event details from search results
+- Write concrete details from search results, not vague theories
+
+【Visual Formatting】
+1. **Inline citations**: Use [1], [2] markers
+2. **Source list**: List URLs at end in <<<SOURCES>>>
+3. **Emphasis**: Use **bold** for key data or names
+4. **Blockquotes**: Use > for quotes or core insights
+5. **Real source images**:
+   - Extract real news image URLs from search results
+   - Format: \`![Source: Image Source Name](https://real-image-url.jpg)\`
+   - **FORBIDDEN** to use generate_inline
+   - **FORBIDDEN** to fabricate URLs
+   - If no real images found, omit images
+
+【Writing Style】
+- **Role**: Tech storyteller who explains complex AI concepts in plain language
+- **Tone**: Friendly, conversational, like chatting with a friend
+- **Approach**: Use vivid metaphors for technical terms, avoid marketing jargon
+- **Structure**: What happened? → What is it? (metaphor) → Details → Impact → Insider analysis → One-liner summary
+
+【Output Format】
+<<<TITLE>>>
+(Title: Format as 【AI Daily】xxxx, witty and interesting, no date)
+<<<SUMMARY>>>
+(Summary: ~100-150 words)
+<<<SEARCH_QUERIES>>>
+(Search keywords, comma-separated)
+<<<IMAGE_PROMPT>>>
+(AI image generation prompt for cover: Design an "RPG game-style infographic".
+Goal: Visualize core logic through RPG character panel/task list style.
+Restriction: **NO TEXT**. Use symbols, icons, geometric shapes instead of text labels. Keep it clean, minimal, avoid information overload.)
+<<<CONTENT>>>
+(Main content, include real image links if found)
+<<<SOURCES>>>
+(Source list, one URL per line)
+`;
 
 /**
- * 使用新的 @google/genai SDK 調用 Google Gemini API
+ * 使用新的 @google/genai SDK 調用 Google Gemini API（帶重試機制）
  * @param {string} modelName - 模型名稱
  * @param {string} prompt - 提示詞
- * @returns {Promise<string>} 生成的內容
+ * @param {boolean} useSearch - 是否使用 Google Search 工具
+ * @param {number} maxRetries - 最大重試次數
+ * @returns {Promise<{text: string, sources?: any[]}>} 生成的內容和來源
  */
-async function callGeminiAPI(modelName, prompt) {
-    try {
-        const ai = await getGenAIClient();
-        const result = await ai.models.generateContent({
-            model: modelName,
-            contents: prompt,
-        });
+async function callGeminiAPI(modelName, prompt, useSearch = true, maxRetries = 3) {
+    const ai = await getGenAIClient();
+    const config = useSearch
+        ? {
+              tools: [{ googleSearch: {} }],
+          }
+        : {};
 
-        const text =
-            result.text ||
-            result.response?.candidates?.[0]?.content?.parts
-                ?.map((p) => p.text || '')
-                .join('')
-                .trim() ||
-            '';
-        return text;
-    } catch (error) {
-        // 重新拋出錯誤以便上層處理
-        throw error;
+    let lastError;
+    for (let i = 0; i < maxRetries; i++) {
+        try {
+            const result = await ai.models.generateContent({
+                model: modelName,
+                contents: prompt,
+                config,
+            });
+
+            const text =
+                result.text ||
+                result.response?.candidates?.[0]?.content?.parts
+                    ?.map((p) => p.text || '')
+                    .join('')
+                    .trim() ||
+                '';
+
+            // 檢查 Hallucination
+            if (isHallucinated(text)) {
+                console.warn(`Attempt ${i + 1}: Hallucination detected.`);
+                if (i === maxRetries - 1) throw new Error('Hallucination detected in response');
+                continue;
+            }
+
+            // 提取來源
+            const sources = [];
+            if (result.candidates?.[0]?.groundingMetadata?.groundingChunks) {
+                result.candidates[0].groundingMetadata.groundingChunks.forEach((chunk) => {
+                    if (chunk.web?.uri) {
+                        sources.push({
+                            title: chunk.web.title || 'Reference Source',
+                            uri: chunk.web.uri,
+                        });
+                    }
+                });
+            }
+
+            return { text, sources };
+        } catch (error) {
+            lastError = error;
+            console.warn(`GenAI API Attempt ${i + 1} failed.`, error.message);
+            if (i === maxRetries - 1) break;
+            // 指數退避：2秒、4秒、8秒
+            const delay = 2000 * Math.pow(2, i);
+            await new Promise((resolve) => setTimeout(resolve, delay));
+        }
     }
+    throw lastError || new Error('API call failed after retries');
 }
 
 /**
- * 簡單清理模型輸出：移除開頭的標題/空白
+ * 清理 HTML 標籤，轉換為 Markdown
  */
-function cleanContent(raw) {
-    let c = (raw || '').trim();
-    // 移除最前面的標題行（# / ## 開頭）
-    c = c.replace(/^(#{1,3}\s.+\n)+/g, '').trimStart();
-    return c;
-}
-
-function cleanTitle(raw) {
-    if (!raw) return '';
-    let t = raw.trim().split('\n')[0];
-    t = t.replace(/^["'“”]+|["'“”]+$/g, '').trim();
-    return t;
+function cleanupHtmlTags(text) {
+    if (!text) return '';
+    let cleaned = text;
+    cleaned = cleaned.replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1');
+    cleaned = cleaned.replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1');
+    cleaned = cleaned.replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1');
+    cleaned = cleaned.replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1');
+    cleaned = cleaned.replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**');
+    cleaned = cleaned.replace(/<b[^>]*>(.*?)<\/b>/gi, '**$1**');
+    cleaned = cleaned.replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*');
+    cleaned = cleaned.replace(/<i[^>]*>(.*?)<\/i>/gi, '*$1*');
+    cleaned = cleaned.replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n');
+    cleaned = cleaned.replace(/<ul[^>]*>/gi, '').replace(/<\/ul>/gi, '');
+    cleaned = cleaned.replace(/<ol[^>]*>/gi, '').replace(/<\/ol>/gi, '');
+    cleaned = cleaned.replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1');
+    cleaned = cleaned.replace(/<br\s*\/?>/gi, '\n');
+    return cleaned;
 }
 
 /**
- * 使用 OpenAI DALL-E API 生成圖片（如果可用）
- * @param {string} prompt - 圖片描述
- * @returns {Promise<string|null>} 圖片 URL 或 null
+ * 檢查是否產生 Hallucination（程式碼或 HTML）
+ */
+function isHallucinated(text) {
+    if (!text) return false;
+    const forbiddenPatterns = [
+        '<!DOCTYPE html>',
+        '<body',
+        '<html',
+        '<div id="root"',
+        'export default function',
+        'import React',
+        'react-dom/client',
+    ];
+    return forbiddenPatterns.some((p) => text.includes(p));
+}
+
+/**
+ * 清理字串（移除多餘空白和標記）- 參考 trendpulse 的實現
+ */
+function cleanStr(str) {
+    if (!str) return '';
+    // 參考 trendpulse：先移除 <<< 之後的內容，再 trim
+    return str.split('<<<')[0].trim();
+}
+
+/**
+ * 解析結構化輸出
+ */
+function parseStructuredOutput(text) {
+    let titlePart = '',
+        summaryPart = '',
+        searchQueriesPart = '',
+        imagePromptPart = '',
+        contentPart = '',
+        sourcesPart = '';
+
+    if (text.includes('<<<TITLE>>>')) titlePart = text.split('<<<TITLE>>>')[1]?.split('<<<')[0] || '';
+    if (text.includes('<<<SUMMARY>>>')) summaryPart = text.split('<<<SUMMARY>>>')[1]?.split('<<<')[0] || '';
+    if (text.includes('<<<SEARCH_QUERIES>>>')) searchQueriesPart = text.split('<<<SEARCH_QUERIES>>>')[1]?.split('<<<')[0] || '';
+    if (text.includes('<<<IMAGE_PROMPT>>>')) imagePromptPart = text.split('<<<IMAGE_PROMPT>>>')[1]?.split('<<<')[0] || '';
+    if (text.includes('<<<CONTENT>>>')) contentPart = text.split('<<<CONTENT>>>')[1]?.split('<<<')[0] || '';
+    if (text.includes('<<<SOURCES>>>')) sourcesPart = text.split('<<<SOURCES>>>')[1] || '';
+
+    // 如果沒有結構化輸出，使用整個文字作為內容
+    if (!contentPart && !titlePart) {
+        contentPart = text;
+    }
+
+    // 清理標題（移除 Markdown 標題符號和方括號）
+    let rawTitle = cleanStr(titlePart) || '【AI日報】今日精選';
+    rawTitle = rawTitle.replace(/[\[\]【】]/g, '').replace(/^#+\s*/, '').trim();
+    rawTitle = cleanupHtmlTags(rawTitle);
+    // 確保標題格式為【AI日報】...
+    if (!rawTitle.startsWith('【AI日報】') && !rawTitle.startsWith('【AI Daily】')) {
+        rawTitle = `【AI日報】${rawTitle}`;
+    }
+
+    const summary = cleanupHtmlTags(cleanStr(summaryPart) || '本篇報導整合了多方來源的即時數據與分析...');
+    const imagePrompt = cleanStr(imagePromptPart) || `AI daily report ${dateStr}, RPG game-style infographic, minimalist chart, no text`;
+    let content = cleanStr(contentPart) || text;
+    if (content.includes('<<<SOURCES>>>')) content = content.split('<<<SOURCES>>>')[0];
+    content = cleanupHtmlTags(content);
+    content = content.replace(/!\[(.*?)\]\(generate_inline\)/g, ''); // 移除 generate_inline
+
+    // 解析搜尋關鍵字
+    const rawQueries = cleanStr(searchQueriesPart);
+    const searchQueries = rawQueries
+        ? rawQueries.split(/,|、|\n/).map((q) => q.trim()).filter((q) => q.length > 0)
+        : [];
+
+    // 解析來源（從結構化輸出和 API 回傳的來源）
+    const sources = [];
+    // 從 sourcesPart 提取 URL
+    if (sourcesPart) {
+        const lines = sourcesPart.split('\n');
+        lines.forEach((line) => {
+            const urlMatch = line.match(/(https?:\/\/[^\s\)]+)/);
+            if (urlMatch) {
+                const uri = urlMatch[0];
+                let title = line.replace(uri, '').replace(/^[0-9]+[\.\)]\s*/, '').replace(/^[\-\*•]\s*/, '').replace(/[\||：:]/g, '').trim();
+                if (!title || title.length < 2) {
+                    try {
+                        title = new URL(uri).hostname;
+                    } catch {
+                        title = 'External Source';
+                    }
+                }
+                if (!sources.find((s) => s.uri === uri)) {
+                    sources.push({ title, uri });
+                }
+            }
+        });
+    }
+
+    return {
+        title: rawTitle,
+        summary,
+        content,
+        imagePrompt,
+        searchQueries,
+        sources,
+    };
+}
+
+/**
+ * 使用 Gemini 生成圖片（參考 trendpulse 的實現）
  */
 async function generateImageWithGemini(prompt) {
     const ai = await getGenAIClient();
-    const imageModelCandidates = [
-        'imagen-3.0-generate-001',
-        'gemini-2.0-flash-exp',
-        'gemini-1.5-flash-latest',
-    ];
+    const imageModelCandidates = ['gemini-2.5-flash-image', 'imagen-3.0-generate-001', 'gemini-2.0-flash-exp'];
+
+    // 優化 Prompt：強制使用「RPG 遊戲風格資訊圖表」（參考 trendpulse）
+    const enhancedPrompt = `${prompt}, RPG game-style infographic, data visualization style, isometric 3d chart, concept map, business intelligence, clean vector art, white background, high contrast, professional, 8k, no text, textless, without words, no letters, no watermark, clean design, simple geometric shapes`;
 
     for (const model of imageModelCandidates) {
         try {
             console.log(`Generating cover image with model: ${model}...`);
-            const res = await ai.models.generateImages({
+            // 參考 trendpulse 的格式：contents: { parts: [{ text: enhancedPrompt }] }
+            const result = await ai.models.generateContent({
                 model,
-                prompt,
+                contents: {
+                    parts: [{ text: enhancedPrompt }],
+                },
+                config: {
+                    imageConfig: { aspectRatio: '16:9' },
+                },
             });
 
-            const img =
-                res?.data?.[0]?.b64Json ||
-                res?.data?.[0]?.bytesBase64Encoded ||
-                res?.data?.[0]?.image?.base64 ||
-                res?.data?.[0]?.imageBase64;
-
-            if (!img) {
-                console.error('⚠️  Image response missing base64 data');
-                continue;
+            // 檢查回傳的圖片資料
+            for (const candidate of result.candidates || []) {
+                for (const part of candidate.content?.parts || []) {
+                    if (part.inlineData) {
+                        const imageBuffer = Buffer.from(part.inlineData.data, 'base64');
+                        const imageFileName = `cover-${timestamp}.png`;
+                        const imagePath = path.join(postFolder, imageFileName);
+                        fs.writeFileSync(imagePath, imageBuffer);
+                        console.log(`✅ Cover image generated: ${imageFileName}`);
+                        return imageFileName;
+                    }
+                }
             }
 
-            const imageBuffer = Buffer.from(img, 'base64');
-            const imageFileName = `cover-${timestamp}.png`;
-            const imagePath = path.join(postFolder, imageFileName);
-            fs.writeFileSync(imagePath, imageBuffer);
-            console.log(`✅ Cover image generated: ${imageFileName}`);
-            return imageFileName;
+            // 嘗試其他可能的格式
+            const img =
+                result.data?.[0]?.b64Json ||
+                result.data?.[0]?.bytesBase64Encoded ||
+                result.data?.[0]?.image?.base64 ||
+                result.data?.[0]?.imageBase64;
+
+            if (img) {
+                const imageBuffer = Buffer.from(img, 'base64');
+                const imageFileName = `cover-${timestamp}.png`;
+                const imagePath = path.join(postFolder, imageFileName);
+                fs.writeFileSync(imagePath, imageBuffer);
+                console.log(`✅ Cover image generated: ${imageFileName}`);
+                return imageFileName;
+            }
         } catch (error) {
             console.error(`⚠️  Image model ${model} failed:`, error.message);
             continue;
@@ -322,141 +551,207 @@ async function generateImageWithGemini(prompt) {
 }
 
 /**
- * 生成圖片描述並嘗試生成圖片
+ * 生成文章內容（中英文）- 參考 trendpulse 的重試邏輯
  */
-async function generateCoverImage(articleContent) {
+async function generateArticles() {
     let lastError = null;
 
-    // 嘗試使用 Gemini 生成圖片描述
     for (const modelName of modelNames) {
-        try {
-            console.log(`Generating image description with model: ${modelName}...`);
-            const imageDescription = await callGeminiAPI(modelName, imagePrompt);
+        // 參考 trendpulse：每個模型嘗試 2 次（處理 Hallucination）
+        let attemptError;
+        for (let attempt = 0; attempt < 2; attempt++) {
+            try {
+                console.log(`Trying model: ${modelName} (attempt ${attempt + 1})...`);
 
-            // 嘗試使用 Gemini 生成圖片
-            const imageFileName = await generateImageWithGemini(imageDescription.trim());
-            return imageFileName;
+                // 生成中文文章
+                const resultZh = await callGeminiAPI(modelName, articlePromptZh, true);
+                
+                // 檢查 Hallucination
+                if (isHallucinated(resultZh.text)) {
+                    console.warn(`Attempt ${attempt + 1}: Hallucination detected in Chinese content.`);
+                    continue;
+                }
 
-        } catch (error) {
-            lastError = error;
-            const isModelNotFound =
-                error.status === 404 ||
-                error.message?.includes('not found') ||
-                error.message?.includes('404') ||
-                error.message?.includes('Model') ||
-                error.code === 404;
+                const parsedZh = parseStructuredOutput(resultZh.text);
+                
+                // 再次檢查內容是否 Hallucinated
+                if (isHallucinated(parsedZh.content)) {
+                    console.warn(`Attempt ${attempt + 1}: Content Hallucination detected.`);
+                    continue;
+                }
 
-            if (isModelNotFound) {
-                console.log(`Model ${modelName} not available for image description, trying next...`);
-                continue;
-            } else {
-                console.error(`Error with model ${modelName}:`, error.message);
-                break;
+                // 合併 API 回傳的來源
+                if (resultZh.sources && resultZh.sources.length > 0) {
+                    parsedZh.sources = [...parsedZh.sources, ...resultZh.sources];
+                }
+
+                // 生成英文文章
+                const resultEn = await callGeminiAPI(modelName, articlePromptEn, true);
+                
+                // 檢查 Hallucination
+                if (isHallucinated(resultEn.text)) {
+                    console.warn(`Attempt ${attempt + 1}: Hallucination detected in English content.`);
+                    continue;
+                }
+
+                const parsedEn = parseStructuredOutput(resultEn.text);
+                
+                // 再次檢查內容是否 Hallucinated
+                if (isHallucinated(parsedEn.content)) {
+                    console.warn(`Attempt ${attempt + 1}: Content Hallucination detected.`);
+                    continue;
+                }
+
+                // 確保英文標題格式
+                if (!parsedEn.title.startsWith('【AI Daily】')) {
+                    parsedEn.title = parsedEn.title.replace(/^【AI日報】/, '【AI Daily】');
+                    if (!parsedEn.title.startsWith('【AI Daily】')) {
+                        parsedEn.title = `【AI Daily】${parsedEn.title}`;
+                    }
+                }
+                // 合併 API 回傳的來源
+                if (resultEn.sources && resultEn.sources.length > 0) {
+                    parsedEn.sources = [...parsedEn.sources, ...resultEn.sources];
+                }
+
+                // 生成封面圖片
+                const coverImage = await generateImageWithGemini(parsedZh.imagePrompt || parsedEn.imagePrompt);
+
+                // 處理內容並寫入檔案
+                processContent(parsedZh, parsedEn, coverImage);
+                return; // 成功退出
+
+            } catch (error) {
+                attemptError = error;
+                console.error(`Attempt ${attempt + 1} Error:`, error.message);
             }
         }
-    }
 
-    console.log('⚠️  Could not generate cover image, continuing without it...');
-    return null;
-}
-
-async function generateDailyReport() {
-    let lastError = null;
-    // 預設標題，若生成失敗仍有保底
-    titleZh = '【AI日報】今日精選';
-    titleEn = '【AI Daily】Today\'s Highlights';
-
-    // 嘗試每個模型直到成功生成文章（中英）
-    for (const modelName of modelNames) {
-        try {
-            console.log(`Trying model: ${modelName}...`);
-            const contentZh = cleanContent(await callGeminiAPI(modelName, articlePromptZh));
-            const contentEn = cleanContent(await callGeminiAPI(modelName, articlePromptEn));
-            // 生成幽默標題（不中斷主流程）
-            titleZh = cleanTitle(await callGeminiAPI(modelName, titlePromptZh)) || titleZh;
-            titleEn = cleanTitle(await callGeminiAPI(modelName, titlePromptEn)) || titleEn;
-
-            // 成功生成文章！先處理圖片，再寫雙語檔案
-            const coverImage = await generateCoverImage(contentZh);
-            processContent(contentZh, contentEn, coverImage);
-            return; // 成功退出
-
-        } catch (error) {
-            lastError = error;
-            // 檢查是否為模型不存在或暫時性錯誤
-            const msg = error?.message || '';
-            const code = error?.status || error?.code;
+        // 如果這個模型的所有嘗試都失敗，記錄錯誤並嘗試下一個模型
+        if (attemptError) {
+            lastError = attemptError;
             const isModelNotFound =
-                code === 404 ||
-                msg.includes('not found') ||
-                msg.includes('404') ||
-                msg.includes('Model');
-            const isTransient =
-                code === 429 ||
-                code === 503 ||
-                msg.includes('overloaded') ||
-                msg.includes('try again');
+                attemptError.status === 404 ||
+                attemptError.message?.includes('not found') ||
+                attemptError.message?.includes('404') ||
+                attemptError.message?.includes('Model') ||
+                attemptError.code === 404;
+
+            const isTemporaryError =
+                attemptError.status === 503 ||
+                attemptError.status === 429 ||
+                attemptError.message?.includes('overloaded') ||
+                attemptError.message?.includes('try again');
 
             if (isModelNotFound) {
                 console.log(`Model ${modelName} not available, trying next...`);
-                continue; // 嘗試下一個模型
-            } else if (isTransient) {
-                console.log(`Model ${modelName} temporarily unavailable (${msg}), trying next...`);
-                continue; // 嘗試下一個模型
+                continue;
+            } else if (isTemporaryError) {
+                console.log(`Model ${modelName} temporarily unavailable, trying next...`);
+                continue;
             } else {
-                // 其他錯誤，重新拋出
-                console.error(`Error with model ${modelName}:`, error.message);
-                throw error;
+                console.error(`Error with model ${modelName}:`, attemptError.message);
+                // 繼續嘗試下一個模型
+                continue;
             }
         }
     }
 
-    // 如果所有模型都失敗
-    throw lastError || new Error('All models failed');
+    throw lastError || new Error('AI 生成失敗 (Hallucination Limit)');
 }
 
-function buildFrontmatter({ title, coverImage }) {
-    return `---
-title: "${title}"
+/**
+ * 處理內容並寫入檔案
+ */
+function processContent(parsedZh, parsedEn, coverImage) {
+    // 生成中文 frontmatter
+    const frontmatterZh = `---
+title: "${parsedZh.title}"
 date: "${dateStr}"
-description: "每日精選 AI 領域的最新動態、技術突破、開源專案與實用技巧，幫助你掌握 AI 發展趨勢。"
+description: "${parsedZh.summary.substring(0, 150)}"
 tags: ["AI", "每日日報", "技術趨勢"]
 ${coverImage ? `coverImage: "${coverImage}"` : ''}
 ---
 
 `;
-}
 
-function processContent(contentZh, contentEn, coverImage) {
-    // 標題改為由模型生成的幽默標題
-    const fmZh = buildFrontmatter({ title: titleZh || '【AI日報】精彩摘要', coverImage });
-    const fmEn = buildFrontmatter({ title: titleEn || '【AI Daily】Highlights', coverImage });
+    // 生成英文 frontmatter
+    const frontmatterEn = `---
+title: "${parsedEn.title}"
+date: "${dateStr}"
+description: "${parsedEn.summary.substring(0, 150)}"
+tags: ["AI", "Daily Report", "Tech Trends"]
+${coverImage ? `coverImage: "${coverImage}"` : ''}
+---
 
-    const fullZh = fmZh + contentZh;
-    const fullEn = fmEn + contentEn;
+`;
 
-    fs.writeFileSync(articlePathZh, fullZh, 'utf8');
-    fs.writeFileSync(articlePathEn, fullEn, 'utf8');
+    // 組合完整內容（包含來源）
+    let contentZh = parsedZh.content;
+    // 確保來源區塊一定會顯示
+    contentZh += '\n\n---\n\n## 參考來源\n\n';
+    if (parsedZh.sources && parsedZh.sources.length > 0) {
+        // 去重來源（根據 URI）
+        const uniqueSources = [];
+        const seenUris = new Set();
+        parsedZh.sources.forEach((source) => {
+            if (source.uri && !seenUris.has(source.uri)) {
+                seenUris.add(source.uri);
+                uniqueSources.push(source);
+            }
+        });
+        
+        uniqueSources.forEach((source, index) => {
+            contentZh += `${index + 1}. [${source.title || '來源'}](${source.uri})\n`;
+        });
+    } else {
+        contentZh += '本文資訊來源於 Google Search 即時查詢結果。\n';
+    }
+
+    let contentEn = parsedEn.content;
+    // 確保來源區塊一定會顯示
+    contentEn += '\n\n---\n\n## References\n\n';
+    if (parsedEn.sources && parsedEn.sources.length > 0) {
+        // 去重來源（根據 URI）
+        const uniqueSources = [];
+        const seenUris = new Set();
+        parsedEn.sources.forEach((source) => {
+            if (source.uri && !seenUris.has(source.uri)) {
+                seenUris.add(source.uri);
+                uniqueSources.push(source);
+            }
+        });
+        
+        uniqueSources.forEach((source, index) => {
+            contentEn += `${index + 1}. [${source.title || 'Source'}](${source.uri})\n`;
+        });
+    } else {
+        contentEn += 'Information sources from Google Search real-time queries.\n';
+    }
+
+    // 寫入檔案
+    fs.writeFileSync(articlePathZh, frontmatterZh + contentZh, 'utf8');
+    fs.writeFileSync(articlePathEn, frontmatterEn + contentEn, 'utf8');
 
     console.log(`✅ Daily report generated successfully!`);
     console.log(`📁 Folder: ${slug}/`);
-    console.log(`📝 Files: article.zh-TW.md, article.en.md`);
+    console.log(`📝 File: article.zh-TW.md`);
+    console.log(`📝 File: article.en.md`);
     if (coverImage) {
         console.log(`🖼️  Cover image: ${coverImage}`);
     }
 }
 
-generateDailyReport().catch((error) => {
+// 執行生成
+generateArticles().catch((error) => {
     console.error('Error generating daily report:', error);
 
-    // 如果模型未找到，提供建議
     if (error.status === 404 || error.message?.includes('not found') || error.message?.includes('404')) {
         console.error('\n💡 Tip: None of the tried models are available.');
         console.error('   Tried models:', modelNames.join(', '));
         console.error('\nYou can check available models or update the modelNames array in the script.');
     }
 
-    // 顯示詳細錯誤信息
     if (error.message) {
         console.error('\nError details:', error.message);
     }
