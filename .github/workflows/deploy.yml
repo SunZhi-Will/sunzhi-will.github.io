@@ -8,6 +8,11 @@ on:
       - 'public/blog/**'    # 當 blog 圖片變更時觸發
   pull_request:
     branches: [main, master]
+  workflow_run:
+    workflows: ["Generate Daily AI Report"]  # 當 daily-ai-report 完成後觸發
+    types:
+      - completed
+    branches: [main, master]
 
 permissions:
   contents: write  # Required for deployment
@@ -15,6 +20,8 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # 如果是由 workflow_run 觸發，只在前一個 workflow 成功時執行
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
 
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

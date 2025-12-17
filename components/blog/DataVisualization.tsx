@@ -100,3 +100,4 @@ export function StatCard({ value, label, icon, color }: StatCardProps) {
     );
 }
 
+
