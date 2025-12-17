@@ -1,7 +1,7 @@
 ---
 title: "【AI Daily】The AI Warring States: White House's Talent Grab, Guangzhou's Big Spenders, and the Dual Arena of Chips & Ethics"
 date: "2025-12-17"
-description: "December 17, 2025: The global AI battleground is heating up. The US White House launches a "Tech Force" to recruit top AI talent, while Japan actively"
+description: "December 17, 2025: The global AI battleground is heating up. The US White House launches a 'Tech Force' to recruit top AI talent, while Japan actively promotes homegrown AI systems."
 tags: ["AI", "Daily Report", "Tech Trends"]
 coverImage: "cover-2025-12-17-011145.png"
 ---
