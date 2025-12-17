@@ -30,8 +30,8 @@ export function ShareButtons({ title, url, lang }: ShareButtonsProps) {
             await navigator.clipboard.writeText(url);
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
-        } catch (err) {
-            console.error('Failed to copy:', err);
+        } catch (error) {
+            console.error('Failed to copy:', error);
         }
     };
 
@@ -42,7 +42,7 @@ export function ShareButtons({ title, url, lang }: ShareButtonsProps) {
                     title,
                     url,
                 });
-            } catch (err) {
+            } catch {
                 // User cancelled or error
             }
         } else {

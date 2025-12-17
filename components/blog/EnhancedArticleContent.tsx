@@ -7,14 +7,12 @@ import { Lang } from '@/types';
 interface EnhancedArticleContentProps {
     htmlContent: string;
     postSlug: string;
-    postTitle: string;
     lang: Lang;
 }
 
 export function EnhancedArticleContent({
     htmlContent,
     postSlug,
-    postTitle,
     lang,
 }: EnhancedArticleContentProps) {
     const contentRef = useRef<HTMLDivElement>(null);
@@ -110,12 +108,7 @@ export function EnhancedArticleContent({
                 );
             }
         });
-    }, [htmlContent, isDark, lang]);
-
-    // 構建完整的文章 URL
-    const postUrl = typeof window !== 'undefined'
-        ? `${window.location.origin}/blog/${postSlug}`
-        : `https://sunzhi-will.github.io/blog/${postSlug}`;
+    }, [htmlContent, isDark, lang, postSlug]);
 
     return (
         <div className="space-y-8">

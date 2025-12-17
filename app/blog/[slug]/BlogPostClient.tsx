@@ -217,7 +217,6 @@ export default function BlogPostClient({
                             <EnhancedArticleContent
                                 htmlContent={currentHtmlContent}
                                 postSlug={currentPost.slug}
-                                postTitle={currentPost.title}
                                 lang={lang}
                             />
                         </motion.div>

@@ -48,7 +48,7 @@ export function InteractiveQuote({
                     <blockquote className={`text-lg leading-relaxed ${
                         isDark ? 'text-gray-200' : 'text-gray-900'
                     }`}>
-                        "{quote}"
+                        &ldquo;{quote}&rdquo;
                     </blockquote>
                     {(author || source) && (
                         <div className={`mt-4 text-sm ${
