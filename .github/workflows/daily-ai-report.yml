@@ -60,9 +60,23 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         id: commit_push
 
-      - name: Verify push triggered deploy
+      - name: Build project
+        if: steps.commit_push.outputs.changed == 'true'
+        run: npm run build
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: Deploy to GitHub Pages
+        if: steps.commit_push.outputs.changed == 'true'
+        uses: JamesIves/github-pages-deploy-action@v4.6.4
+        with:
+          branch: gh-pages
+          folder: out
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify deployment
         if: steps.commit_push.outputs.changed == 'true'
         run: |
-          echo "✅ Changes pushed successfully. Deploy workflow should be triggered automatically."
-          echo "   Check Actions tab to see if Deploy to GitHub Pages workflow is running."
+          echo "✅ Changes pushed and deployed successfully to GitHub Pages."
+          echo "   Site should be available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
 
