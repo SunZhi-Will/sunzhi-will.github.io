@@ -284,7 +284,7 @@ async function callGeminiAPI(modelName, prompt, useSearch = true, maxRetries = 3
                 model: modelName,
                 contents: prompt,
             };
-            
+
             // 只有在需要搜尋時才加入 tools
             if (useSearch) {
                 params.config = {
@@ -327,19 +327,19 @@ async function callGeminiAPI(modelName, prompt, useSearch = true, maxRetries = 3
             lastError = error;
             console.warn(`GenAI API Attempt ${i + 1} failed.`, error.message);
             if (i === maxRetries - 1) break;
-            
+
             // 處理配額錯誤（429）：解析重試時間
             let delay = 2000 * Math.pow(2, i); // 預設指數退避
             if (error.status === 429 || error.code === 429) {
                 let retrySeconds = null;
-                
+
                 // 方法1：從錯誤的 details 中提取 retryDelay（優先）
                 if (error.details && Array.isArray(error.details)) {
                     for (const detail of error.details) {
                         if (detail['@type'] === 'type.googleapis.com/google.rpc.RetryInfo' && detail.retryDelay) {
                             // retryDelay 可能是字串 "58s" 或物件
-                            const delayStr = typeof detail.retryDelay === 'string' 
-                                ? detail.retryDelay 
+                            const delayStr = typeof detail.retryDelay === 'string'
+                                ? detail.retryDelay
                                 : detail.retryDelay.seconds || detail.retryDelay;
                             const match = String(delayStr).match(/([\d.]+)s?/);
                             if (match) {
@@ -349,7 +349,7 @@ async function callGeminiAPI(modelName, prompt, useSearch = true, maxRetries = 3
                         }
                     }
                 }
-                
+
                 // 方法2：從錯誤訊息中提取（備用）
                 if (retrySeconds === null) {
                     const errorMessage = error.message || JSON.stringify(error);
@@ -358,7 +358,7 @@ async function callGeminiAPI(modelName, prompt, useSearch = true, maxRetries = 3
                         retrySeconds = parseFloat(retryMatch[1]);
                     }
                 }
-                
+
                 if (retrySeconds !== null) {
                     delay = Math.ceil(retrySeconds * 1000) + 1000; // 轉換為毫秒，加1秒緩衝
                     console.log(`⏳ Quota exceeded, waiting ${retrySeconds.toFixed(1)}s before retry...`);
@@ -368,7 +368,7 @@ async function callGeminiAPI(modelName, prompt, useSearch = true, maxRetries = 3
                     console.log(`⏳ Quota exceeded, waiting 60s before retry...`);
                 }
             }
-            
+
             await new Promise((resolve) => setTimeout(resolve, delay));
         }
     }
@@ -450,14 +450,14 @@ function parseStructuredOutput(text) {
     let rawTitle = cleanStr(titlePart) || '今日精選';
     rawTitle = rawTitle.replace(/^#+\s*/, '').trim();
     rawTitle = cleanupHtmlTags(rawTitle);
-    
+
     // 移除所有可能的「【AI日報】」或「【AI Daily】」前綴（避免重複）
     rawTitle = rawTitle.replace(/^【AI日報】\s*/g, '');
     rawTitle = rawTitle.replace(/^【AI Daily】\s*/g, '');
     rawTitle = rawTitle.replace(/^AI日報\s*/g, '');
     rawTitle = rawTitle.replace(/^AI Daily\s*/g, '');
     rawTitle = rawTitle.trim();
-    
+
     // 統一加上【AI日報】前綴
     if (!rawTitle) {
         rawTitle = '今日精選';
@@ -590,7 +590,7 @@ async function generateArticles() {
 
                 // 生成中文文章
                 const resultZh = await callGeminiAPI(modelName, articlePromptZh, true);
-                
+
                 // 檢查 Hallucination
                 if (isHallucinated(resultZh.text)) {
                     console.warn(`Attempt ${attempt + 1}: Hallucination detected in Chinese content.`);
@@ -598,7 +598,7 @@ async function generateArticles() {
                 }
 
                 const parsedZh = parseStructuredOutput(resultZh.text);
-                
+
                 // 再次檢查內容是否 Hallucinated
                 if (isHallucinated(parsedZh.content)) {
                     console.warn(`Attempt ${attempt + 1}: Content Hallucination detected.`);
@@ -621,9 +621,9 @@ async function generateArticles() {
                     parsedZh.imagePrompt,
                     parsedZh.sources.map(s => s.uri).join('\n')
                 );
-                
+
                 const resultEn = await callGeminiAPI(modelName, translationPrompt, false); // 翻譯不需要搜尋
-                
+
                 // 檢查 Hallucination
                 if (isHallucinated(resultEn.text)) {
                     console.warn(`Attempt ${attempt + 1}: Hallucination detected in English translation.`);
@@ -631,7 +631,7 @@ async function generateArticles() {
                 }
 
                 const parsedEn = parseStructuredOutput(resultEn.text);
-                
+
                 // 再次檢查內容是否 Hallucinated
                 if (isHallucinated(parsedEn.content)) {
                     console.warn(`Attempt ${attempt + 1}: Content Hallucination detected.`);
@@ -646,13 +646,13 @@ async function generateArticles() {
                 enTitle = enTitle.replace(/^AI日報\s*/g, '');
                 enTitle = enTitle.replace(/^AI Daily\s*/g, '');
                 enTitle = enTitle.trim();
-                
+
                 // 統一加上【AI Daily】前綴
                 if (!enTitle) {
                     enTitle = "Today's Highlights";
                 }
                 parsedEn.title = `【AI Daily】${enTitle}`;
-                
+
                 // 使用中文文章的來源（因為英文是翻譯版本）
                 parsedEn.sources = parsedZh.sources;
 
@@ -661,6 +661,10 @@ async function generateArticles() {
 
                 // 處理內容並寫入檔案
                 processContent(parsedZh, parsedEn, coverImage);
+
+                // 清理超過十天的舊日報
+                cleanupOldReports(10);
+
                 return; // 成功退出
 
             } catch (error) {
@@ -697,7 +701,7 @@ async function generateArticles() {
                 // 配額錯誤：如果是免費層配額用完，應該優雅地失敗
                 const errorMessage = attemptError.message || JSON.stringify(attemptError);
                 const isFreeTierQuota = errorMessage.includes('free_tier') || errorMessage.includes('FreeTier');
-                
+
                 if (isFreeTierQuota) {
                     console.log(`⚠️  Model ${modelName} free tier quota exceeded (20 requests/day limit).`);
                     // 如果是第一個模型（主要模型）且是免費層配額，嘗試下一個模型
@@ -770,7 +774,7 @@ ${coverImage ? `coverImage: "${coverImage}"` : ''}
                 uniqueSources.push(source);
             }
         });
-        
+
         uniqueSources.forEach((source, index) => {
             contentZh += `${index + 1}. [${source.title || '來源'}](${source.uri})\n`;
         });
@@ -791,7 +795,7 @@ ${coverImage ? `coverImage: "${coverImage}"` : ''}
                 uniqueSources.push(source);
             }
         });
-        
+
         uniqueSources.forEach((source, index) => {
             contentEn += `${index + 1}. [${source.title || 'Source'}](${source.uri})\n`;
         });
@@ -809,6 +813,113 @@ ${coverImage ? `coverImage: "${coverImage}"` : ''}
     console.log(`📝 File: article.en.md`);
     if (coverImage) {
         console.log(`🖼️  Cover image: ${coverImage}`);
+    }
+}
+
+/**
+ * 檢查是否為 AI 日報資料夾
+ * @param {string} folderPath - 資料夾路徑
+ * @param {string} folderName - 資料夾名稱
+ * @returns {boolean} 是否為 AI 日報
+ */
+function isAIDailyReport(folderPath, folderName) {
+    // 1. 嚴格匹配 AI 日報命名格式：YYYY-MM-DD-HHMMSS（必須有連字號和 6 位數時間戳）
+    const aiReportPattern = /^\d{4}-\d{2}-\d{2}-\d{6}$/;
+    if (!aiReportPattern.test(folderName)) {
+        return false;
+    }
+
+    // 2. 檢查是否有 article.zh-TW.md 文件（AI 日報的特徵文件）
+    const articleZhPath = path.join(folderPath, 'article.zh-TW.md');
+    if (!fs.existsSync(articleZhPath)) {
+        return false;
+    }
+
+    // 3. 可選：檢查 frontmatter 中的標題或標籤（額外安全檢查）
+    try {
+        const articleContent = fs.readFileSync(articleZhPath, 'utf8');
+        const frontmatterMatch = articleContent.match(/^---\s*\n([\s\S]*?)\n---/);
+        if (frontmatterMatch) {
+            const frontmatter = frontmatterMatch[1];
+            // 檢查標題是否包含 AI 日報標記，或 tags 是否包含每日日報
+            const hasAITitle = /【AI日報】|【AI Daily】/i.test(frontmatter);
+            const hasDailyTag = /tags:.*["\[]每日日報|Daily Report/i.test(frontmatter);
+            if (!hasAITitle && !hasDailyTag) {
+                // 如果不符合 AI 日報特徵，不刪除
+                return false;
+            }
+        }
+    } catch (error) {
+        // 如果讀取失敗，只依賴命名格式和文件存在性檢查
+        console.warn(`⚠️  Could not read frontmatter for ${folderName}:`, error.message);
+    }
+
+    return true;
+}
+
+/**
+ * 清理超過指定天數的舊日報
+ * @param {number} keepDays - 保留的天數（預設 10 天）
+ */
+function cleanupOldReports(keepDays = 10) {
+    try {
+        const publicBlogDir = path.join(process.cwd(), 'public/blog');
+        const entries = fs.readdirSync(blogDir, { withFileTypes: true });
+        const now = new Date();
+        let deletedCount = 0;
+
+        entries.forEach((entry) => {
+            if (!entry.isDirectory()) return;
+
+            const folderName = entry.name;
+            const folderPath = path.join(blogDir, folderName);
+
+            // 嚴格檢查是否為 AI 日報（避免誤刪其他文章）
+            if (!isAIDailyReport(folderPath, folderName)) {
+                return; // 跳過非 AI 日報的資料夾
+            }
+
+            // 解析日期格式：YYYY-MM-DD-HHMMSS
+            const dateMatch = folderName.match(/^(\d{4})-(\d{2})-(\d{2})-(\d{6})$/);
+            if (!dateMatch) return;
+
+            const year = parseInt(dateMatch[1], 10);
+            const month = parseInt(dateMatch[2], 10) - 1; // JavaScript 月份從 0 開始
+            const day = parseInt(dateMatch[3], 10);
+
+            // 將日期標準化到當天的開始時間（00:00:00）來計算天數差異
+            const reportDate = new Date(year, month, day);
+            reportDate.setHours(0, 0, 0, 0);
+            const todayStart = new Date(now);
+            todayStart.setHours(0, 0, 0, 0);
+            const daysDiff = Math.floor((todayStart - reportDate) / (1000 * 60 * 60 * 24));
+
+            if (daysDiff > keepDays) {
+                // 刪除 content/blog 中的資料夾
+                try {
+                    fs.rmSync(folderPath, { recursive: true, force: true });
+                    console.log(`🗑️  Deleted old AI daily report: ${folderName} (${daysDiff} days old)`);
+                    deletedCount++;
+
+                    // 刪除 public/blog 中對應的圖片資料夾
+                    const publicFolderPath = path.join(publicBlogDir, folderName);
+                    if (fs.existsSync(publicFolderPath)) {
+                        fs.rmSync(publicFolderPath, { recursive: true, force: true });
+                        console.log(`🗑️  Deleted public images: ${folderName}`);
+                    }
+                } catch (error) {
+                    console.error(`⚠️  Failed to delete ${folderName}:`, error.message);
+                }
+            }
+        });
+
+        if (deletedCount > 0) {
+            console.log(`✅ Cleaned up ${deletedCount} old report(s) (keeping last ${keepDays} days)`);
+        } else {
+            console.log(`ℹ️  No old reports to clean (keeping last ${keepDays} days)`);
+        }
+    } catch (error) {
+        console.error('⚠️  Error cleaning up old reports:', error.message);
     }
 }
 
