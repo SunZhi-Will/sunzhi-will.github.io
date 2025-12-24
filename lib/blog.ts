@@ -3,6 +3,7 @@ import path from 'path';
 import matter from 'gray-matter';
 import { remark } from 'remark';
 import html from 'remark-html';
+import remarkBreaks from 'remark-breaks';
 import type { BlogPost } from '@/types/blog';
 import type { Lang } from '@/types';
 
@@ -207,9 +208,13 @@ export function getAllPosts(lang?: Lang): BlogPost[] {
 
 /**
  * 將 Markdown 內容轉換為 HTML
+ * 支援換行和更好的段落間距
  */
 export async function markdownToHtml(markdown: string): Promise<string> {
-    const result = await remark().use(html).process(markdown);
+    const result = await remark()
+        .use(remarkBreaks) // 支援換行
+        .use(html, { sanitize: false })
+        .process(markdown);
     return result.toString();
 }
 
