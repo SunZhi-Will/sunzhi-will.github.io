@@ -17,6 +17,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const [theme, setTheme] = useState<Theme>('dark'); // 預設深色系
 
     useEffect(() => {
+        // 確保在客戶端執行
+        if (typeof window === 'undefined') return;
+        
         setMounted(true);
         // 從 localStorage 讀取主題
         const savedTheme = localStorage.getItem('blog-theme') as Theme | null;
@@ -32,7 +35,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         // 只有在客戶端 mounted 後才執行
-        if (!mounted) return;
+        if (!mounted || typeof window === 'undefined') return;
         
         // 保存主題到 localStorage
         localStorage.setItem('blog-theme', theme);

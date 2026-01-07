@@ -5,15 +5,18 @@ import Image from 'next/image';
 import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
 import { blogTranslations, filterTagsByLanguage } from '@/lib/blog-translations';
-import { BlogNavIsland } from '@/components/blog/BlogNavIsland';
-import { BlogPostDynamicIsland } from '@/components/blog/BlogPostDynamicIsland';
-import { BlogMobileNav } from '@/components/blog/BlogMobileNav';
+import dynamic from 'next/dynamic';
 import { formatDate } from '@/lib/blog-utils';
-import { RelatedPosts } from '@/components/blog/RelatedPosts';
-import { CommentSection } from '@/components/blog/CommentSection';
-import { ReadingProgress } from '@/components/blog/ReadingProgress';
-import { EnhancedArticleContent } from '@/components/blog/EnhancedArticleContent';
-import { ShareButtons } from '@/components/blog/ShareButtons';
+
+// 動態導入使用 framer-motion 的組件，避免預渲染問題
+const BlogNavIsland = dynamic(() => import('@/components/blog/BlogNavIsland').then(mod => ({ default: mod.BlogNavIsland })), { ssr: false });
+const BlogPostDynamicIsland = dynamic(() => import('@/components/blog/BlogPostDynamicIsland').then(mod => ({ default: mod.BlogPostDynamicIsland })), { ssr: false });
+const BlogMobileNav = dynamic(() => import('@/components/blog/BlogMobileNav').then(mod => ({ default: mod.BlogMobileNav })), { ssr: false });
+const RelatedPosts = dynamic(() => import('@/components/blog/RelatedPosts').then(mod => ({ default: mod.RelatedPosts })), { ssr: false });
+const CommentSection = dynamic(() => import('@/components/blog/CommentSection').then(mod => ({ default: mod.CommentSection })), { ssr: false });
+const ReadingProgress = dynamic(() => import('@/components/blog/ReadingProgress').then(mod => ({ default: mod.ReadingProgress })), { ssr: false });
+const EnhancedArticleContent = dynamic(() => import('@/components/blog/EnhancedArticleContent').then(mod => ({ default: mod.EnhancedArticleContent })), { ssr: false });
+const ShareButtons = dynamic(() => import('@/components/blog/ShareButtons').then(mod => ({ default: mod.ShareButtons })), { ssr: false });
 // import { ScrollReveal } from '@/components/blog/ScrollReveal';
 import { useTheme } from '../ThemeProvider';
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
@@ -77,6 +80,9 @@ export default function BlogPostClient({
 
     // 從 localStorage 讀取語言選擇，如果沒有則偵測瀏覽器語言
     useEffect(() => {
+        // 確保在客戶端執行
+        if (typeof window === 'undefined') return;
+        
         const savedLang = localStorage.getItem('blog-lang') as Lang | null;
         if (savedLang && (savedLang === 'zh-TW' || savedLang === 'en')) {
             setLang(savedLang);

@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
 import { formatDate } from '@/lib/blog-utils';
 import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
@@ -51,12 +50,9 @@ export function RelatedPosts({ posts, currentSlug, lang }: RelatedPostsProps) {
                 {lang === 'zh-TW' ? '推薦閱讀' : 'Related Articles'}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedPosts.map((post, index) => (
-                    <motion.article
+                {relatedPosts.map((post) => (
+                    <article
                         key={post.slug}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1, duration: 0.5, ease: "easeOut" }}
                         className="group flex flex-col"
                     >
                         <Link href={`/blog/${post.slug}`} className="flex-1 flex flex-col">
@@ -138,7 +134,7 @@ export function RelatedPosts({ posts, currentSlug, lang }: RelatedPostsProps) {
                                 </div>
                             </div>
                         </Link>
-                    </motion.article>
+                    </article>
                 ))}
             </div>
         </section>
