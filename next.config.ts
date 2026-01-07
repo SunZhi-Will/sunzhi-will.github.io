@@ -10,6 +10,18 @@ const nextConfig: NextConfig = {
   // 安全配置（注意：靜態導出時某些標頭可能需要在部署時配置）
   // 建議在 GitHub Pages 或其他部署平台配置安全標頭
   poweredByHeader: false, // 移除 X-Powered-By 標頭
+  // 確保 React 在靜態生成時正確初始化
+  reactStrictMode: true,
+  // 配置 webpack 以處理客戶端組件
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      };
+    }
+    return config;
+  },
 };
 
 export default nextConfig;

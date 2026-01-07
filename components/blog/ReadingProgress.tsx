@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import { useTheme } from '@/app/blog/ThemeProvider';
 
 export function ReadingProgress() {
@@ -29,16 +28,13 @@ export function ReadingProgress() {
 
     return (
         <div className="fixed top-0 left-0 right-0 z-50 h-1">
-            <motion.div
-                className={`h-full ${
+            <div
+                className={`h-full transition-all duration-100 ease-linear ${
                     isDark 
                         ? 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500' 
                         : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600'
                 }`}
                 style={{ width: `${progress}%` }}
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.1, ease: 'linear' }}
             />
         </div>
     );

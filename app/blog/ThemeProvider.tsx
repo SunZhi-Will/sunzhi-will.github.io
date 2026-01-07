@@ -57,8 +57,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
 export function useTheme() {
     const context = useContext(ThemeContext);
+    // 在預渲染時，如果 context 未定義，返回預設值
     if (context === undefined) {
-        throw new Error('useTheme must be used within a ThemeProvider');
+        // 在靜態生成時，返回預設主題以避免錯誤
+        return { theme: 'dark' as Theme, toggleTheme: () => {} };
     }
     return context;
 }

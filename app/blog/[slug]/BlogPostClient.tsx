@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
 import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
 import { blogTranslations, filterTagsByLanguage } from '@/lib/blog-translations';
@@ -15,7 +14,7 @@ import { CommentSection } from '@/components/blog/CommentSection';
 import { ReadingProgress } from '@/components/blog/ReadingProgress';
 import { EnhancedArticleContent } from '@/components/blog/EnhancedArticleContent';
 import { ShareButtons } from '@/components/blog/ShareButtons';
-import { ScrollReveal } from '@/components/blog/ScrollReveal';
+// import { ScrollReveal } from '@/components/blog/ScrollReveal';
 import { useTheme } from '../ThemeProvider';
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 
@@ -154,12 +153,7 @@ export default function BlogPostClient({
                 <article className="relative">
                     {/* 文章內容 - 統一的內容區域 */}
                     <div className="max-w-3xl mx-auto px-4 py-12 md:px-8 md:py-16 lg:px-12 lg:py-20 pt-20 md:pt-24">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6, ease: "easeOut" }}
-                            className="space-y-8"
-                        >
+                        <div className="space-y-8">
                             {/* 標題 - 直接放在內容開頭 */}
                             <header className="space-y-4">
                                 <h1 className={`text-2xl md:text-3xl font-normal leading-tight tracking-tight ${isDark ? 'text-gray-200' : 'text-gray-900'
@@ -237,20 +231,18 @@ export default function BlogPostClient({
                                 postSlug={currentPost.slug}
                                 lang={lang}
                             />
-                        </motion.div>
+                        </div>
                     </div>
 
                     {/* 文章底部 */}
                     <div className="max-w-3xl mx-auto px-6 md:px-8 lg:px-12 pb-16">
                         <div className="space-y-12 pt-8">
                             {/* 分享按鈕 */}
-                            <ScrollReveal direction="fade" delay={0.2}>
-                                <ShareButtons
-                                    title={currentPost.title}
-                                    url={`${currentBaseUrl}/blog/${currentPost.slug}`}
-                                    lang={lang}
-                                />
-                            </ScrollReveal>
+                            <ShareButtons
+                                title={currentPost.title}
+                                url={`${currentBaseUrl}/blog/${currentPost.slug}`}
+                                lang={lang}
+                            />
 
                             {/* 推薦文章 */}
                             <RelatedPosts

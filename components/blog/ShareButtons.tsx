@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { 
     ShareIcon, 
     LinkIcon, 
@@ -71,53 +70,45 @@ export function ShareButtons({ title, url, lang }: ShareButtonsProps) {
                 </span>
             </div>
             <div className="flex flex-wrap gap-3">
-                <motion.a
+                <a
                     href={shareLinks.twitter}
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 ${
                         isDark
                             ? 'bg-gray-700/50 text-gray-200 hover:bg-gray-700'
                             : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
                     }`}
                 >
                     Twitter
-                </motion.a>
-                <motion.a
+                </a>
+                <a
                     href={shareLinks.facebook}
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 ${
                         isDark
                             ? 'bg-gray-700/50 text-gray-200 hover:bg-gray-700'
                             : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
                     }`}
                 >
                     Facebook
-                </motion.a>
-                <motion.a
+                </a>
+                <a
                     href={shareLinks.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 ${
                         isDark
                             ? 'bg-gray-700/50 text-gray-200 hover:bg-gray-700'
                             : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
                     }`}
                 >
                     LinkedIn
-                </motion.a>
-                <motion.button
+                </a>
+                <button
                     onClick={handleShare}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95 flex items-center gap-2 ${
                         isDark
                             ? 'bg-gray-700/50 text-gray-200 hover:bg-gray-700'
                             : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
@@ -134,7 +125,7 @@ export function ShareButtons({ title, url, lang }: ShareButtonsProps) {
                             {lang === 'zh-TW' ? '複製連結' : 'Copy Link'}
                         </>
                     )}
-                </motion.button>
+                </button>
             </div>
         </div>
     );
