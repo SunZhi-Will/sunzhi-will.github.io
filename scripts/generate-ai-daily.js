@@ -204,7 +204,7 @@ const articlePromptZh = `
 <<<TITLE>>>
 (標題：只輸出標題內容，不要包含「【AI日報】」前綴，系統會自動加上。標題要幽默有趣，不包含日期)
 <<<SUMMARY>>>
-(摘要：約 100-150 字)
+(摘要：**必須完整且有意義**，約 150-200 字。請確保摘要是一個完整的段落，包含文章的核心要點，並且在句子結尾結束，不要在中間截斷。摘要應該涵蓋：主要事件、關鍵數據、重要影響。)
 <<<SEARCH_QUERIES>>>
 (搜尋關鍵字，用逗號分隔)
 <<<IMAGE_PROMPT>>>
@@ -253,7 +253,7 @@ ${chineseContent}
 <<<TITLE>>>
 (Translate the title naturally. Only output the title content, do NOT include "【AI Daily】" prefix, the system will add it automatically. Title should be witty and interesting, no date)
 <<<SUMMARY>>>
-(Translate the summary naturally, ~100-150 words)
+(Translate the summary naturally, **must be complete and meaningful**, ~150-200 words. Ensure the summary is a complete paragraph that includes the article's core points and ends at a sentence boundary, not mid-sentence. The summary should cover: main events, key data, important impacts.)
 <<<SEARCH_QUERIES>>>
 (Use the same search queries from Chinese version, or translate them to English)
 <<<IMAGE_PROMPT>>>
@@ -513,11 +513,16 @@ function parseStructuredOutput(text) {
 
 /**
  * 使用 Gemini 生成圖片（參考 trendpulse 的實現）
+ * 優先使用 Gemini 2.5 Flash Image 模型
  */
 async function generateImageWithGemini(prompt) {
     const ai = await getGenAIClient();
-    // 參考 trendpulse：使用 gemini-2.5-flash-image
-    const imageModelCandidates = ['gemini-2.5-flash-image'];
+    // 圖片生成模型列表（按優先順序）
+    // 優先使用 Gemini 2.5 Flash Image（最新版本）
+    const imageModelCandidates = [
+        'gemini-2.5-flash-image',   // Gemini 2.5 Flash Image（優先使用）
+        'gemini-2.0-flash-exp-image', // Gemini 2.0 Flash Experimental Image（備用）
+    ];
 
     // 優化 Prompt：強制使用「RPG 遊戲風格資訊圖表」（參考 trendpulse）
     const enhancedPrompt = `${prompt}, RPG game-style infographic, data visualization style, isometric 3d chart, concept map, business intelligence, clean vector art, white background, high contrast, professional, 8k, no text, textless, without words, no letters, no watermark, clean design, simple geometric shapes`;
@@ -738,11 +743,15 @@ async function generateArticles() {
  * 處理內容並寫入檔案
  */
 function processContent(parsedZh, parsedEn, coverImage) {
+    // 使用完整的 summary，不進行截斷
+    const descriptionZh = (parsedZh.summary || '').trim();
+    const descriptionEn = (parsedEn.summary || '').trim();
+
     // 生成中文 frontmatter
     const frontmatterZh = `---
 title: "${parsedZh.title}"
 date: "${dateStr}"
-description: "${parsedZh.summary.substring(0, 150)}"
+description: "${descriptionZh.replace(/"/g, '\\"')}"
 tags: ["AI", "每日日報", "技術趨勢"]
 ${coverImage ? `coverImage: "${coverImage}"` : ''}
 ---
@@ -753,7 +762,7 @@ ${coverImage ? `coverImage: "${coverImage}"` : ''}
     const frontmatterEn = `---
 title: "${parsedEn.title}"
 date: "${dateStr}"
-description: "${parsedEn.summary.substring(0, 150)}"
+description: "${descriptionEn.replace(/"/g, '\\"')}"
 tags: ["AI", "Daily Report", "Tech Trends"]
 ${coverImage ? `coverImage: "${coverImage}"` : ''}
 ---

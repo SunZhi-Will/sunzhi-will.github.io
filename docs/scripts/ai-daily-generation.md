@@ -81,7 +81,10 @@ content/blog/
 - **注意**: `@google/generative-ai` 已於 2025 年 11 月 30 日停止支援，請使用新的 `@google/genai` SDK
 
 ### 圖片生成
-- **API**: 使用 OpenAI DALL-E 3 API 生成封面圖片
+- **API**: 使用 Google Gemini 2.5 Flash Image API 生成封面圖片
+- **模型**: 
+  - `gemini-2.5-flash-image` (Gemini 2.5 Flash Image - 優先使用，最新版本)
+  - `gemini-2.0-flash-exp-image` (Gemini 2.0 Flash Experimental Image - 備用)
 - **流程**: 
   1. 使用 Gemini 生成圖片描述
   2. 使用 DALL-E 3 根據描述生成圖片

@@ -38,14 +38,22 @@ export function CommentSection({ postSlug, postTitle, lang, postUrl }: CommentSe
     const isDark = theme === 'dark';
     const disqusRef = useRef<HTMLDivElement>(null);
 
-    // Disqus shortname - 從環境變數取得
+    // Disqus shortname - 從環境變數取得並驗證
     const disqusShortname = process.env.NEXT_PUBLIC_DISQUS_SHORTNAME;
+    
+    // 驗證 shortname 格式，防止注入攻擊
+    // Disqus shortname 只能包含字母、數字、連字號和底線
+    // 添加長度限制（3-50 字元）防止 DoS 攻擊
+    const isValidShortname = disqusShortname && 
+                             /^[a-zA-Z0-9_-]+$/.test(disqusShortname) &&
+                             disqusShortname.length >= 3 &&
+                             disqusShortname.length <= 50;
 
     // Disqus identifier（使用 slug）
     const disqusIdentifier = postSlug;
 
     useEffect(() => {
-        if (!disqusShortname) return;
+        if (!isValidShortname) return;
 
         // 配置 Disqus
         window.disqus_config = function (this: DisqusConfig) {
@@ -61,10 +69,10 @@ export function CommentSection({ postSlug, postTitle, lang, postUrl }: CommentSe
                 config: window.disqus_config
             });
         }
-    }, [postSlug, postTitle, postUrl, disqusIdentifier, disqusShortname]);
+    }, [postSlug, postTitle, postUrl, disqusIdentifier, isValidShortname]);
 
     const loadDisqus = () => {
-        if (!disqusShortname || !window.disqus_config) return;
+        if (!isValidShortname || !window.disqus_config) return;
 
         // 如果 Disqus 已經載入，重置它
         if (window.DISQUS) {
@@ -75,7 +83,7 @@ export function CommentSection({ postSlug, postTitle, lang, postUrl }: CommentSe
         }
     };
 
-    if (!disqusShortname) return null;
+    if (!isValidShortname) return null;
 
     return (
         <section>
@@ -98,7 +106,7 @@ export function CommentSection({ postSlug, postTitle, lang, postUrl }: CommentSe
                             s.setAttribute('data-timestamp', +new Date());
                             (d.head || d.body).appendChild(s);
                         })();
-                    `,
+                    `.replace(/\$\{disqusShortname\}/g, disqusShortname || ''),
                 }}
             />
 

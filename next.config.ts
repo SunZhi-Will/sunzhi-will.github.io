@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
     unoptimized: true, // Required for static export
     domains: ['opengraph.githubassets.com', 'cdn.jsdelivr.net', 'static.cdninstagram.com', 'www.threads.net', 'img.youtube.com'],
   },
+  // 安全配置（注意：靜態導出時某些標頭可能需要在部署時配置）
+  // 建議在 GitHub Pages 或其他部署平台配置安全標頭
+  poweredByHeader: false, // 移除 X-Powered-By 標頭
 };
 
 export default nextConfig;

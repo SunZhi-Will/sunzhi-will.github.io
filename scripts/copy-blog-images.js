@@ -30,6 +30,14 @@ function copyImageFile(sourcePath, destPath) {
             return false;
         }
         
+        // 檢查檔案大小（限制為 10MB，防止 DoS 攻擊）
+        const stats = fs.statSync(sourcePath);
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        if (stats.size > maxSize) {
+            console.error(`✗ 檔案過大 (${(stats.size / 1024 / 1024).toFixed(2)}MB): ${sourcePath}`);
+            return false;
+        }
+        
         // 確保目標目錄存在
         const destDir = path.dirname(destPath);
         if (!fs.existsSync(destDir)) {

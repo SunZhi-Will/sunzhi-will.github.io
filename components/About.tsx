@@ -3,14 +3,36 @@
 import { motion } from "framer-motion";
 import { Lang } from '@/types';
 import { translations } from '@/data/translations';
-import { forwardRef } from 'react';
+import { forwardRef, useMemo } from 'react';
 
 interface AboutProps {
   lang: Lang;
   aboutInView: boolean;
 }
 
+// 簡單的 HTML 清理函數，只允許安全的標籤
+function sanitizeHtml(html: string): string {
+  // 只允許基本的格式化標籤
+  const allowedTags = ['strong', 'em', 'b', 'i', 'br', 'p'];
+  const tagPattern = /<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g;
+  
+  return html.replace(tagPattern, (match, tagName) => {
+    const lowerTag = tagName.toLowerCase();
+    if (allowedTags.includes(lowerTag)) {
+      // 移除所有屬性，只保留標籤名
+      return match.replace(/<(\/?)([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/, `<$1${lowerTag}>`);
+    }
+    // 移除不允許的標籤
+    return '';
+  });
+}
+
 export const About = forwardRef<HTMLElement, AboutProps>(({ lang, aboutInView }, ref) => {
+  // 清理 HTML 內容，防止 XSS
+  const sanitizedIntro = useMemo(() => {
+    return sanitizeHtml(translations[lang].aboutContent.intro);
+  }, [lang]);
+
   return (
     <section ref={ref} id="about" className="py-12 sm:py-24 relative">
       <div className="container mx-auto px-4">
@@ -44,7 +66,7 @@ export const About = forwardRef<HTMLElement, AboutProps>(({ lang, aboutInView },
             >
               <div
                 className={`whitespace-pre-line ${lang === 'zh-TW' ? 'text-justify' : ''}`}
-                dangerouslySetInnerHTML={{ __html: translations[lang].aboutContent.intro }}
+                dangerouslySetInnerHTML={{ __html: sanitizedIntro }}
               />
             </motion.div>
 

@@ -1,7 +1,7 @@
 ---
 title: "【AI Daily】AI Awakens: Your New Year's Colleague – Is It an Errand-Running Robot or a Genius AI Assistant?"
 date: "2026-01-01"
-description: "As 2026 dawned, several notable signals emerged from the global AI sector. Agentic AI is transitioning from labs to daily applications, no longer pass"
+description: "As 2026 dawned, several notable signals emerged from the global AI sector. Agentic AI is transitioning from labs to daily applications, no longer passively answering questions but autonomously planning and executing tasks as \"digital interns.\" Meanwhile, physical robots are gearing up to enter homes and factories, with robots like Tesla's Optimus and China's Unitree Robotics expected to make significant strides this year. AI is evolving from \"tool\" to \"infrastructure,\" requiring us to redesign workflows and learn to \"coexist\" with AI."
 tags: ["AI", "Daily Report", "Tech Trends"]
 coverImage: "cover-2026-01-01-012420.png"
 ---

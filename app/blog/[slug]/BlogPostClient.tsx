@@ -205,12 +205,19 @@ export default function BlogPostClient({
                                 </div>
                             )}
 
-                            {/* 文章描述 */}
+                            {/* 文章描述 - 特殊樣式 */}
                             {currentPost.description && (
-                                <p className={`text-base leading-relaxed ${isDark ? 'text-gray-300' : 'text-gray-700'
+                                <div className={`relative my-8 py-6 px-6 rounded-lg border-l-4 ${
+                                    isDark 
+                                        ? 'bg-gray-800/50 border-blue-500/50 text-gray-200' 
+                                        : 'bg-blue-50/50 border-blue-400 text-gray-800'
+                                }`}>
+                                    <p className={`text-lg md:text-xl leading-relaxed font-medium italic ${
+                                        isDark ? 'text-gray-200' : 'text-gray-800'
                                     }`}>
-                                    {currentPost.description}
-                                </p>
+                                        {currentPost.description}
+                                    </p>
+                                </div>
                             )}
 
                             {/* 增強的文章正文 - 包含互動功能 */}

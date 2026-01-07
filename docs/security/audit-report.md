@@ -232,11 +232,11 @@ updates:
 
 ## 🛠️ 快速修復
 
-### 使用自動修復腳本
-```powershell
-# Windows PowerShell
-.\fix-security.ps1
-```
+### 使用 GitHub Actions 自動修復（推薦）
+1. 前往 GitHub Repository > Actions
+2. 選擇 **Auto Fix Security Issues** workflow
+3. 點擊 **Run workflow**，選擇修復級別
+4. 審查自動建立的 Pull Request
 
 ### 手動修復步驟
 ```bash
@@ -294,5 +294,5 @@ npm audit
 **報告生成時間**: 2025年1月  
 **最後修復時間**: 2025年1月  
 **下次檢查建議**: 1週後  
-**修復腳本**: `fix-security.ps1`
+**自動修復**: 使用 GitHub Actions 自動化安全修復（`.github/workflows/auto-fix-security.yml`）
 

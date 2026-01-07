@@ -1,0 +1,89 @@
+---
+name: "文件組織規則"
+scope: project
+priority: 1
+description: "定義專案文件的組織結構和放置規則"
+---
+
+# 文件組織規則 (File Organization Rules)
+
+## 📁 文檔文件組織
+
+### 必須遵守的規則
+
+1. **所有文檔文件必須放在 `docs/` 目錄下**
+   - 安全文檔 → `docs/security/`
+   - 設置文檔 → `docs/setup/`
+   - 腳本文檔 → `docs/scripts/`
+   - 清理報告 → `docs/cleanup-report.md`
+
+2. **根目錄只允許以下文件**:
+   - `README.md`
+   - `README_zh.md`
+   - 配置文件（`next.config.ts`, `tsconfig.json` 等）
+   - `package.json`, `package-lock.json`
+   - `LICENSE`
+   - `.gitignore`
+   - `.cursorrules`
+
+3. **禁止在根目錄放置**:
+   - 任何文檔文件（除了 README）
+   - 臨時文件或報告文件
+   - 備份文件（`*.backup`, `*.bak`, `*.old`）
+   - 重複文件
+
+## 📂 目錄結構規範
+
+```
+專案根目錄/
+├── docs/                    # 所有文檔文件
+│   ├── security/           # 安全相關文檔
+│   ├── setup/              # 設置文檔
+│   ├── scripts/            # 腳本文檔
+│   ├── cleanup-report.md   # 清理報告
+│   └── README.md           # 文檔索引
+├── app/                    # Next.js App Router
+├── components/             # React 組件
+├── lib/                    # 工具函數
+├── types/                  # TypeScript 類型定義
+├── data/                   # 數據文件
+├── content/                # 內容文件
+├── public/                 # 靜態資源
+├── scripts/                # 腳本文件（.js, .ts, .ps1 等）
+└── .github/                # GitHub 配置
+```
+
+## 🚫 嚴格禁止
+
+1. ❌ 在根目錄創建文檔文件（如 `SECURITY_REPORT.md`）
+2. ❌ 在根目錄創建報告文件（如 `CLEANUP_REPORT.md`）
+3. ❌ 創建重複文件（如同時存在根目錄和 docs 目錄的相同文件）
+4. ❌ 在根目錄放置臨時文件或備份文件
+
+## ✅ 正確做法
+
+1. ✅ 創建安全文檔 → `docs/security/`
+2. ✅ 創建設置文檔 → `docs/setup/`
+3. ✅ 創建腳本文檔 → `docs/scripts/`
+4. ✅ 創建清理報告 → `docs/cleanup-report.md`
+5. ✅ 更新文檔索引 → `docs/README.md`
+
+## 🔍 自動檢查
+
+當 AI 助手創建或移動文件時，必須：
+1. 檢查文件類型（文檔、代碼、配置）
+2. 根據文件類型選擇正確的目錄
+3. 確認沒有重複文件
+4. 更新相關索引文件（如 `docs/README.md`）
+
+## 📝 文件命名規範
+
+- **文檔文件**: kebab-case（`rating-report.md`）
+- **組件文件**: PascalCase（`BlogCard.tsx`）
+- **工具文件**: camelCase（`blogUtils.ts`）
+- **配置文件**: 標準名稱（`next.config.ts`）
+
+---
+
+**規則版本**: 1.0  
+**最後更新**: 2025年1月

@@ -4,6 +4,8 @@ import matter from 'gray-matter';
 import { remark } from 'remark';
 import html from 'remark-html';
 import remarkBreaks from 'remark-breaks';
+import rehypeSanitize from 'rehype-sanitize';
+import { rehype } from 'rehype';
 import type { BlogPost } from '@/types/blog';
 import type { Lang } from '@/types';
 
@@ -81,6 +83,19 @@ function getAvailableLangs(folderPath: string): Lang[] {
 }
 
 /**
+ * 驗證 slug 格式，防止路徑遍歷攻擊
+ */
+function validateSlug(slug: string): boolean {
+    // 只允許字母、數字、連字號、底線和點號（用於日期格式）
+    // 禁止路徑遍歷字元
+    return /^[a-zA-Z0-9\-_.]+$/.test(slug) && 
+           !slug.includes('..') && 
+           !path.isAbsolute(slug) &&
+           slug.length > 0 &&
+           slug.length <= 100; // 長度限制
+}
+
+/**
  * 根據 slug 和語言取得單篇文章資料
  * 現在支援資料夾結構：content/blog/[日期時間]/文章.[lang].md
  * 如果指定語言不存在，會嘗試回退到其他可用語言
@@ -88,9 +103,23 @@ function getAvailableLangs(folderPath: string): Lang[] {
 export function getPostBySlug(slug: string, lang?: Lang): BlogPost | null {
     ensurePostsDirectory();
     
+    // 驗證 slug 格式，防止路徑遍歷攻擊
+    if (!validateSlug(slug)) {
+        console.warn(`Invalid slug format: ${slug}`);
+        return null;
+    }
+    
     try {
         // 先嘗試在資料夾中尋找（新結構）
         const folderPath = path.join(postsDirectory, slug);
+        
+        // 額外驗證：確保解析後的路徑仍在 postsDirectory 內
+        const resolvedPath = path.resolve(folderPath);
+        const resolvedPostsDir = path.resolve(postsDirectory);
+        if (!resolvedPath.startsWith(resolvedPostsDir)) {
+            console.warn(`Path traversal detected: ${slug}`);
+            return null;
+        }
         if (fs.existsSync(folderPath) && fs.statSync(folderPath).isDirectory()) {
             const files = fs.readdirSync(folderPath);
             const availableLangs = getAvailableLangs(folderPath);
@@ -171,6 +200,15 @@ export function getPostBySlug(slug: string, lang?: Lang): BlogPost | null {
         
         // 向後兼容：嘗試直接讀取 .md 文件（舊結構）
         const filePath = path.join(postsDirectory, `${slug}.md`);
+        
+        // 再次驗證路徑安全性
+        const resolvedFilePath = path.resolve(filePath);
+        const resolvedPostsDir = path.resolve(postsDirectory);
+        if (!resolvedFilePath.startsWith(resolvedPostsDir)) {
+            console.warn(`Path traversal detected in file path: ${slug}`);
+            return null;
+        }
+        
         if (fs.existsSync(filePath)) {
             const fileContents = fs.readFileSync(filePath, 'utf8');
             const { data, content } = matter(fileContents);
@@ -209,13 +247,22 @@ export function getAllPosts(lang?: Lang): BlogPost[] {
 /**
  * 將 Markdown 內容轉換為 HTML
  * 支援換行和更好的段落間距
+ * 使用 rehype-sanitize 防止 XSS 攻擊
  */
 export async function markdownToHtml(markdown: string): Promise<string> {
-    const result = await remark()
+    // 先將 Markdown 轉換為 HTML
+    const htmlResult = await remark()
         .use(remarkBreaks) // 支援換行
-        .use(html, { sanitize: false })
+        .use(html)
         .process(markdown);
-    return result.toString();
+    
+    // 使用 rehype-sanitize 清理 HTML，防止 XSS 攻擊
+    const sanitizedResult = await rehype()
+        .data('settings', { fragment: true })
+        .use(rehypeSanitize)
+        .process(htmlResult.toString());
+    
+    return sanitizedResult.toString();
 }
 
 /**

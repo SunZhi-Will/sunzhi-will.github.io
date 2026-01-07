@@ -1,0 +1,51 @@
+---
+name: "代碼風格規則"
+scope: project
+priority: 2
+description: "定義專案的代碼風格和編寫規範"
+---
+
+# 代碼風格規則 (Code Style Rules)
+
+## 📝 TypeScript/React 規範
+
+### 組件命名
+- 使用 PascalCase: `BlogCard.tsx`, `UserProfile.tsx`
+- 文件名與組件名一致
+
+### 函數命名
+- 使用 camelCase: `getPostBySlug()`, `validateSlug()`
+- 工具函數使用動詞開頭: `formatDate()`, `sanitizeHtml()`
+
+### 文件組織
+- 一個組件一個文件
+- 相關工具函數放在 `lib/` 目錄
+- 類型定義放在 `types/` 目錄
+
+## 🔒 安全規範
+
+### HTML 處理
+- 使用 `rehype-sanitize` 清理 HTML
+- 避免直接使用 `dangerouslySetInnerHTML`
+- 使用安全的 DOM API 操作
+
+### 輸入驗證
+- 所有用戶輸入必須驗證
+- 使用正則表達式驗證格式
+- 設置長度限制防止 DoS
+
+### 路徑處理
+- 使用 `path.join()` 而非字串拼接
+- 驗證路徑防止路徑遍歷
+- 檢查文件存在性
+
+## 📦 依賴管理
+
+- 保持依賴更新
+- 使用 `npm audit` 檢查漏洞
+- 優先使用官方推薦的套件
+
+---
+
+**規則版本**: 1.0  
+**最後更新**: 2025年1月

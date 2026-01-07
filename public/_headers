@@ -1,0 +1,15 @@
+# Security Headers for GitHub Pages
+# Note: GitHub Pages doesn't natively support custom headers
+# These headers should be configured via:
+# 1. Cloudflare (if using Cloudflare CDN)
+# 2. GitHub Pages custom domain with reverse proxy
+# 3. Or use a service like Netlify/Vercel that supports headers
+
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.disqus.com https://*.disquscdn.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.disqus.com; frame-src https://*.disqus.com; object-src 'none'; base-uri 'self'; form-action 'self';
+

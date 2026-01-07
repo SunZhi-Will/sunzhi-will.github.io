@@ -1,0 +1,125 @@
+name: Security Scan
+
+on:
+  # 每週執行完整安全掃描
+  schedule:
+    - cron: '0 2 * * 0'  # 每週日 02:00 UTC
+  # 手動觸發
+  workflow_dispatch:
+  # 當重要檔案變更時觸發
+  push:
+    branches: [main, master]
+    paths:
+      - '.github/workflows/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'next.config.ts'
+      - 'tsconfig.json'
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  comprehensive-security-scan:
+    name: Comprehensive Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 完整歷史記錄用於掃描
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit (full report)
+        continue-on-error: true
+        run: |
+          echo "## 📊 NPM Audit Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          npm audit --audit-level=low --json > full-audit.json || true
+          npm audit --audit-level=low || true
+
+      - name: Check for known vulnerabilities
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
+      - name: Scan for secrets
+        uses: trufflesecurity/trufflehog@main
+        continue-on-error: true
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
+
+      - name: Check for exposed API keys
+        continue-on-error: true
+        run: |
+          echo "Scanning for potential API keys..."
+          # 檢查常見的 API key 模式
+          if grep -r -E "(api[_-]?key|apikey|secret[_-]?key|access[_-]?token)" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" . | grep -v "node_modules" | grep -v ".git" | grep -v "process.env"; then
+            echo "⚠️ Potential API keys found in code"
+            exit 1
+          else
+            echo "✅ No hardcoded API keys detected"
+          fi
+
+      - name: Check .env files in repository
+        continue-on-error: true
+        run: |
+          if find . -name ".env*" -not -path "./node_modules/*" -not -path "./.git/*" | grep -q .; then
+            echo "⚠️ .env files found in repository"
+            find . -name ".env*" -not -path "./node_modules/*" -not -path "./.git/*"
+            exit 1
+          else
+            echo "✅ No .env files in repository"
+          fi
+
+      - name: Verify .gitignore
+        continue-on-error: true
+        run: |
+          if ! grep -q "\.env" .gitignore 2>/dev/null; then
+            echo "⚠️ .env files not in .gitignore"
+            exit 1
+          else
+            echo "✅ .env files properly ignored"
+          fi
+
+      - name: Security scan summary
+        if: always()
+        run: |
+          echo "# 🔒 Comprehensive Security Scan Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Scan Date**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Scan Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Dependency audit completed" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Secret scanning completed" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ API key detection completed" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Environment file check completed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "View detailed results in the workflow logs." >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload scan results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-scan-results
+          path: |
+            full-audit.json
+          retention-days: 90
+

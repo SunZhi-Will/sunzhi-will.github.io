@@ -42,3 +42,7 @@ next-env.d.ts
 
 # trendpulse---ai-custom-newsletter
 /trendpulse---ai-custom-newsletter
+
+# Cursor IDE
+# .cursor 目錄應該提交（包含規則文件）
+# .cursorrules 應該提交

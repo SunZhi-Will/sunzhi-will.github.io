@@ -92,18 +92,44 @@ export function EnhancedArticleContent({
             }
         });
 
-        // 高亮重要數字
+        // 高亮重要數字（使用安全的 DOM 操作，避免 innerHTML）
         const paragraphs = contentRef.current.querySelectorAll('p');
         paragraphs.forEach((p) => {
             const text = p.textContent || '';
             // 匹配百分比和重要數字
             const numberPattern = /(\d+(?:\.\d+)?%)/g;
             if (numberPattern.test(text)) {
-                p.innerHTML = text.replace(
-                    numberPattern,
-                    (match) => `<span class="font-bold ${isDark ? 'text-purple-400' : 'text-purple-600'
-                        }">${match}</span>`
-                );
+                // 使用安全的 DOM 操作替代 innerHTML
+                const matches = text.matchAll(numberPattern);
+                const parts: (string | Node)[] = [];
+                let lastIndex = 0;
+                
+                for (const match of matches) {
+                    // 添加匹配前的文字
+                    if (match.index !== undefined && match.index > lastIndex) {
+                        parts.push(text.substring(lastIndex, match.index));
+                    }
+                    // 創建高亮 span
+                    const span = document.createElement('span');
+                    span.className = `font-bold ${isDark ? 'text-purple-400' : 'text-purple-600'}`;
+                    span.textContent = match[0];
+                    parts.push(span);
+                    lastIndex = match.index + match[0].length;
+                }
+                // 添加剩餘文字
+                if (lastIndex < text.length) {
+                    parts.push(text.substring(lastIndex));
+                }
+                
+                // 清空並重新填充
+                p.textContent = '';
+                parts.forEach(part => {
+                    if (typeof part === 'string') {
+                        p.appendChild(document.createTextNode(part));
+                    } else {
+                        p.appendChild(part);
+                    }
+                });
             }
             // 確保段落有正確的換行和間距
             p.style.wordBreak = 'break-word';

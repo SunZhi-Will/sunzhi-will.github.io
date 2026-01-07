@@ -1,0 +1,91 @@
+name: Auto Fix Security Issues
+
+on:
+  workflow_run:
+    workflows: ["Security Audit"]
+    types:
+      - completed
+    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      fix_level:
+        description: 'Fix level (moderate, high, critical)'
+        required: true
+        default: 'moderate'
+        type: choice
+        options:
+          - moderate
+          - high
+          - critical
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-fix:
+    name: Auto Fix Security Vulnerabilities
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'failure' || github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit fix
+        id: fix
+        continue-on-error: true
+        run: |
+          echo "Attempting to fix vulnerabilities..."
+          npm audit fix --audit-level=${{ github.event.inputs.fix_level || 'moderate' }} || true
+          
+          # 檢查是否有變更
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Pull Request
+        if: steps.fix.outputs.changes == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore(security): auto-fix security vulnerabilities'
+          title: '🔒 Auto-fix: Security Vulnerabilities'
+          body: |
+            ## 🔒 Automatic Security Fix
+            
+            This PR was automatically created to fix security vulnerabilities detected by the security audit.
+            
+            ### Changes
+            - Automatically fixed vulnerabilities using `npm audit fix`
+            - Updated dependencies to secure versions
+            
+            ### Review Required
+            Please review the changes carefully before merging.
+            
+            ### Related
+            - Triggered by: Security Audit workflow
+            - Fix level: ${{ github.event.inputs.fix_level || 'moderate' }}
+            
+            ---
+            *This PR was created automatically by the Auto Fix Security Issues workflow.*
+          branch: security/auto-fix-$(date +%s)
+          delete-branch: true
+          labels: |
+            security
+            automated
+            dependencies
+
