@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 // @google/genai 為 ESM 套件，使用動態 import 取得類別
 let genAIClientPromise = null;
+let matterPromise = null;
 
 // 確保目錄存在
 const blogDir = path.join(process.cwd(), 'content/blog');
@@ -55,6 +56,91 @@ if (isTodayGenerated()) {
 // 建立文章資料夾
 if (!fs.existsSync(postFolder)) {
     fs.mkdirSync(postFolder, { recursive: true });
+}
+
+// 動態載入 gray-matter（處理 ESM 匯入）
+async function getMatter() {
+    if (!matterPromise) {
+        matterPromise = import('gray-matter').then((mod) => mod.default || mod);
+    }
+    return matterPromise;
+}
+
+/**
+ * 讀取所有現有文章的摘要資訊（用於避免重複和建立連結）
+ * @returns {Promise<Array>} 文章摘要列表
+ */
+async function getAllExistingPosts() {
+    try {
+        const entries = fs.readdirSync(blogDir, { withFileTypes: true });
+        const posts = [];
+        const matter = await getMatter();
+
+        for (const entry of entries) {
+            if (!entry.isDirectory()) continue;
+
+            const folderName = entry.name;
+            const folderPath = path.join(blogDir, folderName);
+
+            // 跳過今天要生成的文章
+            if (folderName === slug || folderName.startsWith(dateStr)) {
+                continue;
+            }
+
+            // 嘗試讀取中文版本的文章
+            const articlePathZh = path.join(folderPath, 'article.zh-TW.mdx');
+            const articlePathZhMd = path.join(folderPath, 'article.zh-TW.md');
+            const articlePathDefault = path.join(folderPath, 'article.mdx');
+            const articlePathDefaultMd = path.join(folderPath, 'article.md');
+
+            let articlePath = null;
+            if (fs.existsSync(articlePathZh)) {
+                articlePath = articlePathZh;
+            } else if (fs.existsSync(articlePathZhMd)) {
+                articlePath = articlePathZhMd;
+            } else if (fs.existsSync(articlePathDefault)) {
+                articlePath = articlePathDefault;
+            } else if (fs.existsSync(articlePathDefaultMd)) {
+                articlePath = articlePathDefaultMd;
+            }
+
+            if (articlePath) {
+                try {
+                    const fileContents = fs.readFileSync(articlePath, 'utf8');
+                    const { data } = matter(fileContents);
+
+                    // 簡化描述（如果太長就截斷，減少 prompt 長度）
+                    let description = data.description || '';
+                    if (description.length > 100) {
+                        description = description.substring(0, 100) + '...';
+                    }
+
+                    posts.push({
+                        slug: folderName,
+                        title: data.title || 'Untitled',
+                        date: data.date || folderName,
+                        description: description,
+                        tags: data.tags || [],
+                        url: `/blog/${folderName}`, // 文章 URL
+                    });
+                } catch (error) {
+                    console.warn(`⚠️  Failed to read article ${folderName}:`, error.message);
+                }
+            }
+        }
+
+        // 按日期排序（最新的在前）
+        posts.sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            return dateB - dateA;
+        });
+
+        return posts;
+    } catch (error) {
+        console.warn('⚠️  Failed to load existing posts:', error.message);
+        return [];
+    }
 }
 
 // 初始化 Google Gemini API
@@ -153,9 +239,51 @@ const personaStyle = `請扮演一位『科技白話文說書人』。你的目�
 篇幅目標：1000 - 1500 字。請保持語氣輕鬆幽默，但觀點要有深度。`;
 
 // 生成 AI 日報的 Prompt（參考 trendpulse 的結構）
-const articlePromptZh = `
+// 注意：這個函數會接收相關文章列表、主題、關鍵字作為參數（Agent 已篩選）
+function createArticlePromptZh(existingPosts = [], topics = [], keywords = [], summary = '') {
+    // 格式化現有文章資訊（Agent 已篩選出相關文章）
+    let existingPostsInfo = '';
+    if (existingPosts.length > 0) {
+        existingPostsInfo = `
+【相關文章資料庫】（已根據今天的主題智能篩選）
+以下文章與今天的主題相關，請檢查並在適當位置加入連結：
+${existingPosts.map((post, index) => {
+            // 簡化摘要（最多 60 字）
+            const shortDesc = post.description
+                ? (post.description.length > 60 ? post.description.substring(0, 60) + '...' : post.description)
+                : '無摘要';
+            // 簡化標籤（最多顯示 2 個）
+            const tagsStr = post.tags && post.tags.length > 0
+                ? post.tags.slice(0, 2).join(', ') + (post.tags.length > 2 ? '...' : '')
+                : '';
+            return `${index + 1}. **${post.title}** | ${post.date} | ${post.url}${tagsStr ? ` | ${tagsStr}` : ''} | ${shortDesc}`;
+        }).join('\n')}
+
+【規則】
+- 避免重複已寫過的內容，改為連結：\`[標題](/blog/[slug])\`
+- 可基於以前文章延伸，但要有新角度或新資訊
+- 連結需自然融入內容
+`;
+    }
+
+    // 加入今天的主題分析（如果有的話）
+    let topicsInfo = '';
+    if (topics.length > 0 || keywords.length > 0) {
+        topicsInfo = `
+【今天的主題分析】
+${summary ? `摘要：${summary}\n` : ''}
+${topics.length > 0 ? `主要主題：${topics.join('、')}\n` : ''}
+${keywords.length > 0 ? `關鍵字：${keywords.slice(0, 10).join('、')}${keywords.length > 10 ? '...' : ''}` : ''}
+`;
+    }
+
+    return `
 【System: Strict Investigative Journalist Agent】
 你是一位資深調查記者，擁有 Google Search 的即時查證能力。
+
+${topicsInfo}
+
+${existingPostsInfo}
 
 【SECURITY PROTOCOL - STRICT MARKDOWN ONLY】
 - **CRITICAL**: You are FORBIDDEN from using HTML tags.
@@ -204,6 +332,9 @@ const articlePromptZh = `
    - **嚴禁**捏造無法訪問的網址
    - 如果找不到真實圖片，該段落就不要放圖片
 
+【智慧撰寫策略 - 避免重複與建立連結】
+${existingPostsInfo}
+
 【撰寫設定】
 - **角色**：科技白話文說書人
 - **風格指令 (Persona Style)**：
@@ -227,10 +358,18 @@ const articlePromptZh = `
 - 重點三：簡潔描述
 ...)
 <<<CONTENT>>>
-(正文，開頭必須包含「### 📋 快速重點摘要」區塊，然後才是其他章節。若有找到真實圖片連結請包含在內)
+(正文，開頭必須包含「### 📋 快速重點摘要」區塊，然後才是其他章節。若有找到真實圖片連結請包含在內。
+
+**重要：相關文章連結**
+- 如果內容與上述「現有相關文章資料庫」中的任何文章相關，請在適當位置加入 Markdown 超連結
+- 連結格式：\`[文章標題](/blog/[slug])\`
+- 連結應該自然融入文章內容，例如：「正如我們之前在[AI Agent 正式進入職場](/blog/2026-01-04-012521)中提到的...」
+- 如果今天的新聞是之前某個主題的延續，請明確指出並連結到相關文章
+- **避免重複**：如果某個主題已經在之前的文章中詳細討論過，請簡要提及並連結，不要重複相同的內容)
 <<<SOURCES>>>
 (來源列表，每行一個 URL)
 `;
+}
 
 // 英文翻譯 Prompt（基於中文文章）
 function createEnglishTranslationPrompt(chineseContent, chineseTitle, chineseSummary, chineseBulletSummary, chineseImagePrompt, chineseSources) {
@@ -280,7 +419,13 @@ ${chineseContent}
 <<<IMAGE_PROMPT>>>
 (${chineseImagePrompt})
 <<<CONTENT>>>
-(Translate the entire content, maintaining all sections and structure. Make sure the bullet summary section (### 📋 Quick Highlights) is at the beginning if it exists.)
+(Translate the entire content, maintaining all sections and structure. Make sure the bullet summary section (### 📋 Quick Highlights) is at the beginning if it exists.
+
+**Important: Related Article Links**
+- Preserve all Markdown links to related articles from the Chinese version
+- Link format: \`[Article Title](/blog/[slug])\`
+- Links should be naturally integrated into the content
+- If the Chinese version has links to related articles, keep them in the English translation)
 <<<SOURCES>>>
 (Use the same sources, translate titles if needed)
 `;
@@ -621,6 +766,122 @@ async function generateImageWithGemini(prompt) {
 }
 
 /**
+ * Agent Step 1: 分析今天的新聞主題和關鍵字
+ */
+async function analyzeTodayTopics(modelName) {
+    const analysisPrompt = `
+【System: News Topic Analyzer Agent】
+你是一位新聞分析專家。請先搜尋今天（${dateStr}）的 AI 相關新聞，然後分析今天的主要主題和關鍵字。
+
+【任務】
+1. 使用 Google Search 搜尋今天（${dateStr}）的 AI 最新動態
+2. 分析今天的主要新聞主題（3-5 個）
+3. 提取關鍵字（10-15 個，包括公司名、產品名、技術名詞等）
+
+【輸出格式】
+<<<TOPICS>>>
+主題1：簡短描述
+主題2：簡短描述
+主題3：簡短描述
+...
+<<<KEYWORDS>>>
+關鍵字1, 關鍵字2, 關鍵字3, ...
+<<<SUMMARY>>>
+今天的主要新聞摘要（100-150字）
+`;
+
+    console.log('🔍 Agent Step 1: Analyzing today\'s topics...');
+    const result = await callGeminiAPI(modelName, analysisPrompt, true);
+
+    // 解析主題和關鍵字
+    const topics = [];
+    const keywords = [];
+    let summary = '';
+
+    if (result.text.includes('<<<TOPICS>>>')) {
+        const topicsPart = result.text.split('<<<TOPICS>>>')[1]?.split('<<<')[0] || '';
+        topicsPart.split('\n').forEach(line => {
+            const trimmed = line.trim();
+            if (trimmed && !trimmed.startsWith('<<<')) {
+                topics.push(trimmed);
+            }
+        });
+    }
+
+    if (result.text.includes('<<<KEYWORDS>>>')) {
+        const keywordsPart = result.text.split('<<<KEYWORDS>>>')[1]?.split('<<<')[0] || '';
+        keywordsPart.split(',').forEach(kw => {
+            const trimmed = kw.trim();
+            if (trimmed) {
+                keywords.push(trimmed);
+            }
+        });
+    }
+
+    if (result.text.includes('<<<SUMMARY>>>')) {
+        summary = result.text.split('<<<SUMMARY>>>')[1]?.split('<<<')[0]?.trim() || '';
+    }
+
+    console.log(`✅ Found ${topics.length} topics and ${keywords.length} keywords`);
+    return { topics, keywords, summary };
+}
+
+/**
+ * Agent Step 2: 根據主題和關鍵字匹配相關文章
+ */
+function findRelevantPosts(allPosts, topics, keywords) {
+    if (allPosts.length === 0) return [];
+
+    // 建立關鍵字匹配分數
+    const scoredPosts = allPosts.map(post => {
+        let score = 0;
+        const searchText = `${post.title} ${post.description} ${post.tags.join(' ')}`.toLowerCase();
+
+        // 檢查關鍵字匹配
+        keywords.forEach(keyword => {
+            const keywordLower = keyword.toLowerCase();
+            if (searchText.includes(keywordLower)) {
+                score += 2; // 關鍵字匹配加 2 分
+            }
+        });
+
+        // 檢查標籤匹配
+        post.tags.forEach(tag => {
+            if (keywords.some(kw => tag.toLowerCase().includes(kw.toLowerCase()) || kw.toLowerCase().includes(tag.toLowerCase()))) {
+                score += 3; // 標籤匹配加 3 分
+            }
+        });
+
+        // 檢查標題匹配
+        const titleLower = post.title.toLowerCase();
+        keywords.forEach(keyword => {
+            if (titleLower.includes(keyword.toLowerCase())) {
+                score += 5; // 標題匹配加 5 分
+            }
+        });
+
+        return { ...post, relevanceScore: score };
+    });
+
+    // 按分數排序，取前 8 篇相關文章
+    const relevantPosts = scoredPosts
+        .filter(post => post.relevanceScore > 0)
+        .sort((a, b) => b.relevanceScore - a.relevanceScore)
+        .slice(0, 8);
+
+    // 如果相關文章少於 5 篇，補充最近的文章
+    if (relevantPosts.length < 5) {
+        const recentPosts = allPosts
+            .slice(0, 5 - relevantPosts.length)
+            .filter(post => !relevantPosts.find(rp => rp.slug === post.slug));
+        relevantPosts.push(...recentPosts);
+    }
+
+    console.log(`📌 Found ${relevantPosts.length} relevant posts`);
+    return relevantPosts;
+}
+
+/**
  * 生成文章內容（中英文）- 參考 trendpulse 的重試邏輯
  */
 async function generateArticles() {
@@ -633,8 +894,20 @@ async function generateArticles() {
             try {
                 console.log(`Trying model: ${modelName} (attempt ${attempt + 1})...`);
 
-                // 生成中文文章
-                const resultZh = await callGeminiAPI(modelName, articlePromptZh, true);
+                // Agent Step 1: 分析今天的主題和關鍵字
+                const { topics, keywords, summary } = await analyzeTodayTopics(modelName);
+
+                // 讀取所有現有文章
+                console.log('📚 Loading existing posts...');
+                const allPosts = await getAllExistingPosts();
+                console.log(`📚 Loaded ${allPosts.length} existing posts`);
+
+                // Agent Step 2: 根據主題和關鍵字匹配相關文章
+                const relevantPosts = findRelevantPosts(allPosts, topics, keywords);
+
+                // 生成中文文章（只傳入相關文章）
+                const articlePromptZhWithContext = createArticlePromptZh(relevantPosts, topics, keywords, summary);
+                const resultZh = await callGeminiAPI(modelName, articlePromptZhWithContext, true);
 
                 // 檢查 Hallucination
                 if (isHallucinated(resultZh.text)) {
