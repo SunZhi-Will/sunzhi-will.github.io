@@ -17,6 +17,7 @@ const CommentSection = dynamic(() => import('@/components/blog/CommentSection').
 const ReadingProgress = dynamic(() => import('@/components/blog/ReadingProgress').then(mod => ({ default: mod.ReadingProgress })), { ssr: false });
 const EnhancedArticleContent = dynamic(() => import('@/components/blog/EnhancedArticleContent').then(mod => ({ default: mod.EnhancedArticleContent })), { ssr: false });
 const ShareButtons = dynamic(() => import('@/components/blog/ShareButtons').then(mod => ({ default: mod.ShareButtons })), { ssr: false });
+const TableOfContents = dynamic(() => import('@/components/blog/TableOfContents').then(mod => ({ default: mod.TableOfContents })), { ssr: false });
 // import { ScrollReveal } from '@/components/blog/ScrollReveal';
 import { useTheme } from '../ThemeProvider';
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
@@ -123,12 +124,7 @@ export default function BlogPostClient({
         <div
             className="h-screen overflow-hidden relative transition-colors duration-300"
             style={{
-                backgroundColor: isDark ? '#111827' : '#f9fafb',
-                backgroundImage: isDark
-                    ? `radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(to bottom right, #111827, #1f2937, #111827)`
-                    : `radial-gradient(circle, rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(to bottom right, #f9fafb, #f3f4f6, #f9fafb)`,
-                backgroundSize: '20px 20px, 100% 100%',
-                backgroundPosition: '0 0, 0 0',
+                backgroundColor: isDark ? '#0f172a' : '#ffffff',
                 color: isDark ? '#e5e7eb' : '#111827',
             } as React.CSSProperties}
         >
@@ -154,28 +150,33 @@ export default function BlogPostClient({
             {/* 閱讀進度條 */}
             <ReadingProgress />
 
+            {/* 目錄 - 左側固定 */}
+            <TableOfContents lang={lang} />
+
             {/* 主要內容區域 - 全寬 */}
             <main className="overflow-y-auto h-full scrollbar-custom">
                 <article className="relative">
                     {/* 文章內容 - 統一的內容區域 */}
-                    <div className="max-w-3xl mx-auto px-4 py-12 md:px-8 md:py-16 lg:px-12 lg:py-20 pt-20 md:pt-24">
-                        <div className="space-y-8">
+                    <div className="max-w-3xl mx-auto px-4 pt-20 pb-6 md:px-8 md:pt-24 md:pb-8 lg:px-12 lg:pb-10">
+                        <div className="space-y-10">
                             {/* 標題 - 直接放在內容開頭 */}
-                            <header className="space-y-4">
-                                <h1 className={`text-2xl md:text-3xl font-normal leading-tight tracking-tight ${isDark ? 'text-gray-200' : 'text-gray-900'
+                            <header className="space-y-5 pb-8 border-b" style={{
+                                borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                            }}>
+                                <h1 className={`text-3xl md:text-4xl font-light leading-tight tracking-tight ${isDark ? 'text-gray-100' : 'text-gray-900'
                                     }`}>
                                     {currentPost.title}
                                 </h1>
 
                                 {/* 元資訊 - 簡潔的單行顯示 */}
-                                <div className={`flex flex-wrap items-center gap-3 text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'
+                                <div className={`flex flex-wrap items-center gap-2.5 text-sm ${isDark ? 'text-gray-500' : 'text-gray-500'
                                     }`}>
                                     <time>
                                         {formatDate(currentPost.date, lang === 'zh-TW' ? 'zh-TW' : 'en-US')}
                                     </time>
                                     {readingTime && (
                                         <>
-                                            <span>·</span>
+                                            <span className="text-gray-400">·</span>
                                             <span>{readingTime} {t.readTime}</span>
                                         </>
                                     )}
@@ -183,12 +184,16 @@ export default function BlogPostClient({
                                         const filteredTags = filterTagsByLanguage(currentPost.tags, lang);
                                         return filteredTags.length > 0 && (
                                             <>
-                                                <span>·</span>
-                                                <div className="flex flex-wrap gap-1.5">
+                                                <span className="text-gray-400">·</span>
+                                                <div className="flex flex-wrap gap-2">
                                                     {filteredTags.map((tag) => (
                                                         <span
                                                             key={tag}
-                                                            className={isDark ? 'text-gray-400' : 'text-gray-600'}
+                                                            className={`px-2 py-0.5 text-xs rounded ${
+                                                                isDark 
+                                                                    ? 'text-gray-400 bg-gray-800/50 border border-gray-700/50' 
+                                                                    : 'text-gray-600 bg-gray-100/50 border border-gray-300/50'
+                                                            }`}
                                                         >
                                                             {tag}
                                                         </span>
@@ -202,8 +207,9 @@ export default function BlogPostClient({
 
                             {/* 封面圖片 - 整合到內容流中 */}
                             {currentPost.coverImage && (
-                                <div className={`relative w-full overflow-hidden rounded-lg ${isDark ? 'bg-gray-700/50' : 'bg-gray-200/50'
-                                    }`}>
+                                <div className="relative w-full overflow-hidden rounded-lg border" style={{
+                                    borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                                }}>
                                     <Image
                                         src={currentPost.coverImage}
                                         alt={currentPost.title}
@@ -217,18 +223,23 @@ export default function BlogPostClient({
 
                             {/* 文章描述 - 特殊樣式 */}
                             {currentPost.description && (
-                                <div className={`relative my-8 py-6 px-6 rounded-lg border-l-4 ${
+                                <div className={`relative my-8 py-5 px-5 rounded-md border-l-2 ${
                                     isDark 
-                                        ? 'bg-gray-800/50 border-gray-500/50' 
-                                        : 'bg-gray-50/50 border-gray-400'
+                                        ? 'bg-gray-800/30 border-gray-600/50' 
+                                        : 'bg-gray-50/80 border-gray-300/50'
                                 }`}>
-                                    <p className={`text-sm md:text-base leading-relaxed font-normal text-gray-500 ${
-                                        isDark ? 'text-gray-400' : 'text-gray-600'
+                                    <p className={`text-base leading-relaxed font-light ${
+                                        isDark ? 'text-gray-300' : 'text-gray-700'
                                     }`}>
                                         {currentPost.description}
                                     </p>
                                 </div>
                             )}
+
+                            {/* 內容開始分界線 */}
+                            <div className="pt-4 border-t" style={{
+                                borderColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'
+                            }} />
 
                             {/* 增強的文章正文 - 包含互動功能 */}
                             <EnhancedArticleContent
@@ -241,8 +252,12 @@ export default function BlogPostClient({
                     </div>
 
                     {/* 文章底部 */}
-                    <div className="max-w-3xl mx-auto px-6 md:px-8 lg:px-12 pb-16">
-                        <div className="space-y-12 pt-8">
+                    <div className="max-w-3xl mx-auto px-4 md:px-8 lg:px-12 pb-20">
+                        {/* 內容結束分界線 */}
+                        <div className="pt-6 border-t" style={{
+                            borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                        }} />
+                        <div className="space-y-8 pt-4">
                             {/* 分享按鈕 */}
                             <ShareButtons
                                 title={currentPost.title}
