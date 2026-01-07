@@ -48,35 +48,13 @@ jobs:
           git add content/blog/ public/blog/
           if git diff --staged --quiet; then
             echo "No changes to commit"
-            echo "changed=false" >> $GITHUB_OUTPUT
           else
             git commit -m "chore: auto-generate daily AI report"
             BRANCH="${{ github.event.repository.default_branch }}"
             echo "Pushing to branch: ${BRANCH}"
             git push origin HEAD:${BRANCH}
-            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "✅ Changes pushed. Deployment will be handled by the Next.js deployment workflow."
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        id: commit_push
-
-      - name: Build project
-        if: steps.commit_push.outputs.changed == 'true'
-        run: npm run build
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-
-      - name: Deploy to GitHub Pages
-        if: steps.commit_push.outputs.changed == 'true'
-        uses: JamesIves/github-pages-deploy-action@v4.6.4
-        with:
-          branch: gh-pages
-          folder: out
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Verify deployment
-        if: steps.commit_push.outputs.changed == 'true'
-        run: |
-          echo "✅ Changes pushed and deployed successfully to GitHub Pages."
-          echo "   Site should be available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
 

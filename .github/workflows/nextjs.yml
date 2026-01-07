@@ -8,6 +8,14 @@ on:
   # Runs on pushes targeting the default branch
   push:
     branches: [main, master]  # 支援 main 和 master 分支
+    paths:
+      - 'content/blog/**'  # 當 blog 內容變更時觸發
+      - 'public/blog/**'   # 當 blog 圖片變更時觸發
+      - 'app/**'           # 當應用程式代碼變更時觸發
+      - 'components/**'    # 當組件變更時觸發
+      - 'package.json'     # 當依賴變更時觸發
+      - 'package-lock.json'
+      - 'next.config.ts'   # 當配置變更時觸發
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -84,6 +92,11 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+      - name: Copy blog images
+        run: |
+          if [ -f "scripts/copy-blog-images.js" ]; then
+            node scripts/copy-blog-images.js
+          fi
       - name: Build with Next.js
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
