@@ -123,6 +123,15 @@ const personaStyle = `請扮演一位『科技白話文說書人』。你的目�
 
 【文章結構與撰寫口吻】：
 
+**重要：文章開頭必須先有一個「條列式重點摘要」區塊**
+在正文開始前，請先提供一個條列式摘要（使用 Markdown 列表格式），列出 5-7 個核心重點，讓讀者可以快速掌握整篇文章的精華。格式如下：
+
+### 📋 快速重點摘要
+- 重點一：簡潔描述第一個核心要點（約 15-20 字）
+- 重點二：簡潔描述第二個核心要點（約 15-20 字）
+- 重點三：簡潔描述第三個核心要點（約 15-20 字）
+- ...（依此類推，共 5-7 個重點）
+
 ### 發生了什麼事？（像在講八卦）
 (用最白話的方式，告訴我這則新聞的重點。例如：「大家都在傳 Google 又出包了...」或是「OpenAI 昨天半夜突然丟出一個震撼彈...」。)
 
@@ -211,14 +220,20 @@ const articlePromptZh = `
 (封面圖片的 AI 繪圖指令：請設計一張「RPG 遊戲風格的資訊圖表」。
 目標：透過 RPG 角色面板/任務清單的視覺化方式來呈現文章的核心邏輯。
 限制：**嚴禁包含文字 (No Text)**。請用符號、圖標、幾何圖形來代替文字標籤，保持畫面非常乾淨、極簡，避免資訊過載。)
+<<<BULLET_SUMMARY>>>
+(條列式重點摘要：請提供 5-7 個核心重點，每個重點約 15-20 字，使用 Markdown 列表格式 (-)。這些重點應該涵蓋文章的主要事件、關鍵數據、重要影響等核心內容。格式範例：
+- 重點一：簡潔描述
+- 重點二：簡潔描述
+- 重點三：簡潔描述
+...)
 <<<CONTENT>>>
-(正文，若有找到真實圖片連結請包含在內)
+(正文，開頭必須包含「### 📋 快速重點摘要」區塊，然後才是其他章節。若有找到真實圖片連結請包含在內)
 <<<SOURCES>>>
 (來源列表，每行一個 URL)
 `;
 
 // 英文翻譯 Prompt（基於中文文章）
-function createEnglishTranslationPrompt(chineseContent, chineseTitle, chineseSummary, chineseImagePrompt, chineseSources) {
+function createEnglishTranslationPrompt(chineseContent, chineseTitle, chineseSummary, chineseBulletSummary, chineseImagePrompt, chineseSources) {
     return `
 【System: Professional Translator & Content Adaptor】
 You are a professional translator and content adaptor. Your task is to translate and adapt a Chinese AI daily report article into English while maintaining the same structure, tone, and depth.
@@ -226,12 +241,14 @@ You are a professional translator and content adaptor. Your task is to translate
 【Source Article (Chinese)】
 Title: ${chineseTitle}
 Summary: ${chineseSummary}
+Bullet Summary: ${chineseBulletSummary || 'N/A'}
 
 Content:
 ${chineseContent}
 
 【Translation Requirements】
 1. **Maintain Structure**: Keep the exact same section structure as the Chinese version:
+   - ### 📋 Quick Highlights (or ### Quick Highlights if emoji not supported)
    - ### What Happened? (Like telling gossip)
    - ### Simply Put, What Is This? (Metaphor time)
    - ### According to Reports, Details Are as Follows
@@ -247,19 +264,23 @@ ${chineseContent}
 
 5. **Maintain Formatting**: Keep the same Markdown formatting, bold text, lists, and structure.
 
-6. **Sources**: Use the same sources as the Chinese version, but translate source titles if needed.
+6. **Bullet Summary**: If the Chinese version has a bullet summary section (### 📋 快速重點摘要), translate it to "### 📋 Quick Highlights" (or "### Quick Highlights" if emoji not supported). Each bullet point should be concise (15-20 words) and capture the core points.
+
+7. **Sources**: Use the same sources as the Chinese version, but translate source titles if needed.
 
 【Output Format】
 <<<TITLE>>>
 (Translate the title naturally. Only output the title content, do NOT include "【AI Daily】" prefix, the system will add it automatically. Title should be witty and interesting, no date)
 <<<SUMMARY>>>
 (Translate the summary naturally, **must be complete and meaningful**, ~150-200 words. Ensure the summary is a complete paragraph that includes the article's core points and ends at a sentence boundary, not mid-sentence. The summary should cover: main events, key data, important impacts.)
+<<<BULLET_SUMMARY>>>
+(If the Chinese version has a bullet summary, translate it here. Format: 5-7 bullet points, each ~15-20 words. Use Markdown list format (-). If no bullet summary exists in Chinese version, extract key points from the content and create one.)
 <<<SEARCH_QUERIES>>>
 (Use the same search queries from Chinese version, or translate them to English)
 <<<IMAGE_PROMPT>>>
 (${chineseImagePrompt})
 <<<CONTENT>>>
-(Translate the entire content, maintaining all sections and structure)
+(Translate the entire content, maintaining all sections and structure. Make sure the bullet summary section (### 📋 Quick Highlights) is at the beginning if it exists.)
 <<<SOURCES>>>
 (Use the same sources, translate titles if needed)
 `;
@@ -429,6 +450,7 @@ function cleanStr(str) {
 function parseStructuredOutput(text) {
     let titlePart = '',
         summaryPart = '',
+        bulletSummaryPart = '',
         searchQueriesPart = '',
         imagePromptPart = '',
         contentPart = '',
@@ -436,6 +458,7 @@ function parseStructuredOutput(text) {
 
     if (text.includes('<<<TITLE>>>')) titlePart = text.split('<<<TITLE>>>')[1]?.split('<<<')[0] || '';
     if (text.includes('<<<SUMMARY>>>')) summaryPart = text.split('<<<SUMMARY>>>')[1]?.split('<<<')[0] || '';
+    if (text.includes('<<<BULLET_SUMMARY>>>')) bulletSummaryPart = text.split('<<<BULLET_SUMMARY>>>')[1]?.split('<<<')[0] || '';
     if (text.includes('<<<SEARCH_QUERIES>>>')) searchQueriesPart = text.split('<<<SEARCH_QUERIES>>>')[1]?.split('<<<')[0] || '';
     if (text.includes('<<<IMAGE_PROMPT>>>')) imagePromptPart = text.split('<<<IMAGE_PROMPT>>>')[1]?.split('<<<')[0] || '';
     if (text.includes('<<<CONTENT>>>')) contentPart = text.split('<<<CONTENT>>>')[1]?.split('<<<')[0] || '';
@@ -465,11 +488,27 @@ function parseStructuredOutput(text) {
     rawTitle = `【AI日報】${rawTitle}`;
 
     const summary = cleanupHtmlTags(cleanStr(summaryPart) || '本篇報導整合了多方來源的即時數據與分析...');
+    const bulletSummary = cleanupHtmlTags(cleanStr(bulletSummaryPart) || '');
     const imagePrompt = cleanStr(imagePromptPart) || `AI daily report ${dateStr}, RPG game-style infographic, minimalist chart, no text`;
     let content = cleanStr(contentPart) || text;
     if (content.includes('<<<SOURCES>>>')) content = content.split('<<<SOURCES>>>')[0];
     content = cleanupHtmlTags(content);
     content = content.replace(/!\[(.*?)\]\(generate_inline\)/g, ''); // 移除 generate_inline
+
+    // 如果內容中沒有條列式摘要，且從 BULLET_SUMMARY 區塊解析到了摘要，則插入到內容開頭
+    // 檢查中文和英文版本的條列式摘要標題
+    const hasBulletSummary = content.includes('### 📋 快速重點摘要') ||
+        content.includes('### 快速重點摘要') ||
+        content.includes('### 📋 Quick Highlights') ||
+        content.includes('### Quick Highlights');
+
+    if (bulletSummary && !hasBulletSummary) {
+        // 根據內容語言決定使用哪個標題（簡單判斷：如果內容包含中文字符，使用中文標題）
+        const hasChinese = /[\u4e00-\u9fa5]/.test(content);
+        const bulletTitle = hasChinese ? '### 📋 快速重點摘要' : '### 📋 Quick Highlights';
+        const bulletSection = `${bulletTitle}\n\n${bulletSummary.trim()}\n\n`;
+        content = bulletSection + content;
+    }
 
     // 解析搜尋關鍵字
     const rawQueries = cleanStr(searchQueriesPart);
@@ -504,6 +543,7 @@ function parseStructuredOutput(text) {
     return {
         title: rawTitle,
         summary,
+        bulletSummary,
         content,
         imagePrompt,
         searchQueries,
@@ -623,6 +663,7 @@ async function generateArticles() {
                     parsedZh.content,
                     zhTitleForTranslation,
                     parsedZh.summary,
+                    parsedZh.bulletSummary,
                     parsedZh.imagePrompt,
                     parsedZh.sources.map(s => s.uri).join('\n')
                 );
