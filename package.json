@@ -17,7 +17,7 @@
     "@tailwindcss/typography": "^0.5.19",
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.8.1",
-    "framer-motion": "^12.4.13",
+    "framer-motion": "^12.24.7",
     "gray-matter": "^4.0.3",
     "next": "^15.5.9",
     "next-mdx-remote": "^5.0.0",

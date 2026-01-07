@@ -206,10 +206,9 @@ export function getPostBySlug(slug: string, lang?: Lang): BlogPost | null {
         const mdxFilePath = path.join(postsDirectory, `${slug}.mdx`);
         const mdFilePath = path.join(postsDirectory, `${slug}.md`);
         
-        // 再次驗證路徑安全性
+        // 再次驗證路徑安全性（使用已聲明的 resolvedPostsDir）
         const resolvedMdxPath = path.resolve(mdxFilePath);
         const resolvedMdPath = path.resolve(mdFilePath);
-        const resolvedPostsDir = path.resolve(postsDirectory);
         
         if (fs.existsSync(mdxFilePath) && resolvedMdxPath.startsWith(resolvedPostsDir)) {
             const fileContents = fs.readFileSync(mdxFilePath, 'utf8');
