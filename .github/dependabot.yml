@@ -10,9 +10,6 @@ updates:
     open-pull-requests-limit: 10
     reviewers:
       - "SunZhi-Will"
-    labels:
-      - "dependencies"
-      - "security"
     commit-message:
       prefix: "chore"
       include: "scope"

@@ -17,12 +17,18 @@ import { EnhancedArticleContent } from '@/components/blog/EnhancedArticleContent
 import { ShareButtons } from '@/components/blog/ShareButtons';
 import { ScrollReveal } from '@/components/blog/ScrollReveal';
 import { useTheme } from '../ThemeProvider';
+import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 
 interface BlogPostClientProps {
     defaultPost: Omit<BlogPost, 'content'>;
-    defaultHtmlContent: string;
+    defaultHtmlContent?: string;
+    defaultMdxSource?: MDXRemoteSerializeResult;
     defaultAllPosts: BlogPost[];
-    postsByLang: Record<Lang, { post: Omit<BlogPost, 'content'>; htmlContent: string } | null>;
+    postsByLang: Record<Lang, { 
+        post: Omit<BlogPost, 'content'>; 
+        htmlContent?: string;
+        mdxSource?: MDXRemoteSerializeResult;
+    } | null>;
     allPostsByLang: Record<Lang, BlogPost[]>;
     baseUrl: string;
 }
@@ -30,6 +36,7 @@ interface BlogPostClientProps {
 export default function BlogPostClient({
     defaultPost,
     defaultHtmlContent,
+    defaultMdxSource,
     defaultAllPosts,
     postsByLang,
     allPostsByLang,
@@ -37,7 +44,8 @@ export default function BlogPostClient({
 }: BlogPostClientProps) {
     const [lang, setLang] = useState<Lang>('zh-TW');
     const [currentPost, setCurrentPost] = useState<Omit<BlogPost, 'content'>>(defaultPost);
-    const [currentHtmlContent, setCurrentHtmlContent] = useState<string>(defaultHtmlContent);
+    const [currentHtmlContent, setCurrentHtmlContent] = useState<string | undefined>(defaultHtmlContent);
+    const [currentMdxSource, setCurrentMdxSource] = useState<MDXRemoteSerializeResult | undefined>(defaultMdxSource);
     const [currentAllPosts, setCurrentAllPosts] = useState<BlogPost[]>(defaultAllPosts);
     // 使用服務端傳來的 baseUrl 作為初始值，避免 hydration mismatch
     const [currentBaseUrl, setCurrentBaseUrl] = useState<string>(baseUrl);
@@ -52,8 +60,9 @@ export default function BlogPostClient({
         }
     }, []);
 
-    // 估算閱讀時間
-    const readingTime = Math.max(1, Math.ceil(currentHtmlContent.length / 1500));
+    // 估算閱讀時間（根據內容類型）
+    const contentLength = currentHtmlContent?.length || currentMdxSource?.compiledSource?.length || 0;
+    const readingTime = Math.max(1, Math.ceil(contentLength / 1500));
 
     // 切換到指定語言版本的文章
     const switchToLang = (targetLang: Lang) => {
@@ -61,6 +70,7 @@ export default function BlogPostClient({
         if (postData) {
             setCurrentPost(postData.post);
             setCurrentHtmlContent(postData.htmlContent);
+            setCurrentMdxSource(postData.mdxSource);
         }
         // 更新推薦文章列表
         setCurrentAllPosts(allPostsByLang[targetLang]);
@@ -223,6 +233,7 @@ export default function BlogPostClient({
                             {/* 增強的文章正文 - 包含互動功能 */}
                             <EnhancedArticleContent
                                 htmlContent={currentHtmlContent}
+                                mdxSource={currentMdxSource}
                                 postSlug={currentPost.slug}
                                 lang={lang}
                             />

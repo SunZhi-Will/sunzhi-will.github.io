@@ -11,5 +11,6 @@ export interface BlogPost {
     content?: string;
     lang?: Lang; // 文章語言
     availableLangs?: Lang[]; // 可用的語言版本
+    isMdx?: boolean; // 是否為 MDX 格式文件
 }
 

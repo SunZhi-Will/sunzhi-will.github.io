@@ -24,8 +24,8 @@ const dateFormatted = new Intl.DateTimeFormat('zh-TW', {
 // 使用時間戳作為資料夾名稱（符合資料結構：content/blog/[日期時間]/）
 const slug = timestamp;
 const postFolder = path.join(blogDir, slug);
-const articlePathZh = path.join(postFolder, 'article.zh-TW.md');
-const articlePathEn = path.join(postFolder, 'article.en.md');
+const articlePathZh = path.join(postFolder, 'article.zh-TW.mdx');
+const articlePathEn = path.join(postFolder, 'article.en.mdx');
 
 // 檢查今天是否已經有生成過（依資料夾日期或檔名含今日日期）
 function isTodayGenerated() {
@@ -37,8 +37,8 @@ function isTodayGenerated() {
                 return entry.name.startsWith(dateStr); // 以 YYYY-MM-DD 開頭
             }
             if (entry.isFile()) {
-                // 舊結構：ai-daily-report-YYYY-MM-DD.md 或其他含今日日期的檔名
-                return entry.name.includes(dateStr) && entry.name.endsWith('.md');
+                // 舊結構：ai-daily-report-YYYY-MM-DD.mdx 或其他含今日日期的檔名
+                return entry.name.includes(dateStr) && (entry.name.endsWith('.mdx') || entry.name.endsWith('.md'));
             }
             return false;
         });
@@ -818,8 +818,8 @@ ${coverImage ? `coverImage: "${coverImage}"` : ''}
 
     console.log(`✅ Daily report generated successfully!`);
     console.log(`📁 Folder: ${slug}/`);
-    console.log(`📝 File: article.zh-TW.md`);
-    console.log(`📝 File: article.en.md`);
+    console.log(`📝 File: article.zh-TW.mdx`);
+    console.log(`📝 File: article.en.mdx`);
     if (coverImage) {
         console.log(`🖼️  Cover image: ${coverImage}`);
     }
@@ -838,9 +838,10 @@ function isAIDailyReport(folderPath, folderName) {
         return false;
     }
 
-    // 2. 檢查是否有 article.zh-TW.md 文件（AI 日報的特徵文件）
-    const articleZhPath = path.join(folderPath, 'article.zh-TW.md');
-    if (!fs.existsSync(articleZhPath)) {
+    // 2. 檢查是否有 article.zh-TW.mdx 或 article.zh-TW.md 文件（AI 日報的特徵文件）
+    const articleZhPathMdx = path.join(folderPath, 'article.zh-TW.mdx');
+    const articleZhPathMd = path.join(folderPath, 'article.zh-TW.md');
+    if (!fs.existsSync(articleZhPathMdx) && !fs.existsSync(articleZhPathMd)) {
         return false;
     }
 

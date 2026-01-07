@@ -20,6 +20,7 @@
     "framer-motion": "^12.4.2",
     "gray-matter": "^4.0.3",
     "next": "^15.5.9",
+    "next-mdx-remote": "^5.0.0",
     "qrcode": "^1.5.4",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",

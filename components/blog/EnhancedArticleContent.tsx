@@ -1,23 +1,90 @@
 'use client'
 
 import { useEffect, useRef } from 'react';
+import { MDXRemote } from 'next-mdx-remote';
 import { useTheme } from '@/app/blog/ThemeProvider';
 import { Lang } from '@/types';
+import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 
 interface EnhancedArticleContentProps {
-    htmlContent: string;
+    htmlContent?: string;
+    mdxSource?: MDXRemoteSerializeResult;
     postSlug: string;
     lang: Lang;
 }
 
 export function EnhancedArticleContent({
     htmlContent,
+    mdxSource,
     postSlug,
     lang,
 }: EnhancedArticleContentProps) {
     const contentRef = useRef<HTMLDivElement>(null);
     const { theme } = useTheme();
     const isDark = theme === 'dark';
+    
+    // 如果使用 MDX，直接渲染 MDX 組件
+    if (mdxSource) {
+        return (
+            <div className="space-y-8">
+                <div
+                    className={`prose prose-base max-w-none
+                        prose-h1:text-2xl prose-h1:mt-12 prose-h1:mb-6 prose-h1:font-normal prose-h1:leading-tight
+                        prose-h2:text-xl prose-h2:mt-10 prose-h2:mb-5 prose-h2:font-normal prose-h2:leading-tight
+                        prose-h3:text-lg prose-h3:mt-8 prose-h3:mb-4 prose-h3:font-normal prose-h3:leading-tight
+                        prose-h4:text-base prose-h4:mt-6 prose-h4:mb-3 prose-h4:font-normal prose-h4:leading-tight
+                        prose-p:leading-[1.8] prose-p:font-normal prose-p:text-[15px] prose-p:mb-6 prose-p:break-words
+                        prose-a:no-underline prose-a:border-b prose-a:transition-all prose-a:font-medium prose-a:break-words
+                        prose-strong:font-semibold
+                        prose-code:px-2 prose-code:py-1 prose-code:text-sm prose-code:font-mono prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-code:border prose-code:break-words
+                        prose-pre:rounded-xl prose-pre:shadow-xl prose-pre:backdrop-blur-sm prose-pre:overflow-x-auto prose-pre:my-8
+                        prose-pre code:bg-transparent prose-pre code:px-0 prose-pre code:py-0 prose-pre code:border-0
+                        prose-blockquote:border-0 prose-blockquote:py-6 prose-blockquote:px-6 prose-blockquote:rounded-xl prose-blockquote:font-light prose-blockquote:not-italic prose-blockquote:my-8 prose-blockquote:leading-relaxed prose-blockquote:shadow-lg prose-blockquote:backdrop-blur-sm prose-blockquote:relative prose-blockquote:overflow-hidden
+                        prose-ul:my-6 prose-ol:my-6
+                        prose-li:leading-relaxed prose-li:break-words
+                        prose-img:rounded-xl prose-img:border prose-img:shadow-xl prose-img:my-8 prose-img:transition-transform prose-img:hover:scale-105
+                        prose-hr:my-12
+                        prose-th:border prose-th:px-4 prose-th:py-2
+                        prose-td:border prose-td:px-4 prose-td:py-2 prose-td:break-words
+                        ${isDark
+                            ? `prose-headings:font-normal prose-headings:tracking-tight prose-headings:text-gray-200
+                            prose-p:text-gray-300
+                            prose-a:text-gray-400 prose-a:border-gray-600/50 hover:prose-a:border-gray-500 hover:prose-a:text-gray-300
+                            prose-strong:text-gray-200
+                            prose-code:text-gray-300 prose-code:bg-gray-700/80 prose-code:border-gray-600/50
+                            prose-pre:bg-gray-800/80 prose-pre:border prose-pre:border-gray-700/50
+                            prose-blockquote:bg-gradient-to-br prose-blockquote:from-gray-800/60 prose-blockquote:to-gray-900/40 prose-blockquote:text-gray-200 prose-blockquote:border prose-blockquote:border-gray-700/50 prose-blockquote:shadow-gray-900/20
+                            prose-ul:text-gray-300 prose-ol:text-gray-300
+                            prose-li:marker:text-gray-500
+                            prose-img:border-gray-700/50
+                            prose-hr:border-gray-700/50
+                            prose-table:text-gray-300 prose-th:border-gray-700/50 prose-th:bg-gray-800/30
+                            prose-td:border-gray-700/50`
+                            : `prose-headings:font-normal prose-headings:tracking-tight prose-headings:text-gray-900
+                            prose-p:text-gray-700
+                            prose-a:text-gray-600 prose-a:border-gray-400/50 hover:prose-a:border-gray-600 hover:prose-a:text-gray-800
+                            prose-strong:text-gray-900
+                            prose-code:text-gray-800 prose-code:bg-gray-200/80 prose-code:border-gray-300/50
+                            prose-pre:bg-gray-100/80 prose-pre:border prose-pre:border-gray-300/50
+                            prose-blockquote:bg-gradient-to-br prose-blockquote:from-gray-50 prose-blockquote:to-gray-100/80 prose-blockquote:text-gray-800 prose-blockquote:border prose-blockquote:border-gray-300/50 prose-blockquote:shadow-gray-400/10
+                            prose-ul:text-gray-700 prose-ol:text-gray-700
+                            prose-li:marker:text-gray-600
+                            prose-img:border-gray-300/50
+                            prose-hr:border-gray-300/50
+                            prose-table:text-gray-700 prose-th:border-gray-300/50 prose-th:bg-gray-200/30
+                            prose-td:border-gray-300/50`
+                        }`}
+                >
+                    <MDXRemote {...mdxSource} />
+                </div>
+            </div>
+        );
+    }
+    
+    // 如果沒有 MDX 內容，回退到 HTML 渲染
+    if (!htmlContent) {
+        return null;
+    }
 
     useEffect(() => {
         if (!contentRef.current) return;
@@ -154,7 +221,7 @@ export function EnhancedArticleContent({
                 listItem.classList.add('list-item-light');
             }
         });
-    }, [htmlContent, isDark, lang, postSlug]);
+    }, [htmlContent, isDark, lang, postSlug, mdxSource]);
 
     return (
         <div className="space-y-8">

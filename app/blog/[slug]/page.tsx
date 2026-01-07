@@ -1,9 +1,11 @@
 import { getPostBySlug, getPostSlugs, markdownToHtml, getAllPosts } from '@/lib/blog';
+import { serializeMdx } from '@/lib/mdx';
 import { notFound } from 'next/navigation';
 import BlogPostClient from './BlogPostClient';
 import type { Lang } from '@/types';
 import type { BlogPost } from '@/types/blog';
 import type { Metadata } from 'next';
+import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 
 // 強制靜態生成
 export const dynamic = 'force-static';
@@ -76,7 +78,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://sunzhi-will.github.io';
 
     // 預先載入所有語言版本的文章數據
-    const postsByLang: Record<Lang, { post: Omit<BlogPost, 'content'>; htmlContent: string } | null> = {
+    const postsByLang: Record<Lang, { 
+        post: Omit<BlogPost, 'content'>; 
+        htmlContent?: string;
+        mdxSource?: MDXRemoteSerializeResult;
+    } | null> = {
         'zh-TW': null,
         'en': null,
     };
@@ -90,20 +96,40 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     for (const lang of ['zh-TW', 'en'] as Lang[]) {
         const post = getPostBySlug(slug, lang);
         if (post) {
-            const htmlContent = post.content ? await markdownToHtml(post.content) : '';
-            postsByLang[lang] = {
-                post: {
-                    slug: post.slug,
-                    title: post.title,
-                    date: post.date,
-                    description: post.description,
-                    tags: post.tags,
-                    coverImage: post.coverImage,
-                    lang: post.lang,
-                    availableLangs: post.availableLangs,
-                },
-                htmlContent,
-            };
+            // 根據文件類型決定使用 MDX 還是 HTML
+            if (post.isMdx && post.content) {
+                const mdxSource = await serializeMdx(post.content);
+                postsByLang[lang] = {
+                    post: {
+                        slug: post.slug,
+                        title: post.title,
+                        date: post.date,
+                        description: post.description,
+                        tags: post.tags,
+                        coverImage: post.coverImage,
+                        lang: post.lang,
+                        availableLangs: post.availableLangs,
+                        isMdx: post.isMdx,
+                    },
+                    mdxSource,
+                };
+            } else {
+                const htmlContent = post.content ? await markdownToHtml(post.content) : '';
+                postsByLang[lang] = {
+                    post: {
+                        slug: post.slug,
+                        title: post.title,
+                        date: post.date,
+                        description: post.description,
+                        tags: post.tags,
+                        coverImage: post.coverImage,
+                        lang: post.lang,
+                        availableLangs: post.availableLangs,
+                        isMdx: post.isMdx,
+                    },
+                    htmlContent,
+                };
+            }
         }
         allPostsByLang[lang] = getAllPosts(lang).map(p => ({
             slug: p.slug,
@@ -130,6 +156,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <BlogPostClient
             defaultPost={defaultPostData.post}
             defaultHtmlContent={defaultPostData.htmlContent}
+            defaultMdxSource={defaultPostData.mdxSource}
             defaultAllPosts={allPostsByLang[defaultLang]}
             postsByLang={postsByLang}
             allPostsByLang={allPostsByLang}

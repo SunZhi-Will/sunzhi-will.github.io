@@ -23,7 +23,7 @@ function ensurePostsDirectory() {
 
 /**
  * 取得所有部落格文章的 slug
- * 現在支援資料夾結構：content/blog/[日期時間]/文章.md
+ * 現在支援資料夾結構：content/blog/[日期時間]/文章.md 或 article.mdx
  */
 export function getPostSlugs(): string[] {
     ensurePostsDirectory();
@@ -34,19 +34,19 @@ export function getPostSlugs(): string[] {
         
         for (const entry of entries) {
             if (entry.isDirectory()) {
-                // 如果是資料夾，在資料夾內尋找 .md 文件
+                // 如果是資料夾，在資料夾內尋找 .md 或 .mdx 文件
                 const folderPath = path.join(postsDirectory, entry.name);
                 const files = fs.readdirSync(folderPath);
-                const mdFile = files.find((file) => file.endsWith('.md'));
+                const mdFile = files.find((file) => file.endsWith('.md') || file.endsWith('.mdx'));
                 
                 if (mdFile) {
                     // 使用資料夾名稱作為 slug
                     slugs.push(entry.name);
                 }
-            } else if (entry.isFile() && entry.name.endsWith('.md') && entry.name !== 'README.md') {
-                // 向後兼容：如果直接有 .md 文件，使用文件名作為 slug
-                // 忽略 README.md 文件
-                slugs.push(entry.name.replace(/\.md$/, ''));
+            } else if ((entry.isFile() && entry.name.endsWith('.md') || entry.name.endsWith('.mdx')) && entry.name !== 'README.md' && entry.name !== 'README.mdx') {
+                // 向後兼容：如果直接有 .md 或 .mdx 文件，使用文件名作為 slug
+                // 忽略 README.md 和 README.mdx 文件
+                slugs.push(entry.name.replace(/\.(md|mdx)$/, ''));
             }
         }
         
@@ -65,13 +65,13 @@ function getAvailableLangs(folderPath: string): Lang[] {
     
     // 檢查是否有語言特定的文件
     files.forEach((file) => {
-        if (file.match(/\.(zh-TW|en)\.md$/)) {
+        if (file.match(/\.(zh-TW|en)\.(md|mdx)$/)) {
             const lang = file.includes('.zh-TW.') ? 'zh-TW' : 'en';
             if (!availableLangs.includes(lang)) {
                 availableLangs.push(lang);
             }
-        } else if (file.endsWith('.md') && !file.includes('.')) {
-            // 如果只有 article.md（沒有語言後綴），認為是預設語言
+        } else if ((file.endsWith('.md') || file.endsWith('.mdx')) && !file.includes('.')) {
+            // 如果只有 article.md 或 article.mdx（沒有語言後綴），認為是預設語言
             // 這裡我們假設是 zh-TW，但也可以根據內容判斷
             if (!availableLangs.includes('zh-TW')) {
                 availableLangs.push('zh-TW');
@@ -129,10 +129,11 @@ export function getPostBySlug(slug: string, lang?: Lang): BlogPost | null {
             let mdFile: string | null = null;
             
             if (lang) {
-                // 嘗試讀取指定語言的文件
+                // 嘗試讀取指定語言的文件（優先 .mdx，然後 .md）
                 const langFile = files.find((file) => 
+                    file.endsWith(`.${lang}.mdx`) ||
                     file.endsWith(`.${lang}.md`) || 
-                    (lang === 'zh-TW' && file === 'article.md' && !file.includes('.'))
+                    (lang === 'zh-TW' && (file === 'article.mdx' || file === 'article.md') && !file.includes('.'))
                 );
                 if (langFile) {
                     targetLang = lang;
@@ -144,8 +145,9 @@ export function getPostBySlug(slug: string, lang?: Lang): BlogPost | null {
             if (!mdFile) {
                 for (const availableLang of availableLangs) {
                     const langFile = files.find((file) => 
+                        file.endsWith(`.${availableLang}.mdx`) ||
                         file.endsWith(`.${availableLang}.md`) ||
-                        (availableLang === 'zh-TW' && file === 'article.md' && !file.includes('.'))
+                        (availableLang === 'zh-TW' && (file === 'article.mdx' || file === 'article.md') && !file.includes('.'))
                     );
                     if (langFile) {
                         targetLang = availableLang;
@@ -155,9 +157,10 @@ export function getPostBySlug(slug: string, lang?: Lang): BlogPost | null {
                 }
             }
             
-            // 如果還是找不到，嘗試任何 .md 文件（向後兼容）
+            // 如果還是找不到，嘗試任何 .mdx 或 .md 文件（向後兼容，優先 .mdx）
             if (!mdFile) {
-                mdFile = files.find((file) => file.endsWith('.md')) || null;
+                mdFile = files.find((file) => file.endsWith('.mdx')) || 
+                         files.find((file) => file.endsWith('.md')) || null;
                 if (mdFile && !targetLang) {
                     targetLang = 'zh-TW'; // 預設語言
                 }
@@ -194,23 +197,22 @@ export function getPostBySlug(slug: string, lang?: Lang): BlogPost | null {
                     content,
                     lang: targetLang || undefined,
                     availableLangs,
+                    isMdx: mdFile.endsWith('.mdx'), // 標記是否為 MDX 文件
                 };
             }
         }
         
-        // 向後兼容：嘗試直接讀取 .md 文件（舊結構）
-        const filePath = path.join(postsDirectory, `${slug}.md`);
+        // 向後兼容：嘗試直接讀取 .mdx 或 .md 文件（舊結構，優先 .mdx）
+        const mdxFilePath = path.join(postsDirectory, `${slug}.mdx`);
+        const mdFilePath = path.join(postsDirectory, `${slug}.md`);
         
         // 再次驗證路徑安全性
-        const resolvedFilePath = path.resolve(filePath);
+        const resolvedMdxPath = path.resolve(mdxFilePath);
+        const resolvedMdPath = path.resolve(mdFilePath);
         const resolvedPostsDir = path.resolve(postsDirectory);
-        if (!resolvedFilePath.startsWith(resolvedPostsDir)) {
-            console.warn(`Path traversal detected in file path: ${slug}`);
-            return null;
-        }
         
-        if (fs.existsSync(filePath)) {
-            const fileContents = fs.readFileSync(filePath, 'utf8');
+        if (fs.existsSync(mdxFilePath) && resolvedMdxPath.startsWith(resolvedPostsDir)) {
+            const fileContents = fs.readFileSync(mdxFilePath, 'utf8');
             const { data, content } = matter(fileContents);
 
             return {
@@ -221,6 +223,23 @@ export function getPostBySlug(slug: string, lang?: Lang): BlogPost | null {
                 tags: data.tags || [],
                 coverImage: data.coverImage || undefined,
                 content,
+                isMdx: true, // 標記為 MDX 文件
+            };
+        }
+        
+        if (fs.existsSync(mdFilePath) && resolvedMdPath.startsWith(resolvedPostsDir)) {
+            const fileContents = fs.readFileSync(mdFilePath, 'utf8');
+            const { data, content } = matter(fileContents);
+
+            return {
+                slug,
+                title: data.title || 'Untitled',
+                date: data.date || new Date().toISOString(),
+                description: data.description || '',
+                tags: data.tags || [],
+                coverImage: data.coverImage || undefined,
+                content,
+                isMdx: false, // 標記為 MD 文件
             };
         }
         
