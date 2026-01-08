@@ -96,6 +96,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     for (const lang of ['zh-TW', 'en'] as Lang[]) {
         const post = getPostBySlug(slug, lang);
         if (post) {
+            // 將 description 轉換為 HTML（支援 markdown 格式）
+            const descriptionHtml = post.description ? await markdownToHtml(post.description) : '';
+            
             // 根據文件類型決定使用 MDX 還是 HTML
             if (post.isMdx && post.content) {
                 const mdxSource = await serializeMdx(post.content);
@@ -105,6 +108,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         title: post.title,
                         date: post.date,
                         description: post.description,
+                        descriptionHtml,
                         tags: post.tags,
                         coverImage: post.coverImage,
                         lang: post.lang,
@@ -121,6 +125,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         title: post.title,
                         date: post.date,
                         description: post.description,
+                        descriptionHtml,
                         tags: post.tags,
                         coverImage: post.coverImage,
                         lang: post.lang,

@@ -119,9 +119,24 @@ export function TableOfContents({ lang }: TableOfContentsProps) {
         };
 
         // 延遲執行，確保 DOM 已渲染
-        const timer = setTimeout(extractHeadings, 100);
+        // 當語言切換時，需要等待內容更新後再提取標題
+        // 使用較長的延遲，確保 React 已經完成 DOM 更新
+        const timer = setTimeout(() => {
+            // 多次嘗試提取，確保內容已更新
+            let attempts = 0;
+            const tryExtract = () => {
+                const articleContent = document.querySelector('article > div.max-w-3xl:first-of-type');
+                if (articleContent && articleContent.querySelectorAll('h2, h3, h4, h5, h6').length > 0) {
+                    extractHeadings();
+                } else if (attempts < 5) {
+                    attempts++;
+                    setTimeout(tryExtract, 100);
+                }
+            };
+            tryExtract();
+        }, 300);
         return () => clearTimeout(timer);
-    }, []);
+    }, [lang]); // 添加 lang 作為依賴，當語言切換時重新提取標題
 
     // 計算文章容器的左邊位置，讓目錄貼在文章左邊
     useEffect(() => {

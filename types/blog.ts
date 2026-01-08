@@ -6,6 +6,7 @@ export interface BlogPost {
     title: string;
     date: string;
     description: string;
+    descriptionHtml?: string; // description 的 HTML 版本（支援 markdown 格式）
     tags: string[];
     coverImage?: string;
     content?: string;

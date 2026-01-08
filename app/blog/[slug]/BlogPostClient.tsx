@@ -221,18 +221,21 @@ export default function BlogPostClient({
                                 </div>
                             )}
 
-                            {/* 文章描述 - 特殊樣式 */}
+                            {/* 文章描述 - 特殊樣式，支援 markdown 格式 */}
                             {currentPost.description && (
                                 <div className={`relative my-8 py-5 px-5 rounded-md border-l-2 ${
                                     isDark 
                                         ? 'bg-gray-800/30 border-gray-600/50' 
                                         : 'bg-gray-50/80 border-gray-300/50'
                                 }`}>
-                                    <p className={`text-base leading-relaxed font-light ${
-                                        isDark ? 'text-gray-300' : 'text-gray-700'
-                                    }`}>
-                                        {currentPost.description}
-                                    </p>
+                                    <div 
+                                        className={`text-base leading-relaxed font-light prose prose-sm max-w-none ${
+                                            isDark ? 'text-gray-300 prose-strong:text-gray-100' : 'text-gray-700 prose-strong:text-gray-900'
+                                        } prose-strong:font-semibold`}
+                                        dangerouslySetInnerHTML={{ 
+                                            __html: currentPost.descriptionHtml || currentPost.description 
+                                        }}
+                                    />
                                 </div>
                             )}
 

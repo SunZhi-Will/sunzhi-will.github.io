@@ -98,43 +98,82 @@ export function EnhancedArticleContent({
             }
         });
 
-        // 高亮重要數字（使用安全的 DOM 操作，避免 innerHTML）
+        // 高亮重要數字（保留原有的 HTML 結構，特別是 strong 標籤）
         const paragraphs = contentRef.current.querySelectorAll('p');
         paragraphs.forEach((p) => {
             const text = p.textContent || '';
             // 匹配百分比和重要數字
             const numberPattern = /(\d+(?:\.\d+)?%)/g;
             if (numberPattern.test(text)) {
-                // 使用安全的 DOM 操作替代 innerHTML
-                const matches = text.matchAll(numberPattern);
-                const parts: (string | Node)[] = [];
-                let lastIndex = 0;
-                
-                for (const match of matches) {
-                    // 添加匹配前的文字
-                    if (match.index !== undefined && match.index > lastIndex) {
-                        parts.push(text.substring(lastIndex, match.index));
+                // 遞歸處理節點，保留 HTML 結構
+                const processNode = (node: Node): Node[] => {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        const textNode = node as Text;
+                        const text = textNode.textContent || '';
+                        const matches = Array.from(text.matchAll(numberPattern));
+                        
+                        if (matches.length === 0) {
+                            return [textNode.cloneNode()];
+                        }
+                        
+                        const parts: Node[] = [];
+                        let lastIndex = 0;
+                        
+                        for (const match of matches) {
+                            // 添加匹配前的文字
+                            if (match.index !== undefined && match.index > lastIndex) {
+                                const beforeText = text.substring(lastIndex, match.index);
+                                if (beforeText) {
+                                    parts.push(document.createTextNode(beforeText));
+                                }
+                            }
+                            // 創建高亮 span
+                            const span = document.createElement('span');
+                            span.className = `font-bold ${isDark ? 'text-purple-400' : 'text-purple-600'}`;
+                            span.textContent = match[0];
+                            parts.push(span);
+                            lastIndex = match.index + match[0].length;
+                        }
+                        // 添加剩餘文字
+                        if (lastIndex < text.length) {
+                            const remainingText = text.substring(lastIndex);
+                            if (remainingText) {
+                                parts.push(document.createTextNode(remainingText));
+                            }
+                        }
+                        
+                        return parts;
+                    } else if (node.nodeType === Node.ELEMENT_NODE) {
+                        const element = node as Element;
+                        const newElement = element.cloneNode(false) as Element;
+                        
+                        // 處理子節點
+                        Array.from(node.childNodes).forEach(child => {
+                            const processed = processNode(child);
+                            processed.forEach(processedNode => {
+                                newElement.appendChild(processedNode);
+                            });
+                        });
+                        
+                        return [newElement];
                     }
-                    // 創建高亮 span
-                    const span = document.createElement('span');
-                    span.className = `font-bold ${isDark ? 'text-purple-400' : 'text-purple-600'}`;
-                    span.textContent = match[0];
-                    parts.push(span);
-                    lastIndex = match.index + match[0].length;
-                }
-                // 添加剩餘文字
-                if (lastIndex < text.length) {
-                    parts.push(text.substring(lastIndex));
-                }
+                    
+                    return [node.cloneNode()];
+                };
                 
-                // 清空並重新填充
-                p.textContent = '';
-                parts.forEach(part => {
-                    if (typeof part === 'string') {
-                        p.appendChild(document.createTextNode(part));
-                    } else {
-                        p.appendChild(part);
-                    }
+                // 處理所有子節點
+                const newChildren: Node[] = [];
+                Array.from(p.childNodes).forEach(child => {
+                    const processed = processNode(child);
+                    processed.forEach(processedNode => {
+                        newChildren.push(processedNode);
+                    });
+                });
+                
+                // 清空並重新填充（保留 HTML 結構）
+                p.innerHTML = '';
+                newChildren.forEach(child => {
+                    p.appendChild(child);
                 });
             }
             // 確保段落有正確的換行和間距
@@ -174,7 +213,7 @@ export function EnhancedArticleContent({
                         prose-h4:text-base prose-h4:mt-8 prose-h4:mb-4 prose-h4:font-light prose-h4:leading-tight
                         prose-p:leading-[1.9] prose-p:font-light prose-p:text-[16px] prose-p:mb-7 prose-p:break-words
                         prose-a:no-underline prose-a:border-b prose-a:border-opacity-50 prose-a:transition-all prose-a:font-light prose-a:break-words prose-a:pb-0.5
-                        prose-strong:font-normal
+                        prose-strong:font-semibold
                         prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:font-mono prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-code:bg-opacity-60
                         prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:my-10 prose-pre:border prose-pre:border-opacity-20
                         prose-pre code:bg-transparent prose-pre code:px-0 prose-pre code:py-0 prose-pre code:border-0
@@ -237,7 +276,7 @@ export function EnhancedArticleContent({
                     prose-h4:text-base prose-h4:mt-8 prose-h4:mb-4 prose-h4:font-light prose-h4:leading-tight
                     prose-p:leading-[1.9] prose-p:font-light prose-p:text-[16px] prose-p:mb-7 prose-p:break-words
                     prose-a:no-underline prose-a:border-b prose-a:border-opacity-50 prose-a:transition-all prose-a:font-light prose-a:break-words prose-a:pb-0.5
-                    prose-strong:font-normal
+                    prose-strong:font-semibold
                     prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:font-mono prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-code:bg-opacity-60
                     prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:my-10 prose-pre:border prose-pre:border-opacity-20
                     prose-pre code:bg-transparent prose-pre code:px-0 prose-pre code:py-0 prose-pre code:border-0
