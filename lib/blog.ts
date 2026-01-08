@@ -280,7 +280,7 @@ function preprocessMarkdown(markdown: string): string {
  */
 export async function markdownToHtml(markdown: string): Promise<string> {
     // 預處理：修復中文引號內的粗體標記
-    let processedMarkdown = preprocessMarkdown(markdown);
+    const processedMarkdown = preprocessMarkdown(markdown);
 
     // 先將 Markdown 轉換為 HTML
     const htmlResult = await remark()
