@@ -70,7 +70,7 @@ export function TableOfContents({ lang }: TableOfContentsProps) {
                     }
                     
                     // 確保 id 唯一：檢查是否已存在
-                    let counter = idCounter.get(baseId) || 0;
+                    const counter = idCounter.get(baseId) || 0;
                     if (counter > 0) {
                         id = `${baseId}-${counter}`;
                     } else {
