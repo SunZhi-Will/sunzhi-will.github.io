@@ -27,6 +27,14 @@ if (!apiKey) {
 const dateInfo = getDateInfo();
 const { dateStr, timestamp, dateFormatted, yesterdayISO } = dateInfo;
 
+// 輸出診斷資訊
+console.log('=== AI Daily Report Generation ===');
+console.log(`Date: ${dateStr}`);
+console.log(`Timestamp: ${timestamp}`);
+console.log(`Formatted Date: ${dateFormatted}`);
+console.log(`Blog Directory: ${blogDir}`);
+console.log(`Current UTC Time: ${new Date().toISOString()}`);
+
 // 使用時間戳作為資料夾名稱（符合資料結構：content/blog/[日期時間]/）
 const slug = timestamp;
 const postFolder = path.join(blogDir, slug);
@@ -34,10 +42,31 @@ const articlePathZh = path.join(postFolder, 'article.zh-TW.mdx');
 const articlePathEn = path.join(postFolder, 'article.en.mdx');
 
 // 檢查今天是否已經有生成過
-if (isTodayGenerated(blogDir, dateStr)) {
-    console.log(`Daily report for ${dateStr} already exists. Skipping...`);
+console.log(`\n🔍 Checking if report for ${dateStr} already exists...`);
+const alreadyGenerated = isTodayGenerated(blogDir, dateStr);
+console.log(`   Check result: ${alreadyGenerated}`);
+
+if (alreadyGenerated) {
+    console.log(`\n⚠️  Daily report for ${dateStr} already exists. Skipping...`);
+    // 列出現有的文件以便診斷
+    try {
+        const entries = fs.readdirSync(blogDir, { withFileTypes: true });
+        const todayEntries = entries.filter(entry => 
+            entry.isDirectory() && entry.name.startsWith(dateStr)
+        );
+        if (todayEntries.length > 0) {
+            console.log(`   Found existing folders for today:`);
+            todayEntries.forEach(entry => {
+                console.log(`     - ${entry.name}`);
+            });
+        }
+    } catch (err) {
+        console.log(`   Error listing existing files: ${err.message}`);
+    }
     process.exit(0);
 }
+
+console.log(`\n✅ No existing report found. Starting generation...`);
 
 // 建立文章資料夾
 ensureDirectoryExists(postFolder);
@@ -153,6 +182,7 @@ async function generateArticles() {
                 );
 
                 // 處理內容並寫入檔案
+                console.log(`\n💾 Writing files to disk...`);
                 await processContent(
                     parsedZh,
                     parsedEn,
@@ -163,9 +193,22 @@ async function generateArticles() {
                     articlePathEn
                 );
 
+                // 驗證文件是否成功寫入
+                console.log(`\n✅ Verifying files were created...`);
+                const zhExists = fs.existsSync(articlePathZh);
+                const enExists = fs.existsSync(articlePathEn);
+                console.log(`   Chinese article: ${zhExists ? '✅' : '❌'} ${articlePathZh}`);
+                console.log(`   English article: ${enExists ? '✅' : '❌'} ${articlePathEn}`);
+
+                if (!zhExists || !enExists) {
+                    throw new Error(`Failed to create article files. zh: ${zhExists}, en: ${enExists}`);
+                }
+
                 // 清理超過十天的舊日報
+                console.log(`\n🧹 Cleaning up old reports...`);
                 cleanupOldReports(blogDir, 10);
 
+                console.log(`\n🎉 Successfully generated daily report for ${dateStr}!`);
                 return; // 成功退出
 
             } catch (error) {
@@ -236,18 +279,45 @@ async function generateArticles() {
 }
 
 // 執行生成
-generateArticles().catch((error) => {
-    console.error('Error generating daily report:', error);
+generateArticles()
+    .then(() => {
+        console.log('\n✅ Script completed successfully');
+        process.exit(0);
+    })
+    .catch((error) => {
+        console.error('\n❌ Error generating daily report:');
+        console.error('Error type:', error.constructor.name);
+        console.error('Error message:', error.message);
+        if (error.stack) {
+            console.error('Stack trace:', error.stack);
+        }
 
-    if (error.status === 404 || error.message?.includes('not found') || error.message?.includes('404')) {
-        console.error('\n💡 Tip: None of the tried models are available.');
-        console.error('   Tried models:', modelNames.join(', '));
-        console.error('\nYou can check available models or update the modelNames array in the script.');
-    }
+        if (error.status === 404 || error.message?.includes('not found') || error.message?.includes('404')) {
+            console.error('\n💡 Tip: None of the tried models are available.');
+            console.error('   Tried models:', modelNames.join(', '));
+            console.error('\nYou can check available models or update the modelNames array in the script.');
+        }
 
-    if (error.message) {
-        console.error('\nError details:', error.message);
-    }
+        if (error.status) {
+            console.error('HTTP Status:', error.status);
+        }
+        if (error.code) {
+            console.error('Error Code:', error.code);
+        }
 
-    process.exit(1);
-});
+        // 檢查是否有部分生成的文件
+        console.log('\n🔍 Checking for partially generated files...');
+        if (fs.existsSync(postFolder)) {
+            const files = fs.readdirSync(postFolder);
+            if (files.length > 0) {
+                console.log(`   Found ${files.length} files in ${postFolder}:`);
+                files.forEach(file => console.log(`     - ${file}`));
+            } else {
+                console.log(`   Folder ${postFolder} exists but is empty`);
+            }
+        } else {
+            console.log(`   No folder created at ${postFolder}`);
+        }
+
+        process.exit(1);
+    });
