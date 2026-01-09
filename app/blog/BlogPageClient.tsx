@@ -7,6 +7,7 @@ import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
 import { blogTranslations, getTagVariants } from '@/lib/blog-translations';
 import { ProfileCard } from '@/components/blog/ProfileCard';
+import { NewsletterCard } from '@/components/blog/NewsletterCard';
 import { BlogCard } from '@/components/blog/BlogCard';
 import { BlogDynamicIsland } from '@/components/blog/BlogDynamicIsland';
 import { BlogNavIsland } from '@/components/blog/BlogNavIsland';
@@ -144,13 +145,19 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
                 />
             </div>
 
-            <div className="flex h-full">
-                {/* 左側個人資料卡片 */}
-                <ProfileCard lang={lang} />
+            <div className="flex h-full gap-4">
+                {/* 左側側邊欄 */}
+                <div className="flex flex-col flex-shrink-0">
+                    {/* 個人資料卡片 */}
+                    <ProfileCard lang={lang} />
+                    
+                    {/* 訂閱電子報卡片 */}
+                    <NewsletterCard lang={lang} />
+                </div>
 
                 {/* 主要內容區域 */}
                 <main className="flex-1 overflow-y-auto h-full relative scrollbar-custom">
-                    <div className="max-w-5xl mx-auto px-4 pb-4 md:px-6 md:pb-6 lg:pb-8 pt-[5.5rem] md:pt-24">
+                    <div className="max-w-6xl mx-auto px-4 pb-4 md:px-6 md:pb-6 lg:pb-8 pt-[5.5rem] md:pt-24">
                         {/* 文章列表 */}
                         {filteredPosts.length > 0 ? (
                             <div className="space-y-4">

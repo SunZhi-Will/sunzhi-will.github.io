@@ -42,6 +42,23 @@ jobs:
       - name: Copy blog images
         run: node scripts/copy-blog-images.js
 
+      - name: Send newsletter via Gmail
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          BLOG_URL: ${{ secrets.BLOG_URL || 'https://sunzhi-will.github.io' }}
+          GOOGLE_APPS_SCRIPT_URL: ${{ secrets.GOOGLE_APPS_SCRIPT_URL }}
+          GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
+          GOOGLE_SHEETS_ID: ${{ secrets.GOOGLE_SHEETS_ID }}
+        run: |
+          if [ -n "$GMAIL_USER" ] && [ -n "$GMAIL_APP_PASSWORD" ]; then
+            echo "Sending newsletter to subscribers..."
+            node scripts/send-newsletter.js
+          else
+            echo "⚠️ Gmail credentials not configured. Skipping newsletter sending."
+          fi
+        continue-on-error: true
+
       - name: Debug - Check generated files
         run: |
           echo "=== Checking for generated files ==="

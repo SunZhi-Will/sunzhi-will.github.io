@@ -28,7 +28,7 @@ export function ProfileCard({ lang }: ProfileCardProps) {
             initial={{ opacity: 0, x: -20 }}
             animate={mounted ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
             transition={mounted ? { duration: 0.5, delay: 0.2 } : { duration: 0 }}
-            className="hidden md:block w-64 lg:w-72 h-full overflow-y-auto scrollbar-custom flex-shrink-0"
+            className="hidden md:block w-64 lg:w-72 flex-shrink-0"
             suppressHydrationWarning
         >
             <div className="px-6 pt-[5.5rem] md:pt-24 pb-6">

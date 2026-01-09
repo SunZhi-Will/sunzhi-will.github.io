@@ -21,27 +21,35 @@ function isAIDailyReport(folderPath, folderName) {
         return false;
     }
 
-    // 3. 可選：檢查 frontmatter 中的標題或標籤（額外安全檢查）
+    // 3. 必須檢查 frontmatter 中的標題或標籤（嚴格安全檢查，避免誤刪技術文章）
     try {
         const articlePath = fs.existsSync(articleZhPathMdx) ? articleZhPathMdx : articleZhPathMd;
         const articleContent = fs.readFileSync(articlePath, 'utf8');
         const frontmatterMatch = articleContent.match(/^---\s*\n([\s\S]*?)\n---/);
+        
         if (frontmatterMatch) {
             const frontmatter = frontmatterMatch[1];
             // 檢查標題是否包含 AI 日報標記，或 tags 是否包含每日日報
             const hasAITitle = /【AI日報】|【AI Daily】/i.test(frontmatter);
             const hasDailyTag = /tags:.*["\[]每日日報|Daily Report/i.test(frontmatter);
-            if (!hasAITitle && !hasDailyTag) {
-                // 如果不符合 AI 日報特徵，不刪除
-                return false;
+            
+            // 只有在明確找到 AI 日報標記時，才返回 true
+            if (hasAITitle || hasDailyTag) {
+                return true;
             }
+            // 如果沒有 AI 日報標記，不刪除（可能是技術文章）
+            return false;
+        } else {
+            // 如果沒有 frontmatter，無法確認是否為 AI 日報，不刪除
+            console.warn(`⚠️  No frontmatter found for ${folderName}, skipping to avoid deleting non-AI-daily articles`);
+            return false;
         }
     } catch (error) {
-        // 如果讀取失敗，只依賴命名格式和文件存在性檢查
+        // 如果讀取失敗，無法確認是否為 AI 日報，不刪除（安全起見）
         console.warn(`⚠️  Could not read frontmatter for ${folderName}:`, error.message);
+        console.warn(`⚠️  Skipping to avoid deleting non-AI-daily articles`);
+        return false;
     }
-
-    return true;
 }
 
 /**

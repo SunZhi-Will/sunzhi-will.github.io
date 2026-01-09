@@ -7,6 +7,7 @@ import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
 import { blogTranslations, filterTagsByLanguage } from '@/lib/blog-translations';
 import { useTheme } from '@/app/blog/ThemeProvider';
+import { NewsletterSubscribe } from './NewsletterSubscribe';
 
 interface BlogPostSidebarProps {
     lang: Lang;
@@ -207,8 +208,13 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                     </div>
                 </div>
 
+                {/* 電子報訂閱 */}
+                <div className="mt-auto">
+                    <NewsletterSubscribe lang={lang} />
+                </div>
+
                 {/* 返回個人頁、語言切換和頁尾 */}
-                <div className={`mt-auto p-5 border-t backdrop-blur-sm ${
+                <div className={`p-5 border-t backdrop-blur-sm ${
                     isDark
                         ? 'border-gray-700/50 bg-gradient-to-br from-gray-800/20 to-gray-900/20'
                         : 'border-gray-300/50 bg-gradient-to-br from-gray-200/20 to-gray-100/20'

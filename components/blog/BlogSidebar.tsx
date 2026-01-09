@@ -6,6 +6,7 @@ import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
 import { blogTranslations } from '@/lib/blog-translations';
 import { useTheme } from '@/app/blog/ThemeProvider';
+import { NewsletterSubscribe } from './NewsletterSubscribe';
 
 interface BlogSidebarProps {
     lang: Lang;
@@ -162,8 +163,13 @@ export function BlogSidebar({ lang, setLang, post }: BlogSidebarProps) {
                 </>
             )}
 
+            {/* 電子報訂閱 */}
+            <div className="mt-auto">
+                <NewsletterSubscribe lang={lang} />
+            </div>
+
             {/* 頁尾 */}
-            <div className={`mt-auto p-4 border-t ${
+            <div className={`p-4 border-t ${
                 isDark ? 'border-gray-700/50' : 'border-gray-300/50'
             }`}>
                 {/* 返回個人頁按鈕 - 只在文章詳情頁面顯示 */}
