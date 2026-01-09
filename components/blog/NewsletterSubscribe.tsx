@@ -81,7 +81,10 @@ export function NewsletterSubscribe({ lang }: NewsletterSubscribeProps) {
             const scriptUrl = process.env.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_URL;
 
             if (!scriptUrl) {
-                console.error('NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_URL is not set');
+                // 只在開發環境記錄日誌（安全措施）
+                if (process.env.NODE_ENV === 'development') {
+                    console.error('NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_URL is not set');
+                }
                 setMessage({ 
                     type: 'error', 
                     text: lang === 'zh-TW' 
@@ -96,7 +99,10 @@ export function NewsletterSubscribe({ lang }: NewsletterSubscribeProps) {
             try {
                 new URL(scriptUrl);
             } catch (urlError) {
-                console.error('Invalid script URL:', scriptUrl, urlError);
+                // 只在開發環境記錄日誌（安全措施）
+                if (process.env.NODE_ENV === 'development') {
+                    console.error('Invalid script URL:', scriptUrl, urlError);
+                }
                 setMessage({ 
                     type: 'error', 
                     text: lang === 'zh-TW' 
@@ -135,9 +141,15 @@ export function NewsletterSubscribe({ lang }: NewsletterSubscribeProps) {
             clearTimeout(timeoutId);
 
             if (!response.ok) {
-                console.error('Response not OK:', response.status, response.statusText);
-                const errorText = await response.text().catch(() => 'Unknown error');
-                console.error('Error response:', errorText);
+                // 只在開發環境記錄日誌（安全措施）
+                if (process.env.NODE_ENV === 'development') {
+                    console.error('Response not OK:', response.status, response.statusText);
+                    const errorText = await response.text().catch(() => 'Unknown error');
+                    console.error('Error response:', errorText);
+                } else {
+                    // 生產環境：只讀取錯誤文本但不記錄
+                    await response.text().catch(() => 'Unknown error');
+                }
                 setMessage({ 
                     type: 'error', 
                     text: lang === 'zh-TW' 
@@ -158,7 +170,10 @@ export function NewsletterSubscribe({ lang }: NewsletterSubscribeProps) {
             try {
                 data = JSON.parse(responseText);
             } catch (parseError) {
-                console.error('Failed to parse JSON response:', parseError);
+                // 只在開發環境記錄日誌（安全措施）
+                if (process.env.NODE_ENV === 'development') {
+                    console.error('Failed to parse JSON response:', parseError);
+                }
                 // 如果無法解析 JSON，檢查響應文本
                 if (responseText.toLowerCase().includes('success') || response.status === 200) {
                     setMessage({ 
@@ -186,7 +201,10 @@ export function NewsletterSubscribe({ lang }: NewsletterSubscribeProps) {
                 setMessage({ type: 'error', text: data.message || t.error });
             }
         } catch (error) {
-            console.error('Subscription error:', error);
+            // 只在開發環境記錄日誌（安全措施）
+            if (process.env.NODE_ENV === 'development') {
+                console.error('Subscription error:', error);
+            }
             const errorMessage = error instanceof Error ? error.message : String(error);
             
             // 提供更詳細的錯誤訊息

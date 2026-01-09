@@ -198,7 +198,7 @@ function getLatestArticle(slug) {
 }
 
 /**
- * 將 Markdown 轉換為 HTML（改進版本，正確處理列表和段落）
+ * 將 Markdown 轉換為 HTML（改進版本，支持嵌套列表）
  */
 function markdownToHtml(markdown) {
     let html = markdown;
@@ -210,113 +210,146 @@ function markdownToHtml(markdown) {
     // 先處理同一行內的多個編號列表項目（例如：1. xxx 2. xxx 3. xxx）
     html = html.replace(/(\d+)\.\s+([^\d]+?)(?=\s+\d+\.|$)/g, '$1. $2\n');
 
-    // 按行分割處理
+    // 按行分割處理（保留原始縮排）
     const lines = html.split('\n');
     const result = [];
-    let inList = false;
-    let isOrderedList = false;
-    let currentListItems = [];
+    
+    // 用於追蹤嵌套列表的堆疊
+    const listStack = []; // [{ level, isOrdered, items }]
 
-    const closeList = () => {
-        if (currentListItems.length > 0) {
-            const listTag = isOrderedList ? 'ol' : 'ul';
-            result.push(`<${listTag} style="margin: 20px 0; padding-left: 24px; line-height: 1.7;">${currentListItems.join('')}</${listTag}>`);
-            currentListItems = [];
+    // 計算縮排層級（每4個空格或1個tab為一層）
+    const getIndentLevel = (line) => {
+        const match = line.match(/^(\s*)/);
+        if (!match) return 0;
+        const spaces = match[1];
+        // 將 tab 轉換為4個空格
+        const normalized = spaces.replace(/\t/g, '    ');
+        return Math.floor(normalized.length / 4);
+    };
+
+    // 關閉列表到指定層級
+    const closeListsToLevel = (targetLevel) => {
+        while (listStack.length > targetLevel) {
+            const list = listStack.pop();
+            if (list.items.length > 0) {
+                const listTag = list.isOrdered ? 'ol' : 'ul';
+                const padding = 24 + (list.level * 20); // 每層增加20px縮排
+                const listHtml = `<${listTag} style="margin: 12px 0; padding-left: ${padding}px; line-height: 1.7;">${list.items.join('')}</${listTag}>`;
+                
+                if (listStack.length > 0) {
+                    // 將這個列表添加到上一層的最後一個項目中
+                    const parentList = listStack[listStack.length - 1];
+                    if (parentList.items.length > 0) {
+                        const lastItem = parentList.items[parentList.items.length - 1];
+                        parentList.items[parentList.items.length - 1] = lastItem.replace('</li>', listHtml + '</li>');
+                    }
+                } else {
+                    result.push(listHtml);
+                }
+            }
         }
-        inList = false;
-        isOrderedList = false;
     };
 
     for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
-        const nextLine = i < lines.length - 1 ? lines[i + 1].trim() : '';
+        const originalLine = lines[i];
+        const trimmedLine = originalLine.trim();
+        const nextLine = i < lines.length - 1 ? lines[i + 1] : '';
 
-        // 處理標題
-        if (line.match(/^### /)) {
-            if (inList) closeList();
-            result.push(`<h3 style="font-size: 20px; font-weight: 600; margin: 32px 0 16px 0; color: #e8e8e8; line-height: 1.4;">${line.replace(/^### /, '')}</h3>`);
-            continue;
-        }
-        if (line.match(/^## /)) {
-            if (inList) closeList();
-            result.push(`<h2 style="font-size: 24px; font-weight: 600; margin: 40px 0 20px 0; color: #e8e8e8; line-height: 1.4;">${line.replace(/^## /, '')}</h2>`);
-            continue;
-        }
-        if (line.match(/^# /)) {
-            if (inList) closeList();
-            result.push(`<h1 style="font-size: 28px; font-weight: 700; margin: 48px 0 24px 0; color: #e8e8e8; line-height: 1.3;">${line.replace(/^# /, '')}</h1>`);
+        if (!trimmedLine) {
+            // 空行：如果下一行不是列表項目，關閉所有列表
+            const nextTrimmed = nextLine.trim();
+            const nextIsList = nextTrimmed.match(/^[\*\-] /) || nextTrimmed.match(/^\d+\.\s+/);
+            if (!nextIsList && listStack.length > 0) {
+                closeListsToLevel(0);
+            }
             continue;
         }
 
-        // 處理編號列表項目（以數字開頭，後面跟著 . 和空格）
-        const orderedMatch = line.match(/^(\d+)\.\s+(.+)$/);
+        // 處理標題
+        if (trimmedLine.match(/^### /)) {
+            closeListsToLevel(0);
+            result.push(`<h3 style="font-size: 20px; font-weight: 600; margin: 32px 0 16px 0; color: #e8e8e8; line-height: 1.4;">${trimmedLine.replace(/^### /, '')}</h3>`);
+            continue;
+        }
+        if (trimmedLine.match(/^## /)) {
+            closeListsToLevel(0);
+            result.push(`<h2 style="font-size: 24px; font-weight: 600; margin: 40px 0 20px 0; color: #e8e8e8; line-height: 1.4;">${trimmedLine.replace(/^## /, '')}</h2>`);
+            continue;
+        }
+        if (trimmedLine.match(/^# /)) {
+            closeListsToLevel(0);
+            result.push(`<h1 style="font-size: 28px; font-weight: 700; margin: 48px 0 24px 0; color: #e8e8e8; line-height: 1.3;">${trimmedLine.replace(/^# /, '')}</h1>`);
+            continue;
+        }
+
+        const indentLevel = getIndentLevel(originalLine);
+        const trimmedIndentLevel = getIndentLevel(trimmedLine);
+
+        // 處理編號列表項目
+        const orderedMatch = trimmedLine.match(/^(\d+)\.\s+(.+)$/);
         if (orderedMatch) {
-            // 如果當前是無序列表，先關閉它
-            if (inList && !isOrderedList) {
-                closeList();
+            closeListsToLevel(indentLevel);
+            
+            // 確保當前層級有列表
+            if (listStack.length <= indentLevel || !listStack[indentLevel] || !listStack[indentLevel].isOrdered) {
+                closeListsToLevel(indentLevel);
+                listStack.push({
+                    level: indentLevel,
+                    isOrdered: true,
+                    items: []
+                });
             }
-            if (!inList) {
-                inList = true;
-                isOrderedList = true;
-            }
+            
             const listContent = orderedMatch[2];
-            currentListItems.push(`<li style="margin: 12px 0; color: #d4d4d4; line-height: 1.8; padding-left: 4px;">${listContent}</li>`);
+            listStack[indentLevel].items.push(`<li style="margin: 12px 0; color: #d4d4d4; line-height: 1.8; padding-left: 4px;">${listContent}</li>`);
             continue;
         }
 
         // 處理無序列表項目（以 * 或 - 開頭）
-        if (line.match(/^[\*\-] /)) {
-            // 如果當前是有序列表，先關閉它
-            if (inList && isOrderedList) {
-                closeList();
+        const unorderedMatch = trimmedLine.match(/^[\*\-]\s+(.+)$/);
+        if (unorderedMatch) {
+            closeListsToLevel(indentLevel);
+            
+            // 確保當前層級有列表
+            if (listStack.length <= indentLevel || !listStack[indentLevel] || listStack[indentLevel].isOrdered) {
+                closeListsToLevel(indentLevel);
+                listStack.push({
+                    level: indentLevel,
+                    isOrdered: false,
+                    items: []
+                });
             }
-            if (!inList) {
-                inList = true;
-                isOrderedList = false;
-            }
-            const listContent = line.replace(/^[\*\-] /, '');
-            currentListItems.push(`<li style="margin: 12px 0; color: #d4d4d4; line-height: 1.8; padding-left: 4px;">${listContent}</li>`);
+            
+            const listContent = unorderedMatch[1];
+            listStack[indentLevel].items.push(`<li style="margin: 12px 0; color: #d4d4d4; line-height: 1.8; padding-left: 4px;">${listContent}</li>`);
             continue;
         }
 
-        // 如果當前在列表中，但這一行不是列表項目
-        if (inList && line) {
-            // 檢查是否是列表項目的延續（縮進的內容）
-            if (line.match(/^\s+/)) {
-                // 這是列表項目的延續內容，添加到最後一個列表項目
-                if (currentListItems.length > 0) {
-                    const lastItem = currentListItems[currentListItems.length - 1];
-                    currentListItems[currentListItems.length - 1] = lastItem.replace('</li>', ` ${line.trim()}</li>`);
+        // 處理普通段落或列表項目的延續內容
+        if (listStack.length > 0) {
+            // 檢查是否是列表項目的延續（有縮排但不是列表標記）
+            if (trimmedIndentLevel > 0 && !trimmedLine.match(/^[\*\-] /) && !trimmedLine.match(/^\d+\.\s+/)) {
+                // 這是列表項目的延續內容
+                const topList = listStack[listStack.length - 1];
+                if (topList.items.length > 0) {
+                    const lastItem = topList.items[topList.items.length - 1];
+                    topList.items[topList.items.length - 1] = lastItem.replace('</li>', ` ${trimmedLine}</li>`);
                 }
                 continue;
             } else {
-                // 列表結束
-                closeList();
+                // 不是列表項目的延續，關閉列表
+                closeListsToLevel(0);
             }
         }
 
-        // 處理空行
-        if (!line) {
-            if (inList) {
-                const nextIsList = nextLine.match(/^[\*\-] /) || nextLine.match(/^\d+\.\s+/);
-                if (!nextIsList) {
-                    // 空行後不是列表項目，結束列表
-                    closeList();
-                }
-            }
-            continue;
-        }
-
-        // 處理普通段落（不在列表中）
-        if (!inList && line) {
-            result.push(`<p style="margin: 20px 0; line-height: 1.8; color: #d4d4d4; font-size: 15px;">${line}</p>`);
+        // 處理普通段落
+        if (listStack.length === 0 && trimmedLine) {
+            result.push(`<p style="margin: 20px 0; line-height: 1.8; color: #d4d4d4; font-size: 15px;">${trimmedLine}</p>`);
         }
     }
 
-    // 如果最後還在列表中，關閉列表
-    if (inList) {
-        closeList();
-    }
+    // 關閉所有剩餘的列表
+    closeListsToLevel(0);
 
     return result.join('\n');
 }

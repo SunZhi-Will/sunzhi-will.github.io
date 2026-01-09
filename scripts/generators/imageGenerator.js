@@ -66,19 +66,19 @@ async function generateImageWithGemini(apiKey, prompt, timestamp, postFolder) {
             const errorObj = error.error || error;
             const errorCode = errorObj.code || errorObj.status;
             const errorMessage = errorObj.message || error.message || JSON.stringify(error);
-            
+
             // 配額錯誤：優雅處理，不影響文章生成
             if (errorCode === 429 || errorCode === 'RESOURCE_EXHAUSTED' || errorMessage.includes('quota')) {
                 console.warn(`⚠️  Image model ${model} quota exceeded. Skipping image generation for this model.`);
                 continue;
             }
-            
+
             // 模型不存在：跳過這個模型
             if (errorCode === 404 || errorCode === 'NOT_FOUND' || errorMessage.includes('not found')) {
                 console.warn(`⚠️  Image model ${model} not found or not available. Trying next model...`);
                 continue;
             }
-            
+
             // 其他錯誤：記錄但繼續
             console.warn(`⚠️  Image model ${model} failed:`, errorMessage.substring(0, 200));
             continue;
