@@ -6,14 +6,14 @@ const { blogDir } = require('./config');
 // 正規化 Email 地址（處理 Gmail 的 + 別名和 . 符號）
 function normalizeEmail(email) {
     if (!email) return email;
-    
+
     const trimmed = email.toLowerCase().trim();
     const parts = trimmed.split('@');
-    
+
     if (parts.length !== 2) return trimmed; // 無效的 Email 格式
-    
+
     let [localPart, domain] = parts;
-    
+
     // 如果是 Gmail 或 Google 郵件服務，進行正規化
     if (domain === 'gmail.com' || domain === 'googlemail.com') {
         // 移除 + 後面的部分（Gmail 別名）
@@ -21,11 +21,11 @@ function normalizeEmail(email) {
         if (plusIndex !== -1) {
             localPart = localPart.substring(0, plusIndex);
         }
-        
+
         // 移除 . 符號（Gmail 忽略點號）
         localPart = localPart.replace(/\./g, '');
     }
-    
+
     return localPart + '@' + domain;
 }
 
@@ -213,7 +213,7 @@ function markdownToHtml(markdown) {
     // 按行分割處理（保留原始縮排）
     const lines = html.split('\n');
     const result = [];
-    
+
     // 用於追蹤嵌套列表的堆疊
     const listStack = []; // [{ level, isOrdered, items }]
 
@@ -235,7 +235,7 @@ function markdownToHtml(markdown) {
                 const listTag = list.isOrdered ? 'ol' : 'ul';
                 const padding = 24 + (list.level * 20); // 每層增加20px縮排
                 const listHtml = `<${listTag} style="margin: 12px 0; padding-left: ${padding}px; line-height: 1.7;">${list.items.join('')}</${listTag}>`;
-                
+
                 if (listStack.length > 0) {
                     // 將這個列表添加到上一層的最後一個項目中
                     const parentList = listStack[listStack.length - 1];
@@ -289,7 +289,7 @@ function markdownToHtml(markdown) {
         const orderedMatch = trimmedLine.match(/^(\d+)\.\s+(.+)$/);
         if (orderedMatch) {
             closeListsToLevel(indentLevel);
-            
+
             // 確保當前層級有列表
             if (listStack.length <= indentLevel || !listStack[indentLevel] || !listStack[indentLevel].isOrdered) {
                 closeListsToLevel(indentLevel);
@@ -299,7 +299,7 @@ function markdownToHtml(markdown) {
                     items: []
                 });
             }
-            
+
             const listContent = orderedMatch[2];
             listStack[indentLevel].items.push(`<li style="margin: 12px 0; color: #d4d4d4; line-height: 1.8; padding-left: 4px;">${listContent}</li>`);
             continue;
@@ -309,7 +309,7 @@ function markdownToHtml(markdown) {
         const unorderedMatch = trimmedLine.match(/^[\*\-]\s+(.+)$/);
         if (unorderedMatch) {
             closeListsToLevel(indentLevel);
-            
+
             // 確保當前層級有列表
             if (listStack.length <= indentLevel || !listStack[indentLevel] || listStack[indentLevel].isOrdered) {
                 closeListsToLevel(indentLevel);
@@ -319,7 +319,7 @@ function markdownToHtml(markdown) {
                     items: []
                 });
             }
-            
+
             const listContent = unorderedMatch[1];
             listStack[indentLevel].items.push(`<li style="margin: 12px 0; color: #d4d4d4; line-height: 1.8; padding-left: 4px;">${listContent}</li>`);
             continue;
@@ -468,7 +468,7 @@ async function sendNewsletter(slug) {
     for (const subscription of subscriptions) {
         // 正規化訂閱者的 Email（確保一致性，處理 Gmail + 別名）
         subscription.email = normalizeEmail(subscription.email);
-        
+
         // 只發送給已驗證的訂閱者
         if (!subscription.verified) {
             // 使用遮罩的 Email 記錄日誌（安全措施）
@@ -582,14 +582,14 @@ function getAllArticleSlugs() {
  */
 function findLatestArticleForToday(dateStr) {
     const allSlugs = getAllArticleSlugs();
-    
+
     // 查找今天日期開頭的文章
     const todayArticles = allSlugs.filter(slug => slug.startsWith(dateStr));
-    
+
     if (todayArticles.length === 0) {
         return null;
     }
-    
+
     // 返回最新的（第一個，因為已經排序）
     return todayArticles[0];
 }
@@ -604,7 +604,7 @@ async function main() {
 
     // 查找今天日期的最新文章
     const slug = findLatestArticleForToday(dateStr);
-    
+
     if (!slug) {
         console.error(`❌ Error: No article found for date ${dateStr}`);
         console.error('   Please ensure an article exists for today, or specify a slug manually.');
