@@ -46,24 +46,57 @@ jobs:
         run: |
           echo "=== Checking for generated files ==="
           echo "Current date: $(date)"
+          echo "Current UTC date: $(date -u +%Y-%m-%d)"
+          echo ""
           echo "Content blog directory:"
-          ls -la content/blog/ | tail -5 || echo "No content/blog directory"
+          ls -la content/blog/ | tail -10 || echo "No content/blog directory"
+          echo ""
           echo "Public blog directory:"
-          ls -la public/blog/ | tail -5 || echo "No public/blog directory"
-          echo "Git status:"
+          ls -la public/blog/ | tail -10 || echo "No public/blog directory"
+          echo ""
+          echo "Git status before add:"
           git status --short || echo "Git status failed"
+          echo ""
+          echo "Checking for untracked files:"
+          git ls-files --others --exclude-standard content/blog/ || echo "No untracked files"
 
       - name: Commit and push changes
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add content/blog/ public/blog/
+          
+          # 檢查今天是否有新文件
+          TODAY=$(date -u +%Y-%m-%d)
+          echo "Looking for files created today ($TODAY)..."
+          
+          # 列出今天創建的所有文件
+          find content/blog/ -type f -newermt "$TODAY" -ls || echo "No files found with find"
+          
+          # 添加所有變更（包括新文件）
+          echo "Adding content/blog/ and public/blog/ to git..."
+          git add -A content/blog/ public/blog/
+          
+          echo ""
+          echo "Git status after add:"
+          git status --short
+          
+          echo ""
+          echo "Staged files:"
+          git diff --staged --name-only || echo "No staged files"
+          
           if git diff --staged --quiet; then
-            echo "⚠️ No changes to commit - this might indicate the script failed or already generated today's report"
+            echo ""
+            echo "⚠️ No changes to commit"
             echo "Checking if today's report exists:"
-            TODAY=$(date +%Y-%m-%d)
             ls -la content/blog/ | grep "$TODAY" || echo "No files found for today ($TODAY)"
+            echo ""
+            echo "Checking if files are already tracked:"
+            git ls-files content/blog/ | grep "$TODAY" || echo "No tracked files for today"
+            echo ""
+            echo "Checking git log for recent commits:"
+            git log --oneline -5 --all -- content/blog/ || echo "No recent commits"
           else
+            echo ""
             echo "✅ Changes detected, committing..."
             git commit -m "chore: auto-generate daily AI report"
             BRANCH="${{ github.event.repository.default_branch }}"

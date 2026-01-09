@@ -60,9 +60,21 @@ ${coverImage ? `coverImage: "${coverImage}"` : ''}
             }
         });
 
-        // 獲取並豐富來源標題
+        // 獲取並豐富來源標題（設置超時保護，最多等待 30 秒）
         console.log(`📡 Fetching page titles for ${uniqueSources.length} sources...`);
-        enrichedSources = await enrichSourceTitles(uniqueSources);
+        try {
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Source title fetching timeout')), 30000)
+            );
+            enrichedSources = await Promise.race([
+                enrichSourceTitles(uniqueSources),
+                timeoutPromise
+            ]);
+        } catch (error) {
+            console.warn(`⚠️  Source title fetching failed or timed out: ${error.message}`);
+            // 如果獲取標題失敗，使用原始來源
+            enrichedSources = uniqueSources;
+        }
     }
 
     // 組合完整內容（包含來源）
@@ -88,16 +100,35 @@ ${coverImage ? `coverImage: "${coverImage}"` : ''}
         contentEn += 'Information sources from Google Search real-time queries.\n';
     }
 
-    // 寫入檔案
+    // 寫入檔案（確保目錄存在）
+    const path = require('path');
+    const dirPath = path.dirname(articlePathZh);
+    if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true });
+    }
+    
     fs.writeFileSync(articlePathZh, frontmatterZh + contentZh, 'utf8');
     fs.writeFileSync(articlePathEn, frontmatterEn + contentEn, 'utf8');
 
+    // 驗證文件是否成功寫入
+    const zhExists = fs.existsSync(articlePathZh);
+    const enExists = fs.existsSync(articlePathEn);
+    
+    if (!zhExists || !enExists) {
+        throw new Error(`Failed to write article files. zh: ${zhExists}, en: ${enExists}`);
+    }
+
     console.log(`✅ Daily report generated successfully!`);
     console.log(`📁 Folder: ${slug}/`);
-    console.log(`📝 File: article.zh-TW.mdx`);
-    console.log(`📝 File: article.en.mdx`);
+    console.log(`📝 File: article.zh-TW.mdx (${fs.statSync(articlePathZh).size} bytes)`);
+    console.log(`📝 File: article.en.mdx (${fs.statSync(articlePathEn).size} bytes)`);
     if (coverImage) {
-        console.log(`🖼️  Cover image: ${coverImage}`);
+        const coverPath = path.join(dirPath, coverImage);
+        if (fs.existsSync(coverPath)) {
+            console.log(`🖼️  Cover image: ${coverImage} (${fs.statSync(coverPath).size} bytes)`);
+        } else {
+            console.log(`⚠️  Cover image not found: ${coverImage}`);
+        }
     }
 }
 
