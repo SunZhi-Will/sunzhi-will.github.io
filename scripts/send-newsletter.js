@@ -204,25 +204,25 @@ function markdownToHtml(markdown) {
     let html = markdown;
 
     // 標題
-    html = html.replace(/^### (.*$)/gim, '<h3 style="font-size: 18px; font-weight: 600; margin: 20px 0 10px 0; color: #e8e8e8;">$1</h3>');
-    html = html.replace(/^## (.*$)/gim, '<h2 style="font-size: 20px; font-weight: 600; margin: 24px 0 12px 0; color: #e8e8e8;">$1</h2>');
-    html = html.replace(/^# (.*$)/gim, '<h1 style="font-size: 24px; font-weight: 700; margin: 28px 0 14px 0; color: #e8e8e8;">$1</h1>');
+    html = html.replace(/^### (.*$)/gim, '<h3 style="font-size: 20px; font-weight: 600; margin: 32px 0 16px 0; color: #e8e8e8; line-height: 1.4;">$1</h3>');
+    html = html.replace(/^## (.*$)/gim, '<h2 style="font-size: 24px; font-weight: 600; margin: 40px 0 20px 0; color: #e8e8e8; line-height: 1.4;">$1</h2>');
+    html = html.replace(/^# (.*$)/gim, '<h1 style="font-size: 28px; font-weight: 700; margin: 48px 0 24px 0; color: #e8e8e8; line-height: 1.3;">$1</h1>');
 
     // 粗體
-    html = html.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #e8e8e8;">$1</strong>');
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #e8e8e8; font-weight: 600;">$1</strong>');
 
     // 連結
-    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: #c0c0c0; text-decoration: underline;">$1</a>');
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: #c0c0c0; text-decoration: underline; transition: color 0.2s;">$1</a>');
 
     // 列表
-    html = html.replace(/^- (.*$)/gim, '<li style="margin: 5px 0; color: #d4d4d4;">$1</li>');
-    html = html.replace(/(<li>.*<\/li>)/s, '<ul style="margin: 10px 0; padding-left: 20px;">$1</ul>');
+    html = html.replace(/^- (.*$)/gim, '<li style="margin: 8px 0; color: #d4d4d4; line-height: 1.7; padding-left: 4px;">$1</li>');
+    html = html.replace(/(<li>.*<\/li>)/s, '<ul style="margin: 20px 0; padding-left: 24px; line-height: 1.7;">$1</ul>');
 
     // 段落
     html = html.split('\n\n').map(p => {
         p = p.trim();
         if (p && !p.startsWith('<')) {
-            return `<p style="margin: 10px 0; line-height: 1.6; color: #d4d4d4;">${p}</p>`;
+            return `<p style="margin: 20px 0; line-height: 1.8; color: #d4d4d4; font-size: 15px;">${p}</p>`;
         }
         return p;
     }).join('\n');
@@ -268,24 +268,23 @@ function generateNewsletterHtml(article, slug, lang, blogUrl) {
                 </div>
                 
                 <!-- Content -->
-                <div style="padding: 40px 30px; background-color: #1a1a1a;">
-                    <p style="color: #d4d4d4; font-size: 16px; margin: 0 0 30px 0; line-height: 1.6;">${description}</p>
+                <div style="padding: 50px 40px; background-color: #1a1a1a;">
+                    <p style="color: #d4d4d4; font-size: 17px; margin: 0 0 40px 0; line-height: 1.7; font-weight: 400;">${description}</p>
                     
-                    <hr style="border: none; border-top: 1px solid #333333; margin: 30px 0;">
+                    <hr style="border: none; border-top: 1px solid #333333; margin: 40px 0;">
                     
-                    <div style="color: #d4d4d4; font-size: 15px; line-height: 1.6;">
+                    <div style="color: #d4d4d4; font-size: 15px; line-height: 1.8;">
                         ${htmlBody}
-                    </div>
-                    
-                    <div style="margin: 35px 0; text-align: center;">
-                        <a href="${articleUrl}" style="display: inline-block; background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 100%); color: #000000; text-decoration: none; padding: 16px 40px; border-radius: 50px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 15px rgba(192, 192, 192, 0.3); transition: all 0.3s ease; border: 1px solid #d4d4d4;">
-                            ${isZh ? '閱讀完整文章' : 'Read Full Article'}
-                        </a>
                     </div>
                 </div>
                 
                 <!-- Footer -->
-                <div style="background-color: #0a0a0a; padding: 25px 30px; border-top: 1px solid #333333;">
+                <div style="background-color: #0a0a0a; padding: 30px 40px; border-top: 1px solid #333333;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <a href="${articleUrl}" style="display: inline-block; color: #c0c0c0; text-decoration: none; font-size: 13px; padding: 8px 16px; border: 1px solid #333333; border-radius: 6px; transition: all 0.2s;">
+                            ${isZh ? '看網頁版' : 'View on Web'}
+                        </a>
+                    </div>
                     <p style="color: #999999; font-size: 12px; text-align: center; margin: 0; line-height: 1.6;">
                         ${isZh ? '這是由 AI 自動生成的每日日報。' : 'This is an AI-generated daily report.'}
                     </p>
