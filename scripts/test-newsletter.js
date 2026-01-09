@@ -199,10 +199,14 @@ function getArticleTypes(article) {
 }
 
 // 測試發送給特定 Email
-async function testSendToEmail(slug, testEmail) {
+async function testSendToEmail(slug, testEmail, testLang = null) {
     console.log('\n🧪 === 測試發送給特定 Email ===');
     console.log(`📄 文章 Slug: ${slug}`);
-    console.log(`📧 測試 Email: ${testEmail}\n`);
+    console.log(`📧 測試 Email: ${testEmail}`);
+    if (testLang) {
+        console.log(`🌐 指定語系: ${testLang}`);
+    }
+    console.log('');
 
     const gmailUser = process.env.GMAIL_USER;
     const gmailPassword = process.env.GMAIL_APP_PASSWORD;
@@ -231,8 +235,14 @@ async function testSendToEmail(slug, testEmail) {
             }
         });
 
-        // 測試發送給兩種語言
-        for (const lang of ['zh-TW', 'en']) {
+        // 根據指定語系發送（如果未指定，則發送兩種語系版本用於測試）
+        const langsToSend = testLang ? [testLang] : ['zh-TW', 'en'];
+        
+        if (!testLang) {
+            console.log('⚠️  未指定語系，將發送兩種語系版本（僅用於測試）\n');
+        }
+
+        for (const lang of langsToSend) {
             const htmlContent = generateNewsletterHtml(article, slug, lang, blogUrl);
             const data = lang === 'zh-TW' ? article.zh : article.en;
             const meta = data.meta;
@@ -301,6 +311,7 @@ async function main() {
     const testEmail = args.find(arg => arg.startsWith('--test-email='))?.split('=')[1] ||
         args.find(arg => arg.startsWith('--to='))?.split('=')[1];
     const slugArg = args.find(arg => arg.startsWith('--slug='))?.split('=')[1];
+    const testLang = args.find(arg => arg.startsWith('--lang='))?.split('=')[1] || null;
     const latest = args.includes('--latest');
     const list = args.includes('--list');
 
@@ -350,7 +361,7 @@ async function main() {
 
     // 執行測試
     if (testEmail) {
-        await testSendToEmail(slug, testEmail);
+        await testSendToEmail(slug, testEmail, testLang);
     } else if (dryRun) {
         await testDryRun(slug);
     } else {
@@ -358,12 +369,13 @@ async function main() {
         console.log('   --dry-run                    : 測試模式（不實際發送）');
         console.log('   --test-email=email@example.com : 發送測試郵件到指定 Email');
         console.log('   --to=email@example.com       : 同上');
+        console.log('   --lang=zh-TW|en              : 指定語系（僅測試郵件模式，預設發送兩種語系）');
         console.log('   --slug=2026-01-09-045335     : 指定文章 slug');
         console.log('   --latest                     : 使用最新文章');
         console.log('   --list                       : 列出所有可用文章');
         console.log('\n範例：');
         console.log('   node scripts/test-newsletter.js --dry-run --latest');
-        console.log('   node scripts/test-newsletter.js --test-email=your-email@gmail.com --slug=2026-01-09-045335');
+        console.log('   node scripts/test-newsletter.js --test-email=your-email@gmail.com --slug=2026-01-09-045335 --lang=zh-TW');
     }
 }
 

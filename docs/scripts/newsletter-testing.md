@@ -55,14 +55,19 @@ node scripts/test-newsletter.js --test-email=your-email@gmail.com --latest
 # 發送測試郵件到指定 Email（使用特定文章）
 node scripts/test-newsletter.js --test-email=your-email@gmail.com --slug=2026-01-09-045335
 
+# 發送測試郵件到指定 Email（指定語系，只發送一個版本）
+node scripts/test-newsletter.js --test-email=your-email@gmail.com --latest --lang=zh-TW
+
 # 使用 --to 參數（等同於 --test-email）
 node scripts/test-newsletter.js --to=your-email@gmail.com --latest
 ```
 
 **注意：**
-- 會發送兩種語言版本（中文和英文）到指定 Email
+- 未指定 `--lang` 時，會發送兩種語言版本（中文和英文）到指定 Email（僅用於測試）
+- 指定 `--lang=zh-TW` 或 `--lang=en` 時，只發送對應語系的版本
 - 郵件主題會加上 `[測試]` 前綴，方便識別
 - 需要設置環境變數：`GMAIL_USER` 和 `GMAIL_APP_PASSWORD`
+- **正式發文時，每個訂閱者只會收到其設定語系的版本**（根據訂閱者的 `Lang` 欄位）
 
 ### 方式 3：列出所有可用文章
 
@@ -372,11 +377,19 @@ dotenv node scripts/test-newsletter.js --dry-run --latest
 
 ### 輸入參數
 
-| 參數           | 說明                                        | 必填 | 預設值    |
-| -------------- | ------------------------------------------- | ---- | --------- |
-| `test_mode`    | 測試模式                                    | ✅    | `dry-run` |
-| `article_slug` | 文章 Slug（留空使用最新文章）               | ❌    | -         |
-| `test_email`   | 測試郵件地址（僅 send-test-email 模式需要） | ❌    | -         |
+| 參數           | 說明                                        | 必填 | 預設值            |
+| -------------- | ------------------------------------------- | ---- | ----------------- |
+| `test_mode`    | 測試模式                                    | ✅    | `dry-run`         |
+| `article_slug` | 文章 Slug（留空使用最新文章或今天的日期）   | ❌    | -                 |
+| `test_email`   | 測試郵件地址（僅 send-test-email 模式需要） | ❌    | -                 |
+| `test_lang`    | 測試語系（zh-TW 或 en，僅 send-test-email） | ❌    | -（發送兩種語系） |
+
+**注意：**
+- `send-to-all` 模式：留空 `article_slug` 會使用今天的日期（與正式發文一致）
+- `dry-run` 和 `send-test-email` 模式：留空 `article_slug` 會使用最新文章
+- `test_lang`：僅在 `send-test-email` 模式有效，未指定則發送兩種語系版本（僅用於測試）
+- **正式發文時，每個訂閱者只會收到其設定語系的版本**（根據訂閱者的 `Lang` 欄位）
+- **正式發文時，只會發送給訂閱了對應文章類型的訂閱者**（根據訂閱者的 `Types` 欄位和文章類型匹配）
 
 ### 測試模式選項
 
@@ -384,12 +397,23 @@ dotenv node scripts/test-newsletter.js --dry-run --latest
    - 只顯示會發送給哪些訂閱者
    - 顯示統計資訊（會發送、跳過未驗證、跳過類型不匹配）
    - 不會消耗 Gmail 配額
+   - **推薦在發送前先使用此模式確認**
 
 2. **send-test-email**：發送測試郵件
    - 實際發送郵件到指定 Email
-   - 會發送中文和英文兩個版本
+   - 可以指定語系（`zh-TW` 或 `en`），未指定則發送兩種語系版本
    - 郵件主題會加上 `[測試]` 前綴
    - 需要提供測試郵件地址
+   - **建議先發給自己確認郵件格式**
+   - **注意：正式發文時，每個訂閱者只會收到其設定語系的版本**
+
+3. **send-to-all**：發送給所有訂閱者（完全模擬正式發文）
+   - 實際發送郵件給所有已驗證的訂閱者
+   - 使用與正式發文相同的 `send-newsletter.js` 腳本
+   - 環境變數和執行邏輯與正式發文完全一致
+   - **每個訂閱者只會收到其設定語系的版本**（zh-TW 或 en）
+   - **只發送給訂閱了對應文章類型的訂閱者**（ai-daily, blockchain, sun-written, all）
+   - **⚠️ 謹慎使用！會實際發送給所有訂閱者**
 
 ### 執行步驟
 
@@ -399,8 +423,25 @@ dotenv node scripts/test-newsletter.js --dry-run --latest
 2. **Setup Node.js** - 設置 Node.js 環境
 3. **Install dependencies** - 安裝依賴套件
 4. **List available articles** - 列出所有可用文章
-5. **Test Newsletter** - 執行測試（根據選擇的模式）
+5. **Test Newsletter** - 執行測試（根據選擇的模式）：
+   - `dry-run`：執行測試模式
+   - `send-test-email`：發送測試郵件
+   - `send-to-all`：發送給所有訂閱者（完全模擬正式發文）
 6. **Test Results Summary** - 顯示測試結果摘要
+
+### 與正式發文流程的對比
+
+| 項目     | 正式發文流程                                                                          | 測試流程（send-to-all）        |
+| -------- | ------------------------------------------------------------------------------------- | ------------------------------ |
+| 腳本     | `scripts/send-newsletter.js`                                                          | `scripts/send-newsletter.js` ✅ |
+| 環境變數 | GMAIL_USER, GMAIL_APP_PASSWORD, BLOG_URL, GOOGLE_SHEETS_CREDENTIALS, GOOGLE_SHEETS_ID | 完全相同 ✅                     |
+| 文章選擇 | 自動使用今天的日期                                                                    | 可選擇今天的日期或指定文章     |
+| 發送對象 | 所有已驗證的訂閱者                                                                    | 所有已驗證的訂閱者 ✅           |
+| 語系處理 | 每個訂閱者只收到其設定語系的版本（zh-TW 或 en）                                       | 完全相同 ✅                     |
+| 類型過濾 | 只發送給訂閱了對應文章類型的訂閱者（ai-daily, blockchain, sun-written, all）          | 完全相同 ✅                     |
+| 執行邏輯 | 完全一致                                                                              | 完全一致 ✅                     |
+
+**結論：** `send-to-all` 模式完全參考正式發文的方式，使用相同的腳本、環境變數和執行邏輯，可以完全模擬正式發文流程。
 
 ### 查看測試結果
 

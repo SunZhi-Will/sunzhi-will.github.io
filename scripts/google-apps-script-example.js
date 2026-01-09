@@ -81,18 +81,21 @@ function getSenderName(lang, types) {
 
     // 如果訂閱了 'all'，使用預設名稱；否則使用第一個訂閱類型
     if (types.includes('all') || types.length === 0) {
-        return lang === 'zh-TW' ? '電子報' : 'Newsletter';
+        return lang === 'zh-TW' ? 'Sun 的電子報' : "Sun's Newsletter";
     }
 
     // 使用第一個訂閱類型
     const primaryType = types[0];
-    return senderNames[lang]?.[primaryType] || (lang === 'zh-TW' ? '電子報' : 'Newsletter');
+    return senderNames[lang]?.[primaryType] || (lang === 'zh-TW' ? 'Sun 的電子報' : "Sun's Newsletter");
 }
 
 // 發送驗證郵件
 function sendVerificationEmail(email, token, lang, blogUrl, types) {
     try {
         const verifyUrl = `${blogUrl}/verify?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`;
+
+        // 獲取寄件者名稱（品牌名稱）
+        const senderName = getSenderName(lang, types || ['all']);
 
         const subject = lang === 'zh-TW'
             ? '【電子報訂閱】請驗證您的 Email'
@@ -118,16 +121,14 @@ function sendVerificationEmail(email, token, lang, blogUrl, types) {
             <td style="padding: 0;">
                 <!-- Header -->
                 <div style="background-color: #0a0a0a; padding: 40px 30px; text-align: center; border-bottom: 1px solid #333333;">
-                    <div style="width: 80px; height: 80px; background-color: rgba(192, 192, 192, 0.1); border: 2px solid #c0c0c0; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
-                        <span style="font-size: 40px;">✉️</span>
-                    </div>
+                    <div style="color: #c0c0c0; font-size: 14px; font-weight: 500; margin-bottom: 10px; letter-spacing: 1px; text-transform: uppercase;">${senderName}</div>
                     <h1 style="color: #e8e8e8; font-size: 28px; font-weight: 700; margin: 0; text-shadow: 0 2px 8px rgba(192, 192, 192, 0.3);">感謝您訂閱！</h1>
                 </div>
                 
                 <!-- Content -->
                 <div style="padding: 40px 30px; background-color: #1a1a1a;">
                     <p style="color: #d4d4d4; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0; text-align: center;">
-                        感謝您訂閱我們的電子報！<br>
+                        感謝您訂閱 <strong style="color: #e8e8e8;">Sun</strong> 的電子報！<br>
                         請點擊下方按鈕驗證您的 Email 地址，以開始接收我們的精彩內容。
                     </p>
                     
@@ -183,16 +184,14 @@ function sendVerificationEmail(email, token, lang, blogUrl, types) {
             <td style="padding: 0;">
                 <!-- Header -->
                 <div style="background-color: #0a0a0a; padding: 40px 30px; text-align: center; border-bottom: 1px solid #333333;">
-                    <div style="width: 80px; height: 80px; background-color: rgba(192, 192, 192, 0.1); border: 2px solid #c0c0c0; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
-                        <span style="font-size: 40px;">✉️</span>
-                    </div>
+                    <div style="color: #c0c0c0; font-size: 14px; font-weight: 500; margin-bottom: 10px; letter-spacing: 1px; text-transform: uppercase;">${senderName}</div>
                     <h1 style="color: #e8e8e8; font-size: 28px; font-weight: 700; margin: 0; text-shadow: 0 2px 8px rgba(192, 192, 192, 0.3);">Thank You for Subscribing!</h1>
                 </div>
                 
                 <!-- Content -->
                 <div style="padding: 40px 30px; background-color: #1a1a1a;">
                     <p style="color: #d4d4d4; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0; text-align: center;">
-                        Thank you for subscribing to our newsletter!<br>
+                        Thank you for subscribing to <strong style="color: #e8e8e8;">Sun's</strong> newsletter!<br>
                         Please click the button below to verify your email address and start receiving our amazing content.
                     </p>
                     
@@ -234,9 +233,6 @@ function sendVerificationEmail(email, token, lang, blogUrl, types) {
 </body>
 </html>
       `;
-
-        // 獲取寄件者名稱（根據語言和訂閱類型）
-        const senderName = getSenderName(lang, types || ['all']);
 
         // 獲取回覆地址（可選，從環境變數讀取）
         const replyTo = PropertiesService.getScriptProperties().getProperty('REPLY_TO') || '';
