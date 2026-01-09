@@ -198,36 +198,127 @@ function getLatestArticle(slug) {
 }
 
 /**
- * 將 Markdown 轉換為 HTML（簡單版本）
+ * 將 Markdown 轉換為 HTML（改進版本，正確處理列表和段落）
  */
 function markdownToHtml(markdown) {
     let html = markdown;
 
-    // 標題
-    html = html.replace(/^### (.*$)/gim, '<h3 style="font-size: 20px; font-weight: 600; margin: 32px 0 16px 0; color: #e8e8e8; line-height: 1.4;">$1</h3>');
-    html = html.replace(/^## (.*$)/gim, '<h2 style="font-size: 24px; font-weight: 600; margin: 40px 0 20px 0; color: #e8e8e8; line-height: 1.4;">$1</h2>');
-    html = html.replace(/^# (.*$)/gim, '<h1 style="font-size: 28px; font-weight: 700; margin: 48px 0 24px 0; color: #e8e8e8; line-height: 1.3;">$1</h1>');
-
-    // 粗體
+    // 先處理粗體和連結（在分割之前）
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #e8e8e8; font-weight: 600;">$1</strong>');
-
-    // 連結
     html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: #c0c0c0; text-decoration: underline; transition: color 0.2s;">$1</a>');
 
-    // 列表
-    html = html.replace(/^- (.*$)/gim, '<li style="margin: 8px 0; color: #d4d4d4; line-height: 1.7; padding-left: 4px;">$1</li>');
-    html = html.replace(/(<li>.*<\/li>)/s, '<ul style="margin: 20px 0; padding-left: 24px; line-height: 1.7;">$1</ul>');
+    // 先處理同一行內的多個編號列表項目（例如：1. xxx 2. xxx 3. xxx）
+    html = html.replace(/(\d+)\.\s+([^\d]+?)(?=\s+\d+\.|$)/g, '$1. $2\n');
 
-    // 段落
-    html = html.split('\n\n').map(p => {
-        p = p.trim();
-        if (p && !p.startsWith('<')) {
-            return `<p style="margin: 20px 0; line-height: 1.8; color: #d4d4d4; font-size: 15px;">${p}</p>`;
+    // 按行分割處理
+    const lines = html.split('\n');
+    const result = [];
+    let inList = false;
+    let isOrderedList = false;
+    let currentListItems = [];
+
+    const closeList = () => {
+        if (currentListItems.length > 0) {
+            const listTag = isOrderedList ? 'ol' : 'ul';
+            result.push(`<${listTag} style="margin: 20px 0; padding-left: 24px; line-height: 1.7;">${currentListItems.join('')}</${listTag}>`);
+            currentListItems = [];
         }
-        return p;
-    }).join('\n');
+        inList = false;
+        isOrderedList = false;
+    };
 
-    return html;
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        const nextLine = i < lines.length - 1 ? lines[i + 1].trim() : '';
+
+        // 處理標題
+        if (line.match(/^### /)) {
+            if (inList) closeList();
+            result.push(`<h3 style="font-size: 20px; font-weight: 600; margin: 32px 0 16px 0; color: #e8e8e8; line-height: 1.4;">${line.replace(/^### /, '')}</h3>`);
+            continue;
+        }
+        if (line.match(/^## /)) {
+            if (inList) closeList();
+            result.push(`<h2 style="font-size: 24px; font-weight: 600; margin: 40px 0 20px 0; color: #e8e8e8; line-height: 1.4;">${line.replace(/^## /, '')}</h2>`);
+            continue;
+        }
+        if (line.match(/^# /)) {
+            if (inList) closeList();
+            result.push(`<h1 style="font-size: 28px; font-weight: 700; margin: 48px 0 24px 0; color: #e8e8e8; line-height: 1.3;">${line.replace(/^# /, '')}</h1>`);
+            continue;
+        }
+
+        // 處理編號列表項目（以數字開頭，後面跟著 . 和空格）
+        const orderedMatch = line.match(/^(\d+)\.\s+(.+)$/);
+        if (orderedMatch) {
+            // 如果當前是無序列表，先關閉它
+            if (inList && !isOrderedList) {
+                closeList();
+            }
+            if (!inList) {
+                inList = true;
+                isOrderedList = true;
+            }
+            const listContent = orderedMatch[2];
+            currentListItems.push(`<li style="margin: 12px 0; color: #d4d4d4; line-height: 1.8; padding-left: 4px;">${listContent}</li>`);
+            continue;
+        }
+
+        // 處理無序列表項目（以 * 或 - 開頭）
+        if (line.match(/^[\*\-] /)) {
+            // 如果當前是有序列表，先關閉它
+            if (inList && isOrderedList) {
+                closeList();
+            }
+            if (!inList) {
+                inList = true;
+                isOrderedList = false;
+            }
+            const listContent = line.replace(/^[\*\-] /, '');
+            currentListItems.push(`<li style="margin: 12px 0; color: #d4d4d4; line-height: 1.8; padding-left: 4px;">${listContent}</li>`);
+            continue;
+        }
+
+        // 如果當前在列表中，但這一行不是列表項目
+        if (inList && line) {
+            // 檢查是否是列表項目的延續（縮進的內容）
+            if (line.match(/^\s+/)) {
+                // 這是列表項目的延續內容，添加到最後一個列表項目
+                if (currentListItems.length > 0) {
+                    const lastItem = currentListItems[currentListItems.length - 1];
+                    currentListItems[currentListItems.length - 1] = lastItem.replace('</li>', ` ${line.trim()}</li>`);
+                }
+                continue;
+            } else {
+                // 列表結束
+                closeList();
+            }
+        }
+
+        // 處理空行
+        if (!line) {
+            if (inList) {
+                const nextIsList = nextLine.match(/^[\*\-] /) || nextLine.match(/^\d+\.\s+/);
+                if (!nextIsList) {
+                    // 空行後不是列表項目，結束列表
+                    closeList();
+                }
+            }
+            continue;
+        }
+
+        // 處理普通段落（不在列表中）
+        if (!inList && line) {
+            result.push(`<p style="margin: 20px 0; line-height: 1.8; color: #d4d4d4; font-size: 15px;">${line}</p>`);
+        }
+    }
+
+    // 如果最後還在列表中，關閉列表
+    if (inList) {
+        closeList();
+    }
+
+    return result.join('\n');
 }
 
 /**

@@ -14,17 +14,31 @@ function VerifyContent() {
     const email = useMemo(() => searchParams.get('email'), [searchParams]);
     const token = useMemo(() => searchParams.get('token'), [searchParams]);
 
+    // 從 localStorage 讀取語言選擇，如果沒有則偵測瀏覽器語言
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        
+        const savedLang = localStorage.getItem('blog-lang') as 'zh-TW' | 'en' | null;
+        if (savedLang && (savedLang === 'zh-TW' || savedLang === 'en')) {
+            setLang(savedLang);
+        } else {
+            const browserLang = navigator.language;
+            const detectedLang = browserLang.includes('zh') ? 'zh-TW' : 'en';
+            setLang(detectedLang);
+        }
+    }, []);
+
     useEffect(() => {
         if (!email || !token) {
             setStatus('error');
-            setMessage('缺少必要的驗證參數');
+            setMessage(lang === 'zh-TW' ? '缺少必要的驗證參數' : 'Missing required verification parameters');
             return;
         }
 
         const scriptUrl = process.env.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_URL;
         if (!scriptUrl) {
             setStatus('error');
-            setMessage('驗證服務未配置');
+            setMessage(lang === 'zh-TW' ? '驗證服務未配置' : 'Verification service not configured');
             return;
         }
 
@@ -42,22 +56,23 @@ function VerifyContent() {
                 return response.json();
             })
             .then((data) => {
+                const responseLang = data.lang || lang;
                 if (data.success) {
                     setStatus('success');
-                    setMessage(data.message || 'Email 驗證成功！');
-                    setLang(data.lang || 'zh-TW');
+                    setMessage(data.message || (responseLang === 'zh-TW' ? 'Email 驗證成功！' : 'Email verified successfully!'));
+                    setLang(responseLang);
                 } else {
                     setStatus('error');
-                    setMessage(data.message || '驗證失敗');
-                    setLang(data.lang || 'zh-TW');
+                    setMessage(data.message || (responseLang === 'zh-TW' ? '驗證失敗' : 'Verification failed'));
+                    setLang(responseLang);
                 }
             })
             .catch((error) => {
                 console.error('Verification error:', error);
                 setStatus('error');
-                setMessage('驗證過程中發生錯誤，請稍後再試');
+                setMessage(lang === 'zh-TW' ? '驗證過程中發生錯誤，請稍後再試' : 'An error occurred during verification. Please try again later.');
             });
-    }, [email, token]);
+    }, [email, token, lang]);
 
     return (
         <div className="max-w-md w-full text-center card-modern p-8 rounded-2xl">
@@ -73,7 +88,7 @@ function VerifyContent() {
             {status === 'success' && (
                 <>
                     <div className="text-emerald-500 dark:text-emerald-400 text-6xl mb-4">✓</div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+                    <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4">
                         {lang === 'zh-TW' ? 'Email 驗證成功！' : 'Email Verified Successfully!'}
                     </h1>
                     <p className="text-slate-600 dark:text-slate-300 mb-6">
@@ -93,7 +108,7 @@ function VerifyContent() {
             {status === 'error' && (
                 <>
                     <div className="text-red-500 dark:text-red-400 text-6xl mb-4">✗</div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+                    <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4">
                         {lang === 'zh-TW' ? '驗證失敗' : 'Verification Failed'}
                     </h1>
                     <p className="text-slate-600 dark:text-slate-300 mb-6">
@@ -124,10 +139,27 @@ function VerifyContent() {
 }
 
 function LoadingFallback() {
+    const [lang, setLang] = useState<'zh-TW' | 'en'>('zh-TW');
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        
+        const savedLang = localStorage.getItem('blog-lang') as 'zh-TW' | 'en' | null;
+        if (savedLang && (savedLang === 'zh-TW' || savedLang === 'en')) {
+            setLang(savedLang);
+        } else {
+            const browserLang = navigator.language;
+            const detectedLang = browserLang.includes('zh') ? 'zh-TW' : 'en';
+            setLang(detectedLang);
+        }
+    }, []);
+
     return (
         <div className="max-w-md w-full text-center card-modern p-8 rounded-2xl">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-400 dark:border-slate-500 mx-auto mb-4"></div>
-            <p className="text-slate-600 dark:text-slate-300 text-lg">載入中...</p>
+            <p className="text-slate-600 dark:text-slate-300 text-lg">
+                {lang === 'zh-TW' ? '載入中...' : 'Loading...'}
+            </p>
         </div>
     );
 }
