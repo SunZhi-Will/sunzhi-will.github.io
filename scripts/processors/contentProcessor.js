@@ -21,9 +21,20 @@ async function processContent(parsedZh, parsedEn, coverImage, dateStr, slug, art
     descriptionZh = removeDatePatterns(descriptionZh);
     descriptionEn = removeDatePatterns(descriptionEn);
 
-    // 限制長度（中文約 80 字，英文約 100 字符）
-    descriptionZh = truncateSummary(descriptionZh, 80, true);
-    descriptionEn = truncateSummary(descriptionEn, 100, false);
+    // 清理開頭的標點符號（逗號、句號、分號等）
+    descriptionZh = descriptionZh.replace(/^[，。、；：,.;:\s]+/, '').trim();
+    descriptionEn = descriptionEn.replace(/^[,.;:\s]+/, '').trim();
+
+    // 限制長度（中文約 60-70 字，英文約 80-90 字符）
+    // 優先選擇完整的句子，不添加省略號
+    descriptionZh = truncateSummary(descriptionZh, 70, true);
+    descriptionEn = truncateSummary(descriptionEn, 90, false);
+    
+    // 再次清理開頭和結尾標點（確保格式乾淨）
+    descriptionZh = descriptionZh.replace(/^[，。、；：,.;:\s]+/, '').trim();
+    descriptionZh = descriptionZh.replace(/[，。、；：,.;:\s]+$/, '').trim();
+    descriptionEn = descriptionEn.replace(/^[,.;:\s]+/, '').trim();
+    descriptionEn = descriptionEn.replace(/[,.;:\s]+$/, '').trim();
 
     // 生成中文 frontmatter
     const frontmatterZh = `---

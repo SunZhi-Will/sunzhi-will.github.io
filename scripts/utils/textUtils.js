@@ -80,21 +80,30 @@ function removeDatePatterns(text) {
         cleaned = cleaned.replace(pattern, '');
     });
 
-    // 清理多餘空白
+    // 清理移除日期後留下的標點符號（如 "，2026年1月9日" 移除日期後留下 "，"）
+    cleaned = cleaned.replace(/([，。、；：,.;:]\s*)+/g, (match, p1) => {
+        // 如果標點符號在開頭，移除它
+        return cleaned.indexOf(match) === 0 ? '' : match;
+    });
+    
+    // 清理多餘空白和開頭標點
     cleaned = cleaned.replace(/\s+/g, ' ').trim();
+    cleaned = cleaned.replace(/^[，。、；：,.;:\s]+/, '').trim();
+    
     return cleaned;
 }
 
 /**
- * 截斷摘要到指定長度（在完整句子處截斷）
+ * 截斷摘要到指定長度（在完整句子處截斷，不添加省略號）
  * @param {string} text - 原始摘要
  * @param {number} maxLength - 最大長度
  * @param {boolean} isChinese - 是否為中文（影響句子結尾符號）
- * @returns {string} 截斷後的摘要
+ * @returns {string} 截斷後的摘要（完整句子，不包含省略號）
  */
 function truncateSummary(text, maxLength, isChinese = false) {
     if (!text || text.length <= maxLength) return text;
 
+    // 優先：在完整句子處截斷（句號、問號、驚嘆號）
     const sentenceEnd = isChinese ? /[。！？]/g : /[.!?]/g;
     const sentences = text.match(isChinese ? /[^。！？]+[。！？]/g : /[^.!?]+[.!?]/g);
 
@@ -104,13 +113,50 @@ function truncateSummary(text, maxLength, isChinese = false) {
             if ((truncated + sentence).length <= maxLength) {
                 truncated += sentence;
             } else {
+                // 如果第一句話就超過長度，嘗試在句子內部找合適的截斷點
+                if (truncated === '' && sentence.length > maxLength) {
+                    // 嘗試在分號、逗號處截斷
+                    const breakPoints = isChinese ? /[；，]/g : /[;,]/g;
+                    const parts = sentence.split(breakPoints);
+                    let partial = '';
+                    for (const part of parts) {
+                        const separator = isChinese ? '，' : ',';
+                        if ((partial + part + separator).length <= maxLength) {
+                            partial += part + separator;
+                        } else {
+                            break;
+                        }
+                    }
+                    return partial.trim() || sentence.substring(0, maxLength).trim();
+                }
                 break;
             }
         }
-        return truncated || text.substring(0, maxLength - 3) + '...';
+        // 返回完整的句子，不添加省略號
+        return truncated.trim();
     }
 
-    return text.substring(0, maxLength - 3) + '...';
+    // 如果沒有找到完整句子，嘗試在分號、逗號處截斷
+    const breakPoints = isChinese ? /[；，]/g : /[;,]/g;
+    const parts = text.split(breakPoints);
+    let truncated = '';
+    for (const part of parts) {
+        const separator = isChinese ? '，' : ',';
+        if ((truncated + part + separator).length <= maxLength) {
+            truncated += part + separator;
+        } else {
+            break;
+        }
+    }
+    
+    // 如果還是太長，直接截斷到最大長度（不添加省略號）
+    if (!truncated || truncated.length > maxLength) {
+        truncated = text.substring(0, maxLength).trim();
+        // 移除末尾可能的不完整標點
+        truncated = truncated.replace(/[，。、；：,.;:\s]+$/, '').trim();
+    }
+    
+    return truncated.trim();
 }
 
 module.exports = {
