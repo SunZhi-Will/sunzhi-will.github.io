@@ -32,7 +32,7 @@ const translations = {
         emailPlaceholder: '輸入您的 Email',
         subscribe: '訂閱',
         subscribing: '訂閱中...',
-        success: '訂閱成功！',
+        success: '訂閱成功！請檢查您的 Email 進行驗證。',
         error: '訂閱失敗，請稍後再試',
         invalidEmail: '請輸入有效的 Email 地址'
     },
@@ -42,7 +42,7 @@ const translations = {
         emailPlaceholder: 'Enter your Email',
         subscribe: 'Subscribe',
         subscribing: 'Subscribing...',
-        success: 'Subscription successful!',
+        success: 'Subscription successful! Please check your email to verify.',
         error: 'Subscription failed, please try again',
         invalidEmail: 'Please enter a valid Email address'
     }
@@ -177,7 +177,9 @@ export function NewsletterSubscribe({ lang }: NewsletterSubscribeProps) {
             }
 
             if (data.success) {
-                setMessage({ type: 'success', text: t.success });
+                // 優先使用後端返回的訊息（可能包含驗證郵件發送狀態），否則使用前端翻譯
+                const successMessage = data.message || t.success;
+                setMessage({ type: 'success', text: successMessage });
                 setEmail('');
                 setSelectedType('all');
             } else {

@@ -105,28 +105,134 @@ function sendVerificationEmail(email, token, lang, blogUrl, types) {
 
         const htmlBody = lang === 'zh-TW'
             ? `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2>感謝您訂閱我們的電子報！</h2>
-          <p>請點擊以下連結驗證您的 Email 地址：</p>
-          <p><a href="${verifyUrl}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">驗證 Email</a></p>
-          <p>或複製以下連結到瀏覽器：</p>
-          <p style="word-break: break-all;">${verifyUrl}</p>
-          <p>此連結將在 7 天後過期。</p>
-          <hr>
-          <p style="color: #666; font-size: 12px;">如果您沒有訂閱此電子報，請忽略此郵件。</p>
-        </div>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>驗證您的 Email</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #000000; min-height: 100vh; padding: 40px 20px;">
+    <table role="presentation" style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #1a1a1a; border-radius: 16px; box-shadow: 0 10px 40px rgba(192, 192, 192, 0.1); overflow: hidden; border: 1px solid #333333;">
+        <tr>
+            <td style="padding: 0;">
+                <!-- Header -->
+                <div style="background-color: #0a0a0a; padding: 40px 30px; text-align: center; border-bottom: 1px solid #333333;">
+                    <div style="width: 80px; height: 80px; background-color: rgba(192, 192, 192, 0.1); border: 2px solid #c0c0c0; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+                        <span style="font-size: 40px;">✉️</span>
+                    </div>
+                    <h1 style="color: #e8e8e8; font-size: 28px; font-weight: 700; margin: 0; text-shadow: 0 2px 8px rgba(192, 192, 192, 0.3);">感謝您訂閱！</h1>
+                </div>
+                
+                <!-- Content -->
+                <div style="padding: 40px 30px; background-color: #1a1a1a;">
+                    <p style="color: #d4d4d4; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0; text-align: center;">
+                        感謝您訂閱我們的電子報！<br>
+                        請點擊下方按鈕驗證您的 Email 地址，以開始接收我們的精彩內容。
+                    </p>
+                    
+                    <!-- Verify Button -->
+                    <div style="text-align: center; margin: 35px 0;">
+                        <a href="${verifyUrl}" style="display: inline-block; background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 100%); color: #000000; text-decoration: none; padding: 16px 40px; border-radius: 50px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 15px rgba(192, 192, 192, 0.3); transition: all 0.3s ease; border: 1px solid #d4d4d4;">
+                            驗證 Email 地址
+                        </a>
+                    </div>
+                    
+                    <!-- Alternative Link -->
+                    <div style="background-color: #0f0f0f; border: 1px solid #333333; border-radius: 8px; padding: 20px; margin: 30px 0;">
+                        <p style="color: #c0c0c0; font-size: 14px; margin: 0 0 10px 0; font-weight: 500;">
+                            或複製以下連結到瀏覽器：
+                        </p>
+                        <p style="color: #d4d4d4; font-size: 12px; word-break: break-all; margin: 0; font-family: 'Courier New', monospace; background-color: #000000; padding: 12px; border-radius: 6px; border: 1px solid #333333;">
+                            ${verifyUrl}
+                        </p>
+                    </div>
+                    
+                    <!-- Expiry Notice -->
+                    <div style="background-color: #1a1a1a; border-left: 4px solid #c0c0c0; padding: 15px; border-radius: 6px; margin: 25px 0; border: 1px solid #333333;">
+                        <p style="color: #d4d4d4; font-size: 14px; margin: 0; line-height: 1.5;">
+                            <strong style="color: #e8e8e8;">⏰ 重要提醒：</strong>此驗證連結將在 <strong style="color: #e8e8e8;">7 天後過期</strong>，請盡快完成驗證。
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Footer -->
+                <div style="background-color: #0a0a0a; padding: 25px 30px; border-top: 1px solid #333333;">
+                    <p style="color: #999999; font-size: 12px; line-height: 1.6; margin: 0; text-align: center;">
+                        如果您沒有訂閱此電子報，請忽略此郵件。<br>
+                        此郵件由系統自動發送，請勿直接回覆。
+                    </p>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
       `
             : `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2>Thank you for subscribing to our newsletter!</h2>
-          <p>Please click the link below to verify your email address:</p>
-          <p><a href="${verifyUrl}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Verify Email</a></p>
-          <p>Or copy the following link to your browser:</p>
-          <p style="word-break: break-all;">${verifyUrl}</p>
-          <p>This link will expire in 7 days.</p>
-          <hr>
-          <p style="color: #666; font-size: 12px;">If you did not subscribe to this newsletter, please ignore this email.</p>
-        </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #000000; min-height: 100vh; padding: 40px 20px;">
+    <table role="presentation" style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #1a1a1a; border-radius: 16px; box-shadow: 0 10px 40px rgba(192, 192, 192, 0.1); overflow: hidden; border: 1px solid #333333;">
+        <tr>
+            <td style="padding: 0;">
+                <!-- Header -->
+                <div style="background-color: #0a0a0a; padding: 40px 30px; text-align: center; border-bottom: 1px solid #333333;">
+                    <div style="width: 80px; height: 80px; background-color: rgba(192, 192, 192, 0.1); border: 2px solid #c0c0c0; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+                        <span style="font-size: 40px;">✉️</span>
+                    </div>
+                    <h1 style="color: #e8e8e8; font-size: 28px; font-weight: 700; margin: 0; text-shadow: 0 2px 8px rgba(192, 192, 192, 0.3);">Thank You for Subscribing!</h1>
+                </div>
+                
+                <!-- Content -->
+                <div style="padding: 40px 30px; background-color: #1a1a1a;">
+                    <p style="color: #d4d4d4; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0; text-align: center;">
+                        Thank you for subscribing to our newsletter!<br>
+                        Please click the button below to verify your email address and start receiving our amazing content.
+                    </p>
+                    
+                    <!-- Verify Button -->
+                    <div style="text-align: center; margin: 35px 0;">
+                        <a href="${verifyUrl}" style="display: inline-block; background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 100%); color: #000000; text-decoration: none; padding: 16px 40px; border-radius: 50px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 15px rgba(192, 192, 192, 0.3); transition: all 0.3s ease; border: 1px solid #d4d4d4;">
+                            Verify Email Address
+                        </a>
+                    </div>
+                    
+                    <!-- Alternative Link -->
+                    <div style="background-color: #0f0f0f; border: 1px solid #333333; border-radius: 8px; padding: 20px; margin: 30px 0;">
+                        <p style="color: #c0c0c0; font-size: 14px; margin: 0 0 10px 0; font-weight: 500;">
+                            Or copy the following link to your browser:
+                        </p>
+                        <p style="color: #d4d4d4; font-size: 12px; word-break: break-all; margin: 0; font-family: 'Courier New', monospace; background-color: #000000; padding: 12px; border-radius: 6px; border: 1px solid #333333;">
+                            ${verifyUrl}
+                        </p>
+                    </div>
+                    
+                    <!-- Expiry Notice -->
+                    <div style="background-color: #1a1a1a; border-left: 4px solid #c0c0c0; padding: 15px; border-radius: 6px; margin: 25px 0; border: 1px solid #333333;">
+                        <p style="color: #d4d4d4; font-size: 14px; margin: 0; line-height: 1.5;">
+                            <strong style="color: #e8e8e8;">⏰ Important:</strong> This verification link will expire in <strong style="color: #e8e8e8;">7 days</strong>. Please complete verification as soon as possible.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Footer -->
+                <div style="background-color: #0a0a0a; padding: 25px 30px; border-top: 1px solid #333333;">
+                    <p style="color: #999999; font-size: 12px; line-height: 1.6; margin: 0; text-align: center;">
+                        If you did not subscribe to this newsletter, please ignore this email.<br>
+                        This is an automated email. Please do not reply directly.
+                    </p>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
       `;
 
         // 獲取寄件者名稱（根據語言和訂閱類型）

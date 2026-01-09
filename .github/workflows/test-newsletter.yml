@@ -1,0 +1,146 @@
+name: Test Newsletter
+
+on:
+  workflow_dispatch: # 允許手動觸發
+    inputs:
+      test_mode:
+        description: '測試模式'
+        required: true
+        type: choice
+        options:
+          - dry-run
+          - send-test-email
+        default: 'dry-run'
+      article_slug:
+        description: '文章 Slug（留空使用最新文章）'
+        required: false
+        type: string
+      test_email:
+        description: '測試郵件地址（僅 send-test-email 模式需要）'
+        required: false
+        type: string
+
+jobs:
+  test-newsletter:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: List available articles
+        run: |
+          echo "=== 列出所有可用文章 ==="
+          node scripts/test-newsletter.js --list || true
+
+      - name: Test Newsletter (Dry Run)
+        if: github.event.inputs.test_mode == 'dry-run'
+        env:
+          GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
+          GOOGLE_SHEETS_ID: ${{ secrets.GOOGLE_SHEETS_ID }}
+        run: |
+          echo "=== 測試模式（Dry Run）==="
+          echo "測試模式：不實際發送郵件，只顯示會發送給誰"
+          echo ""
+          
+          if [ -z "$GOOGLE_SHEETS_CREDENTIALS" ] || [ -z "$GOOGLE_SHEETS_ID" ]; then
+            echo "⚠️ Google Sheets 憑證未設置，無法讀取訂閱列表"
+            echo "請在 GitHub Secrets 中設置："
+            echo "  - GOOGLE_SHEETS_CREDENTIALS"
+            echo "  - GOOGLE_SHEETS_ID"
+            exit 1
+          fi
+          
+          if [ -n "${{ github.event.inputs.article_slug }}" ]; then
+            echo "使用指定文章: ${{ github.event.inputs.article_slug }}"
+            node scripts/test-newsletter.js --dry-run --slug=${{ github.event.inputs.article_slug }}
+          else
+            echo "使用最新文章"
+            node scripts/test-newsletter.js --dry-run --latest
+          fi
+
+      - name: Send Test Email
+        if: github.event.inputs.test_mode == 'send-test-email'
+        env:
+          GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
+          GOOGLE_SHEETS_ID: ${{ secrets.GOOGLE_SHEETS_ID }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          BLOG_URL: ${{ secrets.BLOG_URL }}
+        run: |
+          echo "=== 發送測試郵件 ==="
+          echo "測試模式：實際發送郵件到指定 Email"
+          echo ""
+          
+          # 設置預設 BLOG_URL（如果未設置）
+          if [ -z "$BLOG_URL" ]; then
+            export BLOG_URL="https://sunzhi-will.github.io"
+            echo "使用預設 BLOG_URL: $BLOG_URL"
+          fi
+          
+          # 檢查必要環境變數
+          if [ -z "$GOOGLE_SHEETS_CREDENTIALS" ] || [ -z "$GOOGLE_SHEETS_ID" ]; then
+            echo "❌ Google Sheets 憑證未設置"
+            echo "請在 GitHub Secrets 中設置："
+            echo "  - GOOGLE_SHEETS_CREDENTIALS"
+            echo "  - GOOGLE_SHEETS_ID"
+            exit 1
+          fi
+          
+          if [ -z "$GMAIL_USER" ] || [ -z "$GMAIL_APP_PASSWORD" ]; then
+            echo "❌ Gmail 憑證未設置"
+            echo "請在 GitHub Secrets 中設置："
+            echo "  - GMAIL_USER"
+            echo "  - GMAIL_APP_PASSWORD"
+            exit 1
+          fi
+          
+          if [ -z "${{ github.event.inputs.test_email }}" ]; then
+            echo "❌ 測試郵件地址未提供"
+            echo "請在觸發工作流程時提供測試郵件地址"
+            exit 1
+          fi
+          
+          echo "測試郵件地址: ${{ github.event.inputs.test_email }}"
+          echo ""
+          
+          if [ -n "${{ github.event.inputs.article_slug }}" ]; then
+            echo "使用指定文章: ${{ github.event.inputs.article_slug }}"
+            node scripts/test-newsletter.js --test-email=${{ github.event.inputs.test_email }} --slug=${{ github.event.inputs.article_slug }}
+          else
+            echo "使用最新文章"
+            node scripts/test-newsletter.js --test-email=${{ github.event.inputs.test_email }} --latest
+          fi
+          
+          echo ""
+          echo "✅ 測試郵件已發送！"
+          echo "📬 請檢查 ${{ github.event.inputs.test_email }} 的收件匣"
+
+      - name: Test Results Summary
+        if: always()
+        run: |
+          echo "=== 測試結果摘要 ==="
+          echo "測試模式: ${{ github.event.inputs.test_mode }}"
+          if [ "${{ github.event.inputs.test_mode }}" == "send-test-email" ]; then
+            echo "測試郵件地址: ${{ github.event.inputs.test_email }}"
+          fi
+          if [ -n "${{ github.event.inputs.article_slug }}" ]; then
+            echo "文章 Slug: ${{ github.event.inputs.article_slug }}"
+          else
+            echo "文章: 最新文章"
+          fi
+          echo ""
+          echo "✅ 測試完成！"
