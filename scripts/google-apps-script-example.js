@@ -243,11 +243,37 @@ function doPost(e) {
         // 正規化 Email（處理 Gmail 的 + 別名）
         const email = normalizeEmail(data.email);
 
-        // 簡單的速率限制檢查（基於 Email）
+        // 全局速率限制（防止多 Email 攻擊）
+        const now = Date.now();
+        const globalRateLimitKey = 'global_rate_limit';
+        const globalLastRequest = PropertiesService.getScriptProperties().getProperty(globalRateLimitKey);
+        const globalRequestCountKey = 'global_request_count';
+
+        // 如果在一分鐘內，檢查請求計數
+        if (globalLastRequest && (now - parseInt(globalLastRequest)) < 60000) {
+            const requestCount = parseInt(PropertiesService.getScriptProperties().getProperty(globalRequestCountKey) || '0');
+            // 限制每分鐘最多 20 個請求（全局）
+            if (requestCount >= 20) {
+                Logger.log('⚠️ Global rate limit exceeded: ' + requestCount + ' requests in the last minute');
+                return ContentService.createTextOutput(
+                    JSON.stringify({
+                        success: false,
+                        message: 'Too many requests. Please try again later.'
+                    })
+                ).setMimeType(ContentService.MimeType.JSON);
+            }
+            // 增加計數
+            PropertiesService.getScriptProperties().setProperty(globalRequestCountKey, (requestCount + 1).toString());
+        } else {
+            // 重置計數器（新的一分鐘）
+            PropertiesService.getScriptProperties().setProperty(globalRateLimitKey, now.toString());
+            PropertiesService.getScriptProperties().setProperty(globalRequestCountKey, '1');
+        }
+
+        // 每個 Email 的速率限制檢查（防止單個 Email 濫用）
         if (email) {
             const rateLimitKey = 'rate_limit_' + email;
             const lastRequest = PropertiesService.getScriptProperties().getProperty(rateLimitKey);
-            const now = Date.now();
 
             // 限制每個 Email 每 60 秒只能提交一次
             if (lastRequest && (now - parseInt(lastRequest)) < 60000) {
@@ -317,7 +343,7 @@ function doPost(e) {
             }
         }
 
-        const now = new Date().toISOString();
+        const subscribedAt = new Date().toISOString();
         const typesStr = validTypes.join(','); // 使用驗證後的類型
         const blogUrl = PropertiesService.getScriptProperties().getProperty('BLOG_URL') || 'https://sunzhi-will.github.io';
 
@@ -337,7 +363,7 @@ function doPost(e) {
             // 更新現有訂閱
             sheet.getRange(existingRow, 2).setValue(typesStr); // Types
             sheet.getRange(existingRow, 3).setValue(lang); // Lang
-            sheet.getRange(existingRow, 4).setValue(now); // SubscribedAt
+            sheet.getRange(existingRow, 4).setValue(subscribedAt); // SubscribedAt
             sheet.getRange(existingRow, 5).setValue(false); // Verified (重置為未驗證)
             sheet.getRange(existingRow, 6).setValue(verifyToken); // VerifyToken
             sheet.getRange(existingRow, 7).setValue(tokenExpiry); // TokenExpiry
