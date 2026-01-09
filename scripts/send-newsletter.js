@@ -204,25 +204,25 @@ function markdownToHtml(markdown) {
     let html = markdown;
 
     // 標題
-    html = html.replace(/^### (.*$)/gim, '<h3 style="font-size: 18px; font-weight: 600; margin: 20px 0 10px 0;">$1</h3>');
-    html = html.replace(/^## (.*$)/gim, '<h2 style="font-size: 20px; font-weight: 600; margin: 24px 0 12px 0;">$1</h2>');
-    html = html.replace(/^# (.*$)/gim, '<h1 style="font-size: 24px; font-weight: 700; margin: 28px 0 14px 0;">$1</h1>');
+    html = html.replace(/^### (.*$)/gim, '<h3 style="font-size: 18px; font-weight: 600; margin: 20px 0 10px 0; color: #e8e8e8;">$1</h3>');
+    html = html.replace(/^## (.*$)/gim, '<h2 style="font-size: 20px; font-weight: 600; margin: 24px 0 12px 0; color: #e8e8e8;">$1</h2>');
+    html = html.replace(/^# (.*$)/gim, '<h1 style="font-size: 24px; font-weight: 700; margin: 28px 0 14px 0; color: #e8e8e8;">$1</h1>');
 
     // 粗體
-    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #e8e8e8;">$1</strong>');
 
     // 連結
-    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: #2563eb; text-decoration: underline;">$1</a>');
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: #c0c0c0; text-decoration: underline;">$1</a>');
 
     // 列表
-    html = html.replace(/^- (.*$)/gim, '<li style="margin: 5px 0;">$1</li>');
+    html = html.replace(/^- (.*$)/gim, '<li style="margin: 5px 0; color: #d4d4d4;">$1</li>');
     html = html.replace(/(<li>.*<\/li>)/s, '<ul style="margin: 10px 0; padding-left: 20px;">$1</ul>');
 
     // 段落
     html = html.split('\n\n').map(p => {
         p = p.trim();
         if (p && !p.startsWith('<')) {
-            return `<p style="margin: 10px 0; line-height: 1.6;">${p}</p>`;
+            return `<p style="margin: 10px 0; line-height: 1.6; color: #d4d4d4;">${p}</p>`;
         }
         return p;
     }).join('\n');
@@ -249,13 +249,6 @@ function generateNewsletterHtml(article, slug, lang, blogUrl) {
     // 轉換 Markdown 為 HTML
     const htmlBody = markdownToHtml(body);
 
-    // 限制內容長度（只顯示前 500 字，然後提供連結）
-    const previewLength = isZh ? 500 : 800;
-    let previewBody = htmlBody;
-    if (htmlBody.length > previewLength) {
-        previewBody = htmlBody.substring(0, previewLength) + '...';
-    }
-
     return `
 <!DOCTYPE html>
 <html>
@@ -264,25 +257,42 @@ function generateNewsletterHtml(article, slug, lang, blogUrl) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title}</title>
 </head>
-<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
-    <div style="background-color: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-        <h1 style="color: #1a1a1a; margin-top: 0; font-size: 24px;">${title}</h1>
-        <p style="color: #666; font-size: 14px; margin: 10px 0;">${date}</p>
-        <p style="color: #555; font-size: 16px; margin: 20px 0;">${description}</p>
-        <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-        <div style="color: #333; font-size: 15px;">
-            ${previewBody}
-        </div>
-        <div style="margin: 30px 0; text-align: center;">
-            <a href="${articleUrl}" style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 500;">
-                ${isZh ? '閱讀完整文章' : 'Read Full Article'}
-            </a>
-        </div>
-        <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-        <p style="color: #999; font-size: 12px; text-align: center; margin: 20px 0;">
-            ${isZh ? '這是由 AI 自動生成的每日日報。' : 'This is an AI-generated daily report.'}
-        </p>
-    </div>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #000000; min-height: 100vh; padding: 40px 20px;">
+    <table role="presentation" style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #1a1a1a; border-radius: 16px; box-shadow: 0 10px 40px rgba(192, 192, 192, 0.1); overflow: hidden; border: 1px solid #333333;">
+        <tr>
+            <td style="padding: 0;">
+                <!-- Header -->
+                <div style="background-color: #0a0a0a; padding: 40px 30px; border-bottom: 1px solid #333333;">
+                    <h1 style="color: #e8e8e8; margin-top: 0; margin-bottom: 10px; font-size: 28px; font-weight: 700; text-shadow: 0 2px 8px rgba(192, 192, 192, 0.3);">${title}</h1>
+                    <p style="color: #c0c0c0; font-size: 14px; margin: 0;">${date}</p>
+                </div>
+                
+                <!-- Content -->
+                <div style="padding: 40px 30px; background-color: #1a1a1a;">
+                    <p style="color: #d4d4d4; font-size: 16px; margin: 0 0 30px 0; line-height: 1.6;">${description}</p>
+                    
+                    <hr style="border: none; border-top: 1px solid #333333; margin: 30px 0;">
+                    
+                    <div style="color: #d4d4d4; font-size: 15px; line-height: 1.6;">
+                        ${htmlBody}
+                    </div>
+                    
+                    <div style="margin: 35px 0; text-align: center;">
+                        <a href="${articleUrl}" style="display: inline-block; background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 100%); color: #000000; text-decoration: none; padding: 16px 40px; border-radius: 50px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 15px rgba(192, 192, 192, 0.3); transition: all 0.3s ease; border: 1px solid #d4d4d4;">
+                            ${isZh ? '閱讀完整文章' : 'Read Full Article'}
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Footer -->
+                <div style="background-color: #0a0a0a; padding: 25px 30px; border-top: 1px solid #333333;">
+                    <p style="color: #999999; font-size: 12px; text-align: center; margin: 0; line-height: 1.6;">
+                        ${isZh ? '這是由 AI 自動生成的每日日報。' : 'This is an AI-generated daily report.'}
+                    </p>
+                </div>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>
     `.trim();
@@ -394,7 +404,7 @@ async function sendNewsletter(slug) {
                 }
 
                 // 預設值（當文章類型無法識別時）
-                return lang === 'zh-TW' ? '電子報' : 'Newsletter';
+                return lang === 'zh-TW' ? 'Sun 的電子報' : "Sun's Newsletter";
             };
 
             const senderName = getSenderName(lang, articleTypes);
@@ -425,17 +435,63 @@ async function sendNewsletter(slug) {
     console.log(`   ❌ Errors: ${errorCount}`);
 }
 
+/**
+ * 獲取所有可用的文章 slug
+ */
+function getAllArticleSlugs() {
+    if (!fs.existsSync(blogDir)) {
+        return [];
+    }
+
+    const folders = fs.readdirSync(blogDir)
+        .filter(item => {
+            const itemPath = path.join(blogDir, item);
+            return fs.statSync(itemPath).isDirectory();
+        })
+        .sort()
+        .reverse(); // 最新的在前
+
+    return folders;
+}
+
+/**
+ * 查找今天日期的最新文章
+ */
+function findLatestArticleForToday(dateStr) {
+    const allSlugs = getAllArticleSlugs();
+    
+    // 查找今天日期開頭的文章
+    const todayArticles = allSlugs.filter(slug => slug.startsWith(dateStr));
+    
+    if (todayArticles.length === 0) {
+        return null;
+    }
+    
+    // 返回最新的（第一個，因為已經排序）
+    return todayArticles[0];
+}
+
 // 主函數
 async function main() {
     const dateInfo = getDateInfo();
-    const { timestamp } = dateInfo;
+    const { dateStr } = dateInfo;
 
     console.log('=== Newsletter Sender ===');
-    console.log(`Date: ${dateInfo.dateStr}`);
-    console.log(`Article slug: ${timestamp}`);
+    console.log(`Date: ${dateStr}`);
+
+    // 查找今天日期的最新文章
+    const slug = findLatestArticleForToday(dateStr);
+    
+    if (!slug) {
+        console.error(`❌ Error: No article found for date ${dateStr}`);
+        console.error('   Please ensure an article exists for today, or specify a slug manually.');
+        process.exit(1);
+    }
+
+    console.log(`Article slug: ${slug}`);
 
     try {
-        await sendNewsletter(timestamp);
+        await sendNewsletter(slug);
     } catch (error) {
         console.error('Error:', error);
         process.exit(1);

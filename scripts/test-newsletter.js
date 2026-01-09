@@ -275,7 +275,7 @@ async function testSendToEmail(slug, testEmail, testLang = null) {
                     return senderNames[lang][primaryType];
                 }
 
-                return lang === 'zh-TW' ? '電子報' : 'Newsletter';
+                return lang === 'zh-TW' ? 'Sun 的電子報' : "Sun's Newsletter";
             };
 
             const senderName = getSenderName(lang, articleTypes);
