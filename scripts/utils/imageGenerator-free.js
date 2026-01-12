@@ -33,8 +33,26 @@ async function generateFreeImage(prompt, timestamp, postFolder, articleContent =
         const imageFileName = `cover-${timestamp}.png`;
         const imagePath = path.join(postFolder, imageFileName);
         
+        // 保存到 content/blog/ 目錄
         fs.writeFileSync(imagePath, imageBuffer);
-        console.log(`✅ 圖片生成成功: ${imagePath}\n`);
+        console.log(`✅ 圖片保存到: ${imagePath}`);
+        
+        // 同時複製到 public/blog/ 目錄供電子郵件訪問
+        const publicBlogDir = path.join(__dirname, '../../public/blog');
+        if (!fs.existsSync(publicBlogDir)) {
+            fs.mkdirSync(publicBlogDir, { recursive: true });
+        }
+        
+        // 提取文章 slug（從 postFolder 路徑）
+        const slug = path.basename(postFolder);
+        const publicSlugDir = path.join(publicBlogDir, slug);
+        if (!fs.existsSync(publicSlugDir)) {
+            fs.mkdirSync(publicSlugDir, { recursive: true });
+        }
+        
+        const publicImagePath = path.join(publicSlugDir, imageFileName);
+        fs.writeFileSync(publicImagePath, imageBuffer);
+        console.log(`✅ 圖片已複製到公開目錄: ${publicImagePath}\n`);
         
         return imageFileName;
     } catch (error) {

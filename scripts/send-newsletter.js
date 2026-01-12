@@ -372,7 +372,8 @@ function generateNewsletterHtml(article, slug, lang, blogUrl) {
     const articleUrl = `${blogUrl}/blog/${slug}`;
 
     // 生成封面圖 URL（如果有的話）
-    const coverImageUrl = coverImage ? `${blogUrl}/content/blog/${slug}/${coverImage}` : '';
+    // 圖片存放在 public/blog/ 目錄，可以直接通過 /blog/ 路徑訪問
+    const coverImageUrl = coverImage ? `${blogUrl}/blog/${slug}/${coverImage}` : '';
 
     // 轉換 Markdown 為 HTML
     const htmlBody = markdownToHtml(body);
