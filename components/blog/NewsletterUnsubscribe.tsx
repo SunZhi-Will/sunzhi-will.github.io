@@ -1,11 +1,10 @@
 'use client'
 
 import { useState } from 'react';
-import { Lang } from '@/types';
 import { useTheme } from '@/app/blog/ThemeProvider';
 
 interface NewsletterUnsubscribeProps {
-    lang: Lang;
+    lang: 'zh-TW' | 'en';
 }
 
 const translations = {

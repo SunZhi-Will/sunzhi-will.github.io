@@ -27,12 +27,12 @@ interface BlogPostClientProps {
     defaultHtmlContent?: string;
     defaultMdxSource?: MDXRemoteSerializeResult;
     defaultAllPosts: BlogPost[];
-    postsByLang: Record<Lang, { 
-        post: Omit<BlogPost, 'content'>; 
+    postsByLang: Partial<Record<Lang, {
+        post: Omit<BlogPost, 'content'>;
         htmlContent?: string;
         mdxSource?: MDXRemoteSerializeResult;
-    } | null>;
-    allPostsByLang: Record<Lang, BlogPost[]>;
+    } | null>>;
+    allPostsByLang: Partial<Record<Lang, BlogPost[]>>;
     baseUrl: string;
 }
 
@@ -76,7 +76,7 @@ export default function BlogPostClient({
             setCurrentMdxSource(postData.mdxSource);
         }
         // 更新推薦文章列表
-        setCurrentAllPosts(allPostsByLang[targetLang]);
+        setCurrentAllPosts(allPostsByLang[targetLang] || []);
     };
 
     // 從 localStorage 讀取語言選擇，如果沒有則偵測瀏覽器語言

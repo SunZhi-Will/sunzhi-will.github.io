@@ -78,16 +78,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://sunzhi-will.github.io';
 
     // 預先載入所有語言版本的文章數據
-    const postsByLang: Record<Lang, { 
-        post: Omit<BlogPost, 'content'>; 
+    const postsByLang: Partial<Record<Lang, {
+        post: Omit<BlogPost, 'content'>;
         htmlContent?: string;
         mdxSource?: MDXRemoteSerializeResult;
-    } | null> = {
+    } | null>> = {
         'zh-TW': null,
         'en': null,
     };
 
-    const allPostsByLang: Record<Lang, BlogPost[]> = {
+    const allPostsByLang: Partial<Record<Lang, BlogPost[]>> = {
         'zh-TW': [],
         'en': [],
     };
@@ -162,7 +162,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             defaultPost={defaultPostData.post}
             defaultHtmlContent={defaultPostData.htmlContent}
             defaultMdxSource={defaultPostData.mdxSource}
-            defaultAllPosts={allPostsByLang[defaultLang]}
+            defaultAllPosts={allPostsByLang[defaultLang] || []}
             postsByLang={postsByLang}
             allPostsByLang={allPostsByLang}
             baseUrl={baseUrl}

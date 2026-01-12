@@ -21,29 +21,13 @@ function VerifyContent() {
         if (typeof window === 'undefined') return;
 
         const savedLang = localStorage.getItem('blog-lang') as Lang | null;
-        const supportedLangs: Lang[] = ['zh-TW', 'en', 'ja', 'ko', 'es', 'fr', 'de'];
+        const supportedLangs: Lang[] = ['zh-TW', 'en'];
 
         if (savedLang && supportedLangs.includes(savedLang)) {
             setLang(savedLang);
         } else {
             const browserLang = navigator.language;
-            let detectedLang: Lang = 'en'; // 預設英文
-
-            if (browserLang.startsWith('zh')) {
-                detectedLang = 'zh-TW';
-            } else if (browserLang.startsWith('ja')) {
-                detectedLang = 'ja';
-            } else if (browserLang.startsWith('ko')) {
-                detectedLang = 'ko';
-            } else if (browserLang.startsWith('es')) {
-                detectedLang = 'es';
-            } else if (browserLang.startsWith('fr')) {
-                detectedLang = 'fr';
-            } else if (browserLang.startsWith('de')) {
-                detectedLang = 'de';
-            } else if (browserLang.startsWith('en')) {
-                detectedLang = 'en';
-            }
+            const detectedLang: Lang = browserLang.startsWith('zh') ? 'zh-TW' : 'en';
 
             setLang(detectedLang);
         }
@@ -77,7 +61,7 @@ function VerifyContent() {
                 return response.json();
             })
             .then((data) => {
-                const responseLang = data.lang || lang;
+                const responseLang = (data.lang === 'zh-TW' || data.lang === 'en') ? data.lang : lang;
                 if (data.success) {
                     setStatus('success');
                     setMessage(data.message || translations[responseLang].verify.success.message);
@@ -162,29 +146,13 @@ function LoadingFallback() {
         if (typeof window === 'undefined') return;
 
         const savedLang = localStorage.getItem('blog-lang') as Lang | null;
-        const supportedLangs: Lang[] = ['zh-TW', 'en', 'ja', 'ko', 'es', 'fr', 'de'];
+        const supportedLangs: Lang[] = ['zh-TW', 'en'];
 
         if (savedLang && supportedLangs.includes(savedLang)) {
             setLang(savedLang);
         } else {
             const browserLang = navigator.language;
-            let detectedLang: Lang = 'en'; // 預設英文
-
-            if (browserLang.startsWith('zh')) {
-                detectedLang = 'zh-TW';
-            } else if (browserLang.startsWith('ja')) {
-                detectedLang = 'ja';
-            } else if (browserLang.startsWith('ko')) {
-                detectedLang = 'ko';
-            } else if (browserLang.startsWith('es')) {
-                detectedLang = 'es';
-            } else if (browserLang.startsWith('fr')) {
-                detectedLang = 'fr';
-            } else if (browserLang.startsWith('de')) {
-                detectedLang = 'de';
-            } else if (browserLang.startsWith('en')) {
-                detectedLang = 'en';
-            }
+            const detectedLang: Lang = browserLang.startsWith('zh') ? 'zh-TW' : 'en';
 
             setLang(detectedLang);
         }

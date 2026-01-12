@@ -50,7 +50,23 @@ export const translations: Translations = {
             scrollDown: '下にスクロール'
         },
         about: {
-            title: '私について'
+            title: '私について',
+            services: {
+                title: '専門サービス',
+                available: '受託可能',
+                description: '要件定義からシステム実装まで、専門的な技術開発・コンサルティングサービスを提供いたします。'
+            },
+            teaching: {
+                title: '講義コース',
+                description: '大学や企業での実務経験の共有、個別指導コースを提供。基礎概念から応用まで、受講者が迅速に技術を習得できるよう支援いたします。',
+                courses: [
+                    'Unity ゲーム開発実践コース',
+                    'Unity + MediaPipe 画像認識アプリケーション',
+                    'LINE BOT 開発・実装',
+                    'AI アプリケーション開発実践',
+                    '学生プロジェクト指導'
+                ]
+            }
         },
         skills: {
             title: 'スキル'
@@ -60,10 +76,23 @@ export const translations: Translations = {
             viewProject: 'プロジェクトを見る',
             mainAchievements: '主な成果：',
             video: 'ビデオ',
-            liveDemo: 'ライブデモ'
+            liveDemo: 'ライブデモ',
+            items: []
         },
         activities: {
-            title: '活動と共有'
+            title: '活動と共有',
+            hackathons: {
+                title: 'ハッカソン',
+                items: []
+            },
+            speaking: {
+                title: '講演活動',
+                items: []
+            },
+            teaching: {
+                title: '教育活動',
+                items: []
+            }
         },
         footer: {
             portfolio: 'Sunのポートフォリオ',
@@ -112,7 +141,23 @@ export const translations: Translations = {
             scrollDown: '아래로 스크롤'
         },
         about: {
-            title: '소개'
+            title: '소개',
+            services: {
+                title: '전문 서비스',
+                available: '수주 가능',
+                description: '요구사항 분석부터 시스템 구현까지 전문적인 기술 개발 및 컨설팅 서비스를 제공합니다.'
+            },
+            teaching: {
+                title: '강의 과정',
+                description: '대학 및 기업에서의 실무 경험 공유, 맞춤형 강의를 제공합니다. 기초 개념부터 고급 응용까지, 수강생들이 빠르게 기술을 습득할 수 있도록 지원합니다.',
+                courses: [
+                    'Unity 게임 개발 실무 과정',
+                    'Unity + MediaPipe 이미지 인식 애플리케이션',
+                    'LINE BOT 개발 및 실무',
+                    'AI 애플리케이션 개발 실무',
+                    '학생 프로젝트 지도'
+                ]
+            }
         },
         skills: {
             title: '기술'
@@ -122,10 +167,23 @@ export const translations: Translations = {
             viewProject: '프로젝트 보기',
             mainAchievements: '주요 성과:',
             video: '비디오',
-            liveDemo: '라이브 데모'
+            liveDemo: '라이브 데모',
+            items: []
         },
         activities: {
-            title: '활동 및 공유'
+            title: '활동 및 공유',
+            hackathons: {
+                title: '해커톤',
+                items: []
+            },
+            speaking: {
+                title: '강연 활동',
+                items: []
+            },
+            teaching: {
+                title: '교육 활동',
+                items: []
+            }
         },
         footer: {
             portfolio: 'Sun 포트폴리오',
@@ -174,7 +232,23 @@ export const translations: Translations = {
             scrollDown: 'Desplazar hacia abajo'
         },
         about: {
-            title: 'Sobre mí'
+            title: 'Sobre mí',
+            services: {
+                title: 'Servicios Profesionales',
+                available: 'Disponible para proyectos',
+                description: 'Ofrezco servicios profesionales de desarrollo técnico y consultoría, desde el análisis de requisitos hasta la implementación del sistema.'
+            },
+            teaching: {
+                title: 'Cursos de Enseñanza',
+                description: 'Comparto experiencias prácticas en universidades y empresas, ofreciendo cursos personalizados. Desde conceptos básicos hasta aplicaciones avanzadas, ayudo a los estudiantes a dominar rápidamente las tecnologías.',
+                courses: [
+                    'Curso Práctico de Desarrollo de Juegos Unity',
+                    'Aplicaciones de Reconocimiento de Imágenes Unity + MediaPipe',
+                    'Desarrollo e Implementación de LINE BOT',
+                    'Desarrollo Práctico de Aplicaciones AI',
+                    'Tutoría de Proyectos Estudiantiles'
+                ]
+            }
         },
         skills: {
             title: 'Habilidades'
@@ -184,10 +258,23 @@ export const translations: Translations = {
             viewProject: 'Ver Proyecto',
             mainAchievements: 'Logros principales:',
             video: 'Video',
-            liveDemo: 'Demo en vivo'
+            liveDemo: 'Demo en vivo',
+            items: []
         },
         activities: {
-            title: 'Actividades y Compartir'
+            title: 'Actividades y Compartir',
+            hackathons: {
+                title: 'Hackathons',
+                items: []
+            },
+            speaking: {
+                title: 'Actividades de Conferencias',
+                items: []
+            },
+            teaching: {
+                title: 'Actividades Educativas',
+                items: []
+            }
         },
         footer: {
             portfolio: 'Portafolio de Sun',
@@ -236,7 +323,23 @@ export const translations: Translations = {
             scrollDown: 'Défiler vers le bas'
         },
         about: {
-            title: 'À propos de moi'
+            title: 'À propos de moi',
+            services: {
+                title: 'Services Professionnels',
+                available: 'Disponible pour projets',
+                description: 'Je propose des services professionnels de développement technique et de conseil, de l\'analyse des besoins à l\'implémentation système.'
+            },
+            teaching: {
+                title: 'Cours d\'Enseignement',
+                description: 'Je partage mes expériences pratiques dans les universités et entreprises, en proposant des cours personnalisés. Des concepts de base aux applications avancées, j\'aide les apprenants à maîtriser rapidement les technologies.',
+                courses: [
+                    'Cours Pratique de Développement de Jeux Unity',
+                    'Applications de Reconnaissance d\'Images Unity + MediaPipe',
+                    'Développement et Implémentation de LINE BOT',
+                    'Développement Pratique d\'Applications IA',
+                    'Tutorat de Projets Étudiants'
+                ]
+            }
         },
         skills: {
             title: 'Compétences'
@@ -246,10 +349,23 @@ export const translations: Translations = {
             viewProject: 'Voir le projet',
             mainAchievements: 'Principales réalisations :',
             video: 'Vidéo',
-            liveDemo: 'Démo en direct'
+            liveDemo: 'Démo en direct',
+            items: []
         },
         activities: {
-            title: 'Activités et Partage'
+            title: 'Activités et Partage',
+            hackathons: {
+                title: 'Hackathons',
+                items: []
+            },
+            speaking: {
+                title: 'Activités de Conférence',
+                items: []
+            },
+            teaching: {
+                title: 'Activités d\'Enseignement',
+                items: []
+            }
         },
         footer: {
             portfolio: 'Portefeuille de Sun',
@@ -298,7 +414,23 @@ export const translations: Translations = {
             scrollDown: 'Nach unten scrollen'
         },
         about: {
-            title: 'Über mich'
+            title: 'Über mich',
+            services: {
+                title: 'Professionelle Dienstleistungen',
+                available: 'Für Projekte verfügbar',
+                description: 'Ich biete professionelle technische Entwicklungs- und Beratungsdienstleistungen an, von der Anforderungsanalyse bis zur Systemimplementierung.'
+            },
+            teaching: {
+                title: 'Lehrveranstaltungen',
+                description: 'Ich teile meine praktischen Erfahrungen in Universitäten und Unternehmen und biete maßgeschneiderte Kurse an. Von grundlegenden Konzepten bis zu fortgeschrittenen Anwendungen unterstütze ich Lernende dabei, Technologien schnell zu beherrschen.',
+                courses: [
+                    'Praktischer Unity-Spielentwicklungskurs',
+                    'Unity + MediaPipe Bilderkennungsanwendungen',
+                    'LINE BOT Entwicklung und Implementierung',
+                    'Praktische KI-Anwendungsentwicklung',
+                    'Betreuung von Studentenprojekten'
+                ]
+            }
         },
         skills: {
             title: 'Fähigkeiten'
@@ -308,10 +440,23 @@ export const translations: Translations = {
             viewProject: 'Projekt ansehen',
             mainAchievements: 'Haupterfolge:',
             video: 'Video',
-            liveDemo: 'Live-Demo'
+            liveDemo: 'Live-Demo',
+            items: []
         },
         activities: {
-            title: 'Aktivitäten und Teilen'
+            title: 'Aktivitäten und Teilen',
+            hackathons: {
+                title: 'Hackathons',
+                items: []
+            },
+            speaking: {
+                title: 'Vortragsaktivitäten',
+                items: []
+            },
+            teaching: {
+                title: 'Bildungsaktivitäten',
+                items: []
+            }
         },
         footer: {
             portfolio: 'Suns Portfolio',

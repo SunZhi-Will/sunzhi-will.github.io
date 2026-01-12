@@ -210,7 +210,7 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
 
                 {/* 電子報訂閱 */}
                 <div className="mt-auto">
-                    <NewsletterSubscribe lang={lang} />
+                    <NewsletterSubscribe lang={lang === 'zh-TW' || lang === 'en' ? lang : 'zh-TW'} />
                 </div>
 
                 {/* 返回個人頁、語言切換和頁尾 */}

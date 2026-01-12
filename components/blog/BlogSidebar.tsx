@@ -165,7 +165,7 @@ export function BlogSidebar({ lang, setLang, post }: BlogSidebarProps) {
 
             {/* 電子報訂閱 */}
             <div className="mt-auto">
-                <NewsletterSubscribe lang={lang} />
+                <NewsletterSubscribe lang={lang === 'zh-TW' || lang === 'en' ? lang : 'zh-TW'} />
             </div>
 
             {/* 頁尾 */}

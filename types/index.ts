@@ -1,4 +1,4 @@
-export type Lang = 'zh-TW' | 'en' | 'ja' | 'ko' | 'es' | 'fr' | 'de';
+export type Lang = 'zh-TW' | 'en';
 
 export interface Translations {
     [key: string]: {

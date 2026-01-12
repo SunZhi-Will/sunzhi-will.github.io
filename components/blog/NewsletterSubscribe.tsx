@@ -1,11 +1,10 @@
 'use client'
 
 import { useState } from 'react';
-import { Lang } from '@/types';
 import { useTheme } from '@/app/blog/ThemeProvider';
 
 interface NewsletterSubscribeProps {
-    lang: Lang;
+    lang: 'zh-TW' | 'en';
 }
 
 type SubscriptionType = 'all' | 'ai-daily' | 'blockchain' | 'sun-written';

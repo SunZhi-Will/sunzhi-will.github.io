@@ -38,7 +38,7 @@ export function NewsletterCard({ lang }: NewsletterCardProps) {
                         : 'bg-white/80 border border-gray-300/60'
                         }`}
                 >
-                    <NewsletterSubscribe lang={lang} />
+                    <NewsletterSubscribe lang={lang === 'zh-TW' || lang === 'en' ? lang : 'zh-TW'} />
                 </div>
             </div>
         </motion.div>
