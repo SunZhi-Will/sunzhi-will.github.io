@@ -667,30 +667,53 @@ async function main() {
     const dateInfo = getDateInfo();
     const { dateStr } = dateInfo;
 
+    // 檢查是否為測試模式
+    const isTestMode = process.argv.includes('--test') || process.argv.includes('--force');
+    const specifiedSlug = process.argv.find(arg => arg.startsWith('--slug='))?.split('=')[1];
+
     console.log('=== Newsletter Sender ===');
     console.log(`Date: ${dateStr}`);
+    if (isTestMode) {
+        console.log('🔧 Test mode enabled - bypassing generation marker check');
+    }
 
-    // 查找今天日期的最新文章
-    const slug = findLatestArticleForToday(dateStr);
+    let slug = specifiedSlug;
 
     if (!slug) {
-        console.log(`ℹ️  No article found for date ${dateStr}. This is normal if AI Daily Report hasn't run yet.`);
-        console.log('   Skipping newsletter sending.');
-        process.exit(0);
+        // 查找今天日期的最新文章
+        slug = findLatestArticleForToday(dateStr);
+
+        if (!slug) {
+            console.log(`ℹ️  No article found for date ${dateStr}. This is normal if AI Daily Report hasn't run yet.`);
+            console.log('   Skipping newsletter sending.');
+            process.exit(0);
+        }
     }
 
     console.log(`Article slug: ${slug}`);
 
-    // 檢查文章是否成功生成（有成功標記文件）
-    const isSuccessfullyGenerated = isArticleSuccessfullyGenerated(slug);
-    if (!isSuccessfullyGenerated) {
-        console.log(`⚠️  Article found but generation was not successful (no success marker).`);
-        console.log('   This means the AI Daily Report process ran but failed to complete properly.');
-        console.log('   Skipping newsletter sending to avoid sending incomplete content.');
-        process.exit(0);
+    // 檢查文章是否存在
+    const postFolder = path.join(blogDir, slug);
+    if (!fs.existsSync(path.join(postFolder, 'article.zh-TW.mdx')) ||
+        !fs.existsSync(path.join(postFolder, 'article.en.mdx'))) {
+        console.error(`❌ Error: Article files not found for slug: ${slug}`);
+        process.exit(1);
     }
 
-    console.log(`✅ Article generation marker verified. Proceeding with newsletter sending.`);
+    // 檢查文章是否成功生成（有成功標記文件）- 測試模式下跳過此檢查
+    if (!isTestMode) {
+        const isSuccessfullyGenerated = isArticleSuccessfullyGenerated(slug);
+        if (!isSuccessfullyGenerated) {
+            console.log(`⚠️  Article found but generation was not successful (no success marker).`);
+            console.log('   This means the AI Daily Report process ran but failed to complete properly.');
+            console.log('   Skipping newsletter sending to avoid sending incomplete content.');
+            process.exit(0);
+        }
+
+        console.log(`✅ Article generation marker verified. Proceeding with newsletter sending.`);
+    } else {
+        console.log(`🔧 Test mode: Skipping generation marker check.`);
+    }
 
     try {
         await sendNewsletter(slug);

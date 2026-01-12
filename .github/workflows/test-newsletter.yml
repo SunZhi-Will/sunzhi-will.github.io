@@ -207,9 +207,9 @@ jobs:
               })();
             "
           else
-            echo "使用今天的日期（正式發文方式）"
+            echo "使用今天的日期（正式發文方式，但測試模式下繞過檢查）"
             echo "正在發送電子報..."
-            node scripts/send-newsletter.js
+            node scripts/send-newsletter.js --test
           fi
           
           echo ""
