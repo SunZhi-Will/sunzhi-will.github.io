@@ -51,7 +51,7 @@ if (alreadyGenerated) {
     // 列出現有的文件以便診斷
     try {
         const entries = fs.readdirSync(blogDir, { withFileTypes: true });
-        const todayEntries = entries.filter(entry => 
+        const todayEntries = entries.filter(entry =>
             entry.isDirectory() && entry.name.startsWith(dateStr)
         );
         if (todayEntries.length > 0) {
