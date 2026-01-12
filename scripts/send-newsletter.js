@@ -290,9 +290,8 @@ function markdownToHtml(markdown) {
         if (orderedMatch) {
             closeListsToLevel(indentLevel);
 
-            // 確保當前層級有列表
+            // 確保當前層級有編號列表
             if (listStack.length <= indentLevel || !listStack[indentLevel] || !listStack[indentLevel].isOrdered) {
-                closeListsToLevel(indentLevel);
                 listStack.push({
                     level: indentLevel,
                     isOrdered: true,
@@ -435,6 +434,26 @@ async function sendNewsletter(slug) {
         return;
     }
 
+    // 檢查今天是否已經發送過電子報（避免重複發送）
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD 格式
+    const sentLogPath = path.join(__dirname, 'newsletter-sent.log');
+
+    try {
+        if (fs.existsSync(sentLogPath)) {
+            const sentLog = fs.readFileSync(sentLogPath, 'utf8').trim();
+            const lastSentDate = sentLog.split('\n').pop()?.split(' ')[0];
+
+            if (lastSentDate === today) {
+                console.log(`⚠️  Newsletter already sent today (${today}). Skipping to prevent duplicates.`);
+                console.log('   This is intentional to prevent sending multiple newsletters per day.');
+                return;
+            }
+        }
+    } catch (error) {
+        console.warn('⚠️  Could not check newsletter send history:', error.message);
+        // 繼續執行，不要因為檢查失敗而停止發送
+    }
+
     console.log(`\n📧 Sending newsletter for article: ${slug}...`);
 
     // 讀取文章內容
@@ -556,6 +575,18 @@ async function sendNewsletter(slug) {
     console.log(`\n📊 Newsletter sending completed:`);
     console.log(`   ✅ Sent: ${sentCount}`);
     console.log(`   ❌ Errors: ${errorCount}`);
+
+    // 如果成功發送了電子報，記錄發送狀態
+    if (sentCount > 0) {
+        try {
+            const timestamp = new Date().toISOString();
+            const logEntry = `${today} ${timestamp} ${slug} sent:${sentCount} errors:${errorCount}\n`;
+            fs.appendFileSync(sentLogPath, logEntry);
+            console.log(`   📝 Newsletter send status recorded for ${today}`);
+        } catch (error) {
+            console.warn('⚠️  Could not record newsletter send status:', error.message);
+        }
+    }
 }
 
 /**
