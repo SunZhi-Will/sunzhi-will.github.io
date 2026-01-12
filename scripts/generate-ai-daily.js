@@ -204,6 +204,17 @@ async function generateArticles() {
                     throw new Error(`Failed to create article files. zh: ${zhExists}, en: ${enExists}`);
                 }
 
+                // 創建成功標記文件，表示AI日報成功生成
+                const successMarkerPath = path.join(postFolder, '.generation-success');
+                const successData = {
+                    timestamp: new Date().toISOString(),
+                    date: dateStr,
+                    slug: slug,
+                    status: 'success'
+                };
+                fs.writeFileSync(successMarkerPath, JSON.stringify(successData, null, 2));
+                console.log(`   ✅ Created success marker: ${successMarkerPath}`);
+
                 // 清理超過十天的舊日報
                 console.log(`\n🧹 Cleaning up old reports...`);
                 cleanupOldReports(blogDir, 10);

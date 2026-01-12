@@ -638,6 +638,30 @@ function findLatestArticleForToday(dateStr) {
     return todayArticles[0];
 }
 
+/**
+ * 檢查文章是否成功生成（有成功標記文件）
+ */
+function isArticleSuccessfullyGenerated(slug) {
+    const postFolder = path.join(blogDir, slug);
+    const successMarkerPath = path.join(postFolder, '.generation-success');
+
+    try {
+        if (!fs.existsSync(successMarkerPath)) {
+            return false;
+        }
+
+        // 讀取並驗證標記文件內容
+        const markerContent = fs.readFileSync(successMarkerPath, 'utf8');
+        const markerData = JSON.parse(markerContent);
+
+        // 檢查標記文件是否有效
+        return markerData.status === 'success' && markerData.slug === slug;
+    } catch (error) {
+        console.warn(`⚠️  Could not read success marker for ${slug}:`, error.message);
+        return false;
+    }
+}
+
 // 主函數
 async function main() {
     const dateInfo = getDateInfo();
@@ -650,12 +674,23 @@ async function main() {
     const slug = findLatestArticleForToday(dateStr);
 
     if (!slug) {
-        console.error(`❌ Error: No article found for date ${dateStr}`);
-        console.error('   Please ensure an article exists for today, or specify a slug manually.');
-        process.exit(1);
+        console.log(`ℹ️  No article found for date ${dateStr}. This is normal if AI Daily Report hasn't run yet.`);
+        console.log('   Skipping newsletter sending.');
+        process.exit(0);
     }
 
     console.log(`Article slug: ${slug}`);
+
+    // 檢查文章是否成功生成（有成功標記文件）
+    const isSuccessfullyGenerated = isArticleSuccessfullyGenerated(slug);
+    if (!isSuccessfullyGenerated) {
+        console.log(`⚠️  Article found but generation was not successful (no success marker).`);
+        console.log('   This means the AI Daily Report process ran but failed to complete properly.');
+        console.log('   Skipping newsletter sending to avoid sending incomplete content.');
+        process.exit(0);
+    }
+
+    console.log(`✅ Article generation marker verified. Proceeding with newsletter sending.`);
 
     try {
         await sendNewsletter(slug);
