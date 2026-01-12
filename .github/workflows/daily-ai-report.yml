@@ -35,10 +35,8 @@ jobs:
       - name: Install dependencies
         run: |
           # 配置 npm 來處理網絡問題
-          npm config set fetch-retry-mintimeout 20000
-          npm config set fetch-retry-maxtimeout 120000
           npm config set fetch-retries 5
-          npm config set timeout 300000
+          npm config set fetch-timeout 300000
 
           # 如果 npm ci 失敗，重試一次
           if ! npm ci; then
