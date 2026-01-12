@@ -1,4 +1,4 @@
-export type Lang = 'zh-TW' | 'en';
+export type Lang = 'zh-TW' | 'en' | 'ja' | 'ko' | 'es' | 'fr' | 'de';
 
 export interface Translations {
     [key: string]: {
@@ -143,6 +143,24 @@ export interface Translations {
         teaching: {
             description: string;
             courses: string[];
+        };
+        verify: {
+            loading: string;
+            success: {
+                title: string;
+                message: string;
+            };
+            error: {
+                title: string;
+                missingParams: string;
+                serviceNotConfigured: string;
+                verificationError: string;
+                invalidLink: string;
+            };
+            actions: {
+                backToHome: string;
+                subscribeAgain: string;
+            };
         };
     };
 }

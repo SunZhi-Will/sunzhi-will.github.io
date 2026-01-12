@@ -159,9 +159,14 @@ function sendVerificationEmail(email, token, lang, blogUrl, types) {
                 
                 <!-- Footer -->
                 <div style="background-color: #0a0a0a; padding: 25px 30px; border-top: 1px solid #333333;">
-                    <p style="color: #999999; font-size: 12px; line-height: 1.6; margin: 0; text-align: center;">
+                    <p style="color: #999999; font-size: 12px; line-height: 1.6; margin: 0 0 15px 0; text-align: center;">
                         如果您沒有訂閱此電子報，請忽略此郵件。<br>
                         此郵件由系統自動發送，請勿直接回覆。
+                    </p>
+                    <p style="color: #666666; font-size: 11px; text-align: center; margin: 0;">
+                        <a href="${blogUrl}/unsubscribe" style="color: #888888; text-decoration: underline; transition: color 0.2s;">
+                            取消訂閱
+                        </a>
                     </p>
                 </div>
             </td>
@@ -222,9 +227,14 @@ function sendVerificationEmail(email, token, lang, blogUrl, types) {
                 
                 <!-- Footer -->
                 <div style="background-color: #0a0a0a; padding: 25px 30px; border-top: 1px solid #333333;">
-                    <p style="color: #999999; font-size: 12px; line-height: 1.6; margin: 0; text-align: center;">
+                    <p style="color: #999999; font-size: 12px; line-height: 1.6; margin: 0 0 15px 0; text-align: center;">
                         If you did not subscribe to this newsletter, please ignore this email.<br>
                         This is an automated email. Please do not reply directly.
+                    </p>
+                    <p style="color: #666666; font-size: 11px; text-align: center; margin: 0;">
+                        <a href="${blogUrl}/unsubscribe" style="color: #888888; text-decoration: underline; transition: color 0.2s;">
+                            Unsubscribe
+                        </a>
                     </p>
                 </div>
             </td>
@@ -308,10 +318,12 @@ function doPost(e) {
         if (e.parameter && e.parameter.email) {
             // 表單編碼格式
             const typesParam = e.parameter.types || '';
+            const action = e.parameter.action || 'subscribe';
             data = {
                 email: e.parameter.email,
                 types: typesParam ? (typesParam.includes(',') ? typesParam.split(',') : [typesParam]) : [],
-                lang: e.parameter.lang || 'zh-TW'
+                lang: e.parameter.lang || 'zh-TW',
+                action: action
             };
         } else if (e.postData && e.postData.contents) {
             // 嘗試解析 JSON（支援 application/json 和 text/plain）
@@ -391,12 +403,18 @@ function doPost(e) {
         }
         const types = Array.isArray(data.types) ? data.types : (data.types ? [data.types] : []);
         const lang = data.lang || 'zh-TW';
+        const action = data.action || 'subscribe';
 
         // 驗證 Email 格式
         if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             return ContentService.createTextOutput(
                 JSON.stringify({ success: false, message: 'Invalid email address' })
             ).setMimeType(ContentService.MimeType.JSON);
+        }
+
+        // 處理取消訂閱請求
+        if (action === 'unsubscribe') {
+            return handleUnsubscribe(email, lang);
         }
 
         // 驗證訂閱類型
@@ -914,5 +932,85 @@ function verifyEmail(email, token, returnJson) {
             </body>
             </html>
         `);
+    }
+}
+
+/**
+ * 處理取消訂閱請求
+ * @param {string} email - 要取消訂閱的 Email
+ * @param {string} lang - 語言設定
+ */
+function handleUnsubscribe(email, lang) {
+    try {
+        Logger.log('🔄 開始處理取消訂閱請求...');
+        const maskedEmail = email.substring(0, 3) + '***@' + email.split('@')[1];
+        Logger.log('📧 Email: ' + maskedEmail);
+
+        const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+        const dataRange = sheet.getDataRange();
+        const values = dataRange.getValues();
+
+        // 從第二行開始查找（第一行是標題）
+        for (let i = 1; i < values.length; i++) {
+            const rowEmail = normalizeEmail(values[i][0]?.toString());
+            const isVerified = values[i][4] === true || values[i][4] === 'TRUE' || values[i][4] === 'true';
+
+            if (rowEmail === email) {
+                // 檢查是否已經取消訂閱（未驗證或已刪除）
+                if (!isVerified) {
+                    Logger.log('⚠️ 此 Email 尚未驗證或已經取消訂閱');
+                    return ContentService.createTextOutput(
+                        JSON.stringify({
+                            success: false,
+                            message: lang === 'zh-TW'
+                                ? '此 Email 尚未驗證或已經取消訂閱。'
+                                : 'This email is not verified or has already been unsubscribed.',
+                            lang: lang
+                        })
+                    ).setMimeType(ContentService.MimeType.JSON);
+                }
+
+                // 取消訂閱：將驗證狀態設為 false，並清除驗證相關欄位
+                sheet.getRange(i + 1, 5).setValue(false); // Verified (第 5 欄)
+                sheet.getRange(i + 1, 6).setValue(''); // VerifyToken (第 6 欄)
+                sheet.getRange(i + 1, 7).setValue(''); // TokenExpiry (第 7 欄)
+
+                Logger.log('✅ 取消訂閱成功');
+
+                return ContentService.createTextOutput(
+                    JSON.stringify({
+                        success: true,
+                        message: lang === 'zh-TW'
+                            ? '取消訂閱成功。您將不會再收到我們的電子報。'
+                            : 'Successfully unsubscribed. You will no longer receive our newsletter.',
+                        lang: lang
+                    })
+                ).setMimeType(ContentService.MimeType.JSON);
+            }
+        }
+
+        // 找不到 Email
+        Logger.log('❌ 找不到匹配的 Email: ' + maskedEmail);
+        return ContentService.createTextOutput(
+            JSON.stringify({
+                success: false,
+                message: lang === 'zh-TW'
+                    ? '找不到此 Email 地址的訂閱記錄。'
+                    : 'No subscription found for this email address.',
+                lang: lang
+            })
+        ).setMimeType(ContentService.MimeType.JSON);
+
+    } catch (error) {
+        Logger.log('❌ 取消訂閱錯誤: ' + error.toString());
+        return ContentService.createTextOutput(
+            JSON.stringify({
+                success: false,
+                message: lang === 'zh-TW'
+                    ? '取消訂閱過程中發生錯誤，請稍後再試。'
+                    : 'An error occurred during unsubscribe. Please try again later.',
+                lang: lang
+            })
+        ).setMimeType(ContentService.MimeType.JSON);
     }
 }

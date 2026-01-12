@@ -390,9 +390,36 @@ function generateNewsletterHtml(article, slug, lang, blogUrl) {
     <table role="presentation" style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #1a1a1a; border-radius: 16px; box-shadow: 0 10px 40px rgba(192, 192, 192, 0.1); overflow: hidden; border: 1px solid #333333;">
         <tr>
             <td style="padding: 0;">
-                <!-- Header -->
-                <div style="background-color: #0a0a0a; padding: 40px 30px; border-bottom: 1px solid #333333;">
-                    <h1 style="color: #e8e8e8; margin-top: 0; margin-bottom: 10px; font-size: 28px; font-weight: 700; text-shadow: 0 2px 8px rgba(192, 192, 192, 0.3);">${title}</h1>
+                <!-- Site Header -->
+                <div style="background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); padding: 25px 30px; border-bottom: 1px solid #333333;">
+                    <div style="display: table; width: 100%;">
+                        <div style="display: table-cell; vertical-align: middle;">
+                            <!-- Logo/Brand -->
+                            <div style="display: inline-block; margin-right: 15px;">
+                                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000000; font-size: 18px; box-shadow: 0 2px 8px rgba(192, 192, 192, 0.3);">
+                                    S
+                                </div>
+                            </div>
+                            <div style="display: inline-block; vertical-align: middle;">
+                                <h2 style="color: #e8e8e8; margin: 0; font-size: 20px; font-weight: 600; text-shadow: 0 1px 3px rgba(192, 192, 192, 0.2);">
+                                    ${isZh ? 'Sun 的技術分享' : "Sun's Tech Blog"}
+                                </h2>
+                                <p style="color: #c0c0c0; margin: 0; font-size: 12px; opacity: 0.8;">
+                                    ${isZh ? 'AI 與區塊鏈技術探索' : 'AI & Blockchain Technology Exploration'}
+                                </p>
+                            </div>
+                        </div>
+                        <div style="display: table-cell; text-align: right; vertical-align: middle;">
+                            <a href="${blogUrl}" style="color: #c0c0c0; text-decoration: none; font-size: 12px; padding: 6px 12px; border: 1px solid #333333; border-radius: 4px; transition: all 0.2s;">
+                                ${isZh ? '訪問網站' : 'Visit Site'}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article Header -->
+                <div style="background-color: #0a0a0a; padding: 30px 30px; border-bottom: 1px solid #333333;">
+                    <h1 style="color: #e8e8e8; margin-top: 0; margin-bottom: 10px; font-size: 26px; font-weight: 700; text-shadow: 0 2px 8px rgba(192, 192, 192, 0.3); line-height: 1.3;">${title}</h1>
                     <p style="color: #c0c0c0; font-size: 14px; margin: 0;">${date}</p>
                 </div>
                 
@@ -421,8 +448,17 @@ function generateNewsletterHtml(article, slug, lang, blogUrl) {
                             ${isZh ? '看網頁版' : 'View on Web'}
                         </a>
                     </div>
-                    <p style="color: #999999; font-size: 12px; text-align: center; margin: 0; line-height: 1.6;">
+                    <p style="color: #999999; font-size: 12px; text-align: center; margin: 0 0 15px 0; line-height: 1.6;">
                         ${isZh ? '這是由 AI 自動生成的每日日報。' : 'This is an AI-generated daily report.'}
+                    </p>
+                    <p style="color: #666666; font-size: 11px; text-align: center; margin: 0; line-height: 1.5;">
+                        <a href="${blogUrl}/unsubscribe" style="color: #888888; text-decoration: underline; transition: color 0.2s;">
+                            ${isZh ? '取消訂閱' : 'Unsubscribe'}
+                        </a>
+                        <span style="color: #666666; margin: 0 8px;">|</span>
+                        <a href="${blogUrl}" style="color: #888888; text-decoration: underline; transition: color 0.2s;">
+                            ${isZh ? 'Sun 的網站' : "Sun's Website"}
+                        </a>
                     </p>
                 </div>
             </td>

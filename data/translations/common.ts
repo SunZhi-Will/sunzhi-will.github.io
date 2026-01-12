@@ -163,6 +163,24 @@ Sun 相信偉大的技術不僅僅是演算法——而是要建構人們信任�
                 'AI 應用開發實務分享',
                 '指導學生專案開發'
             ]
+        },
+        verify: {
+            loading: '正在驗證您的 Email...',
+            success: {
+                title: 'Email 驗證成功！',
+                message: '感謝您驗證您的 Email 地址。您現在將開始收到我們的電子報。'
+            },
+            error: {
+                title: '驗證失敗',
+                missingParams: '缺少必要的驗證參數',
+                serviceNotConfigured: '驗證服務未配置',
+                verificationError: '驗證過程中發生錯誤，請稍後再試',
+                invalidLink: '無效的驗證連結或連結已過期。'
+            },
+            actions: {
+                backToHome: '返回首頁',
+                subscribeAgain: '重新訂閱'
+            }
         }
     },
     'en': {
@@ -329,6 +347,24 @@ Sun believes great technology isn't just about algorithms—it's about building 
                 'AI Application Development Sharing',
                 'Student Project Guidance'
             ]
+        },
+        verify: {
+            loading: 'Verifying your email...',
+            success: {
+                title: 'Email Verified Successfully!',
+                message: 'Thank you for verifying your email address. You will now receive our newsletter.'
+            },
+            error: {
+                title: 'Verification Failed',
+                missingParams: 'Missing required verification parameters',
+                serviceNotConfigured: 'Verification service not configured',
+                verificationError: 'An error occurred during verification. Please try again later.',
+                invalidLink: 'Invalid verification link or link has expired.'
+            },
+            actions: {
+                backToHome: 'Back to Home',
+                subscribeAgain: 'Subscribe Again'
+            }
         }
     }
 };

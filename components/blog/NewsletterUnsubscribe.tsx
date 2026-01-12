@@ -4,58 +4,43 @@ import { useState } from 'react';
 import { Lang } from '@/types';
 import { useTheme } from '@/app/blog/ThemeProvider';
 
-interface NewsletterSubscribeProps {
+interface NewsletterUnsubscribeProps {
     lang: Lang;
 }
 
-type SubscriptionType = 'all' | 'ai-daily' | 'blockchain' | 'sun-written';
-
-const subscriptionTypes = {
-    'zh-TW': {
-        all: '全部內容',
-        'ai-daily': 'AI日報',
-        blockchain: '區塊鏈日報',
-        'sun-written': 'Sun撰寫'
-    },
-    'en': {
-        all: 'All Content',
-        'ai-daily': 'AI Daily',
-        blockchain: 'Blockchain Daily',
-        'sun-written': 'Sun Written'
-    }
-};
-
 const translations = {
     'zh-TW': {
-        title: '訂閱電子報',
-        subtitle: '選擇您想接收的內容類型',
+        title: '取消訂閱電子報',
+        subtitle: '輸入您的 Email 地址來取消訂閱',
         emailPlaceholder: '輸入您的 Email',
-        subscribe: '訂閱',
-        subscribing: '訂閱中...',
-        success: '訂閱成功！請檢查您的 Email 進行驗證。',
-        error: '訂閱失敗，請稍後再試',
-        invalidEmail: '請輸入有效的 Email 地址'
+        unsubscribe: '取消訂閱',
+        unsubscribing: '取消訂閱中...',
+        success: '取消訂閱成功。您將不會再收到我們的電子報。',
+        error: '取消訂閱失敗，請稍後再試',
+        invalidEmail: '請輸入有效的 Email 地址',
+        notFound: '找不到此 Email 的訂閱記錄',
+        alreadyUnsubscribed: '此 Email 已經取消訂閱',
     },
     'en': {
-        title: 'Subscribe Newsletter',
-        subtitle: 'Choose the content types you want to receive',
+        title: 'Unsubscribe from Newsletter',
+        subtitle: 'Enter your email address to unsubscribe',
         emailPlaceholder: 'Enter your Email',
-        subscribe: 'Subscribe',
-        subscribing: 'Subscribing...',
-        success: 'Subscription successful! Please check your email to verify.',
-        error: 'Subscription failed, please try again',
-        invalidEmail: 'Please enter a valid Email address'
+        unsubscribe: 'Unsubscribe',
+        unsubscribing: 'Unsubscribing...',
+        success: 'Successfully unsubscribed. You will no longer receive our newsletter.',
+        error: 'Unsubscribe failed, please try again',
+        invalidEmail: 'Please enter a valid Email address',
+        notFound: 'No subscription found for this email address',
+        alreadyUnsubscribed: 'This email has already been unsubscribed',
     }
 };
 
-export function NewsletterSubscribe({ lang }: NewsletterSubscribeProps) {
+export function NewsletterUnsubscribe({ lang }: NewsletterUnsubscribeProps) {
     const { theme } = useTheme();
     const isDark = theme === 'dark';
     const t = translations[lang];
-    const types = subscriptionTypes[lang];
 
     const [email, setEmail] = useState('');
-    const [selectedType, setSelectedType] = useState<SubscriptionType>('all');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -72,24 +57,21 @@ export function NewsletterSubscribe({ lang }: NewsletterSubscribeProps) {
             return;
         }
 
-
         setIsSubmitting(true);
 
         try {
             // 從環境變數獲取 Google Apps Script URL
-            // 在 Next.js 靜態導出中，環境變數需要在建置時設置
             const scriptUrl = process.env.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_URL;
 
             if (!scriptUrl) {
-                // 只在開發環境記錄日誌（安全措施）
                 if (process.env.NODE_ENV === 'development') {
                     console.error('NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_URL is not set');
                 }
-                setMessage({ 
-                    type: 'error', 
-                    text: lang === 'zh-TW' 
-                        ? '訂閱服務未配置，請聯繫管理員' 
-                        : 'Subscription service not configured, please contact administrator' 
+                setMessage({
+                    type: 'error',
+                    text: lang === 'zh-TW'
+                        ? '取消訂閱服務未配置，請聯繫管理員'
+                        : 'Unsubscribe service not configured, please contact administrator'
                 });
                 setIsSubmitting(false);
                 return;
@@ -99,24 +81,21 @@ export function NewsletterSubscribe({ lang }: NewsletterSubscribeProps) {
             try {
                 new URL(scriptUrl);
             } catch (urlError) {
-                // 只在開發環境記錄日誌（安全措施）
                 if (process.env.NODE_ENV === 'development') {
                     console.error('Invalid script URL:', scriptUrl, urlError);
                 }
-                setMessage({ 
-                    type: 'error', 
-                    text: lang === 'zh-TW' 
-                        ? '訂閱服務配置錯誤，請聯繫管理員' 
-                        : 'Subscription service configuration error, please contact administrator' 
+                setMessage({
+                    type: 'error',
+                    text: lang === 'zh-TW'
+                        ? '取消訂閱服務配置錯誤，請聯繫管理員'
+                        : 'Unsubscribe service configuration error, please contact administrator'
                 });
                 setIsSubmitting(false);
                 return;
             }
 
-            // 只在開發環境記錄日誌（安全措施）
             if (process.env.NODE_ENV === 'development') {
-                console.log('Submitting to:', scriptUrl);
-                console.log('Payload:', { email: email.substring(0, 3) + '***', type: selectedType, lang });
+                console.log('Unsubscribing email:', email.substring(0, 3) + '***');
             }
 
             const controller = new AbortController();
@@ -125,8 +104,7 @@ export function NewsletterSubscribe({ lang }: NewsletterSubscribeProps) {
             // 使用表單提交方式避免 CORS 預檢請求
             const formData = new URLSearchParams();
             formData.append('email', email);
-            formData.append('types', selectedType);
-            formData.append('lang', lang);
+            formData.append('action', 'unsubscribe');
 
             const response = await fetch(scriptUrl, {
                 method: 'POST',
@@ -141,49 +119,43 @@ export function NewsletterSubscribe({ lang }: NewsletterSubscribeProps) {
             clearTimeout(timeoutId);
 
             if (!response.ok) {
-                // 只在開發環境記錄日誌（安全措施）
                 if (process.env.NODE_ENV === 'development') {
                     console.error('Response not OK:', response.status, response.statusText);
                     const errorText = await response.text().catch(() => 'Unknown error');
                     console.error('Error response:', errorText);
                 } else {
-                    // 生產環境：只讀取錯誤文本但不記錄
                     await response.text().catch(() => 'Unknown error');
                 }
-                setMessage({ 
-                    type: 'error', 
-                    text: lang === 'zh-TW' 
-                        ? `訂閱失敗 (${response.status})，請稍後再試` 
-                        : `Subscription failed (${response.status}), please try again` 
+                setMessage({
+                    type: 'error',
+                    text: lang === 'zh-TW'
+                        ? `取消訂閱失敗 (${response.status})，請稍後再試`
+                        : `Unsubscribe failed (${response.status}), please try again`
                 });
                 setIsSubmitting(false);
                 return;
             }
 
             const responseText = await response.text();
-            // 只在開發環境記錄日誌（安全措施）
             if (process.env.NODE_ENV === 'development') {
                 console.log('Response text:', responseText);
             }
-            
+
             let data;
             try {
                 data = JSON.parse(responseText);
             } catch (parseError) {
-                // 只在開發環境記錄日誌（安全措施）
                 if (process.env.NODE_ENV === 'development') {
                     console.error('Failed to parse JSON response:', parseError);
                 }
-                // 如果無法解析 JSON，檢查響應文本
                 if (responseText.toLowerCase().includes('success') || response.status === 200) {
-                    setMessage({ 
-                        type: 'success', 
-                        text: lang === 'zh-TW' 
-                            ? '訂閱請求已發送' 
-                            : 'Subscription request sent' 
+                    setMessage({
+                        type: 'success',
+                        text: lang === 'zh-TW'
+                            ? '取消訂閱請求已處理'
+                            : 'Unsubscribe request processed'
                     });
                     setEmail('');
-                    setSelectedType('all');
                 } else {
                     setMessage({ type: 'error', text: t.error });
                 }
@@ -192,37 +164,40 @@ export function NewsletterSubscribe({ lang }: NewsletterSubscribeProps) {
             }
 
             if (data.success) {
-                // 優先使用後端返回的訊息（可能包含驗證郵件發送狀態），否則使用前端翻譯
                 const successMessage = data.message || t.success;
                 setMessage({ type: 'success', text: successMessage });
                 setEmail('');
-                setSelectedType('all');
             } else {
-                setMessage({ type: 'error', text: data.message || t.error });
+                // 處理特定的錯誤情況
+                let errorMessage = data.message || t.error;
+                if (data.message && data.message.includes('not found')) {
+                    errorMessage = t.notFound;
+                } else if (data.message && data.message.includes('already unsubscribed')) {
+                    errorMessage = t.alreadyUnsubscribed;
+                }
+                setMessage({ type: 'error', text: errorMessage });
             }
         } catch (error) {
-            // 只在開發環境記錄日誌（安全措施）
             if (process.env.NODE_ENV === 'development') {
-                console.error('Subscription error:', error);
+                console.error('Unsubscribe error:', error);
             }
             const errorMessage = error instanceof Error ? error.message : String(error);
-            
-            // 提供更詳細的錯誤訊息
+
             let userMessage = t.error;
             if (error instanceof Error && error.name === 'AbortError') {
-                userMessage = lang === 'zh-TW' 
-                    ? '請求超時，請稍後再試' 
+                userMessage = lang === 'zh-TW'
+                    ? '請求超時，請稍後再試'
                     : 'Request timeout, please try again';
             } else if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
-                userMessage = lang === 'zh-TW' 
-                    ? '網路連接失敗，請檢查網路連線或聯繫管理員' 
+                userMessage = lang === 'zh-TW'
+                    ? '網路連接失敗，請檢查網路連線或聯繫管理員'
                     : 'Network connection failed, please check your internet connection or contact administrator';
             } else if (errorMessage.includes('CORS')) {
-                userMessage = lang === 'zh-TW' 
-                    ? '跨域請求失敗，請聯繫管理員檢查服務配置' 
+                userMessage = lang === 'zh-TW'
+                    ? '跨域請求失敗，請聯繫管理員檢查服務配置'
                     : 'CORS request failed, please contact administrator to check service configuration';
             }
-            
+
             setMessage({ type: 'error', text: userMessage });
         } finally {
             setIsSubmitting(false);
@@ -231,14 +206,10 @@ export function NewsletterSubscribe({ lang }: NewsletterSubscribeProps) {
 
     return (
         <div>
-            <h3 className={`text-sm font-semibold mb-2 ${
-                isDark ? 'text-gray-200' : 'text-gray-900'
-            }`}>
+            <h3 className={`text-sm font-semibold mb-2 ${isDark ? 'text-gray-200' : 'text-gray-900'}`}>
                 {t.title}
             </h3>
-            <p className={`text-xs mb-3 ${
-                isDark ? 'text-gray-400' : 'text-gray-600'
-            }`}>
+            <p className={`text-xs mb-3 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                 {t.subtitle}
             </p>
 
@@ -258,35 +229,17 @@ export function NewsletterSubscribe({ lang }: NewsletterSubscribeProps) {
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                 />
 
-                {/* 訂閱類型選擇 - 下拉選單 */}
-                <select
-                    value={selectedType}
-                    onChange={(e) => setSelectedType(e.target.value as SubscriptionType)}
-                    disabled={isSubmitting}
-                    className={`w-full px-3 py-2 text-xs rounded-lg border transition-colors ${
-                        isDark
-                            ? 'bg-gray-700/50 border-gray-600 text-gray-200 focus:border-gray-500 focus:bg-gray-700/70'
-                            : 'bg-white border-gray-300 text-gray-900 focus:border-gray-400 focus:bg-gray-50'
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
-                >
-                    {(['all', 'ai-daily', 'blockchain', 'sun-written'] as SubscriptionType[]).map((type) => (
-                        <option key={type} value={type}>
-                            {types[type]}
-                        </option>
-                    ))}
-                </select>
-
                 {/* 提交按鈕 */}
                 <button
                     type="submit"
                     disabled={isSubmitting || !email}
                     className={`w-full px-3 py-2 text-xs font-medium rounded-lg transition-all ${
                         isDark
-                            ? 'bg-blue-600 hover:bg-blue-700 text-white disabled:bg-gray-700 disabled:text-gray-500'
-                            : 'bg-blue-500 hover:bg-blue-600 text-white disabled:bg-gray-300 disabled:text-gray-500'
+                            ? 'bg-red-600 hover:bg-red-700 text-white disabled:bg-gray-700 disabled:text-gray-500'
+                            : 'bg-red-500 hover:bg-red-600 text-white disabled:bg-gray-300 disabled:text-gray-500'
                     } disabled:cursor-not-allowed`}
                 >
-                    {isSubmitting ? t.subscribing : t.subscribe}
+                    {isSubmitting ? t.unsubscribing : t.unsubscribe}
                 </button>
 
                 {/* 訊息顯示 */}
@@ -300,18 +253,6 @@ export function NewsletterSubscribe({ lang }: NewsletterSubscribeProps) {
                     </div>
                 )}
             </form>
-
-            {/* 取消訂閱連結 */}
-            <div className="mt-3 text-center">
-                <a
-                    href="/unsubscribe"
-                    className={`text-xs transition-colors ${
-                        isDark ? 'text-gray-500 hover:text-gray-400' : 'text-gray-500 hover:text-gray-600'
-                    }`}
-                >
-                    {lang === 'zh-TW' ? '取消訂閱' : 'Unsubscribe'}
-                </a>
-            </div>
         </div>
     );
 }
