@@ -234,7 +234,11 @@ function markdownToHtml(markdown) {
             if (list.items.length > 0) {
                 const listTag = list.isOrdered ? 'ol' : 'ul';
                 const padding = 24 + (list.level * 20); // 每層增加20px縮排
-                const listHtml = `<${listTag} style="margin: 12px 0; padding-left: ${padding}px; line-height: 1.7;">${list.items.join('')}</${listTag}>`;
+                // 為有序列表添加正確的樣式，確保顯示連續編號
+                const listStyle = list.isOrdered
+                    ? `margin: 12px 0; padding-left: ${padding}px; line-height: 1.7; list-style-type: decimal; counter-reset: item;`
+                    : `margin: 12px 0; padding-left: ${padding}px; line-height: 1.7;`;
+                const listHtml = `<${listTag} style="${listStyle}">${list.items.join('')}</${listTag}>`;
 
                 if (listStack.length > 0) {
                     // 將這個列表添加到上一層的最後一個項目中
@@ -288,10 +292,9 @@ function markdownToHtml(markdown) {
         // 處理編號列表項目
         const orderedMatch = trimmedLine.match(/^(\d+)\.\s+(.+)$/);
         if (orderedMatch) {
-            closeListsToLevel(indentLevel);
-
-            // 確保當前層級有編號列表
-            if (listStack.length <= indentLevel || !listStack[indentLevel] || !listStack[indentLevel].isOrdered) {
+            // 只有當堆疊中沒有列表，或者當前層級的列表不是有序列表時，才關閉列表
+            if (listStack.length === 0 || listStack[listStack.length - 1].level !== indentLevel || !listStack[listStack.length - 1].isOrdered) {
+                closeListsToLevel(indentLevel);
                 listStack.push({
                     level: indentLevel,
                     isOrdered: true,
@@ -300,17 +303,15 @@ function markdownToHtml(markdown) {
             }
 
             const listContent = orderedMatch[2];
-            listStack[indentLevel].items.push(`<li style="margin: 12px 0; color: #d4d4d4; line-height: 1.8; padding-left: 4px;">${listContent}</li>`);
+            listStack[listStack.length - 1].items.push(`<li style="margin: 12px 0; color: #d4d4d4; line-height: 1.8; padding-left: 4px; display: list-item;">${listContent}</li>`);
             continue;
         }
 
         // 處理無序列表項目（以 * 或 - 開頭）
         const unorderedMatch = trimmedLine.match(/^[\*\-]\s+(.+)$/);
         if (unorderedMatch) {
-            closeListsToLevel(indentLevel);
-
-            // 確保當前層級有列表
-            if (listStack.length <= indentLevel || !listStack[indentLevel] || listStack[indentLevel].isOrdered) {
+            // 只有當堆疊中沒有列表，或者當前層級的列表不是無序列表時，才關閉列表
+            if (listStack.length === 0 || listStack[listStack.length - 1].level !== indentLevel || listStack[listStack.length - 1].isOrdered) {
                 closeListsToLevel(indentLevel);
                 listStack.push({
                     level: indentLevel,
@@ -320,7 +321,7 @@ function markdownToHtml(markdown) {
             }
 
             const listContent = unorderedMatch[1];
-            listStack[indentLevel].items.push(`<li style="margin: 12px 0; color: #d4d4d4; line-height: 1.8; padding-left: 4px;">${listContent}</li>`);
+            listStack[listStack.length - 1].items.push(`<li style="margin: 12px 0; color: #d4d4d4; line-height: 1.8; padding-left: 4px;">${listContent}</li>`);
             continue;
         }
 
@@ -365,9 +366,13 @@ function generateNewsletterHtml(article, slug, lang, blogUrl) {
     const title = meta.title || '';
     const description = meta.description || '';
     const date = meta.date || '';
+    const coverImage = meta.coverImage || '';
 
     // 生成文章 URL
     const articleUrl = `${blogUrl}/blog/${slug}`;
+
+    // 生成封面圖 URL（如果有的話）
+    const coverImageUrl = coverImage ? `${blogUrl}/content/blog/${slug}/${coverImage}` : '';
 
     // 轉換 Markdown 為 HTML
     const htmlBody = markdownToHtml(body);
@@ -389,6 +394,13 @@ function generateNewsletterHtml(article, slug, lang, blogUrl) {
                     <h1 style="color: #e8e8e8; margin-top: 0; margin-bottom: 10px; font-size: 28px; font-weight: 700; text-shadow: 0 2px 8px rgba(192, 192, 192, 0.3);">${title}</h1>
                     <p style="color: #c0c0c0; font-size: 14px; margin: 0;">${date}</p>
                 </div>
+                
+                ${coverImageUrl ? `
+                <!-- Cover Image -->
+                <div style="width: 100%; overflow: hidden; background-color: #0a0a0a;">
+                    <img src="${coverImageUrl}" alt="${title}" style="width: 100%; height: auto; display: block; border: none;">
+                </div>
+                ` : ''}
                 
                 <!-- Content -->
                 <div style="padding: 50px 40px; background-color: #1a1a1a;">
