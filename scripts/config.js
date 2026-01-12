@@ -18,7 +18,8 @@ const modelNames = [
 // 圖片生成模型列表（按優先順序）
 // 注意：圖片生成模型可能有配額限制，失敗時會繼續執行但不生成圖片
 const imageModelCandidates = [
-    'gemini-2.5-flash-image',   // Gemini 2.5 Flash Image（優先使用）
+    'gemini-2.5-flash-image',   // Gemini 2.5 Flash Image（目前可用）
+    // 'imagen-4.0-generate-001',   // Google Imagen 4.0（需要付費帳戶）
     // 注意：如果配額用完或模型不可用，會跳過圖片生成
 ];
 
