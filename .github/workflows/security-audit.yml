@@ -175,7 +175,8 @@ jobs:
   code-scanning:
     name: Code Security Scanning
     runs-on: ubuntu-latest
-    
+    if: github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -201,10 +202,24 @@ jobs:
           base: ${{ github.event.repository.default_branch }}
           head: HEAD
 
+  secret-scanning:
+    name: Secret Scanning (Scheduled)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for hardcoded secrets (full scan)
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+
   security-summary:
     name: Security Summary
     runs-on: ubuntu-latest
-    needs: [security-audit, dependency-review, code-scanning]
+    needs: [security-audit, dependency-review, code-scanning, secret-scanning]
     if: always()
     
     steps:
@@ -219,6 +234,7 @@ jobs:
           echo "- ✅ Dependency audit completed" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Code scanning completed" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Secret scanning completed" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Scheduled secret scanning completed" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "View detailed results in the workflow artifacts." >> $GITHUB_STEP_SUMMARY
 
