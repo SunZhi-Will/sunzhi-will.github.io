@@ -33,7 +33,19 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          # 配置 npm 來處理網絡問題
+          npm config set fetch-retry-mintimeout 20000
+          npm config set fetch-retry-maxtimeout 120000
+          npm config set fetch-retries 5
+          npm config set network-timeout 300000
+
+          # 如果 npm ci 失敗，重試一次
+          if ! npm ci; then
+            echo "npm ci failed, retrying..."
+            npm cache clean --force
+            npm ci
+          fi
 
       - name: Generate AI Daily Report
         env:
