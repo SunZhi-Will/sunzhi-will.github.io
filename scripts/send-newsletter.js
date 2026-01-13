@@ -666,9 +666,13 @@ async function sendNewsletter(slug) {
 
             // 發送成功後，更新用戶的 LastArticleSent 欄位
             try {
+                console.log(`   🔄 Updating LastArticleSent for ${subscription.email} with slug: ${slug}`);
                 await updateLastArticleSent(subscription.email, slug);
+                console.log(`   ✅ LastArticleSent updated successfully for ${subscription.email}`);
             } catch (updateError) {
-                console.warn(`   ⚠️  Failed to update LastArticleSent for ${subscription.email}:`, updateError.message);
+                console.error(`   ❌ CRITICAL: Failed to update LastArticleSent for ${subscription.email}:`, updateError.message);
+                console.error(`   This means duplicate prevention won't work!`);
+                console.error(`   Please check GOOGLE_APPS_SCRIPT_URL and redeploy Google Apps Script`);
             }
 
             // 使用遮罩的 Email 記錄日誌（安全措施）
