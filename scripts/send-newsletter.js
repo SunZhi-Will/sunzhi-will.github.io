@@ -29,6 +29,55 @@ function normalizeEmail(email) {
     return localPart + '@' + domain;
 }
 
+/**
+ * 更新用戶的 LastArticleSent 欄位
+ * @param {string} email - 用戶的Email地址
+ * @param {string} articleSlug - 文章的slug
+ */
+async function updateLastArticleSent(email, articleSlug) {
+    const scriptUrl = process.env.GOOGLE_APPS_SCRIPT_URL;
+
+    if (!scriptUrl) {
+        throw new Error('GOOGLE_APPS_SCRIPT_URL is not configured');
+    }
+
+    // 發送更新請求到 Google Apps Script
+    const formData = new URLSearchParams();
+    formData.append('email', email);
+    formData.append('action', 'update_last_article');
+    formData.append('article_slug', articleSlug);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+    try {
+        const response = await fetch(scriptUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: formData.toString(),
+            signal: controller.signal,
+            mode: 'cors',
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseText = await response.text();
+        const data = JSON.parse(responseText);
+
+        if (!data.success) {
+            throw new Error(data.message || 'Failed to update LastArticleSent');
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
 // 檢查是否安裝了 nodemailer
 let nodemailer;
 try {
@@ -78,7 +127,7 @@ async function getSubscriptionsFromGoogleSheets() {
             const sheets = google.sheets({ version: 'v4', auth });
             const response = await sheets.spreadsheets.values.get({
                 spreadsheetId,
-                range: 'A2:G', // 跳過標題行，包含所有欄位（Email, Types, Lang, SubscribedAt, Verified, VerifyToken, TokenExpiry）
+                range: 'A2:H', // 跳過標題行，包含所有欄位（Email, Types, Lang, SubscribedAt, Verified, VerifyToken, TokenExpiry, LastArticleSent）
             });
 
             const rows = response.data.values || [];
@@ -93,6 +142,7 @@ async function getSubscriptionsFromGoogleSheets() {
                         lang: row[2] || 'zh-TW',
                         subscribedAt: row[3] || '',
                         verified: row[4] === 'TRUE' || row[4] === true || row[4] === 'true',
+                        lastArticleSent: row[7] || '', // LastArticleSent (第8欄，索引7)
                     };
                 });
         } catch (error) {
@@ -394,12 +444,6 @@ function generateNewsletterHtml(article, slug, lang, blogUrl) {
                 <div style="background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); padding: 25px 30px; border-bottom: 1px solid #333333;">
                     <div style="display: table; width: 100%;">
                         <div style="display: table-cell; vertical-align: middle;">
-                            <!-- Logo/Brand -->
-                            <div style="display: inline-block; margin-right: 15px;">
-                                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000000; font-size: 18px; box-shadow: 0 2px 8px rgba(192, 192, 192, 0.3);">
-                                    S
-                                </div>
-                            </div>
                             <div style="display: inline-block; vertical-align: middle;">
                                 <h2 style="color: #e8e8e8; margin: 0; font-size: 20px; font-weight: 600; text-shadow: 0 1px 3px rgba(192, 192, 192, 0.2);">
                                     ${isZh ? 'Sun 的技術分享' : "Sun's Tech Blog"}
@@ -410,8 +454,8 @@ function generateNewsletterHtml(article, slug, lang, blogUrl) {
                             </div>
                         </div>
                         <div style="display: table-cell; text-align: right; vertical-align: middle;">
-                            <a href="${blogUrl}" style="color: #c0c0c0; text-decoration: none; font-size: 12px; padding: 6px 12px; border: 1px solid #333333; border-radius: 4px; transition: all 0.2s;">
-                                ${isZh ? '訪問網站' : 'Visit Site'}
+                            <a href="${articleUrl}" style="color: #c0c0c0; text-decoration: none; font-size: 12px; padding: 6px 12px; border: 1px solid #333333; border-radius: 4px; transition: all 0.2s;">
+                                ${isZh ? '閱讀全文' : 'Read More'}
                             </a>
                         </div>
                     </div>
@@ -556,6 +600,14 @@ async function sendNewsletter(slug) {
             continue;
         }
 
+        // 檢查是否已經發送過這篇文章
+        if (subscription.lastArticleSent === slug) {
+            // 使用遮罩的 Email 記錄日誌（安全措施）
+            const maskedEmail = subscription.email.substring(0, 3) + '***@' + subscription.email.split('@')[1];
+            console.log(`   Skipping ${maskedEmail} (already received this article: ${slug})`);
+            continue;
+        }
+
         try {
             const lang = subscription.lang || 'zh-TW';
             const data = lang === 'zh-TW' ? article.zh : article.en;
@@ -611,6 +663,14 @@ async function sendNewsletter(slug) {
 
             // 發送郵件
             await transporter.sendMail(mailOptions);
+
+            // 發送成功後，更新用戶的 LastArticleSent 欄位
+            try {
+                await updateLastArticleSent(subscription.email, slug);
+            } catch (updateError) {
+                console.warn(`   ⚠️  Failed to update LastArticleSent for ${subscription.email}:`, updateError.message);
+            }
+
             // 使用遮罩的 Email 記錄日誌（安全措施）
             const maskedEmail = subscription.email.substring(0, 3) + '***@' + subscription.email.split('@')[1];
             console.log(`   ✅ Sent to ${maskedEmail}`);

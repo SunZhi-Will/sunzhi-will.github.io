@@ -329,20 +329,36 @@ function doPost(e) {
             // 嘗試解析 JSON（支援 application/json 和 text/plain）
             try {
                 const content = e.postData.contents;
-                // 嘗試解析為 JSON
+                // 首先嘗試解析為 JSON
                 data = JSON.parse(content);
                 // 如果 types 是數組，保持原樣；如果是字符串，轉換為數組
                 if (data.types && typeof data.types === 'string') {
                     data.types = [data.types];
                 }
             } catch (jsonError) {
-                // JSON 解析失敗，返回錯誤
-                return ContentService.createTextOutput(
-                    JSON.stringify({
-                        success: false,
-                        message: 'Invalid request format. Expected JSON or form-encoded data.'
-                    })
-                ).setMimeType(ContentService.MimeType.JSON);
+                // JSON 解析失敗，嘗試解析為表單編碼數據
+                try {
+                    const formData = content.split('&').reduce((acc, pair) => {
+                        const [key, value] = pair.split('=');
+                        acc[decodeURIComponent(key)] = decodeURIComponent(value || '');
+                        return acc;
+                    }, {});
+
+                    data = {
+                        email: formData.email,
+                        types: formData.types ? (formData.types.includes(',') ? formData.types.split(',') : [formData.types]) : [],
+                        lang: formData.lang || 'zh-TW',
+                        action: formData.action || 'subscribe'
+                    };
+                } catch (formError) {
+                    // 表單編碼解析也失敗，返回錯誤
+                    return ContentService.createTextOutput(
+                        JSON.stringify({
+                            success: false,
+                            message: 'Invalid request format. Expected JSON or form-encoded data.'
+                        })
+                    ).setMimeType(ContentService.MimeType.JSON);
+                }
             }
         } else {
             // 沒有數據
@@ -417,6 +433,11 @@ function doPost(e) {
             return handleUnsubscribe(email, lang);
         }
 
+        // 處理更新最後文章請求
+        if (action === 'update_last_article') {
+            return handleUpdateLastArticle(email, data.article_slug, lang);
+        }
+
         // 驗證訂閱類型
         if (!types || types.length === 0) {
             return ContentService.createTextOutput(
@@ -445,7 +466,7 @@ function doPost(e) {
 
         // 如果試算表是空的，先添加標題行
         if (sheet.getLastRow() === 0) {
-            sheet.appendRow(['Email', 'Types', 'Lang', 'SubscribedAt', 'Verified', 'VerifyToken', 'TokenExpiry']);
+            sheet.appendRow(['Email', 'Types', 'Lang', 'SubscribedAt', 'Verified', 'VerifyToken', 'TokenExpiry', 'LastArticleSent']);
         }
 
         // 檢查是否已存在
@@ -471,11 +492,11 @@ function doPost(e) {
         const verifyToken = generateVerifyToken();
         const tokenExpiry = Date.now() + (7 * 24 * 60 * 60 * 1000); // 7 天後過期
 
-        // 更新試算表結構：添加 TokenExpiry 欄位（第 7 欄）
-        if (sheet.getLastRow() === 0 || sheet.getLastColumn() < 7) {
+        // 更新試算表結構：添加 LastArticleSent 欄位（第 8 欄）
+        if (sheet.getLastRow() === 0 || sheet.getLastColumn() < 8) {
             // 確保有所有必要的欄位
             if (sheet.getLastRow() === 0) {
-                sheet.appendRow(['Email', 'Types', 'Lang', 'SubscribedAt', 'Verified', 'VerifyToken', 'TokenExpiry']);
+                sheet.appendRow(['Email', 'Types', 'Lang', 'SubscribedAt', 'Verified', 'VerifyToken', 'TokenExpiry', 'LastArticleSent']);
             }
         }
 
@@ -678,6 +699,71 @@ function doGet(e) {
             JSON.stringify({
                 success: false,
                 message: 'Server error occurred. Please try again later.'
+            })
+        ).setMimeType(ContentService.MimeType.JSON);
+    }
+}
+
+/**
+ * 更新用戶的 LastArticleSent 欄位
+ * @param {string} email - 用戶的Email地址
+ * @param {string} articleSlug - 文章的slug
+ * @param {string} lang - 語言設定
+ */
+function handleUpdateLastArticle(email, articleSlug, lang) {
+    try {
+        Logger.log('🔄 開始處理更新最後文章請求...');
+        const maskedEmail = email.substring(0, 3) + '***@' + email.split('@')[1];
+        Logger.log('📧 Email: ' + maskedEmail);
+        Logger.log('📄 Article Slug: ' + articleSlug);
+
+        const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+        const dataRange = sheet.getDataRange();
+        const values = dataRange.getValues();
+
+        // 從第二行開始查找（第一行是標題）
+        for (let i = 1; i < values.length; i++) {
+            const rowEmail = normalizeEmail(values[i][0]?.toString());
+
+            if (rowEmail === email) {
+                // 更新 LastArticleSent 欄位（第 8 欄）
+                sheet.getRange(i + 1, 8).setValue(articleSlug);
+
+                Logger.log('✅ LastArticleSent 更新成功');
+
+                return ContentService.createTextOutput(
+                    JSON.stringify({
+                        success: true,
+                        message: lang === 'zh-TW'
+                            ? '最後文章記錄已更新'
+                            : 'Last article record updated',
+                        lang: lang
+                    })
+                ).setMimeType(ContentService.MimeType.JSON);
+            }
+        }
+
+        // 找不到 Email
+        Logger.log('❌ 找不到匹配的 Email: ' + maskedEmail);
+        return ContentService.createTextOutput(
+            JSON.stringify({
+                success: false,
+                message: lang === 'zh-TW'
+                    ? '找不到此 Email 的訂閱記錄'
+                    : 'No subscription found for this email',
+                lang: lang
+            })
+        ).setMimeType(ContentService.MimeType.JSON);
+
+    } catch (error) {
+        Logger.log('❌ 更新LastArticleSent錯誤: ' + error.toString());
+        return ContentService.createTextOutput(
+            JSON.stringify({
+                success: false,
+                message: lang === 'zh-TW'
+                    ? '更新最後文章記錄時發生錯誤'
+                    : 'Error updating last article record',
+                lang: lang
             })
         ).setMimeType(ContentService.MimeType.JSON);
     }
@@ -974,6 +1060,7 @@ function handleUnsubscribe(email, lang) {
                 sheet.getRange(i + 1, 5).setValue(false); // Verified (第 5 欄)
                 sheet.getRange(i + 1, 6).setValue(''); // VerifyToken (第 6 欄)
                 sheet.getRange(i + 1, 7).setValue(''); // TokenExpiry (第 7 欄)
+                sheet.getRange(i + 1, 8).setValue(''); // LastArticleSent (第 8 欄)
 
                 Logger.log('✅ 取消訂閱成功');
 
