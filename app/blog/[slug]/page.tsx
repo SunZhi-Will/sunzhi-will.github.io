@@ -1,11 +1,10 @@
 import { getPostBySlug, getPostSlugs, markdownToHtml, getAllPosts } from '@/lib/blog';
-import { serializeMdx } from '@/lib/mdx';
 import { notFound } from 'next/navigation';
 import BlogPostClient from './BlogPostClient';
 import type { Lang } from '@/types';
 import type { BlogPost } from '@/types/blog';
 import type { Metadata } from 'next';
-import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
+// import type { MDXRemoteSerializeResult } from 'next-mdx-remote'; // 臨時禁用MDX
 
 // 強制靜態生成
 export const dynamic = 'force-static';
@@ -81,7 +80,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const postsByLang: Partial<Record<Lang, {
         post: Omit<BlogPost, 'content'>;
         htmlContent?: string;
-        mdxSource?: MDXRemoteSerializeResult;
+        // mdxSource?: MDXRemoteSerializeResult; // 臨時禁用MDX
     } | null>> = {
         'zh-TW': null,
         'en': null,
@@ -167,7 +166,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <BlogPostClient
             defaultPost={defaultPostData.post}
             defaultHtmlContent={defaultPostData.htmlContent}
-            defaultMdxSource={defaultPostData.mdxSource}
+            // defaultMdxSource={defaultPostData.mdxSource} // 臨時禁用MDX
             defaultAllPosts={allPostsByLang[defaultLang] || []}
             postsByLang={postsByLang}
             allPostsByLang={allPostsByLang}

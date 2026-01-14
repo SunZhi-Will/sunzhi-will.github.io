@@ -1,27 +1,27 @@
 'use client'
 
 import { useEffect, useRef } from 'react';
-import { MDXRemote } from 'next-mdx-remote';
+// import { MDXRemote } from 'next-mdx-remote'; // 臨時禁用MDX
+// import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { useTheme } from '@/app/blog/ThemeProvider';
 import { Lang } from '@/types';
-import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
-import { Callout } from './Callout';
-import { StepGuide } from './StepGuide';
-import { StatsHighlight } from './StatsHighlight';
-import { InsightQuote } from './InsightQuote';
-import { ArticleConclusion } from './ArticleConclusion';
-import { BookmarkCard } from './BookmarkCard';
+// import { Callout } from './Callout'; // 臨時禁用MDX組件
+// import { StepGuide } from './StepGuide';
+// import { StatsHighlight } from './StatsHighlight';
+// import { InsightQuote } from './InsightQuote';
+// import { ArticleConclusion } from './ArticleConclusion';
+// import { BookmarkCard } from './BookmarkCard';
 
 interface EnhancedArticleContentProps {
     htmlContent?: string;
-    mdxSource?: MDXRemoteSerializeResult;
+    // mdxSource?: MDXRemoteSerializeResult; // 臨時禁用MDX
     postSlug: string;
     lang: Lang;
 }
 
 export function EnhancedArticleContent({
     htmlContent,
-    mdxSource,
+    // mdxSource, // 臨時禁用MDX
     postSlug,
     lang,
 }: EnhancedArticleContentProps) {
@@ -31,8 +31,8 @@ export function EnhancedArticleContent({
 
     // Hooks 必須在所有條件返回之前調用
     useEffect(() => {
-        // 只在有 HTML 內容且沒有 MDX 源時執行增強功能
-        if (mdxSource || !htmlContent || !contentRef.current) return;
+        // 只在有 HTML 內容時執行增強功能（MDX 已禁用）
+        if (!htmlContent || !contentRef.current) return;
 
         // 增強連結 - 添加外部連結圖標
         const links = contentRef.current.querySelectorAll('a[href^="http"]');
@@ -205,7 +205,7 @@ export function EnhancedArticleContent({
                 listItem.classList.add('list-item-light');
             }
         });
-    }, [htmlContent, isDark, lang, postSlug, mdxSource]);
+    }, [htmlContent, isDark, lang, postSlug]); // 移除了 mdxSource 依賴
 
     // 臨時禁用 MDX 功能，使用純 HTML
     // TODO: 修復 MDX 兼容性問題後重新啟用
