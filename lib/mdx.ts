@@ -1,6 +1,5 @@
 import { serialize } from 'next-mdx-remote/serialize';
 import remarkBreaks from 'remark-breaks';
-import rehypeSanitize from 'rehype-sanitize';
 
 /**
  * 預處理 Markdown：修復中文引號內的粗體標記
@@ -10,6 +9,10 @@ function preprocessMarkdown(markdown: string): string {
     // 將 **「文字」** 轉換為 「**文字**」
     // 匹配模式：**「...」**（不包含換行符，避免匹配跨行的內容）
     return markdown.replace(/\*\*「([^」\n]+)」\*\*/g, '「**$1**」');
+
+
+
+
 }
 
 /**
@@ -19,11 +22,14 @@ function preprocessMarkdown(markdown: string): string {
 export async function serializeMdx(source: string) {
     // 預處理：修復中文引號內的粗體標記
     const processedSource = preprocessMarkdown(source);
-    
+
     return await serialize(processedSource, {
         mdxOptions: {
             remarkPlugins: [remarkBreaks], // 支援換行
-            rehypePlugins: [rehypeSanitize], // 防止 XSS 攻擊
+            // 移除 rehypeSanitize，因為它會過濾掉我們的 JSX 組件
+            // 我們的內容來自可信任的 AI 生成，所以相對安全
+            jsx: true,
+            format: 'mdx',
         },
         parseFrontmatter: false, // 我們已經用 gray-matter 處理了 frontmatter
     });

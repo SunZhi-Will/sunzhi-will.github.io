@@ -90,12 +90,14 @@ ${existingPostsInfo}
 - 仔細閱讀搜尋回傳的摘要。具體的數字、人名、事件發生經過，必須從搜尋結果中提取
 - 不要只寫空泛的理論，請寫出「搜尋到的具體細節」
 
-【電子報視覺化排版指令 (Visual Formatting)】
-1. **行內引用**：使用 [1], [2] 標記
+【現代科技內容視覺化排版指令 (Visual Formatting)】
+1. **行內引用**：使用 [1], [2] 標記來源
 2. **來源清單**：文章末尾 <<<SOURCES>>> 列出 URL
-3. **重點強調**：使用 **粗體** 標示關鍵數據或人名
-4. **引用區塊**：使用 > 引用區塊來展示金句或核心觀點
-5. **內文真實配圖 (Real Source Images)**：
+3. **重點強調**：使用 **粗體** 標示關鍵數據、人名、公司名
+4. **表情符號**：適度使用 emoji 增加視覺吸引力（⚡ 📊 💡 🔍），但不要過度
+5. **引用區塊**：使用 > 引用區塊來展示金句或核心觀點
+6. **數據醒目標示**：重要數字要加粗並用引號標註單位（**90%** 的用戶、**5分鐘** 完成）
+7. **內文真實配圖 (Real Source Images)**：
    - 請嘗試從搜尋到的來源內容中，提取**真實的新聞圖片網址 (URL)**
    - 如果你在來源中發現有效的圖片連結 (結尾通常是 .jpg, .png, .webp)，請直接插入文章中
    - 格式：\`![Source: 圖片來源名稱](https://真實圖片網址.jpg)\`
@@ -119,9 +121,10 @@ ${existingPostsInfo}
 <<<SEARCH_QUERIES>>>
 (搜尋關鍵字，用逗號分隔)
 <<<IMAGE_PROMPT>>>
-(封面圖片的 AI 繪圖指令：請設計一張「RPG 遊戲風格的資訊圖表」。
-目標：透過 RPG 角色面板/任務清單的視覺化方式來呈現文章的核心邏輯。
-限制：**嚴禁包含文字 (No Text)**。請用符號、圖標、幾何圖形來代替文字標籤，保持畫面非常乾淨、極簡，避免資訊過載。)
+(封面圖片的 AI 繪圖指令：請設計一張「充滿科技感的故事插圖」。
+風格：現代科技插畫風格，色彩鮮明，充滿動感和未來感。
+目標：用視覺化方式呈現文章的核心故事和趨勢，用圖像講述科技變化的故事。
+限制：**禁止文字**，用符號、圖標和圖像來表達概念。畫面要乾淨有力，傳達樂觀積極的科技發展氛圍。)
 <<<BULLET_SUMMARY>>>
 (條列式重點摘要：請提供 5-7 個核心重點，每個重點約 15-20 字，使用 Markdown 列表格式 (-)。這些重點應該涵蓋文章的主要事件、關鍵數據、重要影響等核心內容。格式範例：
 - 重點一：簡潔描述
@@ -131,12 +134,84 @@ ${existingPostsInfo}
 <<<CONTENT>>>
 (正文，開頭必須包含「### 📋 快速重點摘要」區塊，然後才是其他章節。若有找到真實圖片連結請包含在內。
 
-**重要：相關文章連結**
-- 如果內容與上述「現有相關文章資料庫」中的任何文章相關，請在適當位置加入 Markdown 超連結
-- 連結格式：\`[文章標題](/blog/[slug])\`
-- 連結應該自然融入文章內容，例如：「正如我們之前在[AI Agent 正式進入職場](/blog/2026-01-04-012521)中提到的...」
-- 如果今天的新聞是之前某個主題的延續，請明確指出並連結到相關文章
-- **避免重複**：如果某個主題已經在之前的文章中詳細討論過，請簡要提及並連結，不要重複相同的內容)
+**現代科技內容結構要求**：
+- 每個段落都要有明確的功能和目的
+- 重要數據要醒目標示（**粗體** + 單位）
+- 適度使用表情符號增加視覺吸引力
+- 用問題引導讀者思考
+- 結尾要有行動建議或延伸思考
+
+**重要：相關文章引用**
+- 如果內容與上述「現有相關文章資料庫」中的任何文章相關，請使用以下格式引用：
+  BOOKMARK 組件，包含 href、title、description、author、publisher 屬性
+- 也可以引用外部來源，使用完整 URL
+- 連結應該自然融入文章內容，例如：「正如我們之前探討過的...」
+- 如果今天的新聞是之前某個主題的延續，請用引用格式強調這點
+- **避免重複**：如果某個主題已經在之前的文章中詳細討論過，請簡要提及並用引用格式連結，不要重複相同的內容
+
+**視覺化增強**：
+- 使用 > 區塊引用重要觀點或金句
+- 用 - 列表整理複雜資訊
+- 數據對比時用 **舊數據** → **新數據** 格式
+- 重要趨勢用 📈 **趨勢名稱** 格式標示
+
+**互動元件使用說明（重要：請在文章中自然使用以下 JSX 組件）**：
+
+=== 可用組件格式 ===
+1. **文章引用**：
+   \`\`\`
+   <BookmarkCard
+     href="連結"
+     title="標題"
+     description="描述"
+     author="作者"
+     publisher="出版者"
+   />
+   \`\`\`
+
+2. **重要提醒**：
+   \`\`\`
+   <Callout type="info" title="標題">
+     內容說明
+   </Callout>
+   \`\`\`
+
+3. **數據統計**：
+   \`\`\`
+   <StatsHighlight
+     title="標題"
+     stats={[{value: "數值", label: "標籤"}]}
+   />
+   \`\`\`
+
+4. **深度見解**：
+   \`\`\`
+   <InsightQuote
+     type="insight"
+     content="見解內容"
+     author="作者名稱"
+     role="角色職稱"
+   />
+   \`\`\`
+
+5. **教學步驟**：
+   \`\`\`
+   <StepGuide
+     title="教學標題"
+     steps={[{title: "步驟名稱", description: "步驟說明"}]}
+   />
+   \`\`\`
+
+**重要：請在文章中自然插入這些組件，確保格式正確！**
+
+**元件使用原則**：
+- 適度使用，避免過度影響閱讀流暢性
+- 在適當位置自然插入，提高內容互動性
+- BookmarkCard 優先用於文章引用
+- Callout 用於重要提醒
+- StatsHighlight 用於數據展示
+- InsightQuote 用於深度分析
+- StepGuide 用於教學內容)
 <<<SOURCES>>>
 (來源列表，每行一個 URL)
 `;
@@ -168,8 +243,8 @@ ${chineseContent}
 【Translation Requirements】
 1. **Maintain Structure**: Keep the exact same section structure as the Chinese version:
    - ### 📋 Quick Highlights (or ### Quick Highlights if emoji not supported)
-   - ### What Happened? (Like telling gossip)
-   - ### Simply Put, What Is This? (Metaphor time)
+   - ### What Happened?
+   - ### Simply Put, What Is This?
    - ### According to Reports, Details Are as Follows
    - ### What Does This Mean for Us?
    - ### Insider's Deep Analysis
@@ -181,11 +256,18 @@ ${chineseContent}
 
 4. **Natural English**: Translate naturally into fluent English, not word-for-word. Adapt cultural references appropriately for English readers.
 
-5. **Maintain Formatting**: Keep the same Markdown formatting, bold text, lists, and structure.
+5. **Maintain Formatting**: Keep the same Markdown formatting, bold text, lists, and structure. Also preserve all custom components from the Chinese version.
 
-6. **Bullet Summary**: If the Chinese version has a bullet summary section (### 📋 快速重點摘要), translate it to "### 📋 Quick Highlights" (or "### Quick Highlights" if emoji not supported). Each bullet point should be concise (15-20 words) and capture the core points.
+6. **Components**: If the Chinese version uses any of these components, translate them to English while maintaining the same structure and format:
+   - "BookmarkCard" components: Keep href unchanged, translate title and description to English, author stays the same
+   - "Callout" components: Translate content to English, keep type attribute unchanged
+   - "InsightQuote" components: Translate content, author, and role to English
+   - "StatsHighlight" components: Translate title and labels to English, keep numerical values unchanged
+   - "StepGuide" components: Translate title, description, and other text content to English
 
-7. **Sources**: Use the same sources as the Chinese version, but translate source titles if needed.
+7. **Bullet Summary**: If the Chinese version has a bullet summary section (### 📋 快速重點摘要), translate it to "### 📋 Quick Highlights" (or "### Quick Highlights" if emoji not supported). Each bullet point should be concise (15-20 words) and capture the core points.
+
+8. **Sources**: Use the same sources as the Chinese version, but translate source titles if needed.
 
 【Output Format】
 <<<TITLE>>>

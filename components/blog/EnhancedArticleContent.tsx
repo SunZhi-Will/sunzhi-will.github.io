@@ -5,6 +5,12 @@ import { MDXRemote } from 'next-mdx-remote';
 import { useTheme } from '@/app/blog/ThemeProvider';
 import { Lang } from '@/types';
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
+import { Callout } from './Callout';
+import { StepGuide } from './StepGuide';
+import { StatsHighlight } from './StatsHighlight';
+import { InsightQuote } from './InsightQuote';
+import { ArticleConclusion } from './ArticleConclusion';
+import { BookmarkCard } from './BookmarkCard';
 
 interface EnhancedArticleContentProps {
     htmlContent?: string;
@@ -22,7 +28,7 @@ export function EnhancedArticleContent({
     const contentRef = useRef<HTMLDivElement>(null);
     const { theme } = useTheme();
     const isDark = theme === 'dark';
-    
+
     // Hooks 必須在所有條件返回之前調用
     useEffect(() => {
         // 只在有 HTML 內容且沒有 MDX 源時執行增強功能
@@ -66,8 +72,8 @@ export function EnhancedArticleContent({
             if (pre && !pre.querySelector('.copy-code-btn')) {
                 const button = document.createElement('button');
                 button.className = `copy-code-btn absolute top-2 right-2 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${isDark
-                        ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                     }`;
                 button.textContent = lang === 'zh-TW' ? '複製' : 'Copy';
                 button.onclick = async () => {
@@ -111,14 +117,14 @@ export function EnhancedArticleContent({
                         const textNode = node as Text;
                         const text = textNode.textContent || '';
                         const matches = Array.from(text.matchAll(numberPattern));
-                        
+
                         if (matches.length === 0) {
                             return [textNode.cloneNode()];
                         }
-                        
+
                         const parts: Node[] = [];
                         let lastIndex = 0;
-                        
+
                         for (const match of matches) {
                             // 添加匹配前的文字
                             if (match.index !== undefined && match.index > lastIndex) {
@@ -141,12 +147,12 @@ export function EnhancedArticleContent({
                                 parts.push(document.createTextNode(remainingText));
                             }
                         }
-                        
+
                         return parts;
                     } else if (node.nodeType === Node.ELEMENT_NODE) {
                         const element = node as Element;
                         const newElement = element.cloneNode(false) as Element;
-                        
+
                         // 處理子節點
                         Array.from(node.childNodes).forEach(child => {
                             const processed = processNode(child);
@@ -154,13 +160,13 @@ export function EnhancedArticleContent({
                                 newElement.appendChild(processedNode);
                             });
                         });
-                        
+
                         return [newElement];
                     }
-                    
+
                     return [node.cloneNode()];
                 };
-                
+
                 // 處理所有子節點
                 const newChildren: Node[] = [];
                 Array.from(p.childNodes).forEach(child => {
@@ -169,7 +175,7 @@ export function EnhancedArticleContent({
                         newChildren.push(processedNode);
                     });
                 });
-                
+
                 // 清空並重新填充（保留 HTML 結構）
                 p.innerHTML = '';
                 newChildren.forEach(child => {
@@ -200,7 +206,7 @@ export function EnhancedArticleContent({
             }
         });
     }, [htmlContent, isDark, lang, postSlug, mdxSource]);
-    
+
     // 如果使用 MDX，直接渲染 MDX 組件
     if (mdxSource) {
         return (
@@ -253,12 +259,22 @@ export function EnhancedArticleContent({
                             prose-td:border-gray-300/30`
                         }`}
                 >
-                    <MDXRemote {...mdxSource} />
+                    <MDXRemote
+                        {...mdxSource}
+                        components={{
+                            Callout,
+                            StepGuide,
+                            StatsHighlight,
+                            InsightQuote,
+                            ArticleConclusion,
+                            BookmarkCard,
+                        }}
+                    />
                 </div>
             </div>
         );
     }
-    
+
     // 如果沒有 HTML 內容，返回 null
     if (!htmlContent) {
         return null;

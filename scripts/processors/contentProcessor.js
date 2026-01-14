@@ -2,6 +2,7 @@ const fs = require('fs');
 const { removeDatePatterns, truncateSummary } = require('../utils/textUtils');
 const { enrichSourceTitles } = require('../utils/sourceEnricher');
 
+
 /**
  * 處理內容並寫入檔案
  * @param {Object} parsedZh - 解析後的中文內容
@@ -29,7 +30,7 @@ async function processContent(parsedZh, parsedEn, coverImage, dateStr, slug, art
     // 優先選擇完整的句子，不添加省略號
     descriptionZh = truncateSummary(descriptionZh, 70, true);
     descriptionEn = truncateSummary(descriptionEn, 90, false);
-    
+
     // 再次清理開頭和結尾標點（確保格式乾淨）
     descriptionZh = descriptionZh.replace(/^[，。、；：,.;:\s]+/, '').trim();
     descriptionZh = descriptionZh.replace(/[，。、；：,.;:\s]+$/, '').trim();
@@ -74,7 +75,7 @@ ${coverImage ? `coverImage: "${coverImage}"` : ''}
         // 獲取並豐富來源標題（設置超時保護，最多等待 30 秒）
         console.log(`📡 Fetching page titles for ${uniqueSources.length} sources...`);
         try {
-            const timeoutPromise = new Promise((_, reject) => 
+            const timeoutPromise = new Promise((_, reject) =>
                 setTimeout(() => reject(new Error('Source title fetching timeout')), 30000)
             );
             enrichedSources = await Promise.race([
@@ -111,20 +112,21 @@ ${coverImage ? `coverImage: "${coverImage}"` : ''}
         contentEn += 'Information sources from Google Search real-time queries.\n';
     }
 
+
     // 寫入檔案（確保目錄存在）
     const path = require('path');
     const dirPath = path.dirname(articlePathZh);
     if (!fs.existsSync(dirPath)) {
         fs.mkdirSync(dirPath, { recursive: true });
     }
-    
+
     fs.writeFileSync(articlePathZh, frontmatterZh + contentZh, 'utf8');
     fs.writeFileSync(articlePathEn, frontmatterEn + contentEn, 'utf8');
 
     // 驗證文件是否成功寫入
     const zhExists = fs.existsSync(articlePathZh);
     const enExists = fs.existsSync(articlePathEn);
-    
+
     if (!zhExists || !enExists) {
         throw new Error(`Failed to write article files. zh: ${zhExists}, en: ${enExists}`);
     }
