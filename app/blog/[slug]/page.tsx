@@ -99,6 +99,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             // 將 description 轉換為 HTML（支援 markdown 格式）
             const descriptionHtml = post.description ? await markdownToHtml(post.description) : '';
             
+            // 臨時禁用 MDX，全部使用 HTML
+            // TODO: 修復 MDX 兼容性問題後重新啟用
+            /*
             // 根據文件類型決定使用 MDX 還是 HTML
             if (post.isMdx && post.content) {
                 const mdxSource = await serializeMdx(post.content);
@@ -118,6 +121,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     mdxSource,
                 };
             } else {
+            */
                 const htmlContent = post.content ? await markdownToHtml(post.content) : '';
                 postsByLang[lang] = {
                     post: {
@@ -134,7 +138,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     },
                     htmlContent,
                 };
+            /*
             }
+            */
         }
         allPostsByLang[lang] = getAllPosts(lang).map(p => ({
             slug: p.slug,

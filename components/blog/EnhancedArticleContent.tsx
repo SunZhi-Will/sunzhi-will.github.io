@@ -207,6 +207,9 @@ export function EnhancedArticleContent({
         });
     }, [htmlContent, isDark, lang, postSlug, mdxSource]);
 
+    // 臨時禁用 MDX 功能，使用純 HTML
+    // TODO: 修復 MDX 兼容性問題後重新啟用
+    /*
     // 如果使用 MDX，直接渲染 MDX 組件
     if (mdxSource) {
         return (
@@ -274,6 +277,7 @@ export function EnhancedArticleContent({
             </div>
         );
     }
+    */
 
     // 如果沒有 HTML 內容，返回 null
     if (!htmlContent) {

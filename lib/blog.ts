@@ -310,7 +310,7 @@ export async function markdownToHtml(markdown: string): Promise<string> {
     htmlString = htmlString.replace(/<\/strong>(「[^」]+」<\/strong>)/g, '$1');
 
     // 使用 rehype-sanitize 清理 HTML，防止 XSS 攻擊
-    // rehype-sanitize 默認允許 strong, em, b, i 等標籤
+    // 使用默認配置，移除危險標籤
     const sanitizedResult = await rehype()
         .data('settings', { fragment: true })
         .use(rehypeSanitize)
