@@ -273,14 +273,54 @@ function preprocessMarkdown(markdown: string): string {
     return markdown.replace(/\*\*「([^」\n]+)」\*\*/g, '「**$1**」');
 }
 
+// 簡單的 JSX 組件解析器
+function parseJSXComponents(markdown: string): string {
+    // 匹配自閉合 JSX 組件 <Component prop="value" />
+    const selfClosingRegex = /<([A-Z][a-zA-Z]*)\s*([^>]*)\/>/g;
+    // 匹配普通 JSX 組件 <Component>content</Component>
+    const normalRegex = /<([A-Z][a-zA-Z]*)\s*([^>]*)>([\s\S]*?)<\/\1>/g;
+
+    return markdown
+        // 處理自閉合組件
+        .replace(selfClosingRegex, (match, tagName, attrs) => {
+            const lowerTagName = tagName.toLowerCase();
+            const parsedAttrs = parseJSXAttributes(attrs);
+            const attrString = Object.entries(parsedAttrs)
+                .map(([key, value]) => `${key}="${value}"`)
+                .join(' ');
+            return `<${lowerTagName}${attrString ? ' ' + attrString : ''}></${lowerTagName}>`;
+        })
+        // 處理普通組件
+        .replace(normalRegex, (match, tagName, attrs, content) => {
+            const lowerTagName = tagName.toLowerCase();
+            const parsedAttrs = parseJSXAttributes(attrs);
+            const attrString = Object.entries(parsedAttrs)
+                .map(([key, value]) => `${key}="${value}"`)
+                .join(' ');
+            return `<${lowerTagName}${attrString ? ' ' + attrString : ''}>${content}</${lowerTagName}>`;
+        });
+}
+
+function parseJSXAttributes(attrsString: string): Record<string, string> {
+    const attrs: Record<string, string> = {};
+    const attrRegex = /([a-zA-Z]+)="([^"]*)"/g;
+    let match;
+    while ((match = attrRegex.exec(attrsString)) !== null) {
+        attrs[match[1]] = match[2];
+    }
+    return attrs;
+}
+
 /**
  * 將 Markdown 內容轉換為 HTML
  * 支援換行和更好的段落間距
  * 使用 rehype-sanitize 防止 XSS 攻擊
  */
 export async function markdownToHtml(markdown: string): Promise<string> {
+    // 預處理：解析 JSX 組件
+    const jsxParsed = parseJSXComponents(markdown);
     // 預處理：修復中文引號內的粗體標記
-    const processedMarkdown = preprocessMarkdown(markdown);
+    const processedMarkdown = preprocessMarkdown(jsxParsed);
 
     // 先將 Markdown 轉換為 HTML
     const htmlResult = await remark()

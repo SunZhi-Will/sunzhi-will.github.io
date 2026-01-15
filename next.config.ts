@@ -16,7 +16,10 @@ const nextConfig: NextConfig = {
   env: {
     // Google Apps Script URL（用於電子報訂閱）
     // 可以從環境變數讀取，或直接設置（因為這是公開的 Web App URL）
-    NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_URL: process.env.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_URL || 
+    NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_URL: process.env.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_URL ||
+      'https://script.google.com/macros/s/AKfycbx2P2fpDI5c_4cBYfmjxYpmK1iOej3akV52RaeH1eA8yL3pmIVKilce7uWzlJcKUUCK/exec',
+    // 服務端使用的 Google Apps Script URL（用於更新 LastArticleSent）
+    GOOGLE_APPS_SCRIPT_URL: process.env.GOOGLE_APPS_SCRIPT_URL ||
       'https://script.google.com/macros/s/AKfycbx2P2fpDI5c_4cBYfmjxYpmK1iOej3akV52RaeH1eA8yL3pmIVKilce7uWzlJcKUUCK/exec',
   },
 };

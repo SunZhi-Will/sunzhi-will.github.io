@@ -5,18 +5,98 @@ import { useEffect, useRef } from 'react';
 // import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { useTheme } from '@/app/blog/ThemeProvider';
 import { Lang } from '@/types';
-// import { Callout } from './Callout'; // 臨時禁用MDX組件
-// import { StepGuide } from './StepGuide';
-// import { StatsHighlight } from './StatsHighlight';
-// import { InsightQuote } from './InsightQuote';
-// import { ArticleConclusion } from './ArticleConclusion';
-// import { BookmarkCard } from './BookmarkCard';
+import { Callout } from './Callout';
+import { StepGuide } from './StepGuide';
+import { StatsHighlight } from './StatsHighlight';
+import { InsightQuote } from './InsightQuote';
+import { ArticleConclusion } from './ArticleConclusion';
+import { BookmarkCard } from './BookmarkCard';
 
 interface EnhancedArticleContentProps {
     htmlContent?: string;
     // mdxSource?: MDXRemoteSerializeResult; // 臨時禁用MDX
     postSlug: string;
     lang: Lang;
+}
+
+// 自定義組件渲染器
+function renderCustomComponent(tagName: string, attributes: Record<string, string>, children: string): React.ReactElement | null {
+    const attrs = Object.fromEntries(
+        Object.entries(attributes).map(([key, value]) => {
+            // 嘗試解析布林值和數字
+            if (value === 'true') return [key, true];
+            if (value === 'false') return [key, false];
+            if (!isNaN(Number(value))) return [key, Number(value)];
+            return [key, value];
+        })
+    );
+
+    switch (tagName) {
+        case 'insightquote':
+            return <InsightQuote key={Math.random()} {...attrs} content={children} />;
+        case 'callout':
+            return <Callout key={Math.random()} {...attrs}>{children}</Callout>;
+        case 'statshighlight':
+            return <StatsHighlight key={Math.random()} {...attrs} />;
+        case 'stepguide':
+            return <StepGuide key={Math.random()} {...attrs}>{children}</StepGuide>;
+        case 'articleconclusion':
+            return <ArticleConclusion key={Math.random()} {...attrs} />;
+        case 'bookmarkcard':
+            return <BookmarkCard key={Math.random()} {...attrs} />;
+        default:
+            return null;
+    }
+}
+
+// 解析 HTML 中的自定義組件
+function parseCustomComponents(html: string): React.ReactNode[] {
+    if (!html) return [];
+
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+
+    // 匹配自定義組件標籤的正則表達式
+    const componentRegex = /<([a-z]+)([^>]*)>([\s\S]*?)<\/\1>/gi;
+
+    let match;
+    while ((match = componentRegex.exec(html)) !== null) {
+        const [fullMatch, tagName, attributesStr, innerContent] = match;
+
+        // 添加組件之前的文本
+        if (match.index > lastIndex) {
+            const textBefore = html.slice(lastIndex, match.index);
+            if (textBefore.trim()) {
+                parts.push(textBefore);
+            }
+        }
+
+        // 解析屬性
+        const attributes: Record<string, string> = {};
+        const attrRegex = /([a-z-]+)="([^"]*)"/gi;
+        let attrMatch;
+        while ((attrMatch = attrRegex.exec(attributesStr)) !== null) {
+            attributes[attrMatch[1]] = attrMatch[2];
+        }
+
+        // 渲染組件
+        const component = renderCustomComponent(tagName.toLowerCase(), attributes, innerContent);
+        if (component) {
+            parts.push(component);
+        }
+
+        lastIndex = match.index + fullMatch.length;
+    }
+
+    // 添加最後的文本
+    if (lastIndex < html.length) {
+        const remainingText = html.slice(lastIndex);
+        if (remainingText.trim()) {
+            parts.push(remainingText);
+        }
+    }
+
+    return parts;
 }
 
 export function EnhancedArticleContent({
@@ -335,8 +415,9 @@ export function EnhancedArticleContent({
                         prose-table:text-gray-700 prose-th:border-gray-300/30 prose-th:bg-gray-100/20
                         prose-td:border-gray-300/30`
                     }`}
-                dangerouslySetInnerHTML={{ __html: htmlContent }}
-            />
+            >
+                {parseCustomComponents(htmlContent || '')}
+            </div>
         </div>
     );
 }
