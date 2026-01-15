@@ -102,8 +102,8 @@ function parseCustomComponents(html: string): React.ReactNode[] {
 export function EnhancedArticleContent({
     htmlContent,
     mdxPath,
-    postSlug,
-    lang,
+    postSlug, // eslint-disable-line @typescript-eslint/no-unused-vars
+    lang, // eslint-disable-line @typescript-eslint/no-unused-vars
 }: EnhancedArticleContentProps) {
     const contentRef = useRef<HTMLDivElement>(null);
     const { theme } = useTheme();
