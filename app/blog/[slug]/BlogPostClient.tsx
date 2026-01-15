@@ -20,7 +20,7 @@ const ShareButtons = dynamic(() => import('@/components/blog/ShareButtons').then
 const TableOfContents = dynamic(() => import('@/components/blog/TableOfContents').then(mod => ({ default: mod.TableOfContents })), { ssr: false });
 // import { ScrollReveal } from '@/components/blog/ScrollReveal';
 import { useTheme } from '../ThemeProvider';
-import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
+// import type { MDXRemoteSerializeResult } from 'next-mdx-remote'; // 臨時禁用MDX
 
 interface BlogPostClientProps {
     defaultPost: Omit<BlogPost, 'content'>;

@@ -4,8 +4,8 @@ import BlogPostClient from './BlogPostClient';
 import type { Lang } from '@/types';
 import type { BlogPost } from '@/types/blog';
 import type { Metadata } from 'next';
-import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
-import { serializeMdx } from '@/lib/mdx';
+// import type { MDXRemoteSerializeResult } from 'next-mdx-remote'; // 臨時禁用MDX
+// import { serializeMdx } from '@/lib/mdx'; // 臨時禁用MDX
 
 // 強制靜態生成
 export const dynamic = 'force-static';
