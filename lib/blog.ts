@@ -196,7 +196,7 @@ export function getPostBySlug(slug: string, lang?: Lang): BlogPost | null {
                         description: data.description || '',
                         tags: data.tags || [],
                         coverImage,
-                        content: null, // MDX 文件由 Next.js 直接處理，不需要 content
+                        content: undefined, // MDX 文件由 Next.js 直接處理，不需要 content
                         lang: targetLang || undefined,
                         availableLangs,
                         isMdx: true, // 標記為 MDX 文件
