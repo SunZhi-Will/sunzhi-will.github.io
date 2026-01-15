@@ -33,11 +33,14 @@ function normalizeEmail(email) {
  * 更新用戶的 LastArticleSent 欄位
  * @param {string} email - 用戶的Email地址
  * @param {string} articleSlug - 文章的slug
+ * @param {string} lang - 語言設定
  */
-async function updateLastArticleSent(email, articleSlug) {
+async function updateLastArticleSent(email, articleSlug, lang = 'zh-TW') {
     const scriptUrl = process.env.GOOGLE_APPS_SCRIPT_URL;
 
     if (!scriptUrl) {
+        console.error('❌ GOOGLE_APPS_SCRIPT_URL is not configured in environment variables');
+        console.error('   Please check your GitHub secrets or local .env file');
         throw new Error('GOOGLE_APPS_SCRIPT_URL is not configured');
     }
 
@@ -46,6 +49,7 @@ async function updateLastArticleSent(email, articleSlug) {
     formData.append('email', email);
     formData.append('action', 'update_last_article');
     formData.append('article_slug', articleSlug);
+    formData.append('lang', lang);
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000);
@@ -548,6 +552,7 @@ async function sendNewsletter(slug) {
     }
 
     console.log(`\n📧 Sending newsletter for article: ${slug}...`);
+    console.log(`📡 Google Apps Script URL: ${process.env.GOOGLE_APPS_SCRIPT_URL || 'NOT SET'}`);
 
     // 讀取文章內容
     const article = getLatestArticle(slug);
@@ -667,12 +672,15 @@ async function sendNewsletter(slug) {
             // 發送成功後，更新用戶的 LastArticleSent 欄位
             try {
                 console.log(`   🔄 Updating LastArticleSent for ${subscription.email} with slug: ${slug}`);
-                await updateLastArticleSent(subscription.email, slug);
+                console.log(`   📡 Using Google Apps Script URL: ${process.env.GOOGLE_APPS_SCRIPT_URL}`);
+                await updateLastArticleSent(subscription.email, slug, lang);
                 console.log(`   ✅ LastArticleSent updated successfully for ${subscription.email}`);
             } catch (updateError) {
                 console.error(`   ❌ CRITICAL: Failed to update LastArticleSent for ${subscription.email}:`, updateError.message);
+                console.error(`   📡 GOOGLE_APPS_SCRIPT_URL: ${process.env.GOOGLE_APPS_SCRIPT_URL || 'NOT SET'}`);
                 console.error(`   This means duplicate prevention won't work!`);
                 console.error(`   Please check GOOGLE_APPS_SCRIPT_URL and redeploy Google Apps Script`);
+                console.error(`   Full error:`, updateError);
             }
 
             // 使用遮罩的 Email 記錄日誌（安全措施）
