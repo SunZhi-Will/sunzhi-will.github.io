@@ -30,6 +30,7 @@ export async function serializeMdx(source: string) {
             // 我們的內容來自可信任的 AI 生成，所以相對安全
             jsx: true,
             format: 'mdx',
+            development: false,
         },
         parseFrontmatter: false, // 我們已經用 gray-matter 處理了 frontmatter
     });
