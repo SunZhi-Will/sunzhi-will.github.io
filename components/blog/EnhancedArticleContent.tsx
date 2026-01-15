@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState, Suspense } from 'react';
-// import { MDXRemote } from 'next-mdx-remote'; // 使用 Next.js 內建 MDX
-// import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
+import { MDXRemote } from 'next-mdx-remote';
+import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { useTheme } from '@/app/blog/ThemeProvider';
 import { Lang } from '@/types';
 import { Callout } from './Callout';
@@ -14,7 +14,7 @@ import { BookmarkCard } from './BookmarkCard';
 
 interface EnhancedArticleContentProps {
     htmlContent?: string;
-    mdxPath?: string; // MDX 文件路徑，用於動態導入
+    mdxSource?: any; // 序列化的 MDX 內容
     postSlug: string;
     lang: Lang;
 }
@@ -99,36 +99,30 @@ function parseCustomComponents(html: string): React.ReactNode[] {
     return parts;
 }
 
+// MDX 組件映射
+const mdxComponents = {
+    InsightQuote,
+    Callout,
+    StepGuide,
+    StatsHighlight,
+    ArticleConclusion,
+    BookmarkCard,
+};
+
 export function EnhancedArticleContent({
     htmlContent,
-    mdxPath,
+    mdxSource,
     postSlug, // eslint-disable-line @typescript-eslint/no-unused-vars
     lang, // eslint-disable-line @typescript-eslint/no-unused-vars
 }: EnhancedArticleContentProps) {
     const contentRef = useRef<HTMLDivElement>(null);
     const { theme } = useTheme();
     const isDark = theme === 'dark';
-    const [MdxContent, setMdxContent] = useState<React.ComponentType | null>(null);
-
-    // 動態導入 MDX 內容
-    useEffect(() => {
-        if (mdxPath) {
-            // 動態導入 MDX 文件
-            import(mdxPath)
-                .then((module) => {
-                    setMdxContent(() => module.default);
-                })
-                .catch((error) => {
-                    console.error('Failed to load MDX content:', error);
-                    setMdxContent(null);
-                });
-        }
-    }, [mdxPath]);
 
     // HTML 內容增強功能 - 只在非 MDX 模式下運行
     useEffect(() => {
         // 只在有 HTML 內容且不是 MDX 模式時執行增強功能
-        if (!htmlContent || !contentRef.current || MdxContent) return;
+        if (!htmlContent || !contentRef.current || mdxSource) return;
 
         // 增強連結 - 添加外部連結圖標
         const links = contentRef.current.querySelectorAll('a[href^="http"]');
@@ -265,10 +259,10 @@ export function EnhancedArticleContent({
                 pre.appendChild(button);
             }
         });
-    }, [htmlContent, MdxContent, isDark]);
+    }, [htmlContent, isDark]);
 
-    // 如果有 MDX 內容，渲染 MDX 組件
-    if (MdxContent) {
+    // 如果有 MDX 內容，渲染 MDX
+    if (mdxSource) {
         return (
             <div className="space-y-8">
                 <div
@@ -320,14 +314,12 @@ export function EnhancedArticleContent({
                         }`}
                 >
                     <Suspense fallback={<div>Loading...</div>}>
-                        <MdxContent />
+                        <MDXRemote {...mdxSource} components={mdxComponents} />
                     </Suspense>
                 </div>
             </div>
         );
     }
-
-    // 臨時禁用MDX，全部使用HTML渲染
 
     // 如果沒有 HTML 內容，返回 null
     if (!htmlContent) {

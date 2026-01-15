@@ -33,6 +33,9 @@ interface BlogPostPageProps {
     params: Promise<{ slug: string; lang?: string }>;
 }
 
+// 導入必要的組件
+import { serialize } from 'next-mdx-remote/serialize';
+
 // 生成頁面 metadata（標題）
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
     const { slug } = await params;
@@ -80,7 +83,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const postsByLang: Partial<Record<Lang, {
         post: Omit<BlogPost, 'content'>;
         htmlContent?: string;
-        mdxPath?: string; // MDX 文件路徑，用於動態導入
+        mdxSource?: any; // 序列化的 MDX 內容
     } | null>> = {
         'zh-TW': null,
         'en': null,
@@ -100,22 +103,60 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
             // 根據文件類型決定處理方式
             if (post.isMdx) {
-                // MDX 文件：提供文件路徑供動態導入
-                postsByLang[lang] = {
-                    post: {
-                        slug: post.slug,
-                        title: post.title,
-                        date: post.date,
-                        description: post.description,
-                        descriptionHtml,
-                        tags: post.tags,
-                        coverImage: post.coverImage,
-                        lang: post.lang,
-                        availableLangs: post.availableLangs,
-                        isMdx: post.isMdx,
-                    },
-                    mdxPath: `../../../content/blog/${post.slug}/article.${lang}.mdx`,
-                };
+                // MDX 文件：在服務器端讀取並序列化
+                try {
+                    const fs = await import('fs');
+                    const path = await import('path');
+                    const mdxFilePath = path.join(process.cwd(), 'content/blog', post.slug, `article.${lang}.mdx`);
+
+                    if (fs.existsSync(mdxFilePath)) {
+                        const mdxContent = fs.readFileSync(mdxFilePath, 'utf8');
+                        // 使用 gray-matter 解析 frontmatter
+                        const matter = await import('gray-matter');
+                        const { content } = matter.default(mdxContent);
+
+                        // 序列化 MDX 內容
+                        const mdxSource = await serialize(content, {
+                            mdxOptions: {
+                                remarkPlugins: [],
+                                rehypePlugins: [],
+                            },
+                        });
+
+                        postsByLang[lang] = {
+                            post: {
+                                slug: post.slug,
+                                title: post.title,
+                                date: post.date,
+                                description: post.description,
+                                descriptionHtml,
+                                tags: post.tags,
+                                coverImage: post.coverImage,
+                                lang: post.lang,
+                                availableLangs: post.availableLangs,
+                                isMdx: post.isMdx,
+                            },
+                            mdxSource,
+                        };
+                    }
+                } catch (error) {
+                    console.error('Error processing MDX file:', error);
+                    postsByLang[lang] = {
+                        post: {
+                            slug: post.slug,
+                            title: post.title,
+                            date: post.date,
+                            description: post.description,
+                            descriptionHtml,
+                            tags: post.tags,
+                            coverImage: post.coverImage,
+                            lang: post.lang,
+                            availableLangs: post.availableLangs,
+                            isMdx: post.isMdx,
+                        },
+                        htmlContent: '<p>無法載入內容</p>',
+                    };
+                }
             } else {
                 // 普通 Markdown 文件：轉換為 HTML
                 const htmlContent = post.content ? await markdownToHtml(post.content) : '';
@@ -161,7 +202,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <BlogPostClient
             defaultPost={defaultPostData.post}
             defaultHtmlContent={defaultPostData.htmlContent}
-            defaultMdxPath={defaultPostData.mdxPath}
+            defaultMdxSource={defaultPostData.mdxSource}
             defaultAllPosts={allPostsByLang[defaultLang] || []}
             postsByLang={postsByLang}
             allPostsByLang={allPostsByLang}
