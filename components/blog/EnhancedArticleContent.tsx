@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useRef } from 'react';
-// import { MDXRemote } from 'next-mdx-remote'; // 臨時禁用MDX
-// import type { MDXRemoteSerializeResult } from 'next-mdx-remote'; // 臨時禁用MDX
+import { useEffect, useRef, useState, Suspense } from 'react';
+// import { MDXRemote } from 'next-mdx-remote'; // 使用 Next.js 內建 MDX
+// import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { useTheme } from '@/app/blog/ThemeProvider';
 import { Lang } from '@/types';
 import { Callout } from './Callout';
@@ -14,7 +14,7 @@ import { BookmarkCard } from './BookmarkCard';
 
 interface EnhancedArticleContentProps {
     htmlContent?: string;
-    // mdxSource?: MDXRemoteSerializeResult; // 臨時禁用MDX
+    mdxPath?: string; // MDX 文件路徑，用於動態導入
     postSlug: string;
     lang: Lang;
 }
@@ -101,13 +101,89 @@ function parseCustomComponents(html: string): React.ReactNode[] {
 
 export function EnhancedArticleContent({
     htmlContent,
-    // mdxSource, // 臨時禁用MDX
+    mdxPath,
     postSlug,
     lang,
 }: EnhancedArticleContentProps) {
     const contentRef = useRef<HTMLDivElement>(null);
     const { theme } = useTheme();
     const isDark = theme === 'dark';
+    const [MdxContent, setMdxContent] = useState<React.ComponentType | null>(null);
+
+    // 動態導入 MDX 內容
+    useEffect(() => {
+        if (mdxPath) {
+            // 動態導入 MDX 文件
+            import(mdxPath)
+                .then((module) => {
+                    setMdxContent(() => module.default);
+                })
+                .catch((error) => {
+                    console.error('Failed to load MDX content:', error);
+                    setMdxContent(null);
+                });
+        }
+    }, [mdxPath]);
+
+    // 如果有 MDX 內容，渲染 MDX 組件
+    if (MdxContent) {
+        return (
+            <div className="space-y-8">
+                <div
+                    className={`prose prose-base max-w-none
+                        prose-h1:text-2xl prose-h1:mt-14 prose-h1:mb-8 prose-h1:font-light prose-h1:leading-tight prose-h1:tracking-tight prose-h1:pb-4 prose-h1:border-b prose-h1:border-opacity-20
+                        prose-h2:text-xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:font-light prose-h2:leading-tight prose-h2:tracking-tight prose-h2:pb-3 prose-h2:border-b prose-h2:border-opacity-15
+                        prose-h3:text-lg prose-h3:mt-10 prose-h3:mb-5 prose-h3:font-light prose-h3:leading-tight prose-h3:tracking-tight
+                        prose-h4:text-base prose-h4:mt-8 prose-h4:mb-4 prose-h4:font-light prose-h4:leading-tight
+                        prose-p:leading-[1.9] prose-p:font-light prose-p:text-[16px] prose-p:mb-7 prose-p:break-words
+                        prose-a:no-underline prose-a:border-b prose-a:border-opacity-50 prose-a:transition-all prose-a:font-light prose-a:break-words prose-a:pb-0.5
+                        prose-strong:font-semibold
+                        prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:font-mono prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-code:bg-opacity-60
+                        prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:my-10 prose-pre:border prose-pre:border-opacity-20
+                        prose-pre code:bg-transparent prose-pre code:px-0 prose-pre code:py-0 prose-pre code:border-0
+                        prose-blockquote:border-l-2 prose-blockquote:border-opacity-40 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-none prose-blockquote:font-light prose-blockquote:not-italic prose-blockquote:my-10 prose-blockquote:leading-relaxed prose-blockquote:bg-opacity-30
+                        prose-ul:my-7 prose-ol:my-7
+                        prose-li:leading-relaxed prose-li:break-words
+                        prose-img:rounded-lg prose-img:my-10 prose-img:border prose-img:border-opacity-20 prose-img:transition-opacity prose-img:hover:opacity-90
+                        prose-hr:my-14 prose-hr:border-opacity-20 prose-hr:has(+h2):my-4
+                        prose-th:border-opacity-30 prose-th:px-4 prose-th:py-2 prose-th:font-light
+                        prose-td:border-opacity-30 prose-td:px-4 prose-td:py-2 prose-td:break-words
+                        ${isDark
+                            ? `prose-headings:font-light prose-headings:tracking-tight prose-headings:text-gray-100 prose-h1:border-b-gray-700/20 prose-h2:border-b-gray-700/15
+                            prose-p:text-gray-300
+                            prose-a:text-gray-400 prose-a:border-gray-500/50 hover:prose-a:border-gray-400 hover:prose-a:text-gray-300
+                            prose-strong:text-gray-100
+                            prose-code:text-gray-300 prose-code:bg-gray-800/60
+                            prose-pre:bg-gray-900/60 prose-pre:border-gray-700/20
+                            prose-blockquote:text-gray-300 prose-blockquote:border-gray-600/40 prose-blockquote:bg-gray-800/30
+                            prose-ul:text-gray-300 prose-ol:text-gray-300
+                            prose-li:marker:text-gray-500
+                            prose-img:opacity-95 prose-img:border-gray-700/20
+                            prose-hr:border-gray-700/20
+                            prose-table:text-gray-300 prose-th:border-gray-700/30 prose-th:bg-gray-800/20
+                            prose-td:border-gray-700/30`
+                            : `prose-headings:font-light prose-headings:tracking-tight prose-headings:text-gray-900 prose-h1:border-b-gray-300/20 prose-h2:border-b-gray-300/15
+                            prose-p:text-gray-700
+                            prose-a:text-gray-600 prose-a:border-gray-400/50 hover:prose-a:border-gray-500 hover:prose-a:text-gray-800
+                            prose-strong:text-gray-900
+                            prose-code:text-gray-800 prose-code:bg-gray-100/60
+                            prose-pre:bg-gray-50/60 prose-pre:border-gray-300/20
+                            prose-blockquote:text-gray-700 prose-blockquote:border-gray-300/40 prose-blockquote:bg-gray-50/30
+                            prose-ul:text-gray-700 prose-ol:text-gray-700
+                            prose-li:marker:text-gray-500
+                            prose-img:opacity-95 prose-img:border-gray-300/20
+                            prose-hr:border-gray-300/20
+                            prose-table:text-gray-700 prose-th:border-gray-300/30 prose-th:bg-gray-100/20
+                            prose-td:border-gray-300/30`
+                        }`}
+                >
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <MdxContent />
+                    </Suspense>
+                </div>
+            </div>
+        );
+    }
 
     // Hooks 必須在所有條件返回之前調用
     useEffect(() => {

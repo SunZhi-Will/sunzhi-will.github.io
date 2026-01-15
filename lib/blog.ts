@@ -187,6 +187,23 @@ export function getPostBySlug(slug: string, lang?: Lang): BlogPost | null {
                     }
                 }
 
+                // 對於 MDX 文件，使用 Next.js 內建處理
+                if (mdFile.endsWith('.mdx')) {
+                    return {
+                        slug,
+                        title: data.title || 'Untitled',
+                        date: data.date || slug, // 如果沒有 date，使用資料夾名稱（日期時間）
+                        description: data.description || '',
+                        tags: data.tags || [],
+                        coverImage,
+                        content: null, // MDX 文件由 Next.js 直接處理，不需要 content
+                        lang: targetLang || undefined,
+                        availableLangs,
+                        isMdx: true, // 標記為 MDX 文件
+                    };
+                }
+
+                // 對於普通 Markdown 文件，保持原有處理
                 return {
                     slug,
                     title: data.title || 'Untitled',
@@ -197,7 +214,7 @@ export function getPostBySlug(slug: string, lang?: Lang): BlogPost | null {
                     content,
                     lang: targetLang || undefined,
                     availableLangs,
-                    isMdx: mdFile.endsWith('.mdx'), // 標記是否為 MDX 文件
+                    isMdx: false, // 標記為普通 Markdown 文件
                 };
             }
         }

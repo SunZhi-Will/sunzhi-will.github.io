@@ -25,12 +25,12 @@ import { useTheme } from '../ThemeProvider';
 interface BlogPostClientProps {
     defaultPost: Omit<BlogPost, 'content'>;
     defaultHtmlContent?: string;
-    // defaultMdxSource?: MDXRemoteSerializeResult; // 臨時禁用MDX
+    defaultMdxPath?: string; // MDX 文件路徑
     defaultAllPosts: BlogPost[];
     postsByLang: Partial<Record<Lang, {
         post: Omit<BlogPost, 'content'>;
         htmlContent?: string;
-        // mdxSource?: MDXRemoteSerializeResult; // 臨時禁用MDX
+        mdxPath?: string; // MDX 文件路徑
     } | null>>;
     allPostsByLang: Partial<Record<Lang, BlogPost[]>>;
     baseUrl: string;
@@ -39,7 +39,7 @@ interface BlogPostClientProps {
 export default function BlogPostClient({
     defaultPost,
     defaultHtmlContent,
-    // defaultMdxSource, // 臨時禁用MDX
+    defaultMdxPath,
     defaultAllPosts,
     postsByLang,
     allPostsByLang,
@@ -48,7 +48,7 @@ export default function BlogPostClient({
     const [lang, setLang] = useState<Lang>('zh-TW');
     const [currentPost, setCurrentPost] = useState<Omit<BlogPost, 'content'>>(defaultPost);
     const [currentHtmlContent, setCurrentHtmlContent] = useState<string | undefined>(defaultHtmlContent);
-    // const [currentMdxSource, setCurrentMdxSource] = useState<MDXRemoteSerializeResult | undefined>(defaultMdxSource); // 臨時禁用MDX
+    const [currentMdxPath, setCurrentMdxPath] = useState<string | undefined>(defaultMdxPath);
     const [currentAllPosts, setCurrentAllPosts] = useState<BlogPost[]>(defaultAllPosts);
     // 使用服務端傳來的 baseUrl 作為初始值，避免 hydration mismatch
     const [currentBaseUrl, setCurrentBaseUrl] = useState<string>(baseUrl);
@@ -64,7 +64,7 @@ export default function BlogPostClient({
     }, []);
 
     // 估算閱讀時間（根據內容類型）
-    const contentLength = currentHtmlContent?.length || 0; // 臨時只使用HTML內容
+    const contentLength = (currentHtmlContent?.length || 0) + (currentMdxPath ? 2000 : 0); // MDX 文件估計較長
     const readingTime = Math.max(1, Math.ceil(contentLength / 1500));
 
     // 切換到指定語言版本的文章
@@ -73,7 +73,7 @@ export default function BlogPostClient({
         if (postData) {
             setCurrentPost(postData.post);
             setCurrentHtmlContent(postData.htmlContent);
-            // setCurrentMdxSource(postData.mdxSource); // 臨時禁用MDX
+            setCurrentMdxPath(postData.mdxPath);
         }
         // 更新推薦文章列表
         setCurrentAllPosts(allPostsByLang[targetLang] || []);
@@ -247,7 +247,7 @@ export default function BlogPostClient({
                             {/* 增強的文章正文 - 包含互動功能 */}
                             <EnhancedArticleContent
                                 htmlContent={currentHtmlContent}
-                                // mdxSource={currentMdxSource} // 臨時禁用MDX
+                                mdxPath={currentMdxPath}
                                 postSlug={currentPost.slug}
                                 lang={lang}
                             />

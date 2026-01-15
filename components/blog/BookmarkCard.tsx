@@ -56,10 +56,12 @@ export function BookmarkCard({
           {(author || publisher || icon) && (
             <div className="kg-bookmark-metadata flex items-center space-x-3">
               {icon && (
-                <img
-                  className="kg-bookmark-icon w-5 h-5 rounded-full flex-shrink-0"
+                <Image
+                  className="kg-bookmark-icon rounded-full flex-shrink-0"
                   src={icon}
                   alt=""
+                  width={20}
+                  height={20}
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = 'none';
                   }}
@@ -91,11 +93,12 @@ export function BookmarkCard({
         </div>
 
         {thumbnail && (
-          <div className="kg-bookmark-thumbnail">
-            <img
+          <div className="kg-bookmark-thumbnail relative h-48 w-full">
+            <Image
               src={thumbnail}
               alt=""
-              className="w-full h-48 object-cover rounded-r-lg"
+              fill
+              className="object-cover rounded-r-lg"
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = 'none';
               }}

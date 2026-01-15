@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import createMDX from '@next/mdx';
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -22,6 +23,16 @@ const nextConfig: NextConfig = {
     GOOGLE_APPS_SCRIPT_URL: process.env.GOOGLE_APPS_SCRIPT_URL ||
       'https://script.google.com/macros/s/AKfycbx2P2fpDI5c_4cBYfmjxYpmK1iOej3akV52RaeH1eA8yL3pmIVKilce7uWzlJcKUUCK/exec',
   },
+  // MDX 配置
+  pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
 };
 
-export default nextConfig;
+const withMDX = createMDX({
+  // Add markdown plugins here, as desired
+  options: {
+    remarkPlugins: [],
+    rehypePlugins: [],
+  },
+});
+
+export default withMDX(nextConfig);

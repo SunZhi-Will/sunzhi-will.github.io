@@ -4,8 +4,7 @@ import BlogPostClient from './BlogPostClient';
 import type { Lang } from '@/types';
 import type { BlogPost } from '@/types/blog';
 import type { Metadata } from 'next';
-// import type { MDXRemoteSerializeResult } from 'next-mdx-remote'; // 臨時禁用MDX
-// import { serializeMdx } from '@/lib/mdx'; // 臨時禁用MDX
+// MDX 組件現在由 Next.js 內建處理
 
 // 強制靜態生成
 export const dynamic = 'force-static';
@@ -81,7 +80,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const postsByLang: Partial<Record<Lang, {
         post: Omit<BlogPost, 'content'>;
         htmlContent?: string;
-        mdxSource?: MDXRemoteSerializeResult;
+        mdxPath?: string; // MDX 文件路徑，用於動態導入
     } | null>> = {
         'zh-TW': null,
         'en': null,
@@ -99,23 +98,43 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             // 將 description 轉換為 HTML（支援 markdown 格式）
             const descriptionHtml = post.description ? await markdownToHtml(post.description) : '';
 
-            // 臨時全部使用 HTML 渲染來避免 MDX 問題
-            const htmlContent = post.content ? await markdownToHtml(post.content) : '';
-            postsByLang[lang] = {
-                post: {
-                    slug: post.slug,
-                    title: post.title,
-                    date: post.date,
-                    description: post.description,
-                    descriptionHtml,
-                    tags: post.tags,
-                    coverImage: post.coverImage,
-                    lang: post.lang,
-                    availableLangs: post.availableLangs,
-                    isMdx: post.isMdx,
-                },
-                htmlContent,
-            };
+            // 根據文件類型決定處理方式
+            if (post.isMdx) {
+                // MDX 文件：提供文件路徑供動態導入
+                postsByLang[lang] = {
+                    post: {
+                        slug: post.slug,
+                        title: post.title,
+                        date: post.date,
+                        description: post.description,
+                        descriptionHtml,
+                        tags: post.tags,
+                        coverImage: post.coverImage,
+                        lang: post.lang,
+                        availableLangs: post.availableLangs,
+                        isMdx: post.isMdx,
+                    },
+                    mdxPath: `../../../content/blog/${post.slug}/article.${lang}.mdx`,
+                };
+            } else {
+                // 普通 Markdown 文件：轉換為 HTML
+                const htmlContent = post.content ? await markdownToHtml(post.content) : '';
+                postsByLang[lang] = {
+                    post: {
+                        slug: post.slug,
+                        title: post.title,
+                        date: post.date,
+                        description: post.description,
+                        descriptionHtml,
+                        tags: post.tags,
+                        coverImage: post.coverImage,
+                        lang: post.lang,
+                        availableLangs: post.availableLangs,
+                        isMdx: post.isMdx,
+                    },
+                    htmlContent,
+                };
+            }
         }
         allPostsByLang[lang] = getAllPosts(lang).map(p => ({
             slug: p.slug,
@@ -142,6 +161,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <BlogPostClient
             defaultPost={defaultPostData.post}
             defaultHtmlContent={defaultPostData.htmlContent}
+            defaultMdxPath={defaultPostData.mdxPath}
             defaultAllPosts={allPostsByLang[defaultLang] || []}
             postsByLang={postsByLang}
             allPostsByLang={allPostsByLang}
