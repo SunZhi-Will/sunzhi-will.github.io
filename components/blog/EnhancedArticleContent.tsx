@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState, Suspense } from 'react';
+import { useEffect, useRef, Suspense } from 'react';
 import { MDXRemote } from 'next-mdx-remote';
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { useTheme } from '@/app/blog/ThemeProvider';
@@ -14,7 +14,7 @@ import { BookmarkCard } from './BookmarkCard';
 
 interface EnhancedArticleContentProps {
     htmlContent?: string;
-    mdxSource?: any; // 序列化的 MDX 內容
+    mdxSource?: MDXRemoteSerializeResult; // 序列化的 MDX 內容
     postSlug: string;
     lang: Lang;
 }

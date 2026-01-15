@@ -4,6 +4,7 @@ import BlogPostClient from './BlogPostClient';
 import type { Lang } from '@/types';
 import type { BlogPost } from '@/types/blog';
 import type { Metadata } from 'next';
+import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 // MDX 組件現在由 Next.js 內建處理
 
 // 強制靜態生成
@@ -83,7 +84,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const postsByLang: Partial<Record<Lang, {
         post: Omit<BlogPost, 'content'>;
         htmlContent?: string;
-        mdxSource?: any; // 序列化的 MDX 內容
+        mdxSource?: MDXRemoteSerializeResult; // 序列化的 MDX 內容
     } | null>> = {
         'zh-TW': null,
         'en': null,

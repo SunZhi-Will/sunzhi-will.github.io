@@ -22,15 +22,17 @@ const TableOfContents = dynamic(() => import('@/components/blog/TableOfContents'
 import { useTheme } from '../ThemeProvider';
 // import type { MDXRemoteSerializeResult } from 'next-mdx-remote'; // 臨時禁用MDX
 
+import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
+
 interface BlogPostClientProps {
     defaultPost: Omit<BlogPost, 'content'>;
     defaultHtmlContent?: string;
-    defaultMdxSource?: any; // 序列化的 MDX 內容
+    defaultMdxSource?: MDXRemoteSerializeResult; // 序列化的 MDX 內容
     defaultAllPosts: BlogPost[];
     postsByLang: Partial<Record<Lang, {
         post: Omit<BlogPost, 'content'>;
         htmlContent?: string;
-        mdxSource?: any; // 序列化的 MDX 內容
+        mdxSource?: MDXRemoteSerializeResult; // 序列化的 MDX 內容
     } | null>>;
     allPostsByLang: Partial<Record<Lang, BlogPost[]>>;
     baseUrl: string;
@@ -48,7 +50,7 @@ export default function BlogPostClient({
     const [lang, setLang] = useState<Lang>('zh-TW');
     const [currentPost, setCurrentPost] = useState<Omit<BlogPost, 'content'>>(defaultPost);
     const [currentHtmlContent, setCurrentHtmlContent] = useState<string | undefined>(defaultHtmlContent);
-    const [currentMdxSource, setCurrentMdxSource] = useState<any>(defaultMdxSource);
+    const [currentMdxSource, setCurrentMdxSource] = useState<MDXRemoteSerializeResult | undefined>(defaultMdxSource);
     const [currentAllPosts, setCurrentAllPosts] = useState<BlogPost[]>(defaultAllPosts);
     // 使用服務端傳來的 baseUrl 作為初始值，避免 hydration mismatch
     const [currentBaseUrl, setCurrentBaseUrl] = useState<string>(baseUrl);
