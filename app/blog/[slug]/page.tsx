@@ -99,42 +99,23 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             // 將 description 轉換為 HTML（支援 markdown 格式）
             const descriptionHtml = post.description ? await markdownToHtml(post.description) : '';
 
-            // 根據文件類型決定使用 MDX 還是 HTML
-            if (post.isMdx && post.content) {
-                const mdxSource = await serializeMdx(post.content);
-                postsByLang[lang] = {
-                    post: {
-                        slug: post.slug,
-                        title: post.title,
-                        date: post.date,
-                        description: post.description,
-                        descriptionHtml,
-                        tags: post.tags,
-                        coverImage: post.coverImage,
-                        lang: post.lang,
-                        availableLangs: post.availableLangs,
-                        isMdx: post.isMdx,
-                    },
-                    mdxSource,
-                };
-            } else {
-                const htmlContent = post.content ? await markdownToHtml(post.content) : '';
-                postsByLang[lang] = {
-                    post: {
-                        slug: post.slug,
-                        title: post.title,
-                        date: post.date,
-                        description: post.description,
-                        descriptionHtml,
-                        tags: post.tags,
-                        coverImage: post.coverImage,
-                        lang: post.lang,
-                        availableLangs: post.availableLangs,
-                        isMdx: post.isMdx,
-                    },
-                    htmlContent,
-                };
-            }
+            // 臨時全部使用 HTML 渲染來避免 MDX 問題
+            const htmlContent = post.content ? await markdownToHtml(post.content) : '';
+            postsByLang[lang] = {
+                post: {
+                    slug: post.slug,
+                    title: post.title,
+                    date: post.date,
+                    description: post.description,
+                    descriptionHtml,
+                    tags: post.tags,
+                    coverImage: post.coverImage,
+                    lang: post.lang,
+                    availableLangs: post.availableLangs,
+                    isMdx: post.isMdx,
+                },
+                htmlContent,
+            };
         }
         allPostsByLang[lang] = getAllPosts(lang).map(p => ({
             slug: p.slug,
@@ -161,7 +142,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <BlogPostClient
             defaultPost={defaultPostData.post}
             defaultHtmlContent={defaultPostData.htmlContent}
-            defaultMdxSource={defaultPostData.mdxSource}
             defaultAllPosts={allPostsByLang[defaultLang] || []}
             postsByLang={postsByLang}
             allPostsByLang={allPostsByLang}
