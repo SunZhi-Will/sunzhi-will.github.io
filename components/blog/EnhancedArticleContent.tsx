@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useRef } from 'react';
-// import { MDXRemote } from 'next-mdx-remote'; // 臨時禁用MDX
-// import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
+import { MDXRemote } from 'next-mdx-remote';
+import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { useTheme } from '@/app/blog/ThemeProvider';
 import { Lang } from '@/types';
 import { Callout } from './Callout';
@@ -14,7 +14,7 @@ import { BookmarkCard } from './BookmarkCard';
 
 interface EnhancedArticleContentProps {
     htmlContent?: string;
-    // mdxSource?: MDXRemoteSerializeResult; // 臨時禁用MDX
+    mdxSource?: MDXRemoteSerializeResult;
     postSlug: string;
     lang: Lang;
 }
@@ -101,7 +101,7 @@ function parseCustomComponents(html: string): React.ReactNode[] {
 
 export function EnhancedArticleContent({
     htmlContent,
-    // mdxSource, // 臨時禁用MDX
+    mdxSource,
     postSlug,
     lang,
 }: EnhancedArticleContentProps) {
@@ -285,11 +285,8 @@ export function EnhancedArticleContent({
                 listItem.classList.add('list-item-light');
             }
         });
-    }, [htmlContent, isDark, lang, postSlug]); // 移除了 mdxSource 依賴
+    }, [htmlContent, mdxSource, isDark, lang, postSlug]);
 
-    // 臨時禁用 MDX 功能，使用純 HTML
-    // TODO: 修復 MDX 兼容性問題後重新啟用
-    /*
     // 如果使用 MDX，直接渲染 MDX 組件
     if (mdxSource) {
         return (
@@ -357,7 +354,6 @@ export function EnhancedArticleContent({
             </div>
         );
     }
-    */
 
     // 如果沒有 HTML 內容，返回 null
     if (!htmlContent) {

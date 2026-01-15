@@ -4,7 +4,8 @@ import BlogPostClient from './BlogPostClient';
 import type { Lang } from '@/types';
 import type { BlogPost } from '@/types/blog';
 import type { Metadata } from 'next';
-// import type { MDXRemoteSerializeResult } from 'next-mdx-remote'; // 臨時禁用MDX
+import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
+import { serializeMdx } from '@/lib/mdx';
 
 // 強制靜態生成
 export const dynamic = 'force-static';
@@ -80,7 +81,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const postsByLang: Partial<Record<Lang, {
         post: Omit<BlogPost, 'content'>;
         htmlContent?: string;
-        // mdxSource?: MDXRemoteSerializeResult; // 臨時禁用MDX
+        mdxSource?: MDXRemoteSerializeResult;
     } | null>> = {
         'zh-TW': null,
         'en': null,
@@ -97,10 +98,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         if (post) {
             // 將 description 轉換為 HTML（支援 markdown 格式）
             const descriptionHtml = post.description ? await markdownToHtml(post.description) : '';
-            
-            // 臨時禁用 MDX，全部使用 HTML
-            // TODO: 修復 MDX 兼容性問題後重新啟用
-            /*
+
             // 根據文件類型決定使用 MDX 還是 HTML
             if (post.isMdx && post.content) {
                 const mdxSource = await serializeMdx(post.content);
@@ -120,7 +118,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     mdxSource,
                 };
             } else {
-            */
                 const htmlContent = post.content ? await markdownToHtml(post.content) : '';
                 postsByLang[lang] = {
                     post: {
@@ -137,9 +134,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     },
                     htmlContent,
                 };
-            /*
             }
-            */
         }
         allPostsByLang[lang] = getAllPosts(lang).map(p => ({
             slug: p.slug,
@@ -166,7 +161,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <BlogPostClient
             defaultPost={defaultPostData.post}
             defaultHtmlContent={defaultPostData.htmlContent}
-            // defaultMdxSource={defaultPostData.mdxSource} // 臨時禁用MDX
+            defaultMdxSource={defaultPostData.mdxSource}
             defaultAllPosts={allPostsByLang[defaultLang] || []}
             postsByLang={postsByLang}
             allPostsByLang={allPostsByLang}
