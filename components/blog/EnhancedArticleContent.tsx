@@ -125,6 +125,148 @@ export function EnhancedArticleContent({
         }
     }, [mdxPath]);
 
+    // HTML 內容增強功能 - 只在非 MDX 模式下運行
+    useEffect(() => {
+        // 只在有 HTML 內容且不是 MDX 模式時執行增強功能
+        if (!htmlContent || !contentRef.current || MdxContent) return;
+
+        // 增強連結 - 添加外部連結圖標
+        const links = contentRef.current.querySelectorAll('a[href^="http"]');
+        links.forEach((link) => {
+            if (!link.querySelector('.external-link-icon')) {
+                const icon = document.createElement('span');
+                icon.className = 'external-link-icon ml-1 text-xs';
+                icon.textContent = '↗';
+                icon.setAttribute('aria-hidden', 'true');
+                link.appendChild(icon);
+            }
+        });
+
+        // 增強圖片 - 添加點擊放大功能
+        const images = contentRef.current.querySelectorAll('img');
+        images.forEach((img) => {
+            img.style.cursor = 'zoom-in';
+            img.onclick = () => {
+                const modal = document.createElement('div');
+                modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm';
+                modal.onclick = () => modal.remove();
+
+                const modalImg = document.createElement('img');
+                modalImg.src = img.src;
+                modalImg.className = 'max-w-[90vw] max-h-[90vh] object-contain rounded-lg';
+                modalImg.onclick = (e) => e.stopPropagation();
+
+                modal.appendChild(modalImg);
+                document.body.appendChild(modal);
+            };
+        });
+
+        // 增強表格 - 添加滾動容器
+        const tables = contentRef.current.querySelectorAll('table');
+        tables.forEach((table) => {
+            if (!table.parentElement?.classList.contains('table-wrapper')) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'table-wrapper overflow-x-auto my-6';
+                table.parentElement?.insertBefore(wrapper, table);
+                wrapper.appendChild(table);
+            }
+        });
+
+        // 高亮重要數字（保留原有的 HTML 結構，特別是 strong 標籤）
+        const paragraphs = contentRef.current.querySelectorAll('p');
+        paragraphs.forEach((p) => {
+            const text = p.textContent || '';
+            // 匹配百分比和重要數字
+            const numberPattern = /(\d+(?:\.\d+)?%)/g;
+            if (numberPattern.test(text)) {
+                // 遞歸處理節點，保留 HTML 結構
+                const processNode = (node: Node): Node[] => {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        const textNode = node as Text;
+                        const text = textNode.textContent || '';
+                        const matches = Array.from(text.matchAll(numberPattern));
+
+                        if (matches.length === 0) {
+                            return [textNode.cloneNode()];
+                        }
+
+                        const parts: Node[] = [];
+                        let lastIndex = 0;
+
+                        for (const match of matches) {
+                            // 添加匹配前的文字
+                            if (match.index !== undefined && match.index > lastIndex) {
+                                const beforeText = text.substring(lastIndex, match.index);
+                                if (beforeText) {
+                                    parts.push(document.createTextNode(beforeText));
+                                }
+                            }
+                            // 創建高亮 span
+                            const span = document.createElement('span');
+                            span.className = `font-bold ${isDark ? 'text-purple-400' : 'text-purple-600'}`;
+                            span.textContent = match[0];
+                            parts.push(span);
+                            lastIndex = match.index + match[0].length;
+                        }
+                        // 添加剩餘文字
+                        if (lastIndex < text.length) {
+                            const remainingText = text.substring(lastIndex);
+                            if (remainingText) {
+                                parts.push(document.createTextNode(remainingText));
+                            }
+                        }
+
+                        return parts;
+                    } else if (node.nodeType === Node.ELEMENT_NODE) {
+                        const element = node as Element;
+                        // 特別處理 strong 標籤，保留其樣式
+                        if (element.tagName.toLowerCase() === 'strong') {
+                            const clonedStrong = element.cloneNode() as HTMLElement;
+                            clonedStrong.innerHTML = '';
+                            const childParts = Array.from(element.childNodes).flatMap(processNode);
+                            childParts.forEach(child => clonedStrong.appendChild(child));
+                            return [clonedStrong];
+                        } else {
+                            const clonedElement = element.cloneNode() as HTMLElement;
+                            clonedElement.innerHTML = '';
+                            const childParts = Array.from(element.childNodes).flatMap(processNode);
+                            childParts.forEach(child => clonedElement.appendChild(child));
+                            return [clonedElement];
+                        }
+                    }
+                    return [node.cloneNode()];
+                };
+
+                // 應用處理結果
+                const newNodes = Array.from(p.childNodes).flatMap(processNode);
+                p.innerHTML = '';
+                newNodes.forEach(node => p.appendChild(node));
+            }
+        });
+
+        // 增強代碼塊 - 添加複製按鈕
+        const codeBlocks = contentRef.current.querySelectorAll('pre code');
+        codeBlocks.forEach((codeBlock) => {
+            if (!codeBlock.parentElement?.querySelector('.copy-button')) {
+                const pre = codeBlock.parentElement as HTMLElement;
+                const button = document.createElement('button');
+                button.className = 'copy-button absolute top-3 right-3 px-2 py-1 text-xs rounded bg-gray-700 text-white hover:bg-gray-600 transition-colors';
+                button.textContent = 'Copy';
+                button.onclick = async () => {
+                    try {
+                        await navigator.clipboard.writeText(codeBlock.textContent || '');
+                        button.textContent = 'Copied!';
+                        setTimeout(() => button.textContent = 'Copy', 2000);
+                    } catch (err) {
+                        console.error('Failed to copy text: ', err);
+                    }
+                };
+                pre.style.position = 'relative';
+                pre.appendChild(button);
+            }
+        });
+    }, [htmlContent, MdxContent, isDark]);
+
     // 如果有 MDX 內容，渲染 MDX 組件
     if (MdxContent) {
         return (
@@ -184,48 +326,6 @@ export function EnhancedArticleContent({
             </div>
         );
     }
-
-    // Hooks 必須在所有條件返回之前調用
-    useEffect(() => {
-        // 只在有 HTML 內容時執行增強功能（MDX 已禁用）
-        if (!htmlContent || !contentRef.current) return;
-
-        // 增強連結 - 添加外部連結圖標
-        const links = contentRef.current.querySelectorAll('a[href^="http"]');
-        links.forEach((link) => {
-            if (!link.querySelector('.external-link-icon')) {
-                const icon = document.createElement('span');
-                icon.className = 'external-link-icon ml-1 text-xs';
-                icon.textContent = '↗';
-                icon.setAttribute('aria-hidden', 'true');
-                link.appendChild(icon);
-            }
-        });
-
-        // 增強圖片 - 添加點擊放大功能
-        const images = contentRef.current.querySelectorAll('img');
-        images.forEach((img) => {
-            img.style.cursor = 'zoom-in';
-            img.onclick = () => {
-                const modal = document.createElement('div');
-                modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm';
-                modal.onclick = () => modal.remove();
-
-                const modalImg = document.createElement('img');
-                modalImg.src = img.src;
-                modalImg.className = 'max-w-[90vw] max-h-[90vh] object-contain rounded-lg';
-                modalImg.onclick = (e) => e.stopPropagation();
-
-                modal.appendChild(modalImg);
-                document.body.appendChild(modal);
-            };
-        });
-
-        // 增強代碼區塊 - 添加複製按鈕
-        const codeBlocks = contentRef.current.querySelectorAll('pre code');
-        codeBlocks.forEach((codeBlock) => {
-            const pre = codeBlock.parentElement;
-            if (pre && !pre.querySelector('.copy-code-btn')) {
                 const button = document.createElement('button');
                 button.className = `copy-code-btn absolute top-2 right-2 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${isDark
                     ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
