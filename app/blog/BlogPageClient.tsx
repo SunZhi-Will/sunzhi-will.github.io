@@ -98,6 +98,34 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
             );
         }
 
+        // 按日期降序排列（最新的在前面）
+        // 使用自定義的時間戳提取函數來正確排序
+        const getTimestampFromSlug = (slug: string): number => {
+            // 如果 slug 是日期時間戳格式（如 2026-01-16-025506），使用它進行排序
+            const match = slug.match(/^(\d{4}-\d{2}-\d{2}-\d{6})$/);
+            if (match) {
+                const dateStr = match[1].replace(/(\d{4}-\d{2}-\d{2})-(\d{2})(\d{2})(\d{2})/, '$1T$2:$3:$4');
+                return new Date(dateStr).getTime();
+            }
+
+            // 如果 slug 是日期格式（如 2026-01-16），使用它
+            const dateMatch = slug.match(/^(\d{4}-\d{2}-\d{2})/);
+            if (dateMatch) {
+                return new Date(dateMatch[1]).getTime();
+            }
+
+            // 備用：嘗試解析為日期
+            const date = new Date(slug);
+            if (!isNaN(date.getTime())) {
+                return date.getTime();
+            }
+
+            // 最後備用：返回當前時間
+            return Date.now();
+        };
+
+        filtered.sort((a, b) => getTimestampFromSlug(b.slug) - getTimestampFromSlug(a.slug));
+
         return filtered;
     }, [posts, lang, searchQuery, selectedTag]);
 

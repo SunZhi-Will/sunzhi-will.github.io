@@ -266,6 +266,33 @@ export function getPostBySlug(slug: string, lang?: Lang): BlogPost | null {
 }
 
 /**
+ * 從 slug 中提取日期時間戳進行排序
+ * slug 格式：YYYY-MM-DD-HHMMSS
+ */
+function getTimestampFromSlug(slug: string): number {
+    // 如果 slug 是日期時間戳格式（如 2026-01-16-025506），使用它進行排序
+    const match = slug.match(/^(\d{4}-\d{2}-\d{2}-\d{6})$/);
+    if (match) {
+        return new Date(match[1].replace(/(\d{4}-\d{2}-\d{2})-(\d{2})(\d{2})(\d{2})/, '$1T$2:$3:$4')).getTime();
+    }
+
+    // 如果 slug 是日期格式（如 2026-01-16），使用它
+    const dateMatch = slug.match(/^(\d{4}-\d{2}-\d{2})/);
+    if (dateMatch) {
+        return new Date(dateMatch[1]).getTime();
+    }
+
+    // 備用：嘗試解析為日期
+    const date = new Date(slug);
+    if (!isNaN(date.getTime())) {
+        return date.getTime();
+    }
+
+    // 最後備用：返回當前時間
+    return Date.now();
+}
+
+/**
  * 取得所有部落格文章（按日期排序）
  * @param lang 可選，指定語言，如果指定則只返回該語言版本的文章
  */
@@ -274,7 +301,7 @@ export function getAllPosts(lang?: Lang): BlogPost[] {
     const posts = slugs
         .map((slug) => getPostBySlug(slug, lang))
         .filter((post): post is BlogPost => post !== null)
-        .sort((a, b) => (new Date(b.date).getTime() - new Date(a.date).getTime()));
+        .sort((a, b) => getTimestampFromSlug(b.slug) - getTimestampFromSlug(a.slug));
 
     return posts;
 }

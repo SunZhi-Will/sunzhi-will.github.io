@@ -18,6 +18,8 @@
     "@tailwindcss/typography": "^0.5.19",
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.8.1",
+    "axios": "^1.13.2",
+    "cheerio": "^1.1.2",
     "framer-motion": "^12.24.12",
     "googleapis": "^144.0.0",
     "gray-matter": "^4.0.3",
@@ -36,7 +38,8 @@
     "remark": "^15.0.1",
     "remark-breaks": "^4.0.0",
     "remark-html": "^16.0.1",
-    "tsparticles": "^3.8.1"
+    "tsparticles": "^3.8.1",
+    "turndown": "^7.2.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",

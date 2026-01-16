@@ -14,8 +14,8 @@ const http = require('http');
 async function generateFreeImage(prompt, timestamp, postFolder, articleContent = '') {
     console.log('\n🔄 嘗試 Pollinations.ai...');
     
-    // 根據文章內容提取關鍵視覺元素
-    const visualElements = extractVisualElements(articleContent);
+    // 根據文章內容提取關鍵視覺元素（如果沒有內容，使用預設元素）
+    const visualElements = articleContent ? extractVisualElements(articleContent) : ['AI technology', 'digital innovation', 'technology background'];
     
     // 構建更具體的插圖風格提示詞
     const enhancedPrompt = buildIllustrationPrompt(prompt, visualElements);

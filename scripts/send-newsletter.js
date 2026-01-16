@@ -252,10 +252,40 @@ function getLatestArticle(slug) {
 }
 
 /**
- * 將 Markdown 轉換為 HTML（改進版本，支持嵌套列表）
+ * 將 Markdown 轉換為 HTML（改進版本，支持嵌套列表和 BookmarkCard 組件）
  */
 function markdownToHtml(markdown) {
     let html = markdown;
+
+    // 先處理 BookmarkCard 組件（需要在分割之前處理）
+    // 將多行 BookmarkCard 轉換為單行格式
+    html = html.replace(
+        /<BookmarkCard([\s\S]*?)\/>/g,
+        (match) => {
+            // 移除換行和多餘空格，將所有屬性放在一行
+            return match.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim();
+        }
+    );
+
+    // 處理 BookmarkCard 組件
+    html = html.replace(
+        /<BookmarkCard\s+href="([^"]+)"\s+title="([^"]+)"\s+description="([^"]+)"(?:\s+author="([^"]+)")?(?:\s+publisher="([^"]+)")?\s*\/>/g,
+        (match, href, title, description, author, publisher) => {
+            const authorHtml = author ? `<span style="color: #c0c0c0; font-size: 12px; font-weight: 500; display: inline-block; margin-right: 8px;">${author}</span>` : '';
+            const publisherHtml = publisher ? `<span style="color: #888888; font-size: 12px; display: inline-block;"> • ${publisher}</span>` : '';
+            const metadataHtml = (author || publisher) ? `<div style="margin-top: 8px; display: flex; align-items: center;">${authorHtml}${publisherHtml}</div>` : '';
+
+            return `
+<div style="margin: 24px 0; padding: 20px; background-color: #1a1a1a; border: 1px solid #333333; border-radius: 8px;">
+    <a href="${href}" style="text-decoration: none; color: inherit; display: block;" target="_blank" rel="noopener noreferrer">
+        <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px; color: #e8e8e8; line-height: 1.4;">${title}</div>
+        <div style="font-size: 14px; margin-bottom: 12px; color: #d4d4d4; line-height: 1.5;">${description}</div>
+        ${metadataHtml}
+    </a>
+</div>
+            `.trim();
+        }
+    );
 
     // 先處理粗體和連結（在分割之前）
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #e8e8e8; font-weight: 600;">$1</strong>');
@@ -532,24 +562,30 @@ async function sendNewsletter(slug) {
     }
 
     // 檢查今天是否已經發送過電子報（避免重複發送）
+    // 通過檢查訂閱者的 LastArticleSent 欄位來判斷
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD 格式
-    const sentLogPath = path.join(__dirname, 'newsletter-sent.log');
 
-    try {
-        if (fs.existsSync(sentLogPath)) {
-            const sentLog = fs.readFileSync(sentLogPath, 'utf8').trim();
-            const lastSentDate = sentLog.split('\n').pop()?.split(' ')[0];
+    console.log(`🔍 Checking if newsletter was already sent today (${today})...`);
 
-            if (lastSentDate === today) {
-                console.log(`⚠️  Newsletter already sent today (${today}). Skipping to prevent duplicates.`);
-                console.log('   This is intentional to prevent sending multiple newsletters per day.');
-                return;
-            }
-        }
-    } catch (error) {
-        console.warn('⚠️  Could not check newsletter send history:', error.message);
-        // 繼續執行，不要因為檢查失敗而停止發送
+    // 提前讀取訂閱列表來檢查是否已經發送過
+    const subscriptionsForCheck = await getSubscriptionsFromGoogleSheets();
+    const verifiedSubscribers = subscriptionsForCheck.filter(sub => sub.verified);
+    const todayRecipients = verifiedSubscribers.filter(sub =>
+        sub.lastArticleSent && sub.lastArticleSent.startsWith(today)
+    );
+
+    console.log(`   Total verified subscribers: ${verifiedSubscribers.length}`);
+    console.log(`   Subscribers who received today's newsletter: ${todayRecipients.length}`);
+
+    // 如果今天已經發送給大部分訂閱者（>80%），則跳過發送
+    if (verifiedSubscribers.length > 0 && todayRecipients.length / verifiedSubscribers.length > 0.8) {
+        console.log(`⚠️  Newsletter appears to have been sent today (${today}). Skipping to prevent duplicates.`);
+        console.log(`   ${todayRecipients.length}/${verifiedSubscribers.length} subscribers already received today's newsletter.`);
+        console.log('   This prevents sending multiple newsletters per day.');
+        return;
     }
+
+    console.log('✅ No previous newsletter detected for today. Proceeding with sending.');
 
     console.log(`\n📧 Sending newsletter for article: ${slug}...`);
     console.log(`📡 Google Apps Script URL: ${process.env.GOOGLE_APPS_SCRIPT_URL || 'NOT SET'}`);
@@ -697,10 +733,11 @@ async function sendNewsletter(slug) {
     console.log(`   ✅ Sent: ${sentCount}`);
     console.log(`   ❌ Errors: ${errorCount}`);
 
-    // 如果成功發送了電子報，記錄發送狀態
+    // 如果成功發送了電子報，記錄發送狀態（保留舊的日誌格式）
     if (sentCount > 0) {
         try {
             const timestamp = new Date().toISOString();
+            const sentLogPath = path.join(__dirname, 'newsletter-sent.log');
             const logEntry = `${today} ${timestamp} ${slug} sent:${sentCount} errors:${errorCount}\n`;
             fs.appendFileSync(sentLogPath, logEntry);
             console.log(`   📝 Newsletter send status recorded for ${today}`);

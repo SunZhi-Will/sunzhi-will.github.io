@@ -12,6 +12,8 @@ const { callGeminiAPI } = require('./api/geminiAPI');
 const { createArticlePromptZh, createEnglishTranslationPrompt } = require('./prompts/articlePrompts');
 const { analyzeTodayTopics } = require('./agents/topicAnalyzer');
 const { findRelevantPosts } = require('./agents/postMatcher');
+const { GoogleNewsAgent } = require('./agents/googleNewsAgent');
+const { NewsRanker } = require('./agents/newsRanker');
 const { generateImageWithGemini } = require('./generators/imageGenerator');
 const { processContent } = require('./processors/contentProcessor');
 const { cleanupOldReports } = require('./cleanup/reportCleanup');
@@ -87,6 +89,27 @@ async function generateArticles() {
                 // Agent Step 1: 分析今天的主題和關鍵字
                 const { topics, keywords, summary } = await analyzeTodayTopics(apiKey, modelName, dateStr);
 
+                // Agent Step 1.5: 獲取Google News AI新聞
+                console.log('📰 Agent Step 1.5: Fetching Google News...');
+                const googleNewsAgent = new GoogleNewsAgent();
+                const aiNews = await googleNewsAgent.getAINewsWithContent(keywords, postFolder);
+
+                // 使用AI評分新聞重要性（如果有API金鑰，否則使用備用方法）
+                const newsRanker = new NewsRanker();
+                let rankedNews;
+                try {
+                    rankedNews = await newsRanker.rankNewsWithAI(aiNews, apiKey, modelName);
+                    console.log('🧠 AI news ranking completed');
+                } catch (error) {
+                    console.log('⚠️ AI ranking failed, using fallback method:', error.message);
+                    rankedNews = newsRanker.fallbackRanking(aiNews);
+                }
+                const topNews = newsRanker.selectTopNews(rankedNews, 5);
+
+                // 生成新聞摘要
+                const newsSummary = googleNewsAgent.generateNewsSummary(topNews);
+                console.log('📰 Generated news summary:', newsSummary.substring(0, 200) + '...');
+
                 // 讀取所有現有文章
                 console.log('📚 Loading existing posts...');
                 const allPosts = await getAllExistingPosts(blogDir, slug, dateStr);
@@ -103,7 +126,8 @@ async function generateArticles() {
                     summary,
                     dateFormatted,
                     dateStr,
-                    yesterdayISO
+                    yesterdayISO,
+                    newsSummary
                 );
                 const resultZh = await callGeminiAPI(apiKey, modelName, articlePromptZhWithContext, true);
 

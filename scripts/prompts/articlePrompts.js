@@ -9,9 +9,10 @@ const { personaStyle } = require('../config');
  * @param {string} dateFormatted - 格式化日期
  * @param {string} dateStr - 日期字串
  * @param {string} yesterdayISO - 昨天的日期字串
+ * @param {string} newsSummary - Google News摘要
  * @returns {string} 中文文章 Prompt
  */
-function createArticlePromptZh(existingPosts = [], topics = [], keywords = [], summary = '', dateFormatted, dateStr, yesterdayISO) {
+function createArticlePromptZh(existingPosts = [], topics = [], keywords = [], summary = '', dateFormatted, dateStr, yesterdayISO, newsSummary = '') {
     // 格式化現有文章資訊（Agent 已篩選出相關文章）
     let existingPostsInfo = '';
     if (existingPosts.length > 0) {
@@ -48,11 +49,22 @@ ${keywords.length > 0 ? `關鍵字：${keywords.slice(0, 10).join('、')}${keywo
 `;
     }
 
+    // 加入Google News摘要（如果有的話）
+    let newsInfo = '';
+    if (newsSummary) {
+        newsInfo = `
+【Google News AI新聞摘要】
+${newsSummary}
+`;
+    }
+
     return `
 【System: Strict Investigative Journalist Agent】
 你是一位資深調查記者，擁有 Google Search 的即時查證能力。
 
 ${topicsInfo}
+
+${newsInfo}
 
 ${existingPostsInfo}
 

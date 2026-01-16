@@ -102,7 +102,7 @@ jobs:
           
           # 添加所有變更（包括新文件）
           echo "Adding content/blog/ and public/blog/ to git..."
-          git add -A content/blog/ public/blog/
+          git add -A content/blog/ public/blog/ scripts/newsletter-sent.log
           
           echo ""
           echo "Git status after add:"
