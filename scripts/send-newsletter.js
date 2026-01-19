@@ -261,9 +261,9 @@ function markdownToHtml(markdown) {
     // 將多行 BookmarkCard 轉換為單行格式
     html = html.replace(
         /<BookmarkCard([\s\S]*?)\/>/g,
-        (match) => {
-            // 移除換行和多餘空格，將所有屬性放在一行
-            return match.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim();
+        (match, attrs) => {
+            // 移除換行和多餘空格，將所有屬性放在一行，保持完整的標籤結構
+            return `<BookmarkCard${attrs.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim()}/>`;
         }
     );
 
@@ -271,9 +271,29 @@ function markdownToHtml(markdown) {
     // 將多行 InsightQuote 轉換為單行格式
     html = html.replace(
         /<InsightQuote([\s\S]*?)\/>/g,
-        (match) => {
-            // 移除換行和多餘空格，將所有屬性放在一行
-            return match.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim();
+        (match, attrs) => {
+            // 移除換行和多餘空格，將所有屬性放在一行，保持完整的標籤結構
+            return `<InsightQuote${attrs.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim()}/>`;
+        }
+    );
+
+    // 先處理 Callout 組件（需要在分割之前處理）
+    // 將多行 Callout 轉換為單行格式
+    html = html.replace(
+        /<Callout([\s\S]*?)>([\s\S]*?)<\/Callout>/g,
+        (match, attrs, content) => {
+            // 移除換行和多餘空格，保持完整的標籤結構
+            return `<Callout${attrs.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim()}>${content.trim()}</Callout>`;
+        }
+    );
+
+    // 先處理 StatsHighlight 組件（需要在分割之前處理）
+    // 將多行 StatsHighlight 轉換為單行格式
+    html = html.replace(
+        /<StatsHighlight([\s\S]*?)\/>/g,
+        (match, attrs) => {
+            // 移除換行和多餘空格，將所有屬性放在一行，保持完整的標籤結構
+            return `<StatsHighlight${attrs.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim()}/>`;
         }
     );
 
@@ -355,6 +375,85 @@ function markdownToHtml(markdown) {
             ${authorHtml}
         </div>
     </div>
+</div>
+            `.trim();
+        }
+    );
+
+    // 處理 Callout 組件
+    html = html.replace(
+        /<Callout\s+([^>]+)>([^<]*)<\/Callout>/g,
+        (match, attrs, content) => {
+            // 解析屬性
+            const typeMatch = attrs.match(/type="([^"]+)"/);
+            const titleMatch = attrs.match(/title="([^"]+)"/);
+
+            const type = typeMatch ? typeMatch[1] : 'info';
+            const title = titleMatch ? titleMatch[1] : '';
+
+            // 根據類型決定樣式
+            const getTypeConfig = (type) => {
+                const configs = {
+                    info: { icon: 'ℹ️', title: '資訊', bgColor: '#1a1a1a', borderColor: '#333333', textColor: '#d4d4d4' },
+                    success: { icon: '✅', title: '成功', bgColor: '#1a1a1a', borderColor: '#333333', textColor: '#d4d4d4' },
+                    warning: { icon: '⚠️', title: '警告', bgColor: '#1a1a1a', borderColor: '#333333', textColor: '#d4d4d4' },
+                    error: { icon: '❌', title: '錯誤', bgColor: '#1a1a1a', borderColor: '#333333', textColor: '#d4d4d4' },
+                    tip: { icon: '💡', title: '提示', bgColor: '#1a1a1a', borderColor: '#333333', textColor: '#d4d4d4' }
+                };
+                return configs[type] || configs.info;
+            };
+
+            const config = getTypeConfig(type);
+            const titleHtml = title ? `<div style="font-weight: 600; margin-bottom: 8px; color: #e8e8e8;">${config.icon} ${title}</div>` : '';
+
+            return `
+<div style="margin: 24px 0; padding: 16px 20px; background-color: ${config.bgColor}; border: 1px solid ${config.borderColor}; border-radius: 8px;">
+    ${titleHtml}
+    <div style="color: ${config.textColor}; line-height: 1.6;">${content.trim()}</div>
+</div>
+            `.trim();
+        }
+    );
+
+    // 處理 StatsHighlight 組件
+    html = html.replace(
+        /<StatsHighlight\s+([^>]+)\s*\/>/g,
+        (match, attrs) => {
+            // 解析屬性
+            const titleMatch = attrs.match(/title="([^"]+)"/);
+            const title = titleMatch ? titleMatch[1] : '';
+
+            // 嘗試解析 stats 陣列
+            const statsMatch = attrs.match(/stats=\{([^}]+)\}/);
+            let statsHtml = '';
+
+            if (statsMatch) {
+                try {
+                    // 簡化的 stats 解析 - 處理簡單的情況
+                    const statsStr = statsMatch[1];
+                    // 查找 value 和 label
+                    const valueMatch = statsStr.match(/value:\s*"([^"]+)"/);
+                    const labelMatch = statsStr.match(/label:\s*"([^"]+)"/);
+
+                    if (valueMatch && labelMatch) {
+                        statsHtml = `
+    <div style="display: flex; justify-content: center; align-items: center; gap: 12px;">
+        <div style="text-align: center;">
+            <div style="font-size: 28px; font-weight: 700; color: #c0c0c0; margin-bottom: 4px;">${valueMatch[1]}</div>
+            <div style="font-size: 14px; color: #888888;">${labelMatch[1]}</div>
+        </div>
+    </div>
+                        `.trim();
+                    }
+                } catch (e) {
+                    statsHtml = '<div style="font-size: 16px; color: #d4d4d4;">統計數據</div>';
+                }
+            }
+
+            return `
+<div style="margin: 32px 0; padding: 24px; background-color: #0a0a0a; border: 1px solid #333333; border-radius: 8px; text-align: center;">
+    ${title ? `<div style="font-size: 18px; font-weight: 600; margin-bottom: 16px; color: #e8e8e8;">${title}</div>` : ''}
+    ${statsHtml}
 </div>
             `.trim();
         }
@@ -958,5 +1057,6 @@ if (require.main === module) {
 module.exports = {
     sendNewsletter,
     getLatestArticle,
-    generateNewsletterHtml
+    generateNewsletterHtml,
+    updateLastArticleSent
 };
