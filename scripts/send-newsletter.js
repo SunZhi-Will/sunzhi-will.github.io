@@ -52,7 +52,7 @@ async function updateLastArticleSent(email, articleSlug, lang = 'zh-TW') {
     formData.append('lang', lang);
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 增加到30秒
 
     try {
         const response = await fetch(scriptUrl, {
@@ -267,10 +267,33 @@ function markdownToHtml(markdown) {
         }
     );
 
+    // 先處理 InsightQuote 組件（需要在分割之前處理）
+    // 將多行 InsightQuote 轉換為單行格式
+    html = html.replace(
+        /<InsightQuote([\s\S]*?)\/>/g,
+        (match) => {
+            // 移除換行和多餘空格，將所有屬性放在一行
+            return match.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim();
+        }
+    );
+
     // 處理 BookmarkCard 組件
     html = html.replace(
-        /<BookmarkCard\s+href="([^"]+)"\s+title="([^"]+)"\s+description="([^"]+)"(?:\s+author="([^"]+)")?(?:\s+publisher="([^"]+)")?\s*\/>/g,
-        (match, href, title, description, author, publisher) => {
+        /<BookmarkCard\s+([^>]+)\s*\/>/g,
+        (match, attrs) => {
+            // 解析屬性
+            const hrefMatch = attrs.match(/href="([^"]+)"/);
+            const titleMatch = attrs.match(/title="([^"]+)"/);
+            const descriptionMatch = attrs.match(/description="([^"]+)"/);
+            const authorMatch = attrs.match(/author="([^"]+)"/);
+            const publisherMatch = attrs.match(/publisher="([^"]+)"/);
+
+            const href = hrefMatch ? hrefMatch[1] : '';
+            const title = titleMatch ? titleMatch[1] : '';
+            const description = descriptionMatch ? descriptionMatch[1] : '';
+            const author = authorMatch ? authorMatch[1] : '';
+            const publisher = publisherMatch ? publisherMatch[1] : '';
+
             const authorHtml = author ? `<span style="color: #c0c0c0; font-size: 12px; font-weight: 500; display: inline-block; margin-right: 8px;">${author}</span>` : '';
             const publisherHtml = publisher ? `<span style="color: #888888; font-size: 12px; display: inline-block;"> • ${publisher}</span>` : '';
             const metadataHtml = (author || publisher) ? `<div style="margin-top: 8px; display: flex; align-items: center;">${authorHtml}${publisherHtml}</div>` : '';
@@ -282,6 +305,56 @@ function markdownToHtml(markdown) {
         <div style="font-size: 14px; margin-bottom: 12px; color: #d4d4d4; line-height: 1.5;">${description}</div>
         ${metadataHtml}
     </a>
+</div>
+            `.trim();
+        }
+    );
+
+    // 處理 InsightQuote 組件
+    html = html.replace(
+        /<InsightQuote\s+([^>]+)\s*\/>/g,
+        (match, attrs) => {
+            // 解析屬性
+            const typeMatch = attrs.match(/type="([^"]+)"/);
+            const contentMatch = attrs.match(/content="([^"]+)"/);
+            const authorMatch = attrs.match(/author="([^"]+)"/);
+            const roleMatch = attrs.match(/role="([^"]+)"/);
+
+            const type = typeMatch ? typeMatch[1] : 'insight';
+            const content = contentMatch ? contentMatch[1] : '';
+            const author = authorMatch ? authorMatch[1] : '';
+            const role = roleMatch ? roleMatch[1] : '';
+
+            // 根據類型決定樣式
+            const getTypeConfig = (type) => {
+                const configs = {
+                    insight: { icon: '🔍', title: '內行人的深度點評' },
+                    experience: { icon: '💭', title: '我的親身體驗' },
+                    warning: { icon: '⚠️', title: '重要提醒' },
+                    tip: { icon: '💡', title: '實用技巧' }
+                };
+                return configs[type] || configs.insight;
+            };
+
+            const config = getTypeConfig(type);
+            const authorHtml = author ? `<div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #333333; font-size: 13px; color: #999999;">${author}${role ? ` • ${role}` : ''}</div>` : '';
+
+            return `
+<div style="margin: 32px 0; padding: 24px; background-color: #0a0a0a; border: 1px solid #333333; border-radius: 8px;">
+    <div style="display: flex; align-items: flex-start; gap: 16px;">
+        <div style="flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%; background-color: #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 24px;">
+            ${config.icon}
+        </div>
+        <div style="flex: 1;">
+            <div style="font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #e8e8e8;">
+                ${config.title}
+            </div>
+            <div style="font-size: 15px; line-height: 1.7; margin-bottom: 16px; color: #d4d4d4;">
+                ${content}
+            </div>
+            ${authorHtml}
+        </div>
+    </div>
 </div>
             `.trim();
         }
@@ -714,9 +787,15 @@ async function sendNewsletter(slug) {
             } catch (updateError) {
                 console.error(`   ❌ CRITICAL: Failed to update LastArticleSent for ${subscription.email}:`, updateError.message);
                 console.error(`   📡 GOOGLE_APPS_SCRIPT_URL: ${process.env.GOOGLE_APPS_SCRIPT_URL || 'NOT SET'}`);
-                console.error(`   This means duplicate prevention won't work!`);
-                console.error(`   Please check GOOGLE_APPS_SCRIPT_URL and redeploy Google Apps Script`);
+                console.error(`   ⚠️  WARNING: Duplicate prevention may not work for this subscriber!`);
+                console.error(`   💡 Consider checking:`);
+                console.error(`      1. Google Apps Script URL is correct`);
+                console.error(`      2. GAS script is deployed and has proper permissions`);
+                console.error(`      3. Spreadsheet has LastArticleSent column (8th column)`);
                 console.error(`   Full error:`, updateError);
+
+                // 不要因為更新失敗而中斷發送，但記錄警告
+                errorCount++; // 將此計為錯誤，因為重複發送防護失效
             }
 
             // 使用遮罩的 Email 記錄日誌（安全措施）

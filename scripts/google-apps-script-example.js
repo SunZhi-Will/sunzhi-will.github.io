@@ -510,7 +510,7 @@ function doPost(e) {
             sheet.getRange(existingRow, 7).setValue(tokenExpiry); // TokenExpiry
         } else {
             // 添加新訂閱
-            sheet.appendRow([email, typesStr, lang, now, false, verifyToken, tokenExpiry]);
+            sheet.appendRow([email, typesStr, lang, now, false, verifyToken, tokenExpiry, '']);
         }
 
         // 發送驗證郵件
@@ -718,6 +718,15 @@ function handleUpdateLastArticle(email, articleSlug, lang) {
         Logger.log('📄 Article Slug: ' + articleSlug);
 
         const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+
+        // 確保試算表有正確的欄位結構
+        if (sheet.getLastRow() === 0 || sheet.getLastColumn() < 8) {
+            Logger.log('⚠️ 試算表欄位不足，正在修復...');
+            if (sheet.getLastRow() === 0) {
+                sheet.appendRow(['Email', 'Types', 'Lang', 'SubscribedAt', 'Verified', 'VerifyToken', 'TokenExpiry', 'LastArticleSent']);
+            }
+            Logger.log('✅ 試算表結構已修復');
+        }
         const dataRange = sheet.getDataRange();
         const values = dataRange.getValues();
 
