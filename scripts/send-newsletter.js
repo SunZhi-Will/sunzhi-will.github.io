@@ -985,6 +985,30 @@ function isArticleSuccessfullyGenerated(slug) {
     }
 }
 
+/**
+ * 檢查今天是否已經發送過電子報
+ * @param {string} dateStr - 日期字串 (YYYY-MM-DD)
+ * @returns {boolean} 如果今天已經發送過則返回 true
+ */
+function hasNewsletterBeenSentToday(dateStr) {
+    const sentLogPath = path.join(__dirname, 'newsletter-sent.log');
+
+    try {
+        if (!fs.existsSync(sentLogPath)) {
+            return false; // 日誌文件不存在，表示從未發送過
+        }
+
+        const logContent = fs.readFileSync(sentLogPath, 'utf8');
+        const lines = logContent.trim().split('\n');
+
+        // 檢查是否有今天日期的發送記錄
+        return lines.some(line => line.startsWith(dateStr + ' '));
+    } catch (error) {
+        console.warn(`⚠️  Could not check newsletter sent log:`, error.message);
+        return false; // 出錯時假設沒有發送過，避免阻止發送
+    }
+}
+
 // 主函數
 async function main() {
     const dateInfo = getDateInfo();
@@ -1036,6 +1060,18 @@ async function main() {
         console.log(`✅ Article generation marker verified. Proceeding with newsletter sending.`);
     } else {
         console.log(`🔧 Test mode: Skipping generation marker check.`);
+    }
+
+    // 檢查今天是否已經發送過電子報 - 測試模式下跳過此檢查
+    if (!isTestMode) {
+        const hasAlreadySent = hasNewsletterBeenSentToday(dateStr);
+        if (hasAlreadySent) {
+            console.log(`ℹ️  Newsletter for ${dateStr} has already been sent today.`);
+            console.log('   Skipping duplicate newsletter sending.');
+            process.exit(0);
+        }
+    } else {
+        console.log(`🔧 Test mode: Skipping duplicate send check.`);
     }
 
     try {
