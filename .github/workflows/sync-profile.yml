@@ -30,7 +30,6 @@ jobs:
           repository: SunZhi-Will/SunZhi-Will
           path: profile-repo
           token: ${{ secrets.PAT_TOKEN }}
-          ref: ${{ github.event.repository.default_branch }}
 
       - name: Debug target repository
         run: |
@@ -62,7 +61,7 @@ jobs:
           fi
 
           git commit -m "chore: update profile README and images"
-          if git push origin ${{ github.event.repository.default_branch }}; then
+          if git push origin HEAD; then
             echo "✅ Successfully pushed changes to profile repository"
           else
             echo "❌ Failed to push changes to profile repository"
