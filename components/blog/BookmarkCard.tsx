@@ -53,39 +53,18 @@ export function BookmarkCard({
             </div>
           )}
 
-          {(author || publisher || icon) && (
+          {icon && (
             <div className="kg-bookmark-metadata flex items-center space-x-3">
-              {icon && (
-                <Image
-                  className="kg-bookmark-icon rounded-full flex-shrink-0"
-                  src={icon}
-                  alt=""
-                  width={20}
-                  height={20}
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none';
-                  }}
-                />
-              )}
-
-              {author && (
-                <span className={`kg-bookmark-author text-sm font-medium ${
-                  isDark ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  {author}
-                </span>
-              )}
-
-              {publisher && (
-                <>
-                  {author && <span className={isDark ? 'text-gray-500' : 'text-gray-400'}>•</span>}
-                  <span className={`kg-bookmark-publisher text-sm ${
-                    isDark ? 'text-gray-400' : 'text-gray-500'
-                  }`}>
-                    {publisher}
-                  </span>
-                </>
-              )}
+              <Image
+                className="kg-bookmark-icon rounded-full flex-shrink-0"
+                src={icon}
+                alt=""
+                width={20}
+                height={20}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
             </div>
           )}
 

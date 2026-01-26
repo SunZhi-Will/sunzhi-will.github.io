@@ -311,19 +311,12 @@ function markdownToHtml(markdown) {
             const href = hrefMatch ? hrefMatch[1] : '';
             const title = titleMatch ? titleMatch[1] : '';
             const description = descriptionMatch ? descriptionMatch[1] : '';
-            const author = authorMatch ? authorMatch[1] : '';
-            const publisher = publisherMatch ? publisherMatch[1] : '';
-
-            const authorHtml = author ? `<span style="color: #c0c0c0; font-size: 12px; font-weight: 500; display: inline-block; margin-right: 8px;">${author}</span>` : '';
-            const publisherHtml = publisher ? `<span style="color: #888888; font-size: 12px; display: inline-block;"> • ${publisher}</span>` : '';
-            const metadataHtml = (author || publisher) ? `<div style="margin-top: 8px; display: flex; align-items: center;">${authorHtml}${publisherHtml}</div>` : '';
 
             return `
 <div style="margin: 24px 0; padding: 20px; background-color: #1a1a1a; border: 1px solid #333333; border-radius: 8px;">
     <a href="${href}" style="text-decoration: none; color: inherit; display: block;" target="_blank" rel="noopener noreferrer">
         <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px; color: #e8e8e8; line-height: 1.4;">${title}</div>
         <div style="font-size: 14px; margin-bottom: 12px; color: #d4d4d4; line-height: 1.5;">${description}</div>
-        ${metadataHtml}
     </a>
 </div>
             `.trim();
