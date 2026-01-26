@@ -15,16 +15,12 @@ interface BookmarkCardProps {
   children?: ReactNode;
 }
 
-export function BookmarkCard({
-  href,
-  title,
-  description,
-  author: _author,
-  publisher: _publisher,
-  icon,
-  thumbnail,
-  children
-}: BookmarkCardProps) {
+export function BookmarkCard(props: BookmarkCardProps) {
+  const { href, title, description, icon, thumbnail, children } = props;
+  // 明確忽略 author 和 publisher，保持向後相容
+  void props.author;
+  void props.publisher;
+  
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
