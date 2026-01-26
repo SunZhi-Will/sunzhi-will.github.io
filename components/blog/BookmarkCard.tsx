@@ -19,8 +19,8 @@ export function BookmarkCard({
   href,
   title,
   description,
-  author,
-  publisher,
+  author: _author,
+  publisher: _publisher,
   icon,
   thumbnail,
   children

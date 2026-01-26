@@ -259,7 +259,7 @@ export function EnhancedArticleContent({
                 pre.appendChild(button);
             }
         });
-    }, [htmlContent, isDark]);
+    }, [htmlContent, isDark, mdxSource]);
 
     // 如果有 MDX 內容，渲染 MDX
     if (mdxSource) {
