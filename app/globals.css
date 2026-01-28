@@ -309,27 +309,23 @@ html {
 
 .my-masonry-grid {
   display: flex;
-  margin-left: -32px;
-  /* 調整間距 */
+  gap: 32px;
   width: auto;
 }
 
 .my-masonry-grid_column {
-  padding-left: 32px;
-  /* 調整間距 */
+  padding-left: 0;
   background-clip: padding-box;
 }
 
 /* 添加手機版響應式樣式 */
 @media (max-width: 768px) {
   .my-masonry-grid {
-    margin-left: -16px;
-    /* 減少手機版間距 */
+    gap: 16px;
   }
 
   .my-masonry-grid_column {
-    padding-left: 16px;
-    /* 減少手機版間距 */
+    padding-left: 0;
   }
 }
 

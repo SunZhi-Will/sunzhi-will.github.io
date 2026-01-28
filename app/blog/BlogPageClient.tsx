@@ -178,7 +178,7 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
                 <div className="flex flex-col flex-shrink-0">
                     {/* 個人資料卡片 */}
                     <ProfileCard lang={lang} />
-                    
+
                     {/* 訂閱電子報卡片 */}
                     <NewsletterCard lang={lang} />
                 </div>

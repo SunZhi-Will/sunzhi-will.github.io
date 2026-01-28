@@ -15,7 +15,7 @@ function sanitizeHtml(html: string): string {
   // 只允許基本的格式化標籤
   const allowedTags = ['strong', 'em', 'b', 'i', 'br', 'p'];
   const tagPattern = /<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g;
-  
+
   return html.replace(tagPattern, (match, tagName) => {
     const lowerTag = tagName.toLowerCase();
     if (allowedTags.includes(lowerTag)) {
@@ -84,7 +84,7 @@ export const About = forwardRef<HTMLElement, AboutProps>(({ lang, aboutInView },
                   >
                     {/* 時間線 */}
                     <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-500/30 via-blue-400/40 to-blue-500/30">
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-blue-400 shadow-[0_0_12px_rgba(96,165,250,0.6)] ring-2 ring-blue-500/20" />
+                      <div className="absolute top-0 w-3 h-3 rounded-full bg-blue-400 shadow-[0_0_12px_rgba(96,165,250,0.6)] ring-2 ring-blue-500/20" />
                     </div>
 
                     <div className="pl-6 sm:pl-8">
