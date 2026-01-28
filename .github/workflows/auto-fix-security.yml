@@ -57,8 +57,19 @@ jobs:
             echo "changes=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Generate branch name
+        id: branch
+        continue-on-error: true
+        run: |
+          TIMESTAMP=$(date +%s)
+          BRANCH_NAME="security/auto-fix-${TIMESTAMP}"
+          echo "branch_name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
+          echo "Generated branch name: ${BRANCH_NAME}"
+
       - name: Create Pull Request
+        id: pr
         if: steps.fix.outputs.changes == 'true'
+        continue-on-error: true
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -82,7 +93,7 @@ jobs:
             
             ---
             *This PR was created automatically by the Auto Fix Security Issues workflow.*
-          branch: security/auto-fix-$(date +%s)
+          branch: ${{ steps.branch.outputs.branch_name || format('security/auto-fix-{0}', github.run_id) }}
           delete-branch: true
           labels: |
             security
