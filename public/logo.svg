@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <style>
+      .logo-shape { fill: #ffffff; }
+      .logo-text { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-weight: 700; letter-spacing: 0.2em; fill: #ffffff; }
+    </style>
+  </defs>
+  
+  <!-- Circular Background -->
+  <circle cx="256" cy="256" r="256" fill="#000000"/>
+  
+  <!-- Icon: Stylized 'S' formed by < and > brackets -->
+  <g transform="translate(0, -20)">
+    <!-- Top Bracket (Top half of S / Opening Tag) -->
+    <path class="logo-shape" d="M 390 100 L 190 100 L 90 200 L 220 250 L 255 215 L 155 180 L 220 140 L 390 140 Z" />
+    
+    <!-- Bottom Bracket (Bottom half of S / Closing Tag) -->
+    <path class="logo-shape" d="M 122 412 L 322 412 L 422 312 L 292 262 L 257 297 L 357 332 L 292 372 L 122 372 Z" />
+  </g>
+
+  <!-- Text: SUN -->
+  <text x="256" y="470" text-anchor="middle" font-size="64" class="logo-text">SUN</text>
+</svg>

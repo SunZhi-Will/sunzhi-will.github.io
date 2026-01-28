@@ -20,6 +20,12 @@ export const metadata: Metadata = {
     template: "%s | Sun"
   },
   description: "Full-stack engineer specializing in AI application development and Unity game development",
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' }
+    ],
+    apple: '/favicon.svg',
+  },
   alternates: {
     languages: {
       'en': 'Sun Zhi - Software Engineer | AI Developer',
