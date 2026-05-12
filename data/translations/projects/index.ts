@@ -32,6 +32,11 @@ import { openring } from './openring';
 import { nexusos } from './nexusos';
 import { liminal } from './liminal';
 import { taipeiCityDashboard } from './taipei-city-dashboard';
+import { vibeacademy } from './vibeacademy';
+import { vibeWorkshop } from './vibe-workshop';
+import { autolens } from './autolens';
+import { zettelify } from './zettelify';
+import { toolnest } from './toolnest';
 
 // 專案列表 - 按顯示順序排列
 export const projects = {
@@ -55,6 +60,11 @@ export const projects = {
         fliptok['zh-TW'],
         liminal['zh-TW'],
         taipeiCityDashboard['zh-TW'],
+        vibeacademy['zh-TW'],
+        vibeWorkshop['zh-TW'],
+        autolens['zh-TW'],
+        zettelify['zh-TW'],
+        toolnest['zh-TW'],
         ithomeHelper['zh-TW'],
         threadsSaver['zh-TW'],
         postly['zh-TW'],
@@ -91,6 +101,11 @@ export const projects = {
         fliptok['en'],
         liminal['en'],
         taipeiCityDashboard['en'],
+        vibeacademy['en'],
+        vibeWorkshop['en'],
+        autolens['en'],
+        zettelify['en'],
+        toolnest['en'],
         ithomeHelper['en'],
         threadsSaver['en'],
         postly['en'],
