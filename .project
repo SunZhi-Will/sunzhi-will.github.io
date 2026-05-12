@@ -1,0 +1,25 @@
+---
+name: sunzhi-will.github.io
+category: 個人作品
+description: 個人作品集與技術部落格
+stack: Next.js + MDX + HeroUI + Tailwind
+status: 維護中
+---
+
+## 這是什麼
+
+個人作品集與技術部落格
+
+## 核心功能
+
+- 作品集展示\n- 技術部落格\n- 聯絡表單
+
+## 架構
+
+src/ (Next.js App Router) + public/ + data/
+
+## 快速啟動
+
+```bash
+npm run dev
+```
