@@ -13,7 +13,8 @@ export const threado = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/threado/home.png", alt: "Threado 首頁" },
-            { type: 'image' as const, src: "/projects/threado/dashboard.png", alt: "文章管理儀表板" }
+            { type: 'image' as const, src: "/projects/threado/dashboard.png", alt: "文章管理儀表板" },
+            { type: 'image' as const, src: "/projects/threado/ai-generate.png", alt: "AI 文章生成" }
         ],
         technologies: [
             "Next.js",
@@ -42,7 +43,8 @@ export const threado = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/threado/home.png", alt: "Threado Home" },
-            { type: 'image' as const, src: "/projects/threado/dashboard.png", alt: "Post Management Dashboard" }
+            { type: 'image' as const, src: "/projects/threado/dashboard.png", alt: "Post Management Dashboard" },
+            { type: 'image' as const, src: "/projects/threado/ai-generate.png", alt: "AI Post Generation" }
         ],
         technologies: [
             "Next.js",
