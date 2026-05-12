@@ -184,4 +184,5 @@ export type Project = {
         android?: string;
     };
     demo?: string;
+    timelineOrder?: number;
 }; 

@@ -13,8 +13,7 @@ export const fliptok = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/fliptok/home.png", alt: "FlipTok 首頁" },
-            { type: 'image' as const, src: "/projects/fliptok/browse.png", alt: "商品瀏覽" }
-        ],
+            ],
         technologies: [
             "Flutter",
             "Dart",
@@ -40,8 +39,7 @@ export const fliptok = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/fliptok/home.png", alt: "FlipTok Home" },
-            { type: 'image' as const, src: "/projects/fliptok/browse.png", alt: "Product Browse" }
-        ],
+            ],
         technologies: [
             "Flutter",
             "Dart",

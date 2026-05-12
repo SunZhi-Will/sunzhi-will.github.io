@@ -40,92 +40,91 @@ import { toolnest } from './toolnest';
 import { carbon } from './carbon';
 import { specformula } from './specformula';
 
-// 專案列表 - 按顯示順序排列
+type SupportedLang = 'zh-TW' | 'en';
+
+type ProjectItem = {
+    title: string;
+    description: string;
+    buttonText?: string;
+    category: string;
+    achievements: string[];
+    technologies: string[];
+    media: Array<{
+        type: 'image' | 'youtube' | 'video';
+        src: string;
+        alt: string;
+    }>;
+    link?: string;
+    links?: {
+        ios?: string;
+        android?: string;
+    };
+    demo?: string;
+    timelineOrder?: number;
+};
+
+type LocalizedProject = Record<SupportedLang, Omit<ProjectItem, 'timelineOrder'>>;
+
+type ProjectEntry = {
+    project: LocalizedProject;
+    timelineOrder: number;
+};
+
+const projectEntries: ProjectEntry[] = [
+    { project: nexusos, timelineOrder: 41 },
+    { project: openring, timelineOrder: 40 },
+    { project: broadvize, timelineOrder: 39 },
+    { project: threado, timelineOrder: 38 },
+    { project: skyvize, timelineOrder: 37 },
+    { project: resumeai, timelineOrder: 36 },
+    { project: codeltp, timelineOrder: 35 },
+    { project: aiDebtScanner, timelineOrder: 34 },
+    { project: vibegame, timelineOrder: 33 },
+    { project: voxelWorld, timelineOrder: 32 },
+    { project: allvibe, timelineOrder: 31 },
+    { project: ticktive, timelineOrder: 30 },
+    { project: threadsStoryRecap, timelineOrder: 29 },
+    { project: cardflow, timelineOrder: 28 },
+    { project: veyoShop, timelineOrder: 27 },
+    { project: promptly, timelineOrder: 26 },
+    { project: fliptok, timelineOrder: 25 },
+    { project: liminal, timelineOrder: 24 },
+    { project: taipeiCityDashboard, timelineOrder: 23 },
+    { project: vibeacademy, timelineOrder: 22 },
+    { project: vibeWorkshop, timelineOrder: 21 },
+    { project: autolens, timelineOrder: 20 },
+    { project: specformula, timelineOrder: 19 },
+    { project: zettelify, timelineOrder: 18 },
+    { project: toolnest, timelineOrder: 17 },
+    { project: ithomeHelper, timelineOrder: 16 },
+    { project: threadsSaver, timelineOrder: 15 },
+    { project: postly, timelineOrder: 14 },
+    { project: lexitechly, timelineOrder: 13 },
+    { project: coinhub, timelineOrder: 12 },
+    { project: sunui, timelineOrder: 11 },
+    { project: gformAi, timelineOrder: 10 },
+    { project: deepcrawlai, timelineOrder: 9 },
+    { project: synvize, timelineOrder: 8 },
+    { project: snapraze, timelineOrder: 7 },
+    { project: memorylane, timelineOrder: 6 },
+    { project: factory, timelineOrder: 5 },
+    { project: carbon, timelineOrder: 4 },
+    { project: arGame, timelineOrder: 3 },
+    { project: vrGame, timelineOrder: 2 },
+    { project: linebot, timelineOrder: 1 }
+];
+
+const buildProjects = (lang: SupportedLang) => {
+    return projectEntries
+        .map(({ project, timelineOrder }) => ({
+            ...project[lang],
+            timelineOrder
+        }))
+        .sort((left, right) => right.timelineOrder! - left.timelineOrder!);
+};
+
+// 專案列表 - 按時間由新到舊排列
 export const projects = {
-    'zh-TW': [
-        nexusos['zh-TW'],
-        openring['zh-TW'],
-        broadvize['zh-TW'],
-        threado['zh-TW'],
-        skyvize['zh-TW'],
-        resumeai['zh-TW'],
-        codeltp['zh-TW'],
-        aiDebtScanner['zh-TW'],
-        vibegame['zh-TW'],
-        voxelWorld['zh-TW'],
-        allvibe['zh-TW'],
-        ticktive['zh-TW'],
-        threadsStoryRecap['zh-TW'],
-        cardflow['zh-TW'],
-        veyoShop['zh-TW'],
-        promptly['zh-TW'],
-        fliptok['zh-TW'],
-        liminal['zh-TW'],
-        taipeiCityDashboard['zh-TW'],
-        vibeacademy['zh-TW'],
-        vibeWorkshop['zh-TW'],
-        autolens['zh-TW'],
-        specformula['zh-TW'],
-        carbon['zh-TW'],
-        zettelify['zh-TW'],
-        toolnest['zh-TW'],
-        ithomeHelper['zh-TW'],
-        threadsSaver['zh-TW'],
-        postly['zh-TW'],
-        lexitechly['zh-TW'],
-        coinhub['zh-TW'],
-        sunui['zh-TW'],
-        gformAi['zh-TW'],
-        deepcrawlai['zh-TW'],
-        synvize['zh-TW'],
-        snapraze['zh-TW'],
-        memorylane['zh-TW'],
-        factory['zh-TW'],
-        arGame['zh-TW'],
-        vrGame['zh-TW'],
-        linebot['zh-TW']
-    ],
-    'en': [
-        nexusos['en'],
-        openring['en'],
-        broadvize['en'],
-        threado['en'],
-        skyvize['en'],
-        resumeai['en'],
-        codeltp['en'],
-        aiDebtScanner['en'],
-        vibegame['en'],
-        voxelWorld['en'],
-        allvibe['en'],
-        ticktive['en'],
-        threadsStoryRecap['en'],
-        cardflow['en'],
-        veyoShop['en'],
-        promptly['en'],
-        fliptok['en'],
-        liminal['en'],
-        taipeiCityDashboard['en'],
-        vibeacademy['en'],
-        vibeWorkshop['en'],
-        autolens['en'],
-        specformula['en'],
-        carbon['en'],
-        zettelify['en'],
-        toolnest['en'],
-        ithomeHelper['en'],
-        threadsSaver['en'],
-        postly['en'],
-        lexitechly['en'],
-        coinhub['en'],
-        sunui['en'],
-        gformAi['en'],
-        deepcrawlai['en'],
-        synvize['en'],
-        snapraze['en'],
-        memorylane['en'],
-        factory['en'],
-        arGame['en'],
-        vrGame['en'],
-        linebot['en']
-    ]
+    'zh-TW': buildProjects('zh-TW'),
+    'en': buildProjects('en')
 };

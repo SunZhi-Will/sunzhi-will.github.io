@@ -13,8 +13,7 @@ export const threadsStoryRecap = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/threads_story_recap/home.png", alt: "Threads Story Recap 首頁" },
-            { type: 'image' as const, src: "/projects/threads_story_recap/story.png", alt: "Story 播放器" }
-        ],
+            ],
         technologies: [
             "Next.js",
             "TypeScript",
@@ -38,8 +37,7 @@ export const threadsStoryRecap = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/threads_story_recap/home.png", alt: "Threads Story Recap Home" },
-            { type: 'image' as const, src: "/projects/threads_story_recap/story.png", alt: "Story Player" }
-        ],
+            ],
         technologies: [
             "Next.js",
             "TypeScript",

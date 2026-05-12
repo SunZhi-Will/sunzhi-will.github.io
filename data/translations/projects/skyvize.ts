@@ -13,8 +13,7 @@ export const skyvize = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/skyvize/home.png", alt: "Skyvize 首頁" },
-            { type: 'image' as const, src: "/projects/skyvize/patrol.png", alt: "即時海巡介面" }
-        ],
+            ],
         technologies: [
             "Next.js 16",
             "React",
@@ -42,8 +41,7 @@ export const skyvize = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/skyvize/home.png", alt: "Skyvize Home" },
-            { type: 'image' as const, src: "/projects/skyvize/patrol.png", alt: "Real-time Patrol Interface" }
-        ],
+            ],
         technologies: [
             "Next.js 16",
             "React",

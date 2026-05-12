@@ -13,8 +13,7 @@ export const cardflow = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/cardflow/home.png", alt: "CardFlow 首頁" },
-            { type: 'image' as const, src: "/projects/cardflow/card.png", alt: "3D 名片展示" }
-        ],
+            ],
         technologies: [
             "Next.js",
             "React",
@@ -37,8 +36,7 @@ export const cardflow = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/cardflow/home.png", alt: "CardFlow Home" },
-            { type: 'image' as const, src: "/projects/cardflow/card.png", alt: "3D Card Display" }
-        ],
+            ],
         technologies: [
             "Next.js",
             "React",

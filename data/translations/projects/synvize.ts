@@ -13,8 +13,7 @@ export const synvize = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/synvize/home.png", alt: "Synvize 首頁" },
-            { type: 'image' as const, src: "/projects/synvize/edit.png", alt: "編輯介面" }
-        ],
+            ],
         technologies: [
             "Next.js",
             "Python",
@@ -38,8 +37,7 @@ export const synvize = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/synvize/home.png", alt: "Synvize Homepage" },
-            { type: 'image' as const, src: "/projects/synvize/edit.png", alt: "Edit Interface" }
-        ],
+            ],
         technologies: [
             "Next.js",
             "Python",

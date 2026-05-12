@@ -13,8 +13,7 @@ export const promptly = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/promptly/popup.png", alt: "Promptly 彈窗介面" },
-            { type: 'image' as const, src: "/projects/promptly/suggest.png", alt: "智能推薦功能" }
-        ],
+            ],
         technologies: [
             "Chrome Extension",
             "TypeScript",
@@ -38,8 +37,7 @@ export const promptly = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/promptly/popup.png", alt: "Promptly Popup Interface" },
-            { type: 'image' as const, src: "/projects/promptly/suggest.png", alt: "Smart Suggestion Feature" }
-        ],
+            ],
         technologies: [
             "Chrome Extension",
             "TypeScript",

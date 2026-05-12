@@ -13,8 +13,7 @@ export const voxelWorld = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/voxel_world/home.png", alt: "方界：破碎祭壇" },
-            { type: 'image' as const, src: "/projects/voxel_world/gameplay.png", alt: "遊戲玩法" }
-        ],
+            ],
         technologies: [
             "Three.js",
             "React",
@@ -40,8 +39,7 @@ export const voxelWorld = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/voxel_world/home.png", alt: "Fangjie: Shattered Altars" },
-            { type: 'image' as const, src: "/projects/voxel_world/gameplay.png", alt: "Gameplay" }
-        ],
+            ],
         technologies: [
             "Three.js",
             "React",

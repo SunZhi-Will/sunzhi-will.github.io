@@ -14,8 +14,7 @@ export const nexusos = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/nexusos/home.png", alt: "NexusOS 首頁" },
-            { type: 'image' as const, src: "/projects/nexusos/chat.png", alt: "AI 知識庫對話" }
-        ],
+            ],
         technologies: [
             "Next.js",
             "TypeScript",
@@ -45,8 +44,7 @@ export const nexusos = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/nexusos/home.png", alt: "NexusOS Home" },
-            { type: 'image' as const, src: "/projects/nexusos/chat.png", alt: "AI Knowledge Base Chat" }
-        ],
+            ],
         technologies: [
             "Next.js",
             "TypeScript",

@@ -14,8 +14,7 @@ export const openring = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/openring/home.png", alt: "OpenRing 介面" },
-            { type: 'image' as const, src: "/projects/openring/agent.png", alt: "Chat-Driven AI Agent" }
-        ],
+            ],
         technologies: [
             "Kotlin",
             "Android",
@@ -42,8 +41,7 @@ export const openring = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/openring/home.png", alt: "OpenRing Interface" },
-            { type: 'image' as const, src: "/projects/openring/agent.png", alt: "Chat-Driven AI Agent" }
-        ],
+            ],
         technologies: [
             "Kotlin",
             "Android",

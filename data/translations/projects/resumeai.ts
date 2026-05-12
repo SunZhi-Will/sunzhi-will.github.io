@@ -14,8 +14,7 @@ export const resumeai = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/resumeai/home.png", alt: "ResumeAI 工作區" },
-            { type: 'image' as const, src: "/projects/resumeai/preview.png", alt: "履歷預覽" }
-        ],
+            ],
         technologies: [
             "Next.js",
             "TypeScript",
@@ -44,8 +43,7 @@ export const resumeai = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/resumeai/home.png", alt: "ResumeAI Workspace" },
-            { type: 'image' as const, src: "/projects/resumeai/preview.png", alt: "Resume Preview" }
-        ],
+            ],
         technologies: [
             "Next.js",
             "TypeScript",

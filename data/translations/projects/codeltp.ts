@@ -13,8 +13,7 @@ export const codeltp = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/codeltp/home.png", alt: "CodeLTP 首頁" },
-            { type: 'image' as const, src: "/projects/codeltp/learning.png", alt: "學習介面" }
-        ],
+            ],
         technologies: [
             "Next.js",
             "TypeScript",
@@ -42,8 +41,7 @@ export const codeltp = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/codeltp/home.png", alt: "CodeLTP Home" },
-            { type: 'image' as const, src: "/projects/codeltp/learning.png", alt: "Learning Interface" }
-        ],
+            ],
         technologies: [
             "Next.js",
             "TypeScript",
