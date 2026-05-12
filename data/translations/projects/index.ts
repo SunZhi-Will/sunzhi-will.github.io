@@ -13,10 +13,40 @@ import { arGame } from './ar-game';
 import { vrGame } from './vr-game';
 import { linebot } from './linebot';
 import { ithomeHelper } from './ithome-helper';
+import { threado } from './threado';
+import { broadvize } from './broadvize';
+import { cardflow } from './cardflow';
+import { aiDebtScanner } from './ai-debt-scanner';
+import { skyvize } from './skyvize';
+import { allvibe } from './allvibe';
+import { voxelWorld } from './voxel-world';
+import { vibegame } from './vibegame';
+import { ticktive } from './ticktive';
+import { promptly } from './promptly';
+import { resumeai } from './resumeai';
+import { veyoShop } from './veyo-shop';
+import { threadsStoryRecap } from './threads-story-recap';
+import { codeltp } from './codeltp';
+import { fliptok } from './fliptok';
 
 // 專案列表 - 按顯示順序排列
 export const projects = {
     'zh-TW': [
+        broadvize['zh-TW'],
+        threado['zh-TW'],
+        skyvize['zh-TW'],
+        resumeai['zh-TW'],
+        codeltp['zh-TW'],
+        aiDebtScanner['zh-TW'],
+        vibegame['zh-TW'],
+        voxelWorld['zh-TW'],
+        allvibe['zh-TW'],
+        ticktive['zh-TW'],
+        threadsStoryRecap['zh-TW'],
+        cardflow['zh-TW'],
+        veyoShop['zh-TW'],
+        promptly['zh-TW'],
+        fliptok['zh-TW'],
         ithomeHelper['zh-TW'],
         threadsSaver['zh-TW'],
         postly['zh-TW'],
@@ -34,6 +64,21 @@ export const projects = {
         linebot['zh-TW']
     ],
     'en': [
+        broadvize['en'],
+        threado['en'],
+        skyvize['en'],
+        resumeai['en'],
+        codeltp['en'],
+        aiDebtScanner['en'],
+        vibegame['en'],
+        voxelWorld['en'],
+        allvibe['en'],
+        ticktive['en'],
+        threadsStoryRecap['en'],
+        cardflow['en'],
+        veyoShop['en'],
+        promptly['en'],
+        fliptok['en'],
         ithomeHelper['en'],
         threadsSaver['en'],
         postly['en'],

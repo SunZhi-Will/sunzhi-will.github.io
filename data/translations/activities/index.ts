@@ -1,5 +1,6 @@
 import { digitimesHackathon } from './digitimes-hackathon';
 import { taipeiDesignFestivalHackathon } from './taipei-design-festival-hackathon';
+import { doubleCityHackathon } from './double-city-hackathon';
 import { tedAiLecture } from './ted-ai-lecture';
 import { unityCvCourse } from './unity-cv-course';
 
@@ -9,6 +10,7 @@ export const activities = {
             title: '黑客松',
             items: [
                 digitimesHackathon['zh-TW'],
+                doubleCityHackathon['zh-TW'],
                 taipeiDesignFestivalHackathon['zh-TW']
             ]
         },
@@ -30,6 +32,7 @@ export const activities = {
             title: 'Hackathons',
             items: [
                 digitimesHackathon['en'],
+                doubleCityHackathon['en'],
                 taipeiDesignFestivalHackathon['en']
             ]
         },
