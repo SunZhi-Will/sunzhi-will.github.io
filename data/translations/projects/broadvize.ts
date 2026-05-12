@@ -5,11 +5,12 @@ export const broadvize = {
         category: "AI 開發",
         achievements: [
             "單一內容自動生成多平台適配貼文",
-            "支援 LINE、Threads、X、Facebook、LinkedIn",
-            "URL 文章自動擷取與摘要",
-            "自定義模板建立與複用系統",
-            "即時內容編輯與預覽",
-            "直接串接 LINE / Facebook 發布功能"
+            "支援 LINE、Threads、X、Facebook、LinkedIn、Instagram",
+            "URL 文章自動擷取與摘要（免 API）",
+            "Word 文件（.docx）直接上傳解析",
+            "RSS 訂閱源整合，自動拉取最新內容",
+            "可重複使用的品牌語調模板系統",
+            "直接串接 LINE / Facebook / Instagram 發布功能"
         ],
         media: [
             { type: 'image' as const, src: "/projects/broadvize/home.png", alt: "Broadvize 首頁" },
@@ -33,11 +34,12 @@ export const broadvize = {
         category: "AI Development",
         achievements: [
             "Auto-generate platform-specific posts from single input",
-            "Support for LINE, Threads, X, Facebook, LinkedIn",
-            "URL article extraction and summarization",
-            "Custom template creation and reuse system",
-            "Real-time content editing and preview",
-            "Direct publishing to LINE and Facebook"
+            "Support for LINE, Threads, X, Facebook, LinkedIn, Instagram",
+            "URL article extraction and summarization (no API required)",
+            "Direct Word (.docx) document upload and parsing",
+            "RSS feed integration for automatic content fetching",
+            "Reusable brand tone template system",
+            "Direct publishing to LINE, Facebook and Instagram"
         ],
         media: [
             { type: 'image' as const, src: "/projects/broadvize/home.png", alt: "Broadvize Home" },

@@ -6,10 +6,12 @@ export const autolens = {
         achievements: [
             "Electron + React + Vite 跨平台桌面應用",
             "AI 智慧聚焦：Gemini AI 自動偵測重要操作區域",
-            "視窗選擇與全螢幕錄製模式",
+            "uiohook-napi 全局滑鼠鍵盤 Hook（無需窗口焦點）",
+            "视窗選擇與全螢幕錄製模式",
             "系統聲音 + 麥克風音訊混合錄製",
-            "漸層背景、陰影等專業視覺效果",
-            "本地儲存，資料完全不上傳"
+            "時間軸編輯器＋拖曳排序剪輯",
+            "GIF 影片匯出支援",
+            "漸層背景、陰影等專業視覺效果"
         ],
         media: [
             { type: 'image' as const, src: "/projects/autolens/home.png", alt: "AutoLens 錄製介面" }
@@ -20,7 +22,9 @@ export const autolens = {
             "TypeScript",
             "Vite",
             "Google Gemini",
-            "Tailwind CSS"
+            "Tailwind CSS",
+            "Radix UI",
+            "Biome"
         ],
         link: "https://github.com/SunZhi-Will/autolens"
     },
@@ -31,10 +35,12 @@ export const autolens = {
         achievements: [
             "Electron + React + Vite cross-platform desktop app",
             "AI smart focus: Gemini AI auto-detects important action areas",
+            "uiohook-napi global mouse/keyboard hook (no window focus needed)",
             "Window selection and full-screen recording modes",
             "System audio + microphone mixed audio recording",
-            "Gradient backgrounds, shadows, and professional visual effects",
-            "Local storage only — data never uploaded"
+            "Timeline editor with drag-and-drop clip sorting",
+            "GIF export support",
+            "Gradient backgrounds, shadows, and professional visual effects"
         ],
         media: [
             { type: 'image' as const, src: "/projects/autolens/home.png", alt: "AutoLens Recording Interface" }
@@ -45,7 +51,9 @@ export const autolens = {
             "TypeScript",
             "Vite",
             "Google Gemini",
-            "Tailwind CSS"
+            "Tailwind CSS",
+            "Radix UI",
+            "Biome"
         ],
         link: "https://github.com/SunZhi-Will/autolens"
     }

@@ -37,6 +37,8 @@ import { vibeWorkshop } from './vibe-workshop';
 import { autolens } from './autolens';
 import { zettelify } from './zettelify';
 import { toolnest } from './toolnest';
+import { carbon } from './carbon';
+import { specformula } from './specformula';
 
 // 專案列表 - 按顯示順序排列
 export const projects = {
@@ -63,6 +65,8 @@ export const projects = {
         vibeacademy['zh-TW'],
         vibeWorkshop['zh-TW'],
         autolens['zh-TW'],
+        specformula['zh-TW'],
+        carbon['zh-TW'],
         zettelify['zh-TW'],
         toolnest['zh-TW'],
         ithomeHelper['zh-TW'],
@@ -104,6 +108,8 @@ export const projects = {
         vibeacademy['en'],
         vibeWorkshop['en'],
         autolens['en'],
+        specformula['en'],
+        carbon['en'],
         zettelify['en'],
         toolnest['en'],
         ithomeHelper['en'],

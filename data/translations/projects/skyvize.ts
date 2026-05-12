@@ -16,12 +16,15 @@ export const skyvize = {
             { type: 'image' as const, src: "/projects/skyvize/patrol.png", alt: "即時海巡介面" }
         ],
         technologies: [
-            "Next.js",
+            "Next.js 16",
             "React",
             "TypeScript",
+            "Google Gemini",
+            "Drizzle ORM",
+            "PostgreSQL",
+            "Recharts",
             "Tailwind CSS",
-            "shadcn/ui",
-            "PostgreSQL"
+            "shadcn/ui"
         ],
         link: "https://github.com/sunzhi-will/skyvize"
     },
@@ -42,12 +45,15 @@ export const skyvize = {
             { type: 'image' as const, src: "/projects/skyvize/patrol.png", alt: "Real-time Patrol Interface" }
         ],
         technologies: [
-            "Next.js",
+            "Next.js 16",
             "React",
             "TypeScript",
+            "Google Gemini",
+            "Drizzle ORM",
+            "PostgreSQL",
+            "Recharts",
             "Tailwind CSS",
-            "shadcn/ui",
-            "PostgreSQL"
+            "shadcn/ui"
         ],
         link: "https://github.com/sunzhi-will/skyvize"
     }
