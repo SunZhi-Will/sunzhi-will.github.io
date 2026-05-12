@@ -1,7 +1,7 @@
 export const doubleCityHackathon = {
     'zh-TW': {
-        title: "2025 雙北程式設計節 城市儀表板大黑客松",
-        description: "參加新北市政府資訊中心、台北市政府資訊局主辦的 2025 雙北程式設計節城市儀表板大黑客松，與超過 100 支隊伍競爭，開發創新的城市數據視覺化儀表板解決方案",
+        title: "2026 雙北程式設計節 城市儀表板大黑客松",
+        description: "參加新北市政府資訊中心、台北市政府資訊局主辦的 2026 雙北程式設計節城市儀表板大黑客松，與超過 100 支隊伍競爭，開發創新的城市數據視覺化儀表板解決方案",
         category: "全端開發",
         achievements: [
             "開發城市開放資料視覺化儀表板",
@@ -23,8 +23,8 @@ export const doubleCityHackathon = {
         ]
     },
     'en': {
-        title: "2025 Taipei Twin Cities Coding Festival - City Dashboard Hackathon",
-        description: "Participated in the 2025 Taipei Twin Cities Coding Festival City Dashboard Grand Hackathon, organized by New Taipei City Information Center and Taipei City Government Information Department, competing with over 100 teams to develop innovative city data visualization dashboards",
+        title: "2026 Taipei Twin Cities Coding Festival - City Dashboard Hackathon",
+        description: "Participated in the 2026 Taipei Twin Cities Coding Festival City Dashboard Grand Hackathon, organized by New Taipei City Information Center and Taipei City Government Information Department, competing with over 100 teams to develop innovative city data visualization dashboards",
         category: "Full Stack Development",
         achievements: [
             "Developed city open data visualization dashboard",

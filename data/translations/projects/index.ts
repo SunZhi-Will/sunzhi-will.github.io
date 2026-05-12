@@ -28,10 +28,16 @@ import { veyoShop } from './veyo-shop';
 import { threadsStoryRecap } from './threads-story-recap';
 import { codeltp } from './codeltp';
 import { fliptok } from './fliptok';
+import { openring } from './openring';
+import { nexusos } from './nexusos';
+import { liminal } from './liminal';
+import { taipeiCityDashboard } from './taipei-city-dashboard';
 
 // 專案列表 - 按顯示順序排列
 export const projects = {
     'zh-TW': [
+        nexusos['zh-TW'],
+        openring['zh-TW'],
         broadvize['zh-TW'],
         threado['zh-TW'],
         skyvize['zh-TW'],
@@ -47,6 +53,8 @@ export const projects = {
         veyoShop['zh-TW'],
         promptly['zh-TW'],
         fliptok['zh-TW'],
+        liminal['zh-TW'],
+        taipeiCityDashboard['zh-TW'],
         ithomeHelper['zh-TW'],
         threadsSaver['zh-TW'],
         postly['zh-TW'],
@@ -64,6 +72,8 @@ export const projects = {
         linebot['zh-TW']
     ],
     'en': [
+        nexusos['en'],
+        openring['en'],
         broadvize['en'],
         threado['en'],
         skyvize['en'],
@@ -79,6 +89,8 @@ export const projects = {
         veyoShop['en'],
         promptly['en'],
         fliptok['en'],
+        liminal['en'],
+        taipeiCityDashboard['en'],
         ithomeHelper['en'],
         threadsSaver['en'],
         postly['en'],
