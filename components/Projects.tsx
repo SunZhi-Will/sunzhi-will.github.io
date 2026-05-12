@@ -127,9 +127,16 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
                   </div>
                 </div>
                 <div className="p-4 sm:p-6 flex flex-col gap-3 sm:gap-4">
-                  <h3 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-slate-200 via-gray-200 to-slate-100 bg-clip-text text-transparent">
-                    {project.title}
-                  </h3>
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-slate-200 via-gray-200 to-slate-100 bg-clip-text text-transparent flex-1">
+                      {project.title}
+                    </h3>
+                    {project.startYear && (
+                      <span className="px-3 py-1 text-sm font-semibold text-slate-200 bg-slate-500/20 border border-slate-400/30 rounded-lg whitespace-nowrap">
+                        {project.startYear}
+                      </span>
+                    )}
+                  </div>
                   <p className="text-sm sm:text-base text-slate-100 leading-relaxed">{project.description}</p>
 
                   {/* 成就列表 */}

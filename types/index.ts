@@ -63,6 +63,8 @@ export interface Translations {
                     android?: string;
                 };
                 demo?: string;
+                timelineOrder?: number;
+                startYear?: number;
             }>;
         };
         activities: {
@@ -185,4 +187,5 @@ export type Project = {
     };
     demo?: string;
     timelineOrder?: number;
+    startYear?: number;
 }; 

@@ -61,6 +61,7 @@ type ProjectItem = {
     };
     demo?: string;
     timelineOrder?: number;
+    startYear?: number;
 };
 
 type LocalizedProject = Record<SupportedLang, Omit<ProjectItem, 'timelineOrder'>>;
@@ -68,57 +69,59 @@ type LocalizedProject = Record<SupportedLang, Omit<ProjectItem, 'timelineOrder'>
 type ProjectEntry = {
     project: LocalizedProject;
     timelineOrder: number;
+    startYear?: number;
 };
 
 const projectEntries: ProjectEntry[] = [
-    { project: nexusos, timelineOrder: 41 },
-    { project: openring, timelineOrder: 40 },
-    { project: broadvize, timelineOrder: 39 },
-    { project: threado, timelineOrder: 38 },
-    { project: skyvize, timelineOrder: 37 },
-    { project: resumeai, timelineOrder: 36 },
-    { project: codeltp, timelineOrder: 35 },
-    { project: aiDebtScanner, timelineOrder: 34 },
-    { project: vibegame, timelineOrder: 33 },
-    { project: voxelWorld, timelineOrder: 32 },
-    { project: allvibe, timelineOrder: 31 },
-    { project: ticktive, timelineOrder: 30 },
-    { project: threadsStoryRecap, timelineOrder: 29 },
-    { project: cardflow, timelineOrder: 28 },
-    { project: veyoShop, timelineOrder: 27 },
-    { project: promptly, timelineOrder: 26 },
-    { project: fliptok, timelineOrder: 25 },
-    { project: liminal, timelineOrder: 24 },
-    { project: taipeiCityDashboard, timelineOrder: 23 },
-    { project: vibeacademy, timelineOrder: 22 },
-    { project: vibeWorkshop, timelineOrder: 21 },
-    { project: autolens, timelineOrder: 20 },
-    { project: specformula, timelineOrder: 19 },
-    { project: zettelify, timelineOrder: 18 },
-    { project: toolnest, timelineOrder: 17 },
-    { project: ithomeHelper, timelineOrder: 16 },
-    { project: threadsSaver, timelineOrder: 15 },
-    { project: postly, timelineOrder: 14 },
-    { project: lexitechly, timelineOrder: 13 },
-    { project: coinhub, timelineOrder: 12 },
-    { project: sunui, timelineOrder: 11 },
-    { project: gformAi, timelineOrder: 10 },
-    { project: deepcrawlai, timelineOrder: 9 },
-    { project: synvize, timelineOrder: 8 },
-    { project: snapraze, timelineOrder: 7 },
-    { project: memorylane, timelineOrder: 6 },
-    { project: factory, timelineOrder: 5 },
-    { project: carbon, timelineOrder: 4 },
-    { project: arGame, timelineOrder: 3 },
-    { project: vrGame, timelineOrder: 2 },
-    { project: linebot, timelineOrder: 1 }
+    { project: nexusos, timelineOrder: 41, startYear: 2026 },
+    { project: openring, timelineOrder: 40, startYear: 2026 },
+    { project: broadvize, timelineOrder: 39, startYear: 2025 },
+    { project: threado, timelineOrder: 38, startYear: 2025 },
+    { project: skyvize, timelineOrder: 37, startYear: 2026 },
+    { project: resumeai, timelineOrder: 36, startYear: 2025 },
+    { project: codeltp, timelineOrder: 35, startYear: 2025 },
+    { project: aiDebtScanner, timelineOrder: 34, startYear: 2025 },
+    { project: vibegame, timelineOrder: 33, startYear: 2026 },
+    { project: voxelWorld, timelineOrder: 32, startYear: 2026 },
+    { project: allvibe, timelineOrder: 31, startYear: 2025 },
+    { project: ticktive, timelineOrder: 30, startYear: 2025 },
+    { project: threadsStoryRecap, timelineOrder: 29, startYear: 2025 },
+    { project: cardflow, timelineOrder: 28, startYear: 2025 },
+    { project: veyoShop, timelineOrder: 27, startYear: 2025 },
+    { project: promptly, timelineOrder: 26, startYear: 2025 },
+    { project: fliptok, timelineOrder: 25, startYear: 2025 },
+    { project: liminal, timelineOrder: 24, startYear: 2025 },
+    { project: taipeiCityDashboard, timelineOrder: 23, startYear: 2025 },
+    { project: vibeacademy, timelineOrder: 22, startYear: 2026 },
+    { project: vibeWorkshop, timelineOrder: 21, startYear: 2025 },
+    { project: autolens, timelineOrder: 20, startYear: 2025 },
+    { project: specformula, timelineOrder: 19, startYear: 2025 },
+    { project: zettelify, timelineOrder: 18, startYear: 2025 },
+    { project: toolnest, timelineOrder: 17, startYear: 2025 },
+    { project: ithomeHelper, timelineOrder: 16, startYear: 2024 },
+    { project: threadsSaver, timelineOrder: 15, startYear: 2025 },
+    { project: postly, timelineOrder: 14, startYear: 2024 },
+    { project: lexitechly, timelineOrder: 13, startYear: 2025 },
+    { project: coinhub, timelineOrder: 12, startYear: 2025 },
+    { project: sunui, timelineOrder: 11, startYear: 2025 },
+    { project: gformAi, timelineOrder: 10, startYear: 2025 },
+    { project: deepcrawlai, timelineOrder: 9, startYear: 2025 },
+    { project: synvize, timelineOrder: 8, startYear: 2025 },
+    { project: snapraze, timelineOrder: 7, startYear: 2025 },
+    { project: memorylane, timelineOrder: 6, startYear: 2025 },
+    { project: factory, timelineOrder: 5, startYear: 2025 },
+    { project: carbon, timelineOrder: 4, startYear: 2017 },
+    { project: arGame, timelineOrder: 3, startYear: 2024 },
+    { project: vrGame, timelineOrder: 2, startYear: 2024 },
+    { project: linebot, timelineOrder: 1, startYear: 2024 }
 ];
 
-const buildProjects = (lang: SupportedLang) => {
+const buildProjects = (lang: SupportedLang): Array<ProjectItem & { timelineOrder: number; startYear?: number }> => {
     return projectEntries
-        .map(({ project, timelineOrder }) => ({
+        .map(({ project, timelineOrder, startYear }) => ({
             ...project[lang],
-            timelineOrder
+            timelineOrder,
+            startYear
         }))
         .sort((left, right) => right.timelineOrder! - left.timelineOrder!);
 };
