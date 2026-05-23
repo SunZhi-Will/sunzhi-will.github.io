@@ -9,7 +9,6 @@ const https = require("https");
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
-const { execSync } = require("child_process");
 
 const BASE = path.resolve(__dirname, "..");
 const PUBLIC = path.join(BASE, "public");

@@ -355,6 +355,17 @@ class GoogleNewsAgent {
         try {
             console.log(`🕷️ Scraping article: ${article.title.substring(0, 50)}...`);
 
+            // 驗證 URL 只允許 http/https 協議，防止 SSRF
+            let parsedUrl;
+            try {
+                parsedUrl = new URL(article.url);
+            } catch {
+                throw new Error(`Invalid URL: ${article.url}`);
+            }
+            if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+                throw new Error(`Blocked non-HTTP URL protocol: ${parsedUrl.protocol}`);
+            }
+
             const response = await axios.get(article.url, {
                 headers: {
                     'User-Agent': this.getRandomUserAgent()

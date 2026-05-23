@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { spawnSync } = require('child_process');
 
 /**
  * 從 git 歷史中找出所有被刪除的文章，並檢查哪些可能是技術文章（非 AI 日報）
@@ -10,8 +10,13 @@ function findDeletedArticles() {
         console.log('🔍 正在搜尋 git 歷史中被刪除的文章...\n');
         
         // 獲取所有刪除文件的 commit
-        const gitLogCommand = 'git log --all --full-history --diff-filter=D --name-only --pretty=format:"%H|%ad|%s" --date=short -- "content/blog"';
-        const output = execSync(gitLogCommand, { encoding: 'utf8' });
+        const result = spawnSync('git', [
+            'log', '--all', '--full-history', '--diff-filter=D',
+            '--name-only', '--pretty=format:%H|%ad|%s', '--date=short',
+            '--', 'content/blog'
+        ], { encoding: 'utf8' });
+        if (result.error) throw result.error;
+        const output = result.stdout;
         
         const deletedArticles = new Map(); // 使用 Map 避免重複
         
@@ -67,9 +72,10 @@ function findDeletedArticles() {
                 const zhTWFile = info.files.find(f => f.includes('article.zh-TW'));
                 if (zhTWFile && info.commit) {
                     // 獲取刪除前的版本（commit^ 表示刪除前的 commit）
-                    const gitShowCommand = `git show ${info.commit}^:${zhTWFile}`;
                     try {
-                        const articleContent = execSync(gitShowCommand, { encoding: 'utf8' });
+                        const showResult = spawnSync('git', ['show', `${info.commit}^:${zhTWFile}`], { encoding: 'utf8' });
+                        if (showResult.error) throw showResult.error;
+                        const articleContent = showResult.stdout;
                         
                         // 檢查 frontmatter
                         const frontmatterMatch = articleContent.match(/^---\s*\n([\s\S]*?)\n---/);

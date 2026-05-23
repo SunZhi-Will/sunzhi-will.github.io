@@ -16,14 +16,18 @@ permissions:
 
 jobs:
   analyze:
-    name: CodeQL Analysis
+    name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 60
 
     strategy:
       fail-fast: false
       matrix:
-        language: ['javascript']
+        include:
+          - language: javascript-typescript
+            build-mode: none
+          - language: python
+            build-mode: none
 
     steps:
       - name: Checkout repository
@@ -33,19 +37,35 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
-          queries: +security-and-quality
+          build-mode: ${{ matrix.build-mode }}
+          queries: security-extended
+          config: |
+            paths-ignore:
+              - node_modules
+              - .next
+              - dist
+              - build
+              - public
 
-      - name: Setup Node.js
+      - name: Setup Node.js (JavaScript only)
+        if: matrix.language == 'javascript-typescript'
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install Node.js dependencies
+        if: matrix.language == 'javascript-typescript'
         run: npm ci
+
+      - name: Setup Python (Python only)
+        if: matrix.language == 'python'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
-          category: '/language:javascript'
+          category: '/language:${{ matrix.language }}'
 

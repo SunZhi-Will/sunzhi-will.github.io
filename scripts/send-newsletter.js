@@ -44,6 +44,17 @@ async function updateLastArticleSent(email, articleSlug, lang = 'zh-TW') {
         throw new Error('GOOGLE_APPS_SCRIPT_URL is not configured');
     }
 
+    // 驗證 scriptUrl 只允許 https://script.google.com，防止 SSRF
+    let parsedScriptUrl;
+    try {
+        parsedScriptUrl = new URL(scriptUrl);
+    } catch {
+        throw new Error('GOOGLE_APPS_SCRIPT_URL is not a valid URL');
+    }
+    if (parsedScriptUrl.protocol !== 'https:' || parsedScriptUrl.hostname !== 'script.google.com') {
+        throw new Error('GOOGLE_APPS_SCRIPT_URL must be an https://script.google.com URL');
+    }
+
     // 發送更新請求到 Google Apps Script
     const formData = new URLSearchParams();
     formData.append('email', email);
