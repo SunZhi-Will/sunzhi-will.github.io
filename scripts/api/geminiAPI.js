@@ -97,8 +97,9 @@ async function callGeminiAPI(apiKey, modelName, prompt, useSearch = true, maxRet
                 }
 
                 if (retrySeconds !== null) {
-                    delay = Math.ceil(retrySeconds * 1000) + 1000; // 轉換為毫秒，加1秒緩衝
-                    console.log(`⏳ Quota exceeded, waiting ${retrySeconds.toFixed(1)}s before retry...`);
+                    // 最多等待 60 秒，避免 workflow 超時
+                    delay = Math.min(Math.ceil(retrySeconds * 1000) + 1000, 60000);
+                    console.log(`⏳ Quota exceeded, waiting ${Math.min(retrySeconds, 59).toFixed(1)}s before retry...`);
                 } else {
                     // 如果無法解析，使用較長的等待時間
                     delay = 60000; // 1分鐘

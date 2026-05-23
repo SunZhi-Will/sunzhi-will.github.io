@@ -81,9 +81,9 @@ function removeDatePatterns(text) {
     });
 
     // 清理移除日期後留下的標點符號（如 "，2026年1月9日" 移除日期後留下 "，"）
-    cleaned = cleaned.replace(/([，。、；：,.;:]\s*)+/g, (match, p1) => {
-        // 如果標點符號在開頭，移除它
-        return cleaned.indexOf(match) === 0 ? '' : match;
+    // 使用 offset 參數正確判斷符號是否在開頭
+    cleaned = cleaned.replace(/([，。、；：,.;:]\s*)+/g, (match, p1, offset) => {
+        return offset === 0 ? '' : match;
     });
     
     // 清理多餘空白和開頭標點

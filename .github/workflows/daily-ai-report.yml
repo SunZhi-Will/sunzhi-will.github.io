@@ -159,3 +159,13 @@ jobs:
             echo "✅ Changes pushed. Deployment will be handled by the Next.js deployment workflow."
           fi
 
+      - name: Report failure summary
+        if: failure()
+        run: |
+          echo "## ❌ Daily AI Report Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Date (UTC):** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "**Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Please check the [workflow logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details." >> $GITHUB_STEP_SUMMARY
+

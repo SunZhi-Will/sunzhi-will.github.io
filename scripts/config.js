@@ -7,10 +7,11 @@ if (!fs.existsSync(blogDir)) {
     fs.mkdirSync(blogDir, { recursive: true });
 }
 
-// 模型列表 - 只使用 gemini-2.5-flash
-// 注意：免費層 gemini-2.5-flash 限制 20 次/天
+// 模型列表 - 主要使用 gemini-2.5-flash，備用 gemini-2.0-flash
+// 注意：免費層 gemini-2.5-flash 限制 20 次/天；gemini-2.0-flash 限制 200 次/天
 const modelNames = [
     'gemini-2.5-flash',          // 主要使用的模型（免費層：20次/天）
+    'gemini-2.0-flash',          // 備用模型（免費層：200次/天，較舊）
 ];
 
 // 圖片生成模型列表（按優先順序）

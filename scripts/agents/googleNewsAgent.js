@@ -19,6 +19,23 @@ class GoogleNewsAgent {
         this.googleNewsUrl = 'https://news.google.com/search?q=AI&hl=en-US&gl=US&ceid=US:en';
         this.newsCache = new Map(); // 快取新聞資料
         this.cacheExpiry = 30 * 60 * 1000; // 30分鐘快取
+
+        // User-Agent 輪換池，降低被 Google 偵測封鎖的機率
+        this.userAgents = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_4_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15',
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        ];
+    }
+
+    /**
+     * 隨機取得一個 User-Agent
+     * @returns {string} User-Agent 字串
+     */
+    getRandomUserAgent() {
+        return this.userAgents[Math.floor(Math.random() * this.userAgents.length)];
     }
 
     /**
@@ -31,7 +48,7 @@ class GoogleNewsAgent {
 
             const response = await axios.get(this.googleNewsUrl, {
                 headers: {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                    'User-Agent': this.getRandomUserAgent()
                 },
                 timeout: 10000
             });
@@ -340,7 +357,7 @@ class GoogleNewsAgent {
 
             const response = await axios.get(article.url, {
                 headers: {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                    'User-Agent': this.getRandomUserAgent()
                 },
                 timeout: 15000,
                 maxRedirects: 5

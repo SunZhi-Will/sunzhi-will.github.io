@@ -2,6 +2,26 @@ const https = require('https');
 const http = require('http');
 
 /**
+ * 檢查 hostname 是否為私有 IP / localhost（SSRF 防護）
+ * @param {string} hostname - 主機名稱
+ * @returns {boolean} 是否為私有位址
+ */
+function isPrivateHost(hostname) {
+    const privatePatterns = [
+        /^localhost$/i,
+        /^127\./,
+        /^10\./,
+        /^172\.(1[6-9]|2[0-9]|3[01])\./,
+        /^192\.168\./,
+        /^0\.0\.0\.0/,
+        /^::1$/,
+        /^fd[0-9a-f]{2}:/i,
+        /^169\.254\./, // link-local
+    ];
+    return privatePatterns.some(r => r.test(hostname));
+}
+
+/**
  * 從 URL 獲取網頁標題
  * @param {string} url - 網頁 URL
  * @param {number} timeout - 超時時間（毫秒），預設 3000
@@ -11,6 +31,19 @@ async function fetchWebPageTitle(url, timeout = 3000) {
     return new Promise((resolve) => {
         try {
             const urlObj = new URL(url);
+
+            // SSRF 防護：拒絕私有 IP / localhost
+            if (isPrivateHost(urlObj.hostname)) {
+                resolve(null);
+                return;
+            }
+
+            // 只允許 http / https
+            if (urlObj.protocol !== 'http:' && urlObj.protocol !== 'https:') {
+                resolve(null);
+                return;
+            }
+
             const client = urlObj.protocol === 'https:' ? https : http;
 
             const req = client.get(url, {

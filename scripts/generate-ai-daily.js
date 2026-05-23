@@ -349,6 +349,13 @@ generateArticles()
                 files.forEach(file => console.log(`     - ${file}`));
             } else {
                 console.log(`   Folder ${postFolder} exists but is empty`);
+                // 清理空資料夾，避免下次被誤判為已生成
+                try {
+                    fs.rmdirSync(postFolder);
+                    console.log(`   🧹 Removed empty folder: ${postFolder}`);
+                } catch (rmErr) {
+                    console.warn(`   ⚠️  Failed to remove empty folder: ${rmErr.message}`);
+                }
             }
         } else {
             console.log(`   No folder created at ${postFolder}`);
