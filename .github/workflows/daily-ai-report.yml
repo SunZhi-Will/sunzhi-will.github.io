@@ -18,6 +18,28 @@ jobs:
       contents: write  # 需要寫入權限來提交更改
     
     steps:
+      - name: Validate required secrets
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          missing_secrets=()
+          if [ -z "$GEMINI_API_KEY" ]; then
+            missing_secrets+=("GEMINI_API_KEY")
+          fi
+
+          if [ ${#missing_secrets[@]} -gt 0 ]; then
+            echo "❌ 缺少必要的 GitHub Secrets，請前往設定：" >&2
+            echo "   Repo → Settings → Secrets and variables → Actions → New repository secret" >&2
+            echo "" >&2
+            for s in "${missing_secrets[@]}"; do
+              echo "  - $s" >&2
+            done
+            echo "" >&2
+            echo "取得 GEMINI_API_KEY：https://aistudio.google.com/app/apikey" >&2
+            exit 1
+          fi
+          echo "✅ 所有必要 Secrets 已設定"
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -48,7 +70,11 @@ jobs:
       - name: Generate AI Daily Report
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: node scripts/generate-ai-daily.js
+        run: |
+          echo "🤖 Starting AI Daily Report generation..."
+          echo "Node version: $(node --version)"
+          echo "NPM version: $(npm --version)"
+          node scripts/generate-ai-daily.js
 
       - name: Copy blog images
         run: node scripts/copy-blog-images.js
