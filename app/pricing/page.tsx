@@ -63,7 +63,7 @@ const content: Record<Lang, {
                 badge: '可接受委託',
                 title: '軟體專案接案',
                 subtitle: 'Custom Software Development',
-                description: '從需求分析、UI/UX 設計到系統上線，提供全流程客製化開發服務，包含網頁前後端、API 串接與 AI 功能整合。',
+                description: '從需求分析、UI/UX 設計到系統上線，提供全流程客製化開發服務，包含網頁前後端、資料庫設計與第三方 API 串接。',
                 tiers: [
                     {
                         name: '小型專案',
@@ -97,7 +97,7 @@ const content: Record<Lang, {
                 icon: '🎓',
                 title: '軟體教學顧問',
                 subtitle: 'Software Teaching & Consulting',
-                description: '結合業界實務經驗的程式設計教學，涵蓋 Unity、AI 應用、Web 開發等主題，適合個人進修、企業培訓或學生專案指導。',
+                description: '結合業界實務經驗的程式設計教學，涵蓋 Unity、Web 開發等主題，適合個人進修、企業培訓或學生專案指導。',
                 tiers: [
                     {
                         name: '個人家教',
@@ -108,7 +108,7 @@ const content: Record<Lang, {
                             '課前需求訪談與課程規劃',
                             '課後學習資源與筆記提供',
                             '可錄影留存複習',
-                            '涵蓋：Python、C#、JavaScript、Unity、AI API',
+                            '涵蓋：Python、C#、JavaScript、Unity、LINE Bot',
                         ],
                     },
                     {
@@ -121,7 +121,7 @@ const content: Record<Lang, {
                             '場次前問卷調查需求',
                             '客製化簡報與實作教材',
                             '10 人以內小班制（超過另議）',
-                            '主題：Gemini API、AI 自動化、LINE Bot、Unity 遊戲開發',
+                            '主題：LINE Bot 開發、Unity 遊戲開發、Web 前後端實作',
                             '可提供出席證明',
                         ],
                     },
@@ -161,7 +161,7 @@ const content: Record<Lang, {
                 badge: 'Available for Hire',
                 title: 'Software Development',
                 subtitle: 'Custom Software Development',
-                description: 'Full-cycle custom development from requirements analysis to deployment, including front-end, back-end, API integration, and AI features.',
+                description: 'Full-cycle custom development from requirements analysis to deployment, including front-end, back-end, database design, and third-party API integration.',
                 tiers: [
                     {
                         name: 'Small Project',
@@ -191,13 +191,13 @@ const content: Record<Lang, {
                         ],
                     },
                     {
-                        name: 'Large / AI Projects',
+                        name: 'Large Projects',
                         price: 'From 80,000',
                         unit: '/ project',
-                        description: 'SaaS platforms, AI-integrated tools, enterprise systems',
+                        description: 'SaaS platforms, enterprise systems, complex web applications',
                         features: [
-                            'AI / LLM integration (Gemini, OpenAI, etc.)',
                             'System architecture & tech stack planning',
+                            'Complex backend & business logic development',
                             'CI/CD pipeline setup',
                             'Performance & security audit',
                             'Long-term maintenance negotiable',
@@ -223,7 +223,7 @@ const content: Record<Lang, {
                 icon: '🎓',
                 title: 'Teaching & Consulting',
                 subtitle: 'Software Teaching & Consulting',
-                description: 'Industry-practice-based programming instruction covering Unity, AI applications, and web development for individuals, enterprises, or student project guidance.',
+                description: 'Industry-practice-based programming instruction covering Unity, web development, and system integration for individuals, enterprises, or student project guidance.',
                 tiers: [
                     {
                         name: 'Private Tutoring',
@@ -234,7 +234,7 @@ const content: Record<Lang, {
                             'Pre-lesson needs assessment',
                             'Post-lesson notes & resources',
                             'Session recording available',
-                            'Topics: Python, C#, JavaScript, Unity, AI APIs',
+                            'Topics: Python, C#, JavaScript, Unity, LINE Bot',
                         ],
                     },
                     {
@@ -247,7 +247,7 @@ const content: Record<Lang, {
                             'Pre-workshop survey',
                             'Custom slides & hands-on materials',
                             'Up to 10 participants (more negotiable)',
-                            'Topics: Gemini API, AI automation, LINE Bot, Unity',
+                            'Topics: LINE Bot development, Unity, Web front-end & back-end',
                             'Attendance certificate available',
                         ],
                     },
