@@ -16,6 +16,17 @@ export const Footer = ({ lang }: FooterProps) => {
         </p>
         <div className="flex flex-wrap justify-center gap-4">
           <a
+            href="/pricing"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm text-slate-200 hover:text-slate-100 
+                       bg-slate-500/10 hover:bg-slate-500/20 border border-slate-400/20 hover:border-slate-400/40
+                       rounded-full transition-all duration-300 backdrop-blur-sm"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z" />
+            </svg>
+            {lang === 'zh-TW' ? '服務費用' : 'Pricing'}
+          </a>
+          <a
             href="/links"
             className="inline-flex items-center gap-2 px-4 py-2 text-sm text-slate-200 hover:text-slate-100 
                        bg-slate-500/10 hover:bg-slate-500/20 border border-slate-400/20 hover:border-slate-400/40
