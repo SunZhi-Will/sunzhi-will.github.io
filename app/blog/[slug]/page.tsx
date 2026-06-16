@@ -71,11 +71,14 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://sunzhi-will.github.io';
-    const imageUrl = defaultPost.coverImage
-        ? (defaultPost.coverImage.startsWith('http') ? defaultPost.coverImage : `${baseUrl}${defaultPost.coverImage}`)
-        : undefined;
 
-    // 設定標題為「文章標題」，支援多語言
+    let coverImageUrl;
+    if (defaultPost.coverImage) {
+        coverImageUrl = defaultPost.coverImage.startsWith('http')
+            ? defaultPost.coverImage
+            : `${baseUrl}${defaultPost.coverImage}`;
+    }
+
     return {
         title: defaultPost.title,
         description: defaultPost.description,
@@ -96,9 +99,10 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
             type: 'article',
             publishedTime: defaultPost.date,
             modifiedTime: defaultPost.date,
-            authors: [`${baseUrl}/#person`],
             url: `${baseUrl}/blog/${slug}`,
-            images: imageUrl ? [{ url: imageUrl, alt: defaultPost.title, width: 1200, height: 630 }] : [],
+            images: coverImageUrl
+                ? [{ url: coverImageUrl, alt: defaultPost.title }]
+                : [],
             tags: defaultPost.tags || [],
             locale: defaultPost.lang === 'zh-TW' ? 'zh_TW' : 'en_US',
             siteName: 'Sun',
@@ -107,7 +111,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
             card: 'summary_large_image',
             title: defaultPost.title,
             description: defaultPost.description,
-            images: imageUrl ? [imageUrl] : [],
+            images: coverImageUrl ? [coverImageUrl] : [],
         },
         robots: {
             index: true,
