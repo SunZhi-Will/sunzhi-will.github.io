@@ -18,87 +18,6 @@ interface EnhancedArticleContentProps {
     postSlug: string;
     lang: Lang;
 }
-
-// 自定義組件渲染器
-function renderCustomComponent(tagName: string, attributes: Record<string, string>, children: string): React.ReactElement | null {
-    const attrs = Object.fromEntries(
-        Object.entries(attributes).map(([key, value]) => {
-            // 嘗試解析布林值和數字
-            if (value === 'true') return [key, true];
-            if (value === 'false') return [key, false];
-            if (!isNaN(Number(value))) return [key, Number(value)];
-            return [key, value];
-        })
-    );
-
-    switch (tagName) {
-        case 'insightquote':
-            return <InsightQuote key={Math.random()} {...attrs} content={children} />;
-        case 'callout':
-            return <Callout key={Math.random()} {...attrs}>{children}</Callout>;
-        case 'statshighlight':
-            return <StatsHighlight key={Math.random()} {...attrs} />;
-        case 'stepguide':
-            return <StepGuide key={Math.random()} {...attrs}>{children}</StepGuide>;
-        case 'articleconclusion':
-            return <ArticleConclusion key={Math.random()} {...attrs} />;
-        case 'bookmarkcard':
-            return <BookmarkCard key={Math.random()} {...attrs} />;
-        default:
-            return null;
-    }
-}
-
-// 解析 HTML 中的自定義組件
-function parseCustomComponents(html: string): React.ReactNode[] {
-    if (!html) return [];
-
-    const parts: React.ReactNode[] = [];
-    let lastIndex = 0;
-
-    // 匹配自定義組件標籤的正則表達式
-    const componentRegex = /<([a-z]+)([^>]*)>([\s\S]*?)<\/\1>/gi;
-
-    let match;
-    while ((match = componentRegex.exec(html)) !== null) {
-        const [fullMatch, tagName, attributesStr, innerContent] = match;
-
-        // 添加組件之前的文本
-        if (match.index > lastIndex) {
-            const textBefore = html.slice(lastIndex, match.index);
-            if (textBefore.trim()) {
-                parts.push(textBefore);
-            }
-        }
-
-        // 解析屬性
-        const attributes: Record<string, string> = {};
-        const attrRegex = /([a-z-]+)="([^"]*)"/gi;
-        let attrMatch;
-        while ((attrMatch = attrRegex.exec(attributesStr)) !== null) {
-            attributes[attrMatch[1]] = attrMatch[2];
-        }
-
-        // 渲染組件
-        const component = renderCustomComponent(tagName.toLowerCase(), attributes, innerContent);
-        if (component) {
-            parts.push(component);
-        }
-
-        lastIndex = match.index + fullMatch.length;
-    }
-
-    // 添加最後的文本
-    if (lastIndex < html.length) {
-        const remainingText = html.slice(lastIndex);
-        if (remainingText.trim()) {
-            parts.push(remainingText);
-        }
-    }
-
-    return parts;
-}
-
 // MDX 組件映射
 const mdxComponents = {
     InsightQuote,
@@ -119,10 +38,10 @@ export function EnhancedArticleContent({
     const { theme } = useTheme();
     const isDark = theme === 'dark';
 
-    // HTML 內容增強功能 - 只在非 MDX 模式下運行
+    // 內容增強功能 - 適用於 MDX 與 HTML
     useEffect(() => {
-        // 只在有 HTML 內容且不是 MDX 模式時執行增強功能
-        if (!htmlContent || !contentRef.current || mdxSource) return;
+        // 確保 DOM 節點已掛載
+        if (!contentRef.current) return;
 
         // 增強連結 - 添加外部連結圖標
         const links = contentRef.current.querySelectorAll('a[href^="http"]');
@@ -266,46 +185,47 @@ export function EnhancedArticleContent({
         return (
             <div className="space-y-8">
                 <div
+                    ref={contentRef}
                     className={`prose prose-base max-w-none
-                        prose-h1:text-2xl prose-h1:mt-14 prose-h1:mb-8 prose-h1:font-light prose-h1:leading-tight prose-h1:tracking-tight prose-h1:pb-4 prose-h1:border-b prose-h1:border-opacity-20
-                        prose-h2:text-xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:font-light prose-h2:leading-tight prose-h2:tracking-tight prose-h2:pb-3 prose-h2:border-b prose-h2:border-opacity-15
-                        prose-h3:text-lg prose-h3:mt-10 prose-h3:mb-5 prose-h3:font-light prose-h3:leading-tight prose-h3:tracking-tight
-                        prose-h4:text-base prose-h4:mt-8 prose-h4:mb-4 prose-h4:font-light prose-h4:leading-tight
-                        prose-p:leading-[1.9] prose-p:font-light prose-p:text-[16px] prose-p:mb-7 prose-p:break-words
-                        prose-a:no-underline prose-a:border-b prose-a:border-opacity-50 prose-a:transition-all prose-a:font-light prose-a:break-words prose-a:pb-0.5
+                        prose-h1:text-2xl prose-h1:mt-14 prose-h1:mb-8 prose-h1:font-semibold prose-h1:leading-tight prose-h1:tracking-normal prose-h1:pb-4 prose-h1:border-b prose-h1:border-opacity-20
+                        prose-h2:text-xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:font-semibold prose-h2:leading-tight prose-h2:tracking-normal prose-h2:pb-3 prose-h2:border-b prose-h2:border-opacity-15
+                        prose-h3:text-lg prose-h3:mt-10 prose-h3:mb-5 prose-h3:font-semibold prose-h3:leading-tight prose-h3:tracking-normal
+                        prose-h4:text-base prose-h4:mt-8 prose-h4:mb-4 prose-h4:font-semibold prose-h4:leading-tight
+                        prose-p:leading-[1.9] prose-p:font-normal prose-p:text-[17px] prose-p:mb-7 prose-p:break-words
+                        prose-a:no-underline prose-a:border-b prose-a:border-opacity-50 prose-a:transition-all prose-a:font-medium prose-a:break-words prose-a:pb-0.5
                         prose-strong:font-semibold
                         prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:font-mono prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-code:bg-opacity-60
                         prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:my-10 prose-pre:border prose-pre:border-opacity-20
                         prose-pre code:bg-transparent prose-pre code:px-0 prose-pre code:py-0 prose-pre code:border-0
-                        prose-blockquote:border-l-2 prose-blockquote:border-opacity-40 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-none prose-blockquote:font-light prose-blockquote:not-italic prose-blockquote:my-10 prose-blockquote:leading-relaxed prose-blockquote:bg-opacity-30
+                        prose-blockquote:border-l-2 prose-blockquote:border-opacity-40 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-none prose-blockquote:font-normal prose-blockquote:not-italic prose-blockquote:my-10 prose-blockquote:leading-relaxed prose-blockquote:bg-opacity-30
                         prose-ul:my-7 prose-ol:my-7
                         prose-li:leading-relaxed prose-li:break-words
                         prose-img:rounded-lg prose-img:my-10 prose-img:border prose-img:border-opacity-20 prose-img:transition-opacity prose-img:hover:opacity-90
                         prose-hr:my-14 prose-hr:border-opacity-20 prose-hr:has(+h2):my-4
-                        prose-th:border-opacity-30 prose-th:px-4 prose-th:py-2 prose-th:font-light
+                        prose-th:border-opacity-30 prose-th:px-4 prose-th:py-2 prose-th:font-semibold
                         prose-td:border-opacity-30 prose-td:px-4 prose-td:py-2 prose-td:break-words
                         ${isDark
-                            ? `prose-headings:font-light prose-headings:tracking-tight prose-headings:text-gray-100 prose-h1:border-b-gray-700/20 prose-h2:border-b-gray-700/15
-                            prose-p:text-gray-300
-                            prose-a:text-gray-400 prose-a:border-gray-500/50 hover:prose-a:border-gray-400 hover:prose-a:text-gray-300
+                            ? `prose-headings:font-semibold prose-headings:tracking-normal prose-headings:text-gray-50 prose-h1:border-b-gray-700/20 prose-h2:border-b-gray-700/15
+                            prose-p:text-gray-200
+                            prose-a:text-yellow-200 prose-a:border-yellow-300/50 hover:prose-a:border-yellow-200 hover:prose-a:text-yellow-100
                             prose-strong:text-gray-100
                             prose-code:text-gray-300 prose-code:bg-gray-800/60
                             prose-pre:bg-gray-900/60 prose-pre:border-gray-700/20
-                            prose-blockquote:text-gray-300 prose-blockquote:border-gray-600/40 prose-blockquote:bg-gray-800/30
-                            prose-ul:text-gray-300 prose-ol:text-gray-300
+                            prose-blockquote:text-gray-200 prose-blockquote:border-gray-500/50 prose-blockquote:bg-gray-800/40
+                            prose-ul:text-gray-200 prose-ol:text-gray-200
                             prose-li:marker:text-gray-500
                             prose-img:opacity-95 prose-img:border-gray-700/20
                             prose-hr:border-gray-700/20
-                            prose-table:text-gray-300 prose-th:border-gray-700/30 prose-th:bg-gray-800/20
+                            prose-table:text-gray-200 prose-th:border-gray-700/30 prose-th:bg-gray-800/40
                             prose-td:border-gray-700/30`
-                            : `prose-headings:font-light prose-headings:tracking-tight prose-headings:text-gray-900 prose-h1:border-b-gray-300/20 prose-h2:border-b-gray-300/15
-                            prose-p:text-gray-700
-                            prose-a:text-gray-600 prose-a:border-gray-400/50 hover:prose-a:border-gray-500 hover:prose-a:text-gray-800
+                            : `prose-headings:font-semibold prose-headings:tracking-normal prose-headings:text-gray-950 prose-h1:border-b-gray-300/20 prose-h2:border-b-gray-300/15
+                            prose-p:text-gray-800
+                            prose-a:text-yellow-700 prose-a:border-yellow-500/50 hover:prose-a:border-cyan-700 hover:prose-a:text-yellow-900
                             prose-strong:text-gray-900
                             prose-code:text-gray-800 prose-code:bg-gray-100/60
                             prose-pre:bg-gray-50/60 prose-pre:border-gray-300/20
-                            prose-blockquote:text-gray-700 prose-blockquote:border-gray-300/40 prose-blockquote:bg-gray-50/30
-                            prose-ul:text-gray-700 prose-ol:text-gray-700
+                            prose-blockquote:text-gray-800 prose-blockquote:border-gray-400/50 prose-blockquote:bg-gray-50/80
+                            prose-ul:text-gray-800 prose-ol:text-gray-800
                             prose-li:marker:text-gray-500
                             prose-img:opacity-95 prose-img:border-gray-300/20
                             prose-hr:border-gray-300/20
@@ -328,59 +248,57 @@ export function EnhancedArticleContent({
 
     return (
         <div className="space-y-8">
-            {/* 文章內容 */}
+            {/* 文章內容 - 使用 dangerouslySetInnerHTML 正確渲染 HTML */}
             <div
                 ref={contentRef}
                 className={`prose prose-base max-w-none
-                    prose-h1:text-2xl prose-h1:mt-14 prose-h1:mb-8 prose-h1:font-light prose-h1:leading-tight prose-h1:tracking-tight prose-h1:pb-4 prose-h1:border-b prose-h1:border-opacity-20
-                    prose-h2:text-xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:font-light prose-h2:leading-tight prose-h2:tracking-tight prose-h2:pb-3 prose-h2:border-b prose-h2:border-opacity-15
-                    prose-h3:text-lg prose-h3:mt-10 prose-h3:mb-5 prose-h3:font-light prose-h3:leading-tight prose-h3:tracking-tight
-                    prose-h4:text-base prose-h4:mt-8 prose-h4:mb-4 prose-h4:font-light prose-h4:leading-tight
-                    prose-p:leading-[1.9] prose-p:font-light prose-p:text-[16px] prose-p:mb-7 prose-p:break-words
-                    prose-a:no-underline prose-a:border-b prose-a:border-opacity-50 prose-a:transition-all prose-a:font-light prose-a:break-words prose-a:pb-0.5
+                    prose-h1:text-2xl prose-h1:mt-14 prose-h1:mb-8 prose-h1:font-semibold prose-h1:leading-tight prose-h1:tracking-normal prose-h1:pb-4 prose-h1:border-b prose-h1:border-opacity-20
+                    prose-h2:text-xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:font-semibold prose-h2:leading-tight prose-h2:tracking-normal prose-h2:pb-3 prose-h2:border-b prose-h2:border-opacity-15
+                    prose-h3:text-lg prose-h3:mt-10 prose-h3:mb-5 prose-h3:font-semibold prose-h3:leading-tight prose-h3:tracking-normal
+                    prose-h4:text-base prose-h4:mt-8 prose-h4:mb-4 prose-h4:font-semibold prose-h4:leading-tight
+                    prose-p:leading-[1.9] prose-p:font-normal prose-p:text-[17px] prose-p:mb-7 prose-p:break-words
+                    prose-a:no-underline prose-a:border-b prose-a:border-opacity-50 prose-a:transition-all prose-a:font-medium prose-a:break-words prose-a:pb-0.5
                     prose-strong:font-semibold
                     prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:font-mono prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-code:bg-opacity-60
                     prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:my-10 prose-pre:border prose-pre:border-opacity-20
                     prose-pre code:bg-transparent prose-pre code:px-0 prose-pre code:py-0 prose-pre code:border-0
-                    prose-blockquote:border-l-2 prose-blockquote:border-opacity-40 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-none prose-blockquote:font-light prose-blockquote:not-italic prose-blockquote:my-10 prose-blockquote:leading-relaxed prose-blockquote:bg-opacity-30
+                    prose-blockquote:border-l-2 prose-blockquote:border-opacity-40 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-none prose-blockquote:font-normal prose-blockquote:not-italic prose-blockquote:my-10 prose-blockquote:leading-relaxed prose-blockquote:bg-opacity-30
                     prose-ul:my-7 prose-ol:my-7
                     prose-li:leading-relaxed prose-li:break-words
                     prose-img:rounded-lg prose-img:my-10 prose-img:border prose-img:border-opacity-20 prose-img:transition-opacity prose-img:hover:opacity-90
-                    prose-hr:my-14 prose-hr:border-opacity-20 prose-hr:has(+h2):my-4
-                    prose-th:border-opacity-30 prose-th:px-4 prose-th:py-2 prose-th:font-light
+                    prose-hr:my-14 prose-hr:border-opacity-20
+                    prose-th:border-opacity-30 prose-th:px-4 prose-th:py-2 prose-th:font-semibold
                     prose-td:border-opacity-30 prose-td:px-4 prose-td:py-2 prose-td:break-words
                     ${isDark
-                        ? `prose-headings:font-light prose-headings:tracking-tight prose-headings:text-gray-100 prose-h1:border-b-gray-700/20 prose-h2:border-b-gray-700/15
-                        prose-p:text-gray-300
-                        prose-a:text-gray-400 prose-a:border-gray-500/50 hover:prose-a:border-gray-400 hover:prose-a:text-gray-300
+                        ? `prose-headings:font-semibold prose-headings:tracking-normal prose-headings:text-gray-50 prose-h1:border-b-gray-700/20 prose-h2:border-b-gray-700/15
+                        prose-p:text-gray-200
+                        prose-a:text-yellow-200 prose-a:border-yellow-300/50 hover:prose-a:border-yellow-200 hover:prose-a:text-yellow-100
                         prose-strong:text-gray-100
                         prose-code:text-gray-300 prose-code:bg-gray-800/60
                         prose-pre:bg-gray-900/60 prose-pre:border-gray-700/20
-                        prose-blockquote:text-gray-300 prose-blockquote:border-gray-600/40 prose-blockquote:bg-gray-800/30
-                        prose-ul:text-gray-300 prose-ol:text-gray-300
+                        prose-blockquote:text-gray-200 prose-blockquote:border-gray-500/50 prose-blockquote:bg-gray-800/40
+                        prose-ul:text-gray-200 prose-ol:text-gray-200
                         prose-li:marker:text-gray-500
                         prose-img:opacity-95 prose-img:border-gray-700/20
                         prose-hr:border-gray-700/20
-                        prose-table:text-gray-300 prose-th:border-gray-700/30 prose-th:bg-gray-800/20
+                        prose-table:text-gray-200 prose-th:border-gray-700/30 prose-th:bg-gray-800/40
                         prose-td:border-gray-700/30`
-                        : `prose-headings:font-light prose-headings:tracking-tight prose-headings:text-gray-900 prose-h1:border-b-gray-300/20 prose-h2:border-b-gray-300/15
-                        prose-p:text-gray-700
-                        prose-a:text-gray-600 prose-a:border-gray-400/50 hover:prose-a:border-gray-500 hover:prose-a:text-gray-800
+                        : `prose-headings:font-semibold prose-headings:tracking-normal prose-headings:text-gray-950 prose-h1:border-b-gray-300/20 prose-h2:border-b-gray-300/15
+                        prose-p:text-gray-800
+                        prose-a:text-yellow-700 prose-a:border-yellow-500/50 hover:prose-a:border-cyan-700 hover:prose-a:text-yellow-900
                         prose-strong:text-gray-900
                         prose-code:text-gray-800 prose-code:bg-gray-100/60
                         prose-pre:bg-gray-50/60 prose-pre:border-gray-300/20
-                        prose-blockquote:text-gray-700 prose-blockquote:border-gray-300/40 prose-blockquote:bg-gray-50/30
-                        prose-ul:text-gray-700 prose-ol:text-gray-700
+                        prose-blockquote:text-gray-800 prose-blockquote:border-gray-400/50 prose-blockquote:bg-gray-50/80
+                        prose-ul:text-gray-800 prose-ol:text-gray-800
                         prose-li:marker:text-gray-500
                         prose-img:opacity-95 prose-img:border-gray-300/20
                         prose-hr:border-gray-300/20
                         prose-table:text-gray-700 prose-th:border-gray-300/30 prose-th:bg-gray-100/20
                         prose-td:border-gray-300/30`
                     }`}
-            >
-                {parseCustomComponents(htmlContent || '')}
-            </div>
+                dangerouslySetInnerHTML={{ __html: htmlContent }}
+            />
         </div>
     );
 }
-

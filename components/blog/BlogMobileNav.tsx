@@ -71,8 +71,8 @@ export function BlogMobileNav({
             >
                 <div className={`mx-2 mt-2 rounded-2xl backdrop-blur-2xl shadow-2xl transition-colors duration-300 ${
                     isDark
-                        ? 'bg-gray-800/95 border border-gray-700/60'
-                        : 'bg-white/90 border border-gray-300/60'
+                        ? 'bg-[#1c1c1e]/95 border border-white/20'
+                        : 'bg-[#f0ece4]/92 border border-stone-300/60'
                 }`}>
                     {/* 第一行：LOGO 和主要操作 */}
                     <div className="flex items-center justify-between px-4 py-3 min-h-[3.5rem]">
@@ -105,7 +105,7 @@ export function BlogMobileNav({
                                     }}
                                     className={`p-2 rounded-lg transition-all ${
                                         isDark
-                                            ? 'text-gray-300 hover:text-gray-200 hover:bg-gray-700/70'
+                                            ? 'text-white/80 hover:text-yellow-400 hover:bg-[#27272a]/70'
                                             : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200/70'
                                     }`}
                                     whileHover={{ scale: 1.05 }}
@@ -124,7 +124,7 @@ export function BlogMobileNav({
                                     }}
                                     className={`p-2 rounded-lg transition-all relative ${
                                         isDark
-                                            ? 'text-gray-300 hover:text-gray-200 hover:bg-gray-700/70'
+                                            ? 'text-white/80 hover:text-yellow-400 hover:bg-[#27272a]/70'
                                             : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200/70'
                                     }`}
                                     whileHover={{ scale: 1.05 }}
@@ -162,7 +162,7 @@ export function BlogMobileNav({
                                     className={`px-3 py-1.5 rounded-lg text-xs font-medium
                                 transition-all duration-200 whitespace-nowrap ${
                                     isDark
-                                        ? 'text-gray-300 hover:text-gray-200 hover:bg-gray-700/70'
+                                        ? 'text-white/80 hover:text-yellow-400 hover:bg-[#27272a]/70'
                                         : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200/70'
                                 }`}
                                 whileHover={{ scale: 1.05 }}
@@ -226,15 +226,15 @@ export function BlogMobileNav({
                                                     w-full text-left px-4 py-4 rounded-xl
                                                     transition-all duration-200 relative
                                                     ${active
-                                                        ? isDark ? 'text-gray-200 font-semibold' : 'text-gray-900 font-semibold'
-                                                        : isDark ? 'text-gray-400 bg-gray-800/30 hover:text-gray-300 hover:bg-gray-700/50' : 'text-gray-600 bg-gray-50/30 hover:text-gray-800 hover:bg-gray-100/50'
+                                                        ? isDark ? 'text-yellow-400 font-semibold' : 'text-gray-900 font-semibold'
+                                                        : isDark ? 'text-white/60 bg-[#18181b]/30 hover:text-white hover:bg-[#27272a]/50' : 'text-gray-600 bg-gray-50/30 hover:text-gray-800 hover:bg-gray-100/50'
                                                     }
                                                 `}
                                             >
                                                 {active && (
                                                     <motion.div
                                                         className={`absolute bottom-0 left-0 right-0 h-0.5 rounded-full ${
-                                                            isDark ? 'bg-gray-400' : 'bg-gray-700'
+                                                            isDark ? 'bg-yellow-400' : 'bg-gray-700'
                                                         }`}
                                                         layoutId="activeMobileNavIndicator"
                                                         transition={{ duration: 0.3, ease: "easeOut" }}
@@ -262,7 +262,7 @@ export function BlogMobileNav({
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2 }}
                         className={`fixed top-[5.5rem] left-0 right-0 bottom-0 z-40 backdrop-blur-2xl md:hidden ${
-                            isDark ? 'bg-gray-900/50' : 'bg-gray-900/30'
+                            isDark ? 'bg-black/50' : 'bg-black/20'
                         }`}
                         onClick={() => setIsSearchOpen(false)}
                     >
@@ -296,8 +296,8 @@ export function BlogMobileNav({
                                     }}
                                     className={`relative flex items-center gap-3 px-4 py-4 rounded-2xl backdrop-blur-xl shadow-2xl ${
                                         isDark
-                                            ? 'bg-gray-800/90 border border-gray-700/60'
-                                            : 'bg-white/90 border border-gray-300/60'
+                                            ? 'bg-[#1c1c1e]/95 border border-white/20'
+                                            : 'bg-[#f0ece4]/92 border border-stone-300/60'
                                     }`}
                                 >
                                     <motion.div
@@ -311,7 +311,7 @@ export function BlogMobileNav({
                                         }}
                                     >
                                         <MagnifyingGlassIcon className={`w-5 h-5 flex-shrink-0 ${
-                                            isDark ? 'text-gray-400' : 'text-gray-500'
+                                            isDark ? 'text-white/60' : 'text-gray-600'
                                         }`} />
                                     </motion.div>
                                     <input
@@ -322,7 +322,7 @@ export function BlogMobileNav({
                                         autoFocus
                                         className={`flex-1 bg-transparent border-0 focus:outline-none text-base ${
                                             isDark
-                                                ? 'text-gray-200 placeholder-gray-500'
+                                                ? 'text-white placeholder-white/40'
                                                 : 'text-gray-900 placeholder-gray-400'
                                         }`}
                                     />
@@ -343,8 +343,8 @@ export function BlogMobileNav({
                                                 }}
                                                 className={`p-1.5 rounded-lg transition-all ${
                                                     isDark
-                                                        ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-700/70'
-                                                        : 'text-gray-500 hover:text-gray-900 hover:bg-gray-200/70'
+                                                        ? 'text-white/60 hover:text-white hover:bg-white/10'
+                                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                                                 }`}
                                                 whileHover={{ scale: 1.1 }}
                                                 whileTap={{ scale: 0.9 }}
@@ -357,8 +357,8 @@ export function BlogMobileNav({
                                         onClick={() => setIsSearchOpen(false)}
                                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                                             isDark
-                                                ? 'text-gray-300 hover:text-gray-200 hover:bg-gray-700/70'
-                                                : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200/70'
+                                                ? 'text-white/80 hover:text-yellow-400 hover:bg-white/8'
+                                                : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
                                         }`}
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}

@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 import typography from '@tailwindcss/typography';
+import colors from 'tailwindcss/colors';
 
 export default {
   darkMode: 'class',
@@ -13,24 +14,9 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        primary: {
-          50: "var(--primary-50)",
-          100: "var(--primary-100)",
-          200: "var(--primary-200)",
-          300: "var(--primary-300)",
-          400: "var(--primary-400)",
-          500: "var(--primary-500)",
-          600: "var(--primary-600)",
-          700: "var(--primary-700)",
-          800: "var(--primary-800)",
-          900: "var(--primary-900)",
-          950: "var(--primary-950)",
-        },
         accent: {
-          silver: "var(--accent-silver)",
-          platinum: "var(--accent-platinum)",
-          steel: "var(--accent-steel)",
-          chrome: "var(--accent-chrome)",
+          yellow: "var(--accent-yellow)",
+          amber: "var(--accent-amber)",
         },
       },
       backgroundImage: {
@@ -58,10 +44,12 @@ export default {
         xs: '2px',
       },
       boxShadow: {
-        'glow': '0 0 20px rgba(148, 163, 184, 0.4)',
-        'glow-lg': '0 0 40px rgba(148, 163, 184, 0.5)',
+        'glow': '0 0 20px rgba(161, 161, 170, 0.3)',
+        'glow-lg': '0 0 40px rgba(161, 161, 170, 0.4)',
         'glow-silver': '0 0 20px rgba(192, 192, 192, 0.4)',
         'glow-platinum': '0 0 20px rgba(229, 228, 226, 0.3)',
+        'glow-yellow': '0 0 20px rgba(234, 179, 8, 0.4)',
+        'glow-yellow-lg': '0 0 40px rgba(234, 179, 8, 0.5)',
       },
     },
   },

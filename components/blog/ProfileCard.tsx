@@ -31,14 +31,12 @@ export function ProfileCard({ lang }: ProfileCardProps) {
             className="hidden md:block w-64 lg:w-72 flex-shrink-0"
             suppressHydrationWarning
         >
-            <div className="px-6 pt-[5.5rem] md:pt-24 pb-6">
-                {/* 個人資料卡片 */}
-                <div
-                    className={`relative backdrop-blur-xl rounded-2xl p-6 ${safeIsDark
-                        ? 'bg-gray-800/80 border border-gray-700/60'
-                        : 'bg-white/80 border border-gray-300/60'
-                        }`}
-                >
+            <div
+                className={`relative backdrop-blur-xl rounded-2xl p-6 ${safeIsDark
+                    ? 'bg-[#0d0d0d] border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.2)]'
+                    : 'bg-white/80 border border-black/10'
+                    }`}
+            >
                     {/* 個人資訊 - 可點擊連結到首頁 */}
                     <Link
                         href="/"
@@ -50,26 +48,28 @@ export function ProfileCard({ lang }: ProfileCardProps) {
                         <div className="flex flex-col items-center text-center mb-6">
                             {/* 個人照片 */}
                             <div className="relative mb-4">
-                                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-gray-400/50 to-gray-500/50 blur-md opacity-0 group-hover/profile:opacity-100 transition-opacity duration-300"></div>
+                                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-yellow-500/10 to-amber-500/10 blur-md opacity-0 group-hover/profile:opacity-100 transition-opacity duration-300"></div>
                                 <Image
                                     src="/profile.jpg"
                                     alt={lang === 'zh-TW' ? '謝上智' : 'Sun Zhi'}
                                     width={80}
                                     height={80}
-                                    className="relative rounded-full border-2 border-gray-400/50 shadow-lg group-hover/profile:border-gray-500/70 transition-all duration-300 group-hover/profile:scale-105"
+                                    className={`relative rounded-full border-2 shadow-lg group-hover/profile:border-yellow-500/50 transition-all duration-300 group-hover/profile:scale-105 ${
+                                        safeIsDark ? 'border-white/10' : 'border-black/10'
+                                    }`}
                                     priority
                                 />
                             </div>
 
                             {/* 姓名和職稱 */}
                             <h1 className={`text-lg font-semibold mb-1.5 bg-clip-text text-transparent transition-all duration-300 ${safeIsDark
-                                ? 'text-gray-200 bg-gradient-to-r from-gray-200 to-gray-400 group-hover/profile:from-gray-100 group-hover/profile:to-gray-300'
+                                ? 'text-white bg-gradient-to-r from-white via-white to-yellow-400'
                                 : 'text-gray-900 bg-gradient-to-r from-gray-800 to-gray-600 group-hover/profile:from-gray-700 group-hover/profile:to-gray-500'
                                 }`}>
                                 {lang === 'zh-TW' ? '謝上智' : 'Sun Zhi'}
                             </h1>
                             <p className={`text-sm font-light leading-relaxed transition-colors duration-300 ${safeIsDark
-                                ? 'text-gray-400 group-hover/profile:text-gray-300'
+                                ? 'text-white/70 group-hover/profile:text-white'
                                 : 'text-gray-600 group-hover/profile:text-gray-700'
                                 }`}>
                                 {lang === 'zh-TW' ? '軟體工程師 | AI 開發者' : 'Software Engineer | AI Developer'}
@@ -87,7 +87,7 @@ export function ProfileCard({ lang }: ProfileCardProps) {
                                 e.stopPropagation();
                             }}
                             className={`group w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg cursor-pointer ${safeIsDark
-                                ? 'bg-gray-700/70 hover:bg-gray-600/80 text-gray-300 hover:text-gray-200 border border-gray-600/60 hover:border-gray-500/70 hover:shadow-gray-600/30'
+                                ? 'bg-[#18181b] hover:bg-[#27272a] text-white/70 hover:text-white border border-[#3f3f46]/40 hover:border-yellow-500/50'
                                 : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 hover:shadow-gray-400/30'
                                 }`}
                             aria-label="GitHub"
@@ -104,7 +104,7 @@ export function ProfileCard({ lang }: ProfileCardProps) {
                                 e.stopPropagation();
                             }}
                             className={`group w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg cursor-pointer ${safeIsDark
-                                ? 'bg-gray-700/70 hover:bg-gray-600/80 text-gray-300 hover:text-gray-200 border border-gray-600/60 hover:border-gray-500/70 hover:shadow-gray-600/30'
+                                ? 'bg-[#18181b] hover:bg-[#27272a] text-white/70 hover:text-white border border-[#3f3f46]/40 hover:border-yellow-500/50'
                                 : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 hover:shadow-gray-400/30'
                                 }`}
                             aria-label="LinkedIn"
@@ -119,7 +119,7 @@ export function ProfileCard({ lang }: ProfileCardProps) {
                                 e.stopPropagation();
                             }}
                             className={`group w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg cursor-pointer ${safeIsDark
-                                ? 'bg-gray-700/70 hover:bg-gray-600/80 text-gray-300 hover:text-gray-200 border border-gray-600/60 hover:border-gray-500/70 hover:shadow-gray-600/30'
+                                ? 'bg-[#18181b] hover:bg-[#27272a] text-white/70 hover:text-white border border-[#3f3f46]/40 hover:border-yellow-500/50'
                                 : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 hover:shadow-gray-400/30'
                                 }`}
                             aria-label="Email"
@@ -136,7 +136,7 @@ export function ProfileCard({ lang }: ProfileCardProps) {
                                 e.stopPropagation();
                             }}
                             className={`group w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg cursor-pointer ${safeIsDark
-                                ? 'bg-gray-700/70 hover:bg-gray-600/80 text-gray-300 hover:text-gray-200 border border-gray-600/60 hover:border-gray-500/70 hover:shadow-gray-600/30'
+                                ? 'bg-[#18181b] hover:bg-[#27272a] text-white/70 hover:text-white border border-[#3f3f46]/40 hover:border-yellow-500/50'
                                 : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 hover:shadow-gray-400/30'
                                 }`}
                             aria-label="Instagram"
@@ -148,7 +148,7 @@ export function ProfileCard({ lang }: ProfileCardProps) {
                     </div>
 
                     {/* 分隔線 */}
-                    <div className={`h-px bg-gradient-to-r from-transparent to-transparent mb-6 ${safeIsDark ? 'via-gray-600/50' : 'via-gray-400/50'
+                    <div className={`h-px bg-gradient-to-r from-transparent to-transparent mb-6 ${safeIsDark ? 'via-white/10' : 'via-black/10'
                         }`}></div>
 
                     {/* 頁尾 */}
@@ -157,7 +157,6 @@ export function ProfileCard({ lang }: ProfileCardProps) {
                         © {new Date().getFullYear()} Sun
                     </div>
                 </div>
-            </div>
         </motion.aside>
     );
 }

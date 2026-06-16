@@ -29,8 +29,8 @@ export function BookmarkCard(props: BookmarkCardProps) {
       <a
         className={`kg-bookmark-container block rounded-lg border transition-all ${
           isDark
-            ? 'border-gray-700/50 bg-gray-800/50 hover:bg-gray-700/50'
-            : 'border-gray-200 bg-white hover:bg-gray-50'
+            ? 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-yellow-500/50'
+            : 'border-black/15 bg-white hover:bg-black/5 hover:border-yellow-500/50'
         }`}
         href={href}
         target="_blank"
@@ -43,7 +43,7 @@ export function BookmarkCard(props: BookmarkCardProps) {
 
           {description && (
             <div className={`kg-bookmark-description mb-4 text-sm leading-relaxed ${
-              isDark ? 'text-gray-300' : 'text-gray-600'
+              isDark ? 'text-white/70' : 'text-black/60'
             }`}>
               {description}
             </div>

@@ -205,10 +205,10 @@ export function NewsletterUnsubscribe({ lang }: NewsletterUnsubscribeProps) {
 
     return (
         <div>
-            <h3 className={`text-sm font-semibold mb-2 ${isDark ? 'text-gray-200' : 'text-gray-900'}`}>
+            <h3 className={`text-sm font-semibold mb-2 ${isDark ? 'text-white/90' : 'text-black'}`}>
                 {t.title}
             </h3>
-            <p className={`text-xs mb-3 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+            <p className={`text-xs mb-3 ${isDark ? 'text-white/60' : 'text-black/60'}`}>
                 {t.subtitle}
             </p>
 
@@ -224,7 +224,7 @@ export function NewsletterUnsubscribe({ lang }: NewsletterUnsubscribeProps) {
                     className={`w-full px-3 py-2 text-xs rounded-lg border transition-colors ${
                         isDark
                             ? 'bg-gray-700/50 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:bg-gray-700/70'
-                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:border-gray-400 focus:bg-gray-50'
+                            : 'bg-white border-black/15 text-black placeholder-black/40 focus:border-yellow-500 focus:bg-gray-50'
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                 />
 
@@ -234,8 +234,8 @@ export function NewsletterUnsubscribe({ lang }: NewsletterUnsubscribeProps) {
                     disabled={isSubmitting || !email}
                     className={`w-full px-3 py-2 text-xs font-medium rounded-lg transition-all ${
                         isDark
-                            ? 'bg-red-600 hover:bg-red-700 text-white disabled:bg-gray-700 disabled:text-gray-500'
-                            : 'bg-red-500 hover:bg-red-600 text-white disabled:bg-gray-300 disabled:text-gray-500'
+                            ? 'bg-red-600 hover:bg-red-700 text-white disabled:bg-white/10 disabled:text-white/20'
+                            : 'bg-red-500 hover:bg-red-600 text-white disabled:bg-black/5 disabled:text-black/30'
                     } disabled:cursor-not-allowed`}
                 >
                     {isSubmitting ? t.unsubscribing : t.unsubscribe}

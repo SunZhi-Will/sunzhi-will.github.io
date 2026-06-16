@@ -55,7 +55,8 @@ export const common = {
         },
         footer: {
             portfolio: '謝上智 作品集',
-            oldWebsite: '舊版網站'
+            oldWebsite: '舊版網站',
+            courseWebsite: 'Sunkoro 上課囉'
         },
         techCategories: {
             programming: '程式語言',
@@ -241,7 +242,8 @@ Sun 相信偉大的技術不僅僅是演算法——而是要建構人們信任�
         },
         footer: {
             portfolio: 'Sun\'s Portfolio',
-            oldWebsite: 'Old Website'
+            oldWebsite: 'Old Website',
+            courseWebsite: 'Sunkoro Courses'
         },
         techCategories: {
             programming: 'Programming Languages',

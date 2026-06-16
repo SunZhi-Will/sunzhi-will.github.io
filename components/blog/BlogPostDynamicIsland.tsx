@@ -27,8 +27,8 @@ export function BlogPostDynamicIsland({
         >
             <motion.div
                 className={`relative overflow-hidden mt-4 mr-4 rounded-3xl backdrop-blur-2xl shadow-2xl transition-colors duration-300 ${isDark
-                    ? 'bg-gray-900/95 border border-gray-700/60'
-                    : 'bg-white/90 border border-gray-300/60'
+                    ? 'bg-[#1c1c1e]/95 border border-white/20'
+                    : 'bg-[#f0ece4]/92 border border-stone-300/60'
                     }`}
                 animate={{
                     width: 'auto',
@@ -45,8 +45,8 @@ export function BlogPostDynamicIsland({
                         onClick={() => setLang(lang === 'zh-TW' ? 'en' : 'zh-TW')}
                         className={`px-3 py-1.5 rounded-lg text-xs font-medium
                         transition-all duration-200 whitespace-nowrap ${isDark
-                                ? 'text-gray-300 hover:text-gray-200'
-                                : 'text-gray-700 hover:text-gray-900'
+                                ? 'text-white/80 hover:text-yellow-400 hover:bg-white/5'
+                                : 'text-gray-700 hover:text-gray-900 hover:bg-black/5'
                             }`}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}

@@ -4,6 +4,7 @@ import matter from 'gray-matter';
 import { remark } from 'remark';
 import html from 'remark-html';
 import remarkBreaks from 'remark-breaks';
+import remarkGfm from 'remark-gfm';
 import rehypeSanitize from 'rehype-sanitize';
 import { rehype } from 'rehype';
 import type { BlogPost } from '@/types/blog';
@@ -369,6 +370,7 @@ export async function markdownToHtml(markdown: string): Promise<string> {
     // 先將 Markdown 轉換為 HTML
     const htmlResult = await remark()
         .use(remarkBreaks) // 支援換行
+        .use(remarkGfm) // 支援 GitHub Flavored Markdown (包括表格)
         .use(html)
         .process(processedMarkdown);
 

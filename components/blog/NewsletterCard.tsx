@@ -34,11 +34,11 @@ export function NewsletterCard({ lang }: NewsletterCardProps) {
                 {/* 訂閱卡片 */}
                 <div
                     className={`relative backdrop-blur-xl rounded-2xl p-6 ${safeIsDark
-                        ? 'bg-gray-800/80 border border-gray-700/60'
-                        : 'bg-white/80 border border-gray-300/60'
+                        ? 'bg-[#0d0d0d] border border-white/10'
+                        : 'bg-white/80 border border-black/10'
                         }`}
                 >
-                    <NewsletterSubscribe lang={lang === 'zh-TW' || lang === 'en' ? lang : 'zh-TW'} />
+                    <NewsletterSubscribe lang={lang === 'zh-TW' || lang === 'en' ? lang : 'zh-TW'} variant="inline" />
                 </div>
             </div>
         </motion.div>

@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { getAllPosts, getAllTags } from '@/lib/blog';
 import type { BlogPost } from '@/types/blog';
 import BlogPageClient from './BlogPageClient';
@@ -13,5 +14,10 @@ export default function BlogPage() {
     const allPosts: BlogPost[] = [...postsZhTW, ...postsEn];
     const tags: string[] = getAllTags();
 
-    return <BlogPageClient posts={allPosts} tags={tags} />;
+    return (
+        <Suspense>
+            <BlogPageClient posts={allPosts} tags={tags} />
+        </Suspense>
+    );
 }
+

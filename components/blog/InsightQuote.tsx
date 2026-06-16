@@ -17,8 +17,8 @@ export function InsightQuote({ content, author, role, type = 'insight', emoji }:
 
   const config = {
     insight: {
-      bg: isDark ? 'bg-blue-500/10' : 'bg-blue-50',
-      border: isDark ? 'border-blue-500/20' : 'border-blue-200',
+      bg: isDark ? 'bg-zinc-800/40' : 'bg-zinc-100',
+      border: isDark ? 'border-zinc-700/30' : 'border-zinc-200',
       icon: '🔍',
       title: '內行人的深度點評',
     },
@@ -35,8 +35,8 @@ export function InsightQuote({ content, author, role, type = 'insight', emoji }:
       title: '重要提醒',
     },
     tip: {
-      bg: isDark ? 'bg-purple-500/10' : 'bg-purple-50',
-      border: isDark ? 'border-purple-500/20' : 'border-purple-200',
+      bg: isDark ? 'bg-yellow-500/10' : 'bg-yellow-50',
+      border: isDark ? 'border-yellow-500/20' : 'border-yellow-200',
       icon: '💡',
       title: '實用技巧',
     },

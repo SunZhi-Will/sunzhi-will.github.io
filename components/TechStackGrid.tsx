@@ -61,8 +61,8 @@ export const TechStackGrid: React.FC<TechStackGridProps> = ({
                     onClick={() => setSelectedCategory(null)}
                     className={`px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2.5 rounded-full transition-all duration-300 text-xs sm:text-sm font-semibold
             ${!selectedCategory
-                            ? 'bg-gradient-to-r from-slate-500 to-gray-400 text-white shadow-glow border border-slate-400/50'
-                            : 'bg-slate-500/20 text-slate-200 hover:bg-slate-500/30 border border-slate-400/20 hover:border-slate-400/40 backdrop-blur-sm'}`}
+                            ? 'bg-yellow-500 text-black shadow-[0_0_20px_rgba(250,204,21,0.3)] border border-yellow-400'
+                            : 'bg-[#18181b] text-white hover:text-yellow-400 hover:bg-[#27272a] border border-[#3f3f46] backdrop-blur-sm'}`}
                 >
                     {translations.categories.all}
                 </button>
@@ -72,8 +72,8 @@ export const TechStackGrid: React.FC<TechStackGridProps> = ({
                         onClick={() => setSelectedCategory(category.category)}
                         className={`px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2.5 rounded-full transition-all duration-300 text-xs sm:text-sm font-semibold
               ${selectedCategory === category.category
-                                ? 'bg-gradient-to-r from-slate-500 to-gray-400 text-white shadow-glow border border-slate-400/50'
-                                : 'bg-slate-500/20 text-slate-200 hover:bg-slate-500/30 border border-slate-400/20 hover:border-slate-400/40 backdrop-blur-sm'}`}
+                                ? 'bg-yellow-500 text-black shadow-[0_0_20px_rgba(250,204,21,0.3)] border border-yellow-400'
+                                : 'bg-[#18181b] text-white hover:text-yellow-400 hover:bg-[#27272a] border border-[#3f3f46] backdrop-blur-sm'}`}
                     >
                         {category.category}
                     </button>

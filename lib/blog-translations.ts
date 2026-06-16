@@ -18,6 +18,9 @@ export const blogTranslations = {
         tags: '標籤',
         share: '分享這篇文章',
         moreArticles: '更多文章',
+        featuredPost: '精選文章',
+        recentPosts: '最新文章',
+        exploreTags: '探索標籤',
     },
     'en': {
         title: 'Blog',
@@ -38,6 +41,9 @@ export const blogTranslations = {
         tags: 'Tags',
         share: 'Share this article',
         moreArticles: 'More articles',
+        featuredPost: 'Featured Article',
+        recentPosts: 'Recent Articles',
+        exploreTags: 'Explore Tags',
     },
     'ja': {
         title: 'ブログ',

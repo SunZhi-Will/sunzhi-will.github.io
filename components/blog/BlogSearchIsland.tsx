@@ -37,8 +37,8 @@ export function BlogSearchIsland({
             <motion.div
                 className={`relative overflow-hidden mt-4 mr-4 md:mr-6 rounded-3xl backdrop-blur-2xl shadow-2xl transition-colors duration-300 ${
                     isDark
-                        ? 'bg-gray-800/95 border border-gray-700/60'
-                        : 'bg-white/90 border border-gray-300/60'
+                        ? 'bg-[#1c1c1e]/95 border border-white/20'
+                        : 'bg-[#f0ece4]/92 border border-stone-300/60'
                 }`}
                 animate={{
                     minWidth: isExpanded ? '320px' : '180px',
@@ -49,7 +49,7 @@ export function BlogSearchIsland({
                     {/* 搜尋框 */}
                     <div className="relative flex-1 min-w-0">
                         <MagnifyingGlassIcon className={`absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 z-10 ${
-                            isDark ? 'text-gray-400' : 'text-gray-500'
+                            isDark ? 'text-white/60' : 'text-black/50'
                         }`} />
                         <AnimatePresence mode="wait">
                             {isExpanded ? (
@@ -73,8 +73,8 @@ export function BlogSearchIsland({
                                     className={`w-full pl-9 pr-8 py-1.5 text-sm bg-transparent border-0 
                                              focus:outline-none ${
                                                 isDark
-                                                    ? 'text-gray-200 placeholder-gray-500'
-                                                    : 'text-gray-900 placeholder-gray-400'
+                                                    ? 'text-white placeholder-white/35'
+                                                    : 'text-black placeholder-black/40'
                                             }`}
                                 />
                             ) : (
@@ -86,8 +86,8 @@ export function BlogSearchIsland({
                                     onClick={() => setIsFocused(true)}
                                     className={`w-full pl-9 pr-4 py-1.5 text-sm text-left transition-colors ${
                                         isDark
-                                            ? 'text-gray-400 hover:text-gray-300'
-                                            : 'text-gray-500 hover:text-gray-700'
+                                            ? 'text-white/50 hover:text-white'
+                                            : 'text-black/50 hover:text-black'
                                     }`}
                                 >
                                     {t.searchPlaceholder}
@@ -104,8 +104,8 @@ export function BlogSearchIsland({
                                 }}
                                 className={`absolute right-2 top-1/2 -translate-y-1/2 transition-colors z-10 ${
                                     isDark
-                                        ? 'text-gray-400 hover:text-gray-300'
-                                        : 'text-gray-500 hover:text-gray-900'
+                                        ? 'text-white/50 hover:text-white'
+                                        : 'text-black/50 hover:text-black'
                                 }`}
                             >
                                 <XMarkIcon className="w-4 h-4" />
@@ -115,7 +115,7 @@ export function BlogSearchIsland({
 
                     {/* 分隔線 */}
                     <motion.div
-                        className={`w-px h-6 ${isDark ? 'bg-gray-600/50' : 'bg-gray-400/50'}`}
+                        className={`w-px h-6 ${isDark ? 'bg-white/15' : 'bg-black/15'}`}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.1 }}
@@ -127,12 +127,11 @@ export function BlogSearchIsland({
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.15 }}
                         onClick={() => setLang(lang === 'zh-TW' ? 'en' : 'zh-TW')}
-                        className="px-3 py-1.5 rounded-xl text-sm font-medium
-                        ${isDark
-                            ? 'text-gray-300 hover:text-gray-200 hover:bg-gray-700/70'
-                            : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200/70'
-                        }
-                        transition-all duration-200 whitespace-nowrap flex-shrink-0"
+                        className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-all duration-200 whitespace-nowrap flex-shrink-0 ${
+                            isDark
+                                ? 'text-white/80 hover:text-yellow-400 hover:bg-white/8'
+                                : 'text-black/70 hover:text-black hover:bg-black/8'
+                        }`}
                         whileHover={{ scale: 1.05, y: -1 }}
                         whileTap={{ scale: 0.95 }}
                     >

@@ -23,16 +23,16 @@ export const TechIcon = memo(({ name, icon, delay = 0 }: { name: string; icon: s
         <div className="
         hex-container relative
         w-32 h-32
-        bg-gradient-to-br from-blue-600/20 to-blue-900/40
+        bg-gradient-to-br from-yellow-500/10 to-zinc-900/40
         backdrop-blur-sm
         flex flex-col items-center justify-center
         transition-all duration-300
-        border border-blue-500/20
-        group-hover:border-blue-400/50
-        group-hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]
+        border border-zinc-700/30
+        group-hover:border-yellow-500/50
+        group-hover:shadow-[0_0_20px_rgba(234,179,8,0.3)]
         overflow-hidden
       ">
-            <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute inset-0 bg-yellow-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
             <Image
                 src={icon}
                 alt={name}
@@ -40,7 +40,7 @@ export const TechIcon = memo(({ name, icon, delay = 0 }: { name: string; icon: s
                 height={48}
                 className="mb-2 group-hover:scale-110 transition-transform filter brightness-125 contrast-125"
             />
-            <p className="text-blue-200 text-sm font-medium">{name}</p>
+            <p className="text-zinc-200 text-sm font-medium group-hover:text-yellow-200 transition-colors">{name}</p>
         </div>
     </motion.div>
 ));

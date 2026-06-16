@@ -48,7 +48,7 @@ export const DynamicIslandNav = ({
                 className={`
                     relative overflow-hidden
                     ${scrolled
-                        ? 'mx-auto max-w-fit rounded-3xl bg-slate-900/95 backdrop-blur-2xl border border-slate-400/40 shadow-2xl mt-4'
+                        ? 'mx-auto max-w-fit rounded-3xl bg-[#18181b]/90 backdrop-blur-2xl border border-[#3f3f46] shadow-2xl mt-4'
                         : 'w-full bg-transparent border-0 shadow-none'
                     }
                     transition-all duration-300 ease-out
@@ -71,8 +71,8 @@ export const DynamicIslandNav = ({
                   transition-all duration-200
                   whitespace-nowrap
                   ${activeSection === section.id
-                                    ? 'text-white bg-slate-700/70 shadow-lg'
-                                    : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                                    ? 'text-yellow-400 font-semibold shadow-lg'
+                                    : 'text-zinc-300 hover:text-white hover:bg-zinc-900/50'
                                 }
                 `}
                             whileHover={{ scale: 1.05, y: -1 }}
@@ -80,7 +80,7 @@ export const DynamicIslandNav = ({
                         >
                             {activeSection === section.id && (
                                 <motion.div
-                                    className="absolute inset-0 rounded-xl bg-gradient-to-r from-slate-500/50 to-gray-500/50"
+                                    className="absolute inset-0 rounded-xl bg-yellow-500/10 border border-yellow-500/30"
                                     layoutId="activeSection"
                                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
                                 />
@@ -90,7 +90,7 @@ export const DynamicIslandNav = ({
                     ))}
 
                     {/* 分隔線 */}
-                    <div className="w-px h-6 bg-slate-600/50 mx-0.5 sm:mx-1"></div>
+                    <div className="w-px h-6 bg-zinc-800 mx-0.5 sm:mx-1"></div>
 
                     {/* 語言切換按鈕 */}
                     <motion.button
@@ -99,7 +99,7 @@ export const DynamicIslandNav = ({
                         transition={{ delay: (sections.length + 1) * 0.05, type: "spring", stiffness: 300, damping: 20 }}
                         onClick={() => setLang(lang === 'zh-TW' ? 'en' : 'zh-TW')}
                         className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium
-                        text-slate-300 hover:text-white hover:bg-slate-800/50
+                        text-zinc-300 hover:text-white hover:bg-zinc-900/50
                         transition-all duration-200 whitespace-nowrap"
                         whileHover={{ scale: 1.05, y: -1 }}
                         whileTap={{ scale: 0.95 }}

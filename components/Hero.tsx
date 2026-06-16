@@ -115,7 +115,7 @@ export const Hero = ({ lang, typedSubtitle, scrollToSection }: HeroProps) => {
                   <span className="bg-gradient-to-r from-slate-200 via-gray-200 to-slate-100 bg-clip-text text-transparent">
                     {typedSubtitle}
                   </span>
-                  <span className="absolute -right-4 top-0 w-0.5 h-full bg-gradient-to-b from-slate-400 to-gray-300 animate-blink shadow-glow" />
+                  <span className="absolute -right-4 top-0 w-0.5 h-full bg-gradient-to-b from-yellow-400 to-amber-300 animate-blink shadow-glow-yellow" />
                 </p>
               </motion.div>
 
@@ -133,11 +133,11 @@ export const Hero = ({ lang, typedSubtitle, scrollToSection }: HeroProps) => {
                 >
                   <GlowingButton
                     href="/links"
-                    className="bg-gradient-to-r from-slate-500 via-gray-400 to-slate-300 
-                              border border-slate-400/50 
-                              shadow-[0_0_20px_rgba(148,163,184,0.4)] hover:shadow-[0_0_30px_rgba(148,163,184,0.6)]
+                    className="bg-black border border-white/20 text-white
+                              shadow-[0_0_20px_rgba(255,255,255,0.05)] hover:shadow-[0_0_30px_rgba(250,204,21,0.2)]
+                              hover:border-yellow-500/50 hover:text-yellow-400
                               group relative overflow-hidden glow-button
-                              backdrop-blur-sm !px-0 !py-0"
+                              backdrop-blur-sm !px-0 !py-0 transition-colors duration-300"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-white/10 to-transparent 
                                   translate-x-[-100%] group-hover:translate-x-[100%] 
@@ -159,16 +159,16 @@ export const Hero = ({ lang, typedSubtitle, scrollToSection }: HeroProps) => {
                 >
                   <GlowingButton
                     href="/blog"
-                    className="bg-gradient-to-r from-blue-500 via-indigo-400 to-blue-300 
-                              border border-blue-400/50 
-                              shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)]
+                    className="bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-300 
+                              border border-yellow-400/50 
+                              shadow-[0_0_20px_rgba(245,158,11,0.4)] hover:shadow-[0_0_30px_rgba(245,158,11,0.6)]
                               group relative overflow-hidden glow-button
-                              backdrop-blur-sm !px-0 !py-0"
+                              backdrop-blur-sm !px-0 !py-0 text-black font-semibold"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-white/10 to-transparent 
                                   translate-x-[-100%] group-hover:translate-x-[100%] 
                                   transition-transform duration-700" />
-                    <div className="relative flex items-center gap-2 px-4 py-2 text-sm font-medium">
+                    <div className="relative flex items-center gap-2 px-4 py-2 text-sm font-semibold">
                       <svg className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                       </svg>

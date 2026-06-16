@@ -16,10 +16,10 @@ export function Callout({ type = 'info', title, children, emoji }: CalloutProps)
 
   const styles = {
     info: {
-      bg: isDark ? 'bg-blue-500/10' : 'bg-blue-50',
-      border: isDark ? 'border-blue-500/20' : 'border-blue-200',
+      bg: isDark ? 'bg-zinc-800/40' : 'bg-zinc-100',
+      border: isDark ? 'border-zinc-700/30' : 'border-zinc-200',
       icon: 'ℹ️',
-      text: isDark ? 'text-blue-200' : 'text-blue-800',
+      text: isDark ? 'text-zinc-200' : 'text-zinc-800',
     },
     success: {
       bg: isDark ? 'bg-green-500/10' : 'bg-green-50',
@@ -40,10 +40,10 @@ export function Callout({ type = 'info', title, children, emoji }: CalloutProps)
       text: isDark ? 'text-red-200' : 'text-red-800',
     },
     tip: {
-      bg: isDark ? 'bg-purple-500/10' : 'bg-purple-50',
-      border: isDark ? 'border-purple-500/20' : 'border-purple-200',
+      bg: isDark ? 'bg-yellow-500/10' : 'bg-yellow-50',
+      border: isDark ? 'border-yellow-500/20' : 'border-yellow-200',
       icon: '💡',
-      text: isDark ? 'text-purple-200' : 'text-purple-800',
+      text: isDark ? 'text-yellow-200' : 'text-yellow-800',
     },
   };
 

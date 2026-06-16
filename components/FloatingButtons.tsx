@@ -14,9 +14,9 @@ export default function FloatingButtons({ show = true }) {
             <motion.button
                 onClick={() => setIsMenuOpen(prev => !prev)}
                 className="w-10 h-10 rounded-full flex items-center justify-center
-                    bg-gradient-to-r from-slate-500 to-gray-400 
-                    border border-slate-400/50
-                    shadow-lg hover:shadow-glow-lg transition-all duration-300
+                    bg-[#18181b]/95 hover:bg-[#27272a]/95 text-white hover:text-yellow-400
+                    border border-[#3f3f46]/80 hover:border-yellow-500/50
+                    shadow-lg hover:shadow-glow-yellow-lg transition-all duration-300
                     relative z-50 backdrop-blur-sm"
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
@@ -36,7 +36,7 @@ export default function FloatingButtons({ show = true }) {
                             href="https://github.com/SunZhi-Will"
                             icon="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
                             position={{ x: -50, y: 0 }}
-                            className="from-purple-600/90 to-indigo-800/90 hover:shadow-purple-500/50"
+                            className="from-[#18181b] to-black hover:border-yellow-500/50 hover:shadow-glow-yellow"
                             iconClassName="[filter:invert(1)]"
                         />
 
@@ -45,7 +45,7 @@ export default function FloatingButtons({ show = true }) {
                             href="https://www.linkedin.com/in/sunzhi-will"
                             icon="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg"
                             position={{ x: -35, y: -35 }}
-                            className="from-slate-600/90 to-gray-700/90 hover:shadow-glow"
+                            className="from-black to-[#18181b] hover:border-yellow-500/50 hover:shadow-glow-yellow"
                         />
 
                         {/* Email 按鈕 */}
@@ -78,8 +78,8 @@ const SocialButton = ({ href, icon, position, className, iconClassName }: Social
         target="_blank"
         rel="noopener noreferrer"
         className={`w-9 h-9 rounded-full flex items-center justify-center
-            bg-gradient-to-r ${className} border border-white/20
-            shadow-lg hover:shadow-glow transition-all duration-300
+            bg-gradient-to-r ${className} border border-white/10 hover:border-yellow-500/50
+            shadow-lg hover:shadow-glow-yellow transition-all duration-300
             absolute backdrop-blur-sm`}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
@@ -102,8 +102,9 @@ const EmailButton = ({ href, position }: { href: string; position: { x: number; 
         transition={{ duration: 0.1, ease: [1, 1, 1, 1] }}
         href={href}
             className="w-9 h-9 rounded-full flex items-center justify-center
-            bg-gradient-to-r from-slate-500 to-gray-400 border border-slate-400/30
-            shadow-lg hover:shadow-glow transition-all duration-300
+            bg-gradient-to-r from-[#18181b]/90 to-[#27272a]/90 text-white hover:text-yellow-400
+            border border-[#3f3f46]/50 hover:border-yellow-500/50
+            shadow-lg hover:shadow-glow-yellow transition-all duration-300
             absolute backdrop-blur-sm"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}

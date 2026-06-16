@@ -23,8 +23,8 @@ export function DataBar({
     const percentage = (value / maxValue) * 100;
     
     const defaultColor = isDark 
-        ? 'from-blue-500 to-purple-500' 
-        : 'from-blue-600 to-purple-600';
+        ? 'from-yellow-500 to-amber-500' 
+        : 'from-yellow-600 to-amber-600';
 
     return (
         <div className="my-4">

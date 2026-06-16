@@ -83,8 +83,8 @@ export const About = forwardRef<HTMLElement, AboutProps>(({ lang, aboutInView },
                     className="relative pl-8 sm:pl-10"
                   >
                     {/* 時間線 */}
-                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-500/30 via-blue-400/40 to-blue-500/30">
-                      <div className="absolute top-0 w-3 h-3 rounded-full bg-blue-400 shadow-[0_0_12px_rgba(96,165,250,0.6)] ring-2 ring-blue-500/20" />
+                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-yellow-500/30 via-yellow-400/40 to-yellow-500/30">
+                      <div className="absolute top-0 w-3 h-3 rounded-full bg-yellow-400 shadow-[0_0_12px_rgba(250,204,21,0.6)] ring-2 ring-yellow-500/20" />
                     </div>
 
                     <div className="pl-6 sm:pl-8">
@@ -102,7 +102,7 @@ export const About = forwardRef<HTMLElement, AboutProps>(({ lang, aboutInView },
                       <ul className="space-y-2">
                         {exp.achievements.map((achievement, i) => (
                           <li key={i} className={`flex items-start text-sm sm:text-base text-slate-100 group/item ${lang === 'zh-TW' ? 'text-justify' : ''}`}>
-                            <span className="text-slate-400 mr-2 mt-1 group-hover/item:text-blue-300 transition-colors flex-shrink-0">▹</span>
+                            <span className="text-slate-400 mr-2 mt-1 group-hover/item:text-yellow-400 transition-colors flex-shrink-0">▹</span>
                             <span className="leading-relaxed">{achievement}</span>
                           </li>
                         ))}
@@ -120,10 +120,10 @@ export const About = forwardRef<HTMLElement, AboutProps>(({ lang, aboutInView },
                 transition={{ duration: 0.6, delay: 0.3 }}
               >
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-3">
-                  <h3 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-300 via-blue-200 to-blue-300 bg-clip-text text-transparent">
+                  <h3 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-zinc-100 via-yellow-200 to-zinc-200 bg-clip-text text-transparent">
                     {translations[lang].about.services.title}
                   </h3>
-                  <span className="px-4 py-2 bg-gradient-to-r from-blue-500/20 to-blue-600/20 border border-blue-400/30 rounded-full text-sm text-blue-200 font-semibold shadow-glow backdrop-blur-sm inline-flex w-fit">
+                  <span className="px-4 py-2 bg-gradient-to-r from-yellow-500/10 to-yellow-600/10 border border-yellow-500/30 rounded-full text-sm text-yellow-200 font-semibold shadow-glow backdrop-blur-sm inline-flex w-fit">
                     {translations[lang].about.services.available}
                   </span>
                 </div>
@@ -143,8 +143,8 @@ export const About = forwardRef<HTMLElement, AboutProps>(({ lang, aboutInView },
                       className="flex items-start gap-4 p-5 bg-slate-800/20 hover:bg-slate-800/30 rounded-xl border border-slate-500/20 hover:border-slate-400/40 transition-all duration-300 backdrop-blur-sm group"
                     >
                       <div className="flex-shrink-0 mt-0.5">
-                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/20 border border-blue-400/30 flex items-center justify-center group-hover:scale-110 transition-transform">
-                          <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-500/10 to-zinc-800/40 border border-yellow-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <svg className="w-5 h-5 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M12 5l7 7-7 7" />
                           </svg>
                         </div>
@@ -160,7 +160,7 @@ export const About = forwardRef<HTMLElement, AboutProps>(({ lang, aboutInView },
                 {/* 教學課程 */}
                 <div className="mt-8">
                   <h4 className="text-lg font-semibold bg-gradient-to-r from-slate-200 to-gray-200 bg-clip-text text-transparent mb-4 flex items-center gap-2">
-                    <span className="w-1 h-5 bg-gradient-to-b from-blue-400 to-blue-300 rounded-full"></span>
+                    <span className="w-1 h-5 bg-gradient-to-b from-yellow-400 to-amber-300 rounded-full"></span>
                     {translations[lang].about.teaching.title}
                   </h4>
                   <p className="text-slate-50 mb-6 leading-relaxed text-base">
@@ -176,8 +176,8 @@ export const About = forwardRef<HTMLElement, AboutProps>(({ lang, aboutInView },
                         className="flex items-center gap-3 p-4 bg-slate-800/15 hover:bg-slate-800/25 rounded-lg border border-slate-500/15 hover:border-slate-400/30 transition-all duration-300 backdrop-blur-sm group"
                       >
                         <div className="flex-shrink-0">
-                          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/20 border border-blue-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <svg className="w-4 h-4 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-500/10 to-zinc-800/40 border border-yellow-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg className="w-4 h-4 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                           </div>

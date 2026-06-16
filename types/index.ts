@@ -118,6 +118,7 @@ export interface Translations {
         footer: {
             portfolio: string;
             oldWebsite: string;
+            courseWebsite: string;
         };
         techCategories: {
             programming: string;

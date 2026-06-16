@@ -42,10 +42,10 @@ const ParticlesBackground = memo(() => {
                     },
                     particles: {
                         color: {
-                            value: ["#3b82f6", "#60a5fa", "#93c5fd"],
+                            value: ["#facc15", "#fbbf24", "#fef08a"],
                         },
                         links: {
-                            color: "#3b82f6",
+                            color: "#eab308",
                             distance: 180,
                             enable: true,
                             opacity: 0.3,

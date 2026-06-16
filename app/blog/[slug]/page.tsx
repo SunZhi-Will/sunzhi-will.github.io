@@ -5,6 +5,7 @@ import type { Lang } from '@/types';
 import type { BlogPost } from '@/types/blog';
 import type { Metadata } from 'next';
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
+import remarkGfm from 'remark-gfm';
 // MDX 組件現在由 Next.js 內建處理
 
 // 強制靜態生成
@@ -13,6 +14,12 @@ export const dynamic = 'force-static';
 // 預先生成所有文章的靜態路徑（包含所有語言版本）
 export async function generateStaticParams() {
     const slugs = getPostSlugs();
+
+    // 如果沒有任何文章，返回一個 placeholder slug，避免靜態導出出錯
+    if (slugs.length === 0) {
+        return [{ slug: 'placeholder' }];
+    }
+
     const params: { slug: string; lang?: string }[] = [];
 
     // 為每個文章生成所有可用語言的路徑
@@ -83,6 +90,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     // 預先載入所有語言版本的文章數據
     const postsByLang: Partial<Record<Lang, {
         post: Omit<BlogPost, 'content'>;
+        contentLength?: number;
         htmlContent?: string;
         mdxSource?: MDXRemoteSerializeResult; // 序列化的 MDX 內容
     } | null>> = {
@@ -119,7 +127,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         // 序列化 MDX 內容
                         const mdxSource = await serialize(content, {
                             mdxOptions: {
-                                remarkPlugins: [],
+                                remarkPlugins: [remarkGfm],
                                 rehypePlugins: [],
                             },
                         });
@@ -137,6 +145,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                                 availableLangs: post.availableLangs,
                                 isMdx: post.isMdx,
                             },
+                            contentLength: content.length,
                             mdxSource,
                         };
                     }
@@ -155,6 +164,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                             availableLangs: post.availableLangs,
                             isMdx: post.isMdx,
                         },
+                        contentLength: post.content?.length,
                         htmlContent: '<p>無法載入內容</p>',
                     };
                 }
@@ -174,6 +184,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         availableLangs: post.availableLangs,
                         isMdx: post.isMdx,
                     },
+                    contentLength: post.content?.length,
                     htmlContent,
                 };
             }
@@ -202,6 +213,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     return (
         <BlogPostClient
             defaultPost={defaultPostData.post}
+            defaultContentLength={defaultPostData.contentLength}
             defaultHtmlContent={defaultPostData.htmlContent}
             defaultMdxSource={defaultPostData.mdxSource}
             defaultAllPosts={allPostsByLang[defaultLang] || []}

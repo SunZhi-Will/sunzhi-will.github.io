@@ -22,7 +22,7 @@ export const GlowingButton = ({ href, className, children }: {
     >
         <div className="absolute inset-0 opacity-50 group-hover:opacity-70 transition-opacity" />
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/30 to-cyan-600/30 animate-pulse" />
+            <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/30 to-amber-600/30 animate-pulse" />
         </div>
         {children}
     </motion.a>

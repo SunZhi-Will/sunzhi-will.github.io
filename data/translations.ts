@@ -96,7 +96,8 @@ export const translations: Translations = {
         },
         footer: {
             portfolio: 'Sunのポートフォリオ',
-            oldWebsite: '旧ウェブサイト'
+            oldWebsite: '旧ウェブサイト',
+            courseWebsite: 'Sunkoroで学ぼう'
         },
         verify: {
             loading: 'メールを検証中...',
@@ -187,7 +188,8 @@ export const translations: Translations = {
         },
         footer: {
             portfolio: 'Sun 포트폴리오',
-            oldWebsite: '구 버전 웹사이트'
+            oldWebsite: '구 버전 웹사이트',
+            courseWebsite: 'Sunkoro 강의'
         },
         verify: {
             loading: '이메일을 확인하는 중...',
@@ -278,7 +280,8 @@ export const translations: Translations = {
         },
         footer: {
             portfolio: 'Portafolio de Sun',
-            oldWebsite: 'Sitio web anterior'
+            oldWebsite: 'Sitio web anterior',
+            courseWebsite: 'Cursos Sunkoro'
         },
         verify: {
             loading: 'Verificando tu correo electrónico...',
@@ -369,7 +372,8 @@ export const translations: Translations = {
         },
         footer: {
             portfolio: 'Portefeuille de Sun',
-            oldWebsite: 'Ancien site web'
+            oldWebsite: 'Ancien site web',
+            courseWebsite: 'Cours Sunkoro'
         },
         verify: {
             loading: 'Vérification de votre email...',
@@ -460,7 +464,8 @@ export const translations: Translations = {
         },
         footer: {
             portfolio: 'Suns Portfolio',
-            oldWebsite: 'Alte Website'
+            oldWebsite: 'Alte Website',
+            courseWebsite: 'Sunkoro Kurse'
         },
         verify: {
             loading: 'E-Mail wird überprüft...',

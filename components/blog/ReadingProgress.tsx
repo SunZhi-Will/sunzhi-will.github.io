@@ -31,8 +31,8 @@ export function ReadingProgress() {
             <div
                 className={`h-full transition-all duration-100 ease-linear ${
                     isDark 
-                        ? 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500' 
-                        : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600'
+                        ? 'bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600' 
+                        : 'bg-gradient-to-r from-yellow-600 via-amber-600 to-yellow-700'
                 }`}
                 style={{ width: `${progress}%` }}
             />

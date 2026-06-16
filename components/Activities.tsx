@@ -63,7 +63,7 @@ export const Activities = ({ lang, currentSlides, setCurrentSlides }: Activities
                       />
                     </div>
                     <div className="absolute top-4 right-4">
-                      <span className="px-4 py-2 bg-gradient-to-r from-slate-500/60 to-gray-400/60 backdrop-blur-md border border-slate-400/30 rounded-full text-sm font-semibold text-white shadow-lg shadow-glow flex items-center gap-2 transition-all duration-300 group-hover:scale-105">
+                      <span className="px-4 py-2 bg-[#18181b]/95 border border-[#3f3f46]/60 rounded-full text-sm font-semibold text-white shadow-lg shadow-glow-yellow flex items-center gap-2 transition-all duration-300 group-hover:scale-105">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" className="w-4 h-4" fill="currentColor">
                           <path d="M192-384q-40 0-68-28t-28-68q0-40 28-68t68-28v-72q0-29.7 21.15-50.85Q234.3-720 264-720h120q0-40 28-68t68-28q40 0 68 28t28 68h120q29.7 0 50.85 21.15Q768-677.7 768-648v72q40 0 68 28t28 68q0 40-28 68t-68 28v168q0 29.7-21.16 50.85Q725.68-144 695.96-144H263.72Q234-144 213-165.15T192-216v-168Zm168-72q20 0 34-14t14-34q0-20-14-34t-34-14q-20 0-34 14t-14 34q0 20 14 34t34 14Zm228 0q20 0 34-14t14-34q0-20-14-34t-34-14q-20 0-34 14t-14 34q0 20 14 34t34 14ZM336-312h288v-72H336v72Zm-72 96h432v-432H264v432Zm216-216Z" />
                         </svg>
@@ -93,9 +93,9 @@ export const Activities = ({ lang, currentSlides, setCurrentSlides }: Activities
                         {hackathon.technologies.map((tech, i) => (
                           <span
                             key={i}
-                              className="px-2 sm:px-3 py-1 sm:py-1.5 bg-slate-500/15 hover:bg-slate-500/25 
-                                         border border-slate-400/20 hover:border-slate-400/40
-                                         rounded-lg text-xs text-slate-100 font-medium
+                              className="px-2 sm:px-3 py-1 sm:py-1.5 bg-[#18181b]/50 hover:bg-[#27272a]/70 
+                                         border border-[#3f3f46]/30 hover:border-yellow-500/30
+                                         rounded-lg text-xs text-white/80 font-medium
                                        transition-all duration-300 cursor-default
                                        backdrop-blur-sm"
                           >
@@ -146,13 +146,13 @@ export const Activities = ({ lang, currentSlides, setCurrentSlides }: Activities
                       <p className="text-slate-100 mb-4 leading-relaxed">{speaking.description}</p>
                       <div className="space-y-4">
                         <div>
-                          <h5 className="text-blue-300 font-semibold mb-2">
+                          <h5 className="text-yellow-400 font-semibold mb-2">
                             {translations[lang].projects.mainAchievements}
                           </h5>
                           <ul className="space-y-1">
                             {speaking.achievements.map((achievement, i) => (
-                              <li key={i} className="flex items-start text-blue-200 text-sm">
-                                <span className="text-blue-400 mr-2 mt-0.5">▹</span>
+                              <li key={i} className="flex items-start text-slate-100 text-sm">
+                                <span className="text-yellow-400 mr-2 mt-0.5">▹</span>
                                 <span>{achievement}</span>
                               </li>
                             ))}
@@ -208,7 +208,7 @@ export const Activities = ({ lang, currentSlides, setCurrentSlides }: Activities
                     </div>
                     <div className="p-6 md:w-1/2">
                       <div className="mb-4">
-                        <span className="px-3 py-1.5 bg-gradient-to-r from-slate-500/30 to-gray-500/30 border border-slate-400/30 rounded-full text-sm text-slate-100 font-semibold shadow-glow">
+                        <span className="px-3 py-1.5 bg-[#18181b]/95 border border-[#3f3f46]/60 rounded-full text-sm text-white font-semibold shadow-glow-yellow">
                           {teaching.category}
                         </span>
                       </div>
@@ -216,13 +216,13 @@ export const Activities = ({ lang, currentSlides, setCurrentSlides }: Activities
                       <p className="text-slate-100 mb-4 leading-relaxed">{teaching.description}</p>
                       <div className="space-y-4">
                         <div>
-                          <h5 className="text-blue-300 font-semibold mb-2">
+                          <h5 className="text-yellow-400 font-semibold mb-2">
                             {translations[lang].projects.mainAchievements}
                           </h5>
                           <ul className="space-y-1">
                             {teaching.achievements.map((achievement, i) => (
-                              <li key={i} className="flex items-start text-blue-200 text-sm">
-                                <span className="text-blue-400 mr-2 mt-0.5">▹</span>
+                              <li key={i} className="flex items-start text-slate-100 text-sm">
+                                <span className="text-yellow-400 mr-2 mt-0.5">▹</span>
                                 <span>{achievement}</span>
                               </li>
                             ))}
@@ -232,9 +232,9 @@ export const Activities = ({ lang, currentSlides, setCurrentSlides }: Activities
                           {teaching.technologies.map((tech, i) => (
                             <span
                               key={i}
-                              className="px-2 sm:px-3 py-1 sm:py-1.5 bg-slate-500/15 hover:bg-slate-500/25 
-                                         border border-slate-400/20 hover:border-slate-400/40
-                                         rounded-lg text-xs text-slate-100 font-medium
+                              className="px-2 sm:px-3 py-1 sm:py-1.5 bg-[#18181b]/50 hover:bg-[#27272a]/70 
+                                         border border-[#3f3f46]/30 hover:border-yellow-500/30
+                                         rounded-lg text-xs text-white/80 font-medium
                                          transition-all duration-300 cursor-default
                                          backdrop-blur-sm"
                             >

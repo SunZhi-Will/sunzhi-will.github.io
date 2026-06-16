@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "node scripts/copy-blog-images.js && next dev --turbopack",
+    "clean-dev": "rm -rf .next tsconfig.tsbuildinfo && npm run dev",
     "prebuild": "node scripts/copy-blog-images.js",
     "build": "next build",
     "start": "next start",
@@ -21,11 +22,12 @@
     "axios": "^1.13.6",
     "cheerio": "^1.1.2",
     "framer-motion": "^12.24.12",
-    "googleapis": "^144.0.0",
-    "gray-matter": "^4.0.3",
+    "googleapis": "^173.0.0",
+    "gray-matter": "npm:@11ty/gray-matter@^2.0.2",
+    "lenis": "^1.3.23",
     "next": "^15.5.15",
-    "next-mdx-remote": "^5.0.0",
-    "nodemailer": "^7.0.13",
+    "next-mdx-remote": "^6.0.0",
+    "nodemailer": "^9.0.0",
     "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -37,6 +39,7 @@
     "rehype-sanitize": "^6.0.0",
     "remark": "^15.0.1",
     "remark-breaks": "^4.0.0",
+    "remark-gfm": "^4.0.1",
     "remark-html": "^16.0.1",
     "tsparticles": "^3.8.1",
     "turndown": "^7.2.4"
@@ -53,8 +56,12 @@
     "eslint-config-next": "15.1.12",
     "gh-pages": "^6.3.0",
     "playwright": "^1.60.0",
-    "postcss": "^8",
+    "postcss": "^8.5.15",
     "tailwindcss": "^3.4.19",
     "typescript": "^5"
+  },
+  "overrides": {
+    "postcss": "^8.5.15",
+    "uuid": "^11.1.1"
   }
 }

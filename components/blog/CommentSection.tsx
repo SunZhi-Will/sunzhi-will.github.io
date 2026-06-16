@@ -88,7 +88,7 @@ export function CommentSection({ postSlug, postTitle, lang, postUrl }: CommentSe
     return (
         <section>
             <h2 className={`text-lg font-light mb-6 ${
-                isDark ? 'text-gray-200' : 'text-gray-900'
+                isDark ? 'text-white' : 'text-black font-semibold'
             }`}>
                 {lang === 'zh-TW' ? '留言' : 'Comments'}
             </h2>

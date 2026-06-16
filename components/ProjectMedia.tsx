@@ -68,7 +68,7 @@ export const ProjectMedia = ({
                 onMouseLeave={() => setIsHovered(false)}
             >
                 <div className="aspect-video relative overflow-hidden">
-                    <div className="absolute inset-0 bg-blue-950">
+                    <div className="absolute inset-0 bg-zinc-950">
                         <motion.div
                             key={currentSlide}
                             initial={{ x: direction * 100 + '%', opacity: 0 }}
@@ -195,8 +195,8 @@ export const ProjectMedia = ({
                                     key={idx}
                                     onClick={() => handleSlideChange(idx)}
                                     className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === currentSlide
-                                        ? 'bg-blue-400 scale-125'
-                                        : 'bg-blue-400/40 hover:bg-blue-400/60'
+                                        ? 'bg-yellow-400 scale-125'
+                                        : 'bg-yellow-400/40 hover:bg-yellow-400/60'
                                         }`}
                                 />
                             ))}

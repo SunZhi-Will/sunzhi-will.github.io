@@ -1,18 +1,38 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
-import { blogTranslations, getTagVariants } from '@/lib/blog-translations';
-import { ProfileCard } from '@/components/blog/ProfileCard';
-import { NewsletterCard } from '@/components/blog/NewsletterCard';
+import { blogTranslations, getTagVariants, translateTag } from '@/lib/blog-translations';
 import { BlogCard } from '@/components/blog/BlogCard';
 import { BlogDynamicIsland } from '@/components/blog/BlogDynamicIsland';
 import { BlogNavIsland } from '@/components/blog/BlogNavIsland';
 import { BlogMobileNav } from '@/components/blog/BlogMobileNav';
+import { NewsletterSubscribe } from '@/components/blog/NewsletterSubscribe';
 import { useTheme } from './ThemeProvider';
+
+// Helper: Section label with accent indicator
+function SectionLabel({ children, isDark, color }: { children: React.ReactNode; isDark: boolean; color: 'amber' | 'neutral' }) {
+    return (
+        <div className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.12em]
+            ${color === 'amber'
+                ? isDark ? 'text-yellow-400/80' : 'text-amber-600/80'
+                : isDark ? 'text-white/25' : 'text-stone-400'
+            }
+        `}>
+            <span className={`w-1 h-2.5 rounded-full flex-shrink-0
+                ${color === 'amber'
+                    ? isDark ? 'bg-yellow-400/60' : 'bg-amber-500/60'
+                    : isDark ? 'bg-white/20' : 'bg-stone-300'
+                }
+            `} />
+            {children}
+        </div>
+    );
+}
 
 interface BlogPageClientProps {
     posts: BlogPost[];
@@ -20,13 +40,19 @@ interface BlogPageClientProps {
 }
 
 export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
-    void tags;
-    const [searchQuery, setSearchQuery] = useState('');
+    const searchParams = useSearchParams();
+    const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') || '');
     const [selectedTag, setSelectedTag] = useState<string | null>(null);
     const [lang, setLang] = useState<Lang>('zh-TW');
     const { theme } = useTheme();
 
     const t = blogTranslations[lang];
+
+    // 取得當前語言下唯一的翻譯後標籤列表
+    const uniqueTags = useMemo(() => {
+        const translated = tags.map(tag => translateTag(tag, lang));
+        return Array.from(new Set(translated)).filter(Boolean);
+    }, [tags, lang]);
 
     // 從 localStorage 讀取語言選擇，如果沒有則偵測瀏覽器語言
     useEffect(() => {
@@ -135,13 +161,12 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
         <div
             className="h-screen overflow-hidden relative transition-colors duration-300"
             style={{
-                backgroundColor: isDark ? '#111827' : '#f9fafb',
+                backgroundColor: isDark ? '#0a0a0a' : '#faf9f7',
                 backgroundImage: isDark
-                    ? `radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(to bottom right, #111827, #1f2937, #111827)`
-                    : `radial-gradient(circle, rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(to bottom right, #f9fafb, #f3f4f6, #f9fafb)`,
-                backgroundSize: '20px 20px, 100% 100%',
+                    ? `radial-gradient(ellipse 80% 50% at 50% -20%, rgba(250,204,21,0.04) 0%, transparent 60%), radial-gradient(circle, rgba(255,255,255,0.025) 1px, transparent 1px)`
+                    : `radial-gradient(ellipse 80% 50% at 50% -20%, rgba(251,191,36,0.06) 0%, transparent 60%), radial-gradient(circle, rgba(0,0,0,0.03) 1px, transparent 1px)`,
+                backgroundSize: isDark ? '100% 100%, 48px 48px' : '100% 100%, 48px 48px',
                 backgroundPosition: '0 0, 0 0',
-                color: isDark ? '#e5e7eb' : '#111827',
             } as React.CSSProperties}
         >
             {/* 手機版單一導覽列 */}
@@ -173,62 +198,163 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
                 />
             </div>
 
-            <div className="flex h-full gap-4">
-                {/* 左側側邊欄 */}
-                <div className="flex flex-col flex-shrink-0">
-                    {/* 個人資料卡片 */}
-                    <ProfileCard lang={lang} />
-
-                    {/* 訂閱電子報卡片 */}
-                    <NewsletterCard lang={lang} />
-                </div>
-
-                {/* 主要內容區域 */}
-                <main className="flex-1 overflow-y-auto h-full relative scrollbar-custom">
-                    <div className="max-w-6xl mx-auto px-4 pb-4 md:px-6 md:pb-6 lg:pb-8 pt-[5.5rem] md:pt-24">
-                        {/* 文章列表 */}
-                        {filteredPosts.length > 0 ? (
-                            <div className="space-y-4">
-                                {filteredPosts.map((post, index) => (
-                                    <BlogCard key={post.slug} post={post} lang={lang} index={index} />
-                                ))}
+            {/* 主要內容區域 */}
+            <main className="h-full overflow-y-auto relative scrollbar-custom">
+                <div className="max-w-4xl mx-auto px-4 pb-20 md:px-6 pt-[5.5rem] md:pt-24">
+                    {/* 標籤雲 / 探索標籤 */}
+                    {uniqueTags.length > 0 && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4 }}
+                            className="mb-8"
+                        >
+                            <div className="flex flex-wrap items-center gap-2">
+                                {/* 全部按鈕 */}
+                                <button
+                                    onClick={() => setSelectedTag(null)}
+                                    className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                                        selectedTag === null
+                                            ? isDark
+                                                ? 'bg-yellow-400 text-black shadow-sm shadow-yellow-400/25'
+                                                : 'bg-stone-900 text-white shadow-sm'
+                                            : isDark
+                                                ? 'bg-white/[0.05] text-white/55 border border-white/[0.07] hover:bg-white/[0.08] hover:text-white/80'
+                                                : 'bg-stone-100 text-stone-500 border border-stone-200/80 hover:bg-stone-200/70 hover:text-stone-700'
+                                    }`}
+                                >
+                                    {t.allPosts}
+                                </button>
+                                {/* 個別標籤 */}
+                                {uniqueTags.map((tag) => {
+                                    const active = selectedTag === tag;
+                                    return (
+                                        <button
+                                            key={tag}
+                                            onClick={() => setSelectedTag(active ? null : tag)}
+                                            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                                                active
+                                                    ? isDark
+                                                        ? 'bg-yellow-400 text-black shadow-sm shadow-yellow-400/25'
+                                                        : 'bg-amber-500 text-white shadow-sm shadow-amber-500/25'
+                                                    : isDark
+                                                        ? 'bg-white/[0.05] text-white/55 border border-white/[0.07] hover:bg-white/[0.08] hover:text-white/80'
+                                                        : 'bg-stone-100 text-stone-500 border border-stone-200/80 hover:bg-stone-200/70 hover:text-stone-700'
+                                            }`}
+                                        >
+                                            {tag}
+                                        </button>
+                                    );
+                                })}
                             </div>
-                        ) : searchQuery ? (
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="py-24 text-center"
-                            >
-                                <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full backdrop-blur-sm border mb-4 ${isDark
-                                    ? 'bg-gray-800/80 border-gray-700/50'
-                                    : 'bg-gray-200/80 border-gray-300/50'
-                                    }`}>
-                                    <MagnifyingGlassIcon className={`w-8 h-8 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+                            {/* 分隔線 */}
+                            <div className={`mt-5 h-px w-full ${isDark ? 'bg-white/[0.06]' : 'bg-stone-200/70'}`} />
+                        </motion.div>
+                    )}
+
+                    {/* 文章列表 */}
+                    {filteredPosts.length > 0 ? (
+                        <div className="space-y-8">
+                            {selectedTag === null && !searchQuery.trim() ? (
+                                <>
+                                    {/* 精選文章 */}
+                                    <div className="space-y-4">
+                                        <SectionLabel isDark={isDark} color="amber">
+                                            {t.featuredPost || '精選文章'}
+                                        </SectionLabel>
+                                        <BlogCard
+                                            post={filteredPosts[0]}
+                                            lang={lang}
+                                            index={0}
+                                            layout="horizontal"
+                                            featured={true}
+                                        />
+                                    </div>
+
+                                    {/* 其他文章 */}
+                                    {filteredPosts.length > 1 && (
+                                        <div className="space-y-4 pt-2">
+                                            <SectionLabel isDark={isDark} color="neutral">
+                                                {t.recentPosts || '最新文章'}
+                                            </SectionLabel>
+                                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                                {filteredPosts.slice(1).map((post, index) => (
+                                                    <BlogCard
+                                                        key={post.slug}
+                                                        post={post}
+                                                        lang={lang}
+                                                        index={index + 1}
+                                                        layout="vertical"
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                // 搜尋或標籤過濾時，不顯示精選文章，全部以網格展示
+                                <div className="space-y-4">
+                                    <SectionLabel isDark={isDark} color="amber">
+                                        {selectedTag 
+                                            ? `${lang === 'zh-TW' ? '分類：' : 'Category: '}${selectedTag}` 
+                                            : (lang === 'zh-TW' ? '搜尋結果' : 'Search Results')
+                                        }
+                                    </SectionLabel>
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                        {filteredPosts.map((post, index) => (
+                                            <BlogCard
+                                                key={post.slug}
+                                                post={post}
+                                                lang={lang}
+                                                index={index}
+                                                layout="vertical"
+                                            />
+                                        ))}
+                                    </div>
                                 </div>
-                                <p className={`text-lg font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{t.noResults}</p>
-                                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t.noResultsDesc}</p>
-                            </motion.div>
-                        ) : (
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="py-24 text-center"
-                            >
-                                <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full backdrop-blur-sm border mb-4 ${isDark
-                                    ? 'bg-gray-800/80 border-gray-700/50'
-                                    : 'bg-gray-200/80 border-gray-300/50'
-                                    }`}>
-                                    <svg className={`w-8 h-8 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                </div>
-                                <p className={`text-lg font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{t.noPosts}</p>
-                                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t.noPostsDesc}</p>
-                            </motion.div>
-                        )}
+                            )}
+                        </div>
+                    ) : searchQuery ? (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="py-28 text-center"
+                        >
+                            <div className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-5
+                                ${isDark ? 'bg-white/[0.04] border border-white/[0.08]' : 'bg-stone-100 border border-stone-200/80'}
+                            `}>
+                                <MagnifyingGlassIcon className={`w-6 h-6 ${isDark ? 'text-white/30' : 'text-stone-400'}`} />
+                            </div>
+                            <p className={`text-base font-semibold mb-1.5 ${isDark ? 'text-white/80' : 'text-stone-700'}`}>{t.noResults}</p>
+                            <p className={`text-sm ${isDark ? 'text-white/40' : 'text-stone-400'}`}>{t.noResultsDesc}</p>
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="py-28 text-center"
+                        >
+                            <div className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-5
+                                ${isDark ? 'bg-white/[0.04] border border-white/[0.08]' : 'bg-stone-100 border border-stone-200/80'}
+                            `}>
+                                <svg className={`w-6 h-6 ${isDark ? 'text-white/30' : 'text-stone-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <p className={`text-base font-semibold mb-1.5 ${isDark ? 'text-white/80' : 'text-stone-700'}`}>{t.noPosts}</p>
+                            <p className={`text-sm ${isDark ? 'text-white/40' : 'text-stone-400'}`}>{t.noPostsDesc}</p>
+                        </motion.div>
+                    )}
+
+                    {/* 訂閱電子報與頁尾區 */}
+                    <div className={`mt-16 pt-10 border-t ${isDark ? 'border-white/[0.06]' : 'border-stone-200/70'}`}>
+                        <NewsletterSubscribe lang={lang} variant="section" />
+                        <div className={`mt-10 text-center text-xs tracking-widest uppercase ${isDark ? 'text-white/20' : 'text-stone-300'}`}>
+                            © {new Date().getFullYear()} Sun
+                        </div>
                     </div>
-                </main>
-            </div>
+                </div>
+            </main>
         </div>
     );
 }

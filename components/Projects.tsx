@@ -90,13 +90,13 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
                   <div className="absolute top-4 right-4">
                     <span className="
                       px-4 py-2 
-                      bg-gradient-to-r from-slate-500/60 to-gray-400/60
+                      bg-[#18181b]/95
                       backdrop-blur-md 
-                      border border-slate-400/30
+                      border border-[#3f3f46]/60
                       rounded-full 
                       text-sm font-semibold
                       text-white
-                      shadow-glow
+                      shadow-glow-yellow
                       flex items-center gap-2
                       transition-all duration-300
                       group-hover:scale-105
@@ -132,7 +132,7 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
                       {project.title}
                     </h3>
                     {project.startYear && (
-                      <span className="px-3 py-1 text-sm font-semibold text-slate-200 bg-slate-500/20 border border-slate-400/30 rounded-lg whitespace-nowrap">
+                      <span className="px-3 py-1 text-sm font-semibold text-white/80 bg-[#18181b]/80 border border-[#3f3f46]/50 rounded-lg whitespace-nowrap">
                         {project.startYear}
                       </span>
                     )}
@@ -166,9 +166,9 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
                           {project.technologies.map((tech, i) => (
                             <span
                               key={i}
-                              className="px-2 sm:px-3 py-1 sm:py-1.5 bg-slate-500/15 hover:bg-slate-500/25 
-                                         border border-slate-400/20 hover:border-slate-400/40
-                                         rounded-lg text-xs text-slate-100 font-medium
+                              className="px-2 sm:px-3 py-1 sm:py-1.5 bg-[#18181b]/50 hover:bg-[#27272a]/70 
+                                         border border-[#3f3f46]/30 hover:border-yellow-500/30
+                                         rounded-lg text-xs text-white/80 font-medium
                                          transition-all duration-300 cursor-default
                                          backdrop-blur-sm"
                             >
@@ -187,11 +187,9 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 
-                                       rounded-full bg-gradient-to-r from-slate-500/30 to-slate-600/30 
-                                       border border-slate-400/30
-                                       text-slate-100 text-xs sm:text-sm font-semibold 
-                                       hover:from-slate-500/40 hover:to-slate-600/40
-                                       hover:border-slate-400/50 hover:shadow-glow
+                                       rounded-full bg-[#18181b]/90 hover:bg-[#27272a]/95
+                                       border border-[#3f3f46]/80 hover:border-yellow-500/50
+                                       text-white hover:text-yellow-400 hover:shadow-glow-yellow
                                        backdrop-blur-sm transition-all duration-300"
                             whileHover={{ scale: 1.05, y: -2 }}
                             whileTap={{ scale: 0.95 }}
@@ -220,11 +218,9 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 
-                                       rounded-full bg-gradient-to-r from-gray-500/30 to-slate-500/30 
-                                       border border-gray-400/30
-                                       text-gray-100 text-xs sm:text-sm font-semibold 
-                                       hover:from-gray-500/40 hover:to-slate-500/40
-                                       hover:border-gray-400/50 hover:shadow-glow
+                                       rounded-full bg-[#18181b]/90 hover:bg-[#27272a]/95
+                                       border border-[#3f3f46]/80 hover:border-yellow-500/50
+                                       text-white hover:text-yellow-400 hover:shadow-glow-yellow
                                        backdrop-blur-sm transition-all duration-300"
                             whileHover={{ scale: 1.05, y: -2 }}
                             whileTap={{ scale: 0.95 }}
@@ -243,11 +239,9 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 
-                                       rounded-full bg-gradient-to-r from-gray-700/30 to-gray-800/30 
-                                       border border-gray-600/30
-                                       text-gray-100 text-xs sm:text-sm font-semibold 
-                                       hover:from-gray-700/40 hover:to-gray-800/40
-                                       hover:border-gray-600/50 hover:shadow-glow
+                                       rounded-full bg-[#18181b]/90 hover:bg-[#27272a]/95
+                                       border border-[#3f3f46]/80 hover:border-yellow-500/50
+                                       text-white hover:text-yellow-400 hover:shadow-glow-yellow
                                        backdrop-blur-sm transition-all duration-300"
                             whileHover={{ scale: 1.05, y: -2 }}
                             whileTap={{ scale: 0.95 }}
@@ -270,11 +264,9 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 
-                                       rounded-full bg-gradient-to-r from-slate-500/30 to-gray-500/30 
-                                       border border-slate-400/30
-                                       text-slate-100 text-xs sm:text-sm font-semibold 
-                                       hover:from-slate-500/40 hover:to-gray-500/40
-                                       hover:border-slate-400/50 hover:shadow-glow
+                                       rounded-full bg-[#18181b]/90 hover:bg-[#27272a]/95
+                                       border border-[#3f3f46]/80 hover:border-yellow-500/50
+                                       text-white hover:text-yellow-400 hover:shadow-glow-yellow
                                        backdrop-blur-sm transition-all duration-300"
                             whileHover={{ scale: 1.05, y: -2 }}
                             whileTap={{ scale: 0.95 }}

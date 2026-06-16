@@ -1,16 +1,16 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import type { CSSProperties } from 'react';
 import type { BlogPost } from '@/types/blog';
-import { Lang } from '@/types';
-import { blogTranslations, filterTagsByLanguage } from '@/lib/blog-translations';
+import type { Lang } from '@/types';
 import dynamic from 'next/dynamic';
-import { formatDate } from '@/lib/blog-utils';
+import { ArticleHero } from '@/components/blog/ArticleHero';
 
 // 動態導入使用 framer-motion 的組件，避免預渲染問題
 const BlogNavIsland = dynamic(() => import('@/components/blog/BlogNavIsland').then(mod => ({ default: mod.BlogNavIsland })), { ssr: false });
-const BlogPostDynamicIsland = dynamic(() => import('@/components/blog/BlogPostDynamicIsland').then(mod => ({ default: mod.BlogPostDynamicIsland })), { ssr: false });
+const BlogDynamicIsland = dynamic(() => import('@/components/blog/BlogDynamicIsland').then(mod => ({ default: mod.BlogDynamicIsland })), { ssr: false });
 const BlogMobileNav = dynamic(() => import('@/components/blog/BlogMobileNav').then(mod => ({ default: mod.BlogMobileNav })), { ssr: false });
 const RelatedPosts = dynamic(() => import('@/components/blog/RelatedPosts').then(mod => ({ default: mod.RelatedPosts })), { ssr: false });
 const CommentSection = dynamic(() => import('@/components/blog/CommentSection').then(mod => ({ default: mod.CommentSection })), { ssr: false });
@@ -18,6 +18,7 @@ const ReadingProgress = dynamic(() => import('@/components/blog/ReadingProgress'
 const EnhancedArticleContent = dynamic(() => import('@/components/blog/EnhancedArticleContent').then(mod => ({ default: mod.EnhancedArticleContent })), { ssr: false });
 const ShareButtons = dynamic(() => import('@/components/blog/ShareButtons').then(mod => ({ default: mod.ShareButtons })), { ssr: false });
 const TableOfContents = dynamic(() => import('@/components/blog/TableOfContents').then(mod => ({ default: mod.TableOfContents })), { ssr: false });
+const NewsletterSubscribe = dynamic(() => import('@/components/blog/NewsletterSubscribe').then(mod => ({ default: mod.NewsletterSubscribe })), { ssr: false });
 // import { ScrollReveal } from '@/components/blog/ScrollReveal';
 import { useTheme } from '../ThemeProvider';
 // import type { MDXRemoteSerializeResult } from 'next-mdx-remote'; // 臨時禁用MDX
@@ -26,11 +27,13 @@ import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 
 interface BlogPostClientProps {
     defaultPost: Omit<BlogPost, 'content'>;
+    defaultContentLength?: number;
     defaultHtmlContent?: string;
     defaultMdxSource?: MDXRemoteSerializeResult; // 序列化的 MDX 內容
     defaultAllPosts: BlogPost[];
     postsByLang: Partial<Record<Lang, {
         post: Omit<BlogPost, 'content'>;
+        contentLength?: number;
         htmlContent?: string;
         mdxSource?: MDXRemoteSerializeResult; // 序列化的 MDX 內容
     } | null>>;
@@ -38,8 +41,13 @@ interface BlogPostClientProps {
     baseUrl: string;
 }
 
+function isSupportedLang(value: string | null): value is Lang {
+    return value === 'zh-TW' || value === 'en';
+}
+
 export default function BlogPostClient({
     defaultPost,
+    defaultContentLength,
     defaultHtmlContent,
     defaultMdxSource,
     defaultAllPosts,
@@ -48,7 +56,10 @@ export default function BlogPostClient({
     baseUrl,
 }: BlogPostClientProps) {
     const [lang, setLang] = useState<Lang>('zh-TW');
+    const [searchQuery, setSearchQuery] = useState('');
+    const router = useRouter();
     const [currentPost, setCurrentPost] = useState<Omit<BlogPost, 'content'>>(defaultPost);
+    const [currentContentLength, setCurrentContentLength] = useState<number | undefined>(defaultContentLength);
     const [currentHtmlContent, setCurrentHtmlContent] = useState<string | undefined>(defaultHtmlContent);
     const [currentMdxSource, setCurrentMdxSource] = useState<MDXRemoteSerializeResult | undefined>(defaultMdxSource);
     const [currentAllPosts, setCurrentAllPosts] = useState<BlogPost[]>(defaultAllPosts);
@@ -56,7 +67,6 @@ export default function BlogPostClient({
     const [currentBaseUrl, setCurrentBaseUrl] = useState<string>(baseUrl);
     const { theme } = useTheme();
     const isDark = theme === 'dark';
-    const t = blogTranslations[lang];
 
     // 在客戶端更新 baseUrl（僅在客戶端執行，不影響 SSR）
     useEffect(() => {
@@ -66,7 +76,7 @@ export default function BlogPostClient({
     }, []);
 
     // 估算閱讀時間（根據內容類型）
-    const contentLength = (currentHtmlContent?.length || 0) + (currentMdxSource ? 2000 : 0); // MDX 文件估計較長
+    const contentLength = currentContentLength ?? (currentHtmlContent?.length || 0) + (currentMdxSource ? 9000 : 0);
     const readingTime = Math.max(1, Math.ceil(contentLength / 1500));
 
     // 切換到指定語言版本的文章
@@ -74,6 +84,7 @@ export default function BlogPostClient({
         const postData = postsByLang[targetLang];
         if (postData) {
             setCurrentPost(postData.post);
+            setCurrentContentLength(postData.contentLength);
             setCurrentHtmlContent(postData.htmlContent);
             setCurrentMdxSource(postData.mdxSource);
         }
@@ -86,8 +97,8 @@ export default function BlogPostClient({
         // 確保在客戶端執行
         if (typeof window === 'undefined') return;
         
-        const savedLang = localStorage.getItem('blog-lang') as Lang | null;
-        if (savedLang && (savedLang === 'zh-TW' || savedLang === 'en')) {
+        const savedLang = localStorage.getItem('blog-lang');
+        if (isSupportedLang(savedLang)) {
             setLang(savedLang);
             // 如果保存的語言與預設語言不同，切換到該語言版本
             if (savedLang !== defaultPost.lang) {
@@ -126,9 +137,12 @@ export default function BlogPostClient({
         <div
             className="h-screen overflow-hidden relative transition-colors duration-300"
             style={{
-                backgroundColor: isDark ? '#0f172a' : '#ffffff',
-                color: isDark ? '#e5e7eb' : '#111827',
-            } as React.CSSProperties}
+                backgroundColor: isDark ? '#000000' : '#ffffff',
+                backgroundImage: isDark
+                    ? `radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px)`
+                    : `radial-gradient(circle, rgba(0,0,0,0.08) 1px, transparent 1px)`,
+                backgroundSize: '50px 50px',
+            } satisfies CSSProperties}
         >
             {/* 手機版單一導覽列 */}
             <BlogMobileNav
@@ -141,11 +155,18 @@ export default function BlogPostClient({
                 <BlogNavIsland lang={lang} />
             </div>
 
-            {/* 電腦版右側動態島 - 語言切換 */}
+            {/* 電腦版右側動態島 - 搜尋、主題切換和語言切換 */}
             <div className="hidden md:block">
-                <BlogPostDynamicIsland
+                <BlogDynamicIsland
                     lang={lang}
                     setLang={handleLangChange}
+                    searchQuery={searchQuery}
+                    setSearchQuery={(query) => {
+                        setSearchQuery(query);
+                        if (query) {
+                            router.push(`/blog?q=${encodeURIComponent(query)}`);
+                        }
+                    }}
                 />
             </div>
 
@@ -159,87 +180,14 @@ export default function BlogPostClient({
             <main className="overflow-y-auto h-full scrollbar-custom">
                 <article className="relative">
                     {/* 文章內容 - 統一的內容區域 */}
-                    <div className="max-w-3xl mx-auto px-4 pt-20 pb-6 md:px-8 md:pt-24 md:pb-8 lg:px-12 lg:pb-10">
+                    <div data-article-content="true" className="max-w-4xl mx-auto px-4 pt-20 pb-6 md:px-8 md:pt-24 md:pb-8 lg:px-12 lg:pb-10">
                         <div className="space-y-10">
-                            {/* 標題 - 直接放在內容開頭 */}
-                            <header className="space-y-5 pb-8 border-b" style={{
-                                borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
-                            }}>
-                                <h1 className={`text-3xl md:text-4xl font-light leading-tight tracking-tight ${isDark ? 'text-gray-100' : 'text-gray-900'
-                                    }`}>
-                                    {currentPost.title}
-                                </h1>
-
-                                {/* 元資訊 - 簡潔的單行顯示 */}
-                                <div className={`flex flex-wrap items-center gap-2.5 text-sm ${isDark ? 'text-gray-500' : 'text-gray-500'
-                                    }`}>
-                                    <time>
-                                        {formatDate(currentPost.date, lang === 'zh-TW' ? 'zh-TW' : 'en-US')}
-                                    </time>
-                                    {readingTime && (
-                                        <>
-                                            <span className="text-gray-400">·</span>
-                                            <span>{readingTime} {t.readTime}</span>
-                                        </>
-                                    )}
-                                    {(() => {
-                                        const filteredTags = filterTagsByLanguage(currentPost.tags, lang);
-                                        return filteredTags.length > 0 && (
-                                            <>
-                                                <span className="text-gray-400">·</span>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {filteredTags.map((tag) => (
-                                                        <span
-                                                            key={tag}
-                                                            className={`px-2 py-0.5 text-xs rounded ${
-                                                                isDark 
-                                                                    ? 'text-gray-400 bg-gray-800/50 border border-gray-700/50' 
-                                                                    : 'text-gray-600 bg-gray-100/50 border border-gray-300/50'
-                                                            }`}
-                                                        >
-                                                            {tag}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </>
-                                        );
-                                    })()}
-                                </div>
-                            </header>
-
-                            {/* 封面圖片 - 整合到內容流中 */}
-                            {currentPost.coverImage && (
-                                <div className="relative w-full overflow-hidden rounded-lg border" style={{
-                                    borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
-                                }}>
-                                    <Image
-                                        src={currentPost.coverImage}
-                                        alt={currentPost.title}
-                                        width={1200}
-                                        height={675}
-                                        className="w-full h-auto"
-                                        priority
-                                    />
-                                </div>
-                            )}
-
-                            {/* 文章描述 - 特殊樣式，支援 markdown 格式 */}
-                            {currentPost.description && (
-                                <div className={`relative my-8 py-5 px-5 rounded-md border-l-2 ${
-                                    isDark 
-                                        ? 'bg-gray-800/30 border-gray-600/50' 
-                                        : 'bg-gray-50/80 border-gray-300/50'
-                                }`}>
-                                    <div 
-                                        className={`text-base leading-relaxed font-light prose prose-sm max-w-none ${
-                                            isDark ? 'text-gray-300 prose-strong:text-gray-100' : 'text-gray-700 prose-strong:text-gray-900'
-                                        } prose-strong:font-semibold`}
-                                        dangerouslySetInnerHTML={{ 
-                                            __html: currentPost.descriptionHtml || currentPost.description 
-                                        }}
-                                    />
-                                </div>
-                            )}
+                            <ArticleHero
+                                post={currentPost}
+                                lang={lang}
+                                readingTime={readingTime}
+                                isDark={isDark}
+                            />
 
                             {/* 內容開始分界線 */}
                             <div className="pt-4 border-t" style={{
@@ -257,7 +205,7 @@ export default function BlogPostClient({
                     </div>
 
                     {/* 文章底部 */}
-                    <div className="max-w-3xl mx-auto px-4 md:px-8 lg:px-12 pb-20">
+                    <div className="max-w-4xl mx-auto px-4 md:px-8 lg:px-12 pb-20">
                         {/* 內容結束分界線 */}
                         <div className="pt-6 border-t" style={{
                             borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
@@ -276,6 +224,11 @@ export default function BlogPostClient({
                                 currentSlug={currentPost.slug}
                                 lang={lang}
                             />
+
+                            {/* 訂閱電子報 */}
+                            <div className="pt-10 border-t border-black/8 dark:border-white/8">
+                                <NewsletterSubscribe lang={lang} variant="section" />
+                            </div>
 
                             {/* 留言區 */}
                             <CommentSection

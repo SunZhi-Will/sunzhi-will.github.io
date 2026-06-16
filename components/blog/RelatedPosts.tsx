@@ -45,7 +45,7 @@ export function RelatedPosts({ posts, currentSlug, lang }: RelatedPostsProps) {
     return (
         <section className="pt-6">
             <h2 className={`text-lg font-light mb-6 ${
-                isDark ? 'text-gray-200' : 'text-gray-900'
+                isDark ? 'text-white' : 'text-black font-semibold'
             }`}>
                 {lang === 'zh-TW' ? '推薦閱讀' : 'Related Articles'}
             </h2>
@@ -58,28 +58,28 @@ export function RelatedPosts({ posts, currentSlug, lang }: RelatedPostsProps) {
                         <Link href={`/blog/${post.slug}`} className="flex-1 flex flex-col">
                             <div className={`relative overflow-hidden rounded-lg border transition-all duration-300 flex flex-col h-full ${
                                 isDark
-                                    ? 'border-gray-700/50 bg-gray-800/20 hover:border-gray-700/80 hover:bg-gray-800/30'
-                                    : 'border-gray-300/50 bg-gray-50/30 hover:border-gray-300/80 hover:bg-gray-50/50'
+                                    ? 'border-white/10 bg-white/5 hover:border-yellow-500/50 hover:bg-white/10'
+                                    : 'border-black/10 bg-black/5 hover:border-yellow-500/50 hover:bg-black/10'
                             }`}>
                                 {/* 封面圖片 */}
                                 <div className={`relative w-full aspect-[16/9] overflow-hidden flex-shrink-0 border-b ${
-                                    isDark ? 'bg-gray-800 border-gray-700/50' : 'bg-gray-100 border-gray-300/50'
+                                    isDark ? 'bg-[#18181b] border-white/10' : 'bg-gray-100 border-black/10'
                                 }`}>
                                     {post.coverImage ? (
                                         <Image
                                             src={post.coverImage}
                                             alt={post.title}
                                             fill
-                                            className="object-cover transition-opacity duration-500 group-hover:opacity-90"
+                                            className="object-contain transition-opacity duration-500 group-hover:opacity-90"
                                             sizes="(max-width: 768px) 100vw, 33vw"
                                         />
                                     ) : (
                                         <div className={`w-full h-full flex items-center justify-center ${
                                             isDark
-                                                ? 'bg-gray-800'
+                                                ? 'bg-[#18181b]'
                                                 : 'bg-gray-100'
                                         }`}>
-                                            <svg className={`w-8 h-8 ${isDark ? 'text-gray-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className={`w-8 h-8 ${isDark ? 'text-white/40' : 'text-black/40'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                             </svg>
                                         </div>
@@ -90,7 +90,7 @@ export function RelatedPosts({ posts, currentSlug, lang }: RelatedPostsProps) {
                                 <div className="p-4 flex flex-col flex-1">
                                     {/* 日期 */}
                                     <time className={`text-xs mb-3 block flex-shrink-0 ${
-                                        isDark ? 'text-gray-500' : 'text-gray-500'
+                                        isDark ? 'text-white/50' : 'text-black/50'
                                     }`}>
                                         {formatDate(post.date, lang === 'zh-TW' ? 'zh-TW' : 'en-US')}
                                     </time>
@@ -98,15 +98,15 @@ export function RelatedPosts({ posts, currentSlug, lang }: RelatedPostsProps) {
                                     {/* 標題 */}
                                     <h3 className={`text-base font-light mb-3 line-clamp-2 transition-colors flex-shrink-0 ${
                                         isDark
-                                            ? 'text-gray-200 group-hover:text-gray-300'
-                                            : 'text-gray-900 group-hover:text-gray-700'
+                                            ? 'text-white group-hover:text-yellow-400'
+                                            : 'text-black group-hover:text-yellow-600'
                                     }`}>
                                         {post.title}
                                     </h3>
 
                                     {/* 描述 */}
                                     <p className={`text-sm line-clamp-2 leading-relaxed flex-1 font-light ${
-                                        isDark ? 'text-gray-400' : 'text-gray-600'
+                                        isDark ? 'text-white/70' : 'text-black/75'
                                     }`}>
                                         {post.description}
                                     </p>
@@ -123,8 +123,8 @@ export function RelatedPosts({ posts, currentSlug, lang }: RelatedPostsProps) {
                                                         key={tag}
                                                         className={`px-2 py-0.5 text-xs font-light rounded ${
                                                             isDark
-                                                                ? 'text-gray-500 bg-gray-800/50 border border-gray-700/50'
-                                                                : 'text-gray-500 bg-gray-100/50 border border-gray-300/50'
+                                                                ? 'text-white/60 bg-white/5 border border-white/10'
+                                                                : 'text-black/60 bg-black/5 border border-black/10'
                                                         }`}
                                                     >
                                                         {tag}

@@ -451,7 +451,7 @@ export default function PricingPage() {
                                 </div>
                                 <a
                                     href={`mailto:${CONTACT_EMAIL}`}
-                                    className="inline-block text-blue-300 hover:text-blue-200 underline underline-offset-4 font-mono text-sm transition-colors"
+                                    className="inline-block text-yellow-300 hover:text-yellow-200 underline underline-offset-4 font-mono text-sm transition-colors"
                                 >
                                     {CONTACT_EMAIL}
                                 </a>

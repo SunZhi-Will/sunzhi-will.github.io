@@ -39,11 +39,13 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         
         // 保存主題到 localStorage
         localStorage.setItem('blog-theme', theme);
-        // 可以添加 class 到 document 來控制全局樣式
+        // 同時設定 class 到 document，讓 CSS 變數和 Tailwind dark: 前綴都能正確運作
         if (theme === 'dark') {
             document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
         } else {
             document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
         }
     }, [theme, mounted]);
 

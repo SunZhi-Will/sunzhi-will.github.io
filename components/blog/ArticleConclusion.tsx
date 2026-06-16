@@ -31,8 +31,8 @@ export function ArticleConclusion({
   return (
     <div className={`my-12 p-8 rounded-xl border ${
       isDark
-        ? 'bg-gradient-to-br from-purple-900/20 to-blue-900/20 border-purple-500/20'
-        : 'bg-gradient-to-br from-purple-50 to-blue-50 border-purple-200'
+        ? 'bg-gradient-to-br from-zinc-900/60 to-zinc-950/60 border-yellow-500/20 shadow-glow-yellow/10'
+        : 'bg-gradient-to-br from-yellow-50/50 to-zinc-50 border-zinc-200 shadow-sm'
     }`}>
 
       {/* Summary Section */}
@@ -43,8 +43,8 @@ export function ArticleConclusion({
         }`}>
           一句話總結
         </h3>
-        <p className={`text-lg leading-relaxed font-medium ${
-          isDark ? 'text-purple-200' : 'text-purple-800'
+        <p className={`text-lg leading-relaxed font-semibold ${
+          isDark ? 'text-yellow-300' : 'text-yellow-700'
         }`}>
           {summary}
         </p>
@@ -63,8 +63,8 @@ export function ArticleConclusion({
               <li key={index} className="flex items-start space-x-3">
                 <span className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-sm font-semibold mt-0.5 ${
                   isDark
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-purple-600 text-white'
+                    ? 'bg-yellow-500 text-black'
+                    : 'bg-yellow-500 text-black'
                 }`}>
                   {index + 1}
                 </span>
@@ -94,19 +94,19 @@ export function ArticleConclusion({
                 className={`p-4 rounded-lg border transition-all ${
                   action.primary
                     ? (isDark
-                        ? 'bg-purple-600/20 border-purple-500/40 hover:bg-purple-600/30'
-                        : 'bg-purple-600/20 border-purple-400/40 hover:bg-purple-600/30'
+                        ? 'bg-yellow-500/10 border-yellow-500/30 hover:bg-yellow-500/20'
+                        : 'bg-yellow-500/10 border-yellow-500/20 hover:bg-yellow-500/20'
                       )
                     : (isDark
-                        ? 'bg-gray-800/50 border-gray-700/30 hover:bg-gray-700/50'
-                        : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                        ? 'bg-zinc-800/50 border-zinc-700/30 hover:bg-zinc-700/50'
+                        : 'bg-zinc-50 border-zinc-200 hover:bg-zinc-100'
                       )
                 }`}
               >
-                <div className={`font-medium ${
+                <div className={`font-semibold ${
                   action.primary
-                    ? (isDark ? 'text-purple-200' : 'text-purple-800')
-                    : (isDark ? 'text-gray-300' : 'text-gray-700')
+                    ? (isDark ? 'text-yellow-300' : 'text-yellow-800')
+                    : (isDark ? 'text-zinc-200' : 'text-zinc-700')
                 }`}>
                   {action.text}
                 </div>

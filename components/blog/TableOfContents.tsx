@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useTheme } from '@/app/blog/ThemeProvider';
 import { Lang } from '@/types';
 
@@ -18,21 +18,21 @@ export function TableOfContents({ lang }: TableOfContentsProps) {
     const [headings, setHeadings] = useState<Heading[]>([]);
     const [activeId, setActiveId] = useState<string>('');
     const [leftPosition, setLeftPosition] = useState<number>(0);
+    const [isMobileOpen, setIsMobileOpen] = useState(false);
     const { theme } = useTheme();
     const isDark = theme === 'dark';
-    const observerRef = useRef<IntersectionObserver | null>(null);
 
     // 提取文章中的標題
     useEffect(() => {
         const extractHeadings = () => {
             // 只從文章正文內容區域提取標題，排除底部的推薦文章、留言等區塊
             // 第一個 max-w-3xl div 是文章正文，第二個是文章底部
-            const articleContent = document.querySelector('article > div.max-w-3xl:first-of-type');
+            const articleContent = document.querySelector('[data-article-content="true"]');
             if (!articleContent) return;
 
             // 只提取 h2-h6，過濾掉文章主標題 h1
             const headingElements = articleContent.querySelectorAll('h2, h3, h4, h5, h6');
-            
+
             // 過濾掉特定的標題（推薦閱讀、留言、參考資料等）
             const excludedTexts = [
                 '推薦閱讀', 'Related Articles',
@@ -47,12 +47,12 @@ export function TableOfContents({ lang }: TableOfContentsProps) {
             headingElements.forEach((heading, index) => {
                 const level = parseInt(heading.tagName.charAt(1));
                 const text = heading.textContent || '';
-                
+
                 // 過濾掉特定的標題文字
                 if (excludedTexts.some(excluded => text.trim() === excluded)) {
                     return;
                 }
-                
+
                 // 如果標題沒有 id，創建一個
                 let id = heading.id;
                 if (!id || id.trim() === '') {
@@ -63,12 +63,12 @@ export function TableOfContents({ lang }: TableOfContentsProps) {
                         .replace(/\s+/g, '-')
                         .replace(/-+/g, '-')
                         .trim();
-                    
+
                     // 如果 id 為空，使用索引作為後備
                     if (!baseId || baseId === '') {
                         baseId = `heading-${index}`;
                     }
-                    
+
                     // 確保 id 唯一：檢查是否已存在
                     const counter = idCounter.get(baseId) || 0;
                     if (counter > 0) {
@@ -77,7 +77,7 @@ export function TableOfContents({ lang }: TableOfContentsProps) {
                         id = baseId;
                     }
                     idCounter.set(baseId, counter + 1);
-                    
+
                     // 確保生成的 id 在 DOM 中唯一
                     let finalId = id;
                     let checkCounter = 0;
@@ -85,7 +85,7 @@ export function TableOfContents({ lang }: TableOfContentsProps) {
                         checkCounter++;
                         finalId = `${baseId}-${checkCounter}`;
                     }
-                    
+
                     heading.id = finalId;
                     id = finalId;
                 } else {
@@ -119,13 +119,10 @@ export function TableOfContents({ lang }: TableOfContentsProps) {
         };
 
         // 延遲執行，確保 DOM 已渲染
-        // 當語言切換時，需要等待內容更新後再提取標題
-        // 使用較長的延遲，確保 React 已經完成 DOM 更新
         const timer = setTimeout(() => {
-            // 多次嘗試提取，確保內容已更新
             let attempts = 0;
             const tryExtract = () => {
-                const articleContent = document.querySelector('article > div.max-w-3xl:first-of-type');
+                const articleContent = document.querySelector('[data-article-content="true"]');
                 if (articleContent && articleContent.querySelectorAll('h2, h3, h4, h5, h6').length > 0) {
                     extractHeadings();
                 } else if (attempts < 5) {
@@ -136,34 +133,29 @@ export function TableOfContents({ lang }: TableOfContentsProps) {
             tryExtract();
         }, 300);
         return () => clearTimeout(timer);
-    }, [lang]); // 添加 lang 作為依賴，當語言切換時重新提取標題
+    }, [lang]);
 
     // 計算文章容器的左邊位置，讓目錄貼在文章左邊
     useEffect(() => {
         const calculatePosition = () => {
-            const articleContent = document.querySelector('article > div.max-w-3xl');
+            const articleContent = document.querySelector('[data-article-content="true"]');
             if (articleContent) {
                 const rect = articleContent.getBoundingClientRect();
-                // 目錄寬度 224px (w-56 = 14rem = 224px)，加上間距 16px
-                const calculatedLeft = rect.left - 240;
-                // 確保不會太靠左，最小距離左邊 16px
-                setLeftPosition(Math.max(16, calculatedLeft));
+                // 目錄寬度 224px (w-56)，加上間距 24px
+                const calculatedLeft = rect.left - 248;
+                // 確保不會太靠左，最小 12px
+                setLeftPosition(Math.max(12, calculatedLeft));
             }
         };
 
-        // 初始計算
         calculatePosition();
-
-        // 監聽窗口大小變化和滾動
         window.addEventListener('resize', calculatePosition);
         window.addEventListener('scroll', calculatePosition);
 
-        // 使用 ResizeObserver 監聽文章容器大小變化
-        const articleContent = document.querySelector('article > div.max-w-3xl');
+        const articleContent = document.querySelector('[data-article-content="true"]');
         if (articleContent) {
             const resizeObserver = new ResizeObserver(calculatePosition);
             resizeObserver.observe(articleContent);
-
             return () => {
                 window.removeEventListener('resize', calculatePosition);
                 window.removeEventListener('scroll', calculatePosition);
@@ -177,135 +169,66 @@ export function TableOfContents({ lang }: TableOfContentsProps) {
         };
     }, []);
 
-    // 監聽滾動，高亮當前章節
+    // 監聽滾動，高亮當前章節（純 scroll offset，無 IntersectionObserver，避免閃爍）
     useEffect(() => {
         if (headings.length === 0) return;
 
-        const headingElements = headings.map(({ id }) => 
-            document.getElementById(id)
-        ).filter(Boolean) as HTMLElement[];
+        const headingElements = headings
+            .map(({ id }) => document.getElementById(id))
+            .filter(Boolean) as HTMLElement[];
 
         if (headingElements.length === 0) return;
 
-        // 找到滾動容器
         const scrollContainer = document.querySelector('main.overflow-y-auto') as HTMLElement;
+        if (!scrollContainer) return;
 
-        // 創建 Intersection Observer
-        observerRef.current = new IntersectionObserver(
-            (entries) => {
-                // 找到最接近視窗頂部的標題
-                const visibleHeadings = entries
-                    .filter(entry => entry.isIntersecting)
-                    .map(entry => {
-                        const element = entry.target as HTMLElement;
-                        const rect = element.getBoundingClientRect();
-                        return {
-                            id: element.id,
-                            top: rect.top,
-                            bottom: rect.bottom,
-                        };
-                    })
-                    .sort((a, b) => {
-                        // 優先選擇最接近頂部（120px 位置）的標題
-                        const targetTop = 120;
-                        return Math.abs(a.top - targetTop) - Math.abs(b.top - targetTop);
-                    });
+        // 預先快取每個標題相對於 scrollContainer 頂部的 offsetTop
+        const getOffsets = () =>
+            headingElements.map((el) => {
+                const rect = el.getBoundingClientRect();
+                const cRect = scrollContainer.getBoundingClientRect();
+                return rect.top - cRect.top + scrollContainer.scrollTop;
+            });
 
-                if (visibleHeadings.length > 0) {
-                    setActiveId(visibleHeadings[0].id);
-                } else {
-                    // 如果沒有可見標題，檢查當前滾動位置
-                    if (!scrollContainer) return;
-                    
-                    const scrollPosition = scrollContainer.scrollTop + 120;
-                    let activeHeadingId = '';
-                    
-                    // 從上往下找，找到第一個已經滾過去的標題
-                    for (let i = 0; i < headingElements.length; i++) {
-                        const element = headingElements[i];
-                        const elementRect = element.getBoundingClientRect();
-                        const containerRect = scrollContainer.getBoundingClientRect();
-                        const elementTop = elementRect.top - containerRect.top + scrollContainer.scrollTop;
-                        
-                        if (elementTop <= scrollPosition) {
-                            activeHeadingId = element.id;
-                        } else {
-                            break;
-                        }
-                    }
-                    
-                    // 如果找到了，設置為活動項
-                    if (activeHeadingId) {
-                        setActiveId(activeHeadingId);
-                    } else if (headingElements.length > 0) {
-                        // 如果都沒找到，使用第一個標題
-                        setActiveId(headingElements[0].id);
-                    }
-                }
-            },
-            {
-                root: scrollContainer || null,
-                rootMargin: '-120px 0px -70% 0px',
-                threshold: [0, 0.1, 0.5, 1],
-            }
-        );
+        let offsets = getOffsets();
+        let rafId: number | null = null;
 
-        headingElements.forEach((element) => {
-            observerRef.current?.observe(element);
-        });
-
-        // 添加滾動事件監聽器作為備份
-        const handleScroll = () => {
-            if (!scrollContainer) return;
-            
-            const scrollPosition = scrollContainer.scrollTop + 120;
-            let activeHeadingId = '';
-            
-            // 從上往下找，找到第一個已經滾過去的標題
+        const updateActive = () => {
+            const scrollPos = scrollContainer.scrollTop + 100;
+            let active = headingElements[0].id;
             for (let i = 0; i < headingElements.length; i++) {
-                const element = headingElements[i];
-                const elementRect = element.getBoundingClientRect();
-                const containerRect = scrollContainer.getBoundingClientRect();
-                const elementTop = elementRect.top - containerRect.top + scrollContainer.scrollTop;
-                
-                if (elementTop <= scrollPosition) {
-                    activeHeadingId = element.id;
+                if (offsets[i] <= scrollPos) {
+                    active = headingElements[i].id;
                 } else {
                     break;
                 }
             }
-            
-            if (activeHeadingId) {
-                setActiveId(activeHeadingId);
-            }
+            setActiveId(active);
         };
 
-        // 使用節流來優化性能
-        let scrollTimeout: NodeJS.Timeout | null = null;
-        const throttledHandleScroll = () => {
-            if (scrollTimeout) return;
-            scrollTimeout = setTimeout(() => {
-                handleScroll();
-                scrollTimeout = null;
-            }, 100);
+        const onScroll = () => {
+            if (rafId !== null) return;
+            rafId = requestAnimationFrame(() => {
+                updateActive();
+                rafId = null;
+            });
         };
 
-        if (scrollContainer) {
-            scrollContainer.addEventListener('scroll', throttledHandleScroll, { passive: true });
-        }
+        // 視窗 resize 時重算 offsets
+        const onResize = () => {
+            offsets = getOffsets();
+            updateActive();
+        };
+
+        // 初始化
+        updateActive();
+        scrollContainer.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onResize);
 
         return () => {
-            if (observerRef.current) {
-                headingElements.forEach((element) => {
-                    observerRef.current?.unobserve(element);
-                });
-            }
-            if (scrollContainer) {
-                scrollContainer.removeEventListener('scroll', throttledHandleScroll);
-            }
-            if (scrollTimeout) {
-                clearTimeout(scrollTimeout);
-            }
+            scrollContainer.removeEventListener('scroll', onScroll);
+            window.removeEventListener('resize', onResize);
+            if (rafId !== null) cancelAnimationFrame(rafId);
         };
     }, [headings]);
 
@@ -313,88 +236,152 @@ export function TableOfContents({ lang }: TableOfContentsProps) {
     const handleClick = (id: string, e: React.MouseEvent) => {
         e.preventDefault();
         const element = document.getElementById(id);
-        if (!element) {
-            console.warn(`Element with id "${id}" not found`);
-            return;
-        }
+        if (!element) return;
 
-        // 找到滾動容器（main 元素）
         const scrollContainer = document.querySelector('main.overflow-y-auto') as HTMLElement;
-        if (!scrollContainer) {
-            console.warn('Scroll container not found');
-            return;
-        }
+        if (!scrollContainer) return;
 
-        const offset = 120; // 考慮固定導航欄的高度
-        
-        // 獲取元素相對於滾動容器的位置
+        const offset = 120;
         const elementRect = element.getBoundingClientRect();
         const containerRect = scrollContainer.getBoundingClientRect();
         const elementTop = elementRect.top - containerRect.top + scrollContainer.scrollTop;
         const targetPosition = elementTop - offset;
 
-        // 滾動容器到目標位置
-        scrollContainer.scrollTo({
-            top: Math.max(0, targetPosition),
-            behavior: 'smooth',
-        });
-
-        // 立即設置活動項
+        scrollContainer.scrollTo({ top: Math.max(0, targetPosition), behavior: 'smooth' });
         setActiveId(id);
+        // 手機點擊後關閉抽屜
+        setIsMobileOpen(false);
     };
 
-    // 如果沒有標題，不顯示目錄
-    if (headings.length === 0) {
-        return null;
-    }
+    if (headings.length === 0) return null;
 
-    return (
-        <nav
-            className={`hidden lg:block fixed top-24 w-56 max-h-[calc(100vh-8rem)] overflow-y-auto scrollbar-custom z-10 transition-all duration-300 ${
-                isDark ? 'text-gray-300' : 'text-gray-700'
-            }`}
-            style={{ left: `${leftPosition}px` }}
-            aria-label={lang === 'zh-TW' ? '目錄' : 'Table of Contents'}
-        >
-            <ul className="space-y-0.5">
-                {headings.map((heading, index) => {
-                    const isActive = activeId === heading.id;
-                    // 調整縮進：h2 對應 level 2，但視覺上應該是第一級（pl-0）
-                    const indentClass = {
-                        2: 'pl-0',  // h2
-                        3: 'pl-3',  // h3
-                        4: 'pl-6',  // h4
-                        5: 'pl-9',  // h5
-                        6: 'pl-12', // h6
-                    }[heading.level] || 'pl-0';
+    const tocLabel = lang === 'zh-TW' ? '目錄' : 'On this page';
 
-                    // 確保 key 唯一：使用 id + index 作為後備
-                    const uniqueKey = heading.id && heading.id.trim() !== '' 
-                        ? heading.id 
-                        : `heading-${index}`;
+    const TocList = ({ clamp = false }: { clamp?: boolean }) => (
+        <ul className="space-y-0.5">
+            {headings.map((heading, index) => {
+                const isActive = activeId === heading.id;
+                const indentClass = {
+                    2: 'pl-0',
+                    3: 'pl-3',
+                    4: 'pl-6',
+                    5: 'pl-9',
+                    6: 'pl-12',
+                }[heading.level] || 'pl-0';
 
-                    return (
-                        <li key={uniqueKey} className={indentClass}>
-                            <a
-                                href={`#${heading.id}`}
-                                onClick={(e) => handleClick(heading.id, e)}
-                                className={`block py-1.5 text-sm transition-all duration-200 ${
-                                    isActive
-                                        ? isDark
-                                            ? 'text-gray-200 font-medium'
-                                            : 'text-gray-900 font-medium'
-                                        : isDark
+                const uniqueKey = heading.id && heading.id.trim() !== ''
+                    ? heading.id
+                    : `heading-${index}`;
+
+                return (
+                    <li key={uniqueKey} className={indentClass}>
+                        <a
+                            href={`#${heading.id}`}
+                            onClick={(e) => handleClick(heading.id, e)}
+                            className={`block py-1.5 text-xs leading-snug transition-all duration-200 ${clamp ? 'line-clamp-2' : ''
+                                } ${isActive
+                                    ? isDark
+                                        ? 'text-yellow-300 font-medium'
+                                        : 'text-yellow-700 font-medium'
+                                    : isDark
                                         ? 'text-gray-400 hover:text-gray-200'
                                         : 'text-gray-600 hover:text-gray-900'
                                 }`}
+                        >
+                            {heading.text}
+                        </a>
+                    </li>
+                );
+            })}
+        </ul>
+    );
+
+    return (
+        <>
+            {/* ── 桌面版：固定在左側，更長的高度 ── */}
+            <nav
+                className={`hidden xl:block fixed top-[6rem] w-44 max-h-[calc(100vh-5rem)] overflow-hidden overflow-y-auto z-10 transition-all duration-300 scrollbar-hide ${isDark ? 'text-gray-300' : 'text-gray-700'
+                    }`}
+                style={{ left: `${leftPosition}px` }}
+                aria-label={lang === 'zh-TW' ? '目錄' : 'Table of Contents'}
+            >
+                <p className={`mb-3 text-[11px] font-bold tracking-widest uppercase ${isDark ? 'text-white/30' : 'text-gray-400'
+                    }`}>
+                    {tocLabel}
+                </p>
+                <TocList clamp />
+            </nav>
+
+            {/* ── 手機／平板版：浮動按鈕 + 底部抽屜 ── */}
+            <div className="xl:hidden">
+                {/* 浮動目錄按鈕 */}
+                <button
+                    onClick={() => setIsMobileOpen(true)}
+                    aria-label={tocLabel}
+                    className={`fixed bottom-24 right-4 z-40 flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium shadow-lg backdrop-blur-md transition-all duration-300 active:scale-95 ${isDark
+                        ? 'bg-gray-800/90 border border-white/15 text-gray-200 hover:bg-gray-700/90'
+                        : 'bg-white/90 border border-black/10 text-gray-700 hover:bg-gray-50/90'
+                        }`}
+                >
+                    {/* List / TOC icon */}
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                            d="M4 6h16M4 10h10M4 14h16M4 18h10" />
+                    </svg>
+                    <span>{tocLabel}</span>
+                </button>
+
+                {/* 遮罩 */}
+                {isMobileOpen && (
+                    <div
+                        className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+                        onClick={() => setIsMobileOpen(false)}
+                    />
+                )}
+
+                {/* 底部抽屜 */}
+                <div
+                    className={`fixed bottom-0 left-0 right-0 z-50 transition-transform duration-300 ease-out ${isMobileOpen ? 'translate-y-0' : 'translate-y-full'
+                        }`}
+                >
+                    <div className={`rounded-t-2xl shadow-2xl border-t max-h-[70vh] flex flex-col backdrop-blur-2xl ${isDark
+                        ? 'bg-gray-900/95 border-white/10'
+                        : 'bg-white/95 border-black/10'
+                        }`}>
+                        {/* 抽屜頭部 */}
+                        <div className={`flex items-center justify-between px-5 py-4 border-b ${isDark ? 'border-white/10' : 'border-black/8'
+                            }`}>
+                            <div className="flex items-center gap-2">
+                                <svg className={`w-4 h-4 ${isDark ? 'text-yellow-300' : 'text-yellow-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                        d="M4 6h16M4 10h10M4 14h16M4 18h10" />
+                                </svg>
+                                <span className={`text-sm font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
+                                    {tocLabel}
+                                </span>
+                            </div>
+                            <button
+                                onClick={() => setIsMobileOpen(false)}
+                                className={`w-7 h-7 flex items-center justify-center rounded-full transition-colors ${isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-white/10' : 'text-gray-500 hover:text-gray-800 hover:bg-black/5'
+                                    }`}
+                                aria-label="Close"
                             >
-                                {heading.text}
-                            </a>
-                        </li>
-                    );
-                })}
-            </ul>
-        </nav>
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        {/* 抽屜內容 */}
+                        <div className="overflow-y-auto flex-1 px-5 py-4 scrollbar-hide">
+                            <TocList />
+                        </div>
+
+                        {/* 底部安全間距 (iOS safe area) */}
+                        <div className="h-safe-bottom" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }} />
+                    </div>
+                </div>
+            </div>
+        </>
     );
 }
-
