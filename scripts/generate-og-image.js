@@ -92,23 +92,23 @@ function buildAccentLine() {
 
 function buildAvatar(profileDataUrl) {
   return el('div', { position: 'relative', flexShrink: 0, display: 'flex' }, [
-    el('div', { position: 'absolute', inset: -4, borderRadius: '50%', width: 136, height: 136, background: 'linear-gradient(135deg, #facc15, #f59e0b, #7c3aed)', opacity: 0.6 }),
-    vnode('img', { src: profileDataUrl, alt: 'Sun', width: 128, height: 128, style: { borderRadius: '50%', objectFit: 'cover', position: 'relative', zIndex: 2 } }),
+    el('div', { position: 'absolute', inset: -5, borderRadius: '50%', width: 210, height: 210, background: 'linear-gradient(135deg, #facc15, #f59e0b, #7c3aed)', opacity: 0.6 }),
+    vnode('img', { src: profileDataUrl, alt: 'Sun', width: 200, height: 200, style: { borderRadius: '50%', objectFit: 'cover', position: 'relative', zIndex: 2 } }),
   ]);
 }
 
 function buildBranding(url) {
-  return el('div', { position: 'absolute', bottom: 24, right: 32, display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, fontWeight: 600, letterSpacing: '0.05em', color: 'rgba(255,255,255,0.2)', zIndex: 10 }, [
+  return el('div', { position: 'absolute', bottom: 28, right: 36, display: 'flex', alignItems: 'center', gap: 4, fontSize: 16, fontWeight: 600, letterSpacing: '0.05em', color: 'rgba(255,255,255,0.2)', zIndex: 10 }, [
     el('span', {}, url),
   ]);
 }
 
 function buildPageLabel(label) {
-  return el('div', { fontSize: 14, fontWeight: 700, color: ACCENT, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 2 }, label);
+  return el('div', { fontSize: 20, fontWeight: 700, color: ACCENT, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }, label);
 }
 
 function buildCard(children) {
-  return el('div', { display: 'flex', alignItems: 'center', gap: 40, padding: '48px 64px', position: 'relative', zIndex: 10 }, children);
+  return el('div', { display: 'flex', alignItems: 'center', gap: 36, padding: '40px 56px', position: 'relative', zIndex: 10 }, children);
 }
 
 // Shared shell for all OG images
@@ -151,7 +151,7 @@ async function main() {
   const tags = ['Next.js', 'React', 'TypeScript', 'Python', 'Unity'];
   const tagEls = tags.map((label, i) =>
     el('div', {
-      padding: '5px 14px', borderRadius: 999, fontSize: 13, fontWeight: 600,
+      padding: '8px 20px', borderRadius: 999, fontSize: 18, fontWeight: 600,
       background: i === 0 ? `${ACCENT_RGB}0.12)` : 'rgba(39,39,42,0.8)',
       border: i === 0 ? `1px solid ${ACCENT_RGB}0.25)` : '1px solid rgba(63,63,70,0.6)',
       color: i === 0 ? ACCENT : 'rgba(255,255,255,0.65)',
@@ -163,30 +163,30 @@ async function main() {
       name: 'og-home.png',
       label: '',
       body: [
-        el('div', { fontSize: 48, fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em', lineHeight: 1.15 }, 'Sun'),
-        el('div', { display: 'flex', alignItems: 'center', gap: 10, fontSize: 18, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5, marginTop: 2 }, [
-          el('span', {}, 'Software Engineer'), el('span', { width: 4, height: 4, borderRadius: '50%', background: ACCENT }), el('span', {}, 'AI Developer'), el('span', { width: 4, height: 4, borderRadius: '50%', background: ACCENT }), el('span', {}, 'Instructor'),
+        el('div', { fontSize: 72, fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em', lineHeight: 1.1 }, 'Sun'),
+        el('div', { display: 'flex', alignItems: 'center', gap: 12, fontSize: 26, color: 'rgba(255,255,255,0.75)', lineHeight: 1.4, marginTop: 4 }, [
+          el('span', {}, 'Software Engineer'), el('span', { width: 6, height: 6, borderRadius: '50%', background: ACCENT }), el('span', {}, 'AI Developer'), el('span', { width: 6, height: 6, borderRadius: '50%', background: ACCENT }), el('span', {}, 'Instructor'),
         ]),
-        el('div', { fontSize: 16, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5, maxWidth: 560, marginTop: 2 }, 'Building tools that combine frontend excellence with AI-driven intelligence.'),
-        el('div', { display: 'flex', gap: 10, marginTop: 6 }, tagEls),
+        el('div', { fontSize: 21, color: 'rgba(255,255,255,0.5)', lineHeight: 1.4, maxWidth: 580, marginTop: 4 }, 'Building tools that combine frontend excellence with AI-driven intelligence.'),
+        el('div', { display: 'flex', gap: 12, marginTop: 10 }, tagEls),
       ],
     },
     {
       name: 'og-links.png',
       label: 'Links',
       body: [
-        el('div', { fontSize: 44, fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em', lineHeight: 1.15 }, 'Sun'),
-        el('div', { fontSize: 17, color: 'rgba(255,255,255,0.55)', lineHeight: 1.5, maxWidth: 500, marginTop: 2 }, 'Software Engineer \u00B7 AI Developer \u00B7 Instructor'),
-        el('div', { fontSize: 15, color: 'rgba(255,255,255,0.35)', lineHeight: 1.5, maxWidth: 500, marginTop: 2 }, 'Connect with me across social media and explore my work.'),
+        el('div', { fontSize: 64, fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em', lineHeight: 1.1 }, 'Sun'),
+        el('div', { fontSize: 24, color: 'rgba(255,255,255,0.55)', lineHeight: 1.4, maxWidth: 520, marginTop: 4 }, 'Software Engineer \u00B7 AI Developer \u00B7 Instructor'),
+        el('div', { fontSize: 19, color: 'rgba(255,255,255,0.35)', lineHeight: 1.4, maxWidth: 520, marginTop: 4 }, 'Connect with me across social media and explore my work.'),
       ],
     },
     {
       name: 'og-blog.png',
       label: 'Blog',
       body: [
-        el('div', { fontSize: 36, fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em', lineHeight: 1.15 }, 'Thoughts & Insights'),
-        el('div', { fontSize: 18, color: 'rgba(255,255,255,0.6)', lineHeight: 1.5, marginTop: 4 }, 'by Sun'),
-        el('div', { fontSize: 15, color: 'rgba(255,255,255,0.4)', lineHeight: 1.5, maxWidth: 500, marginTop: 2 }, 'Exploring software engineering, AI development, and the art of building great products.'),
+        el('div', { fontSize: 56, fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em', lineHeight: 1.1 }, 'Thoughts & Insights'),
+        el('div', { fontSize: 26, color: 'rgba(255,255,255,0.6)', lineHeight: 1.4, marginTop: 6 }, 'by Sun'),
+        el('div', { fontSize: 20, color: 'rgba(255,255,255,0.4)', lineHeight: 1.4, maxWidth: 520, marginTop: 4 }, 'Exploring software engineering, AI development, and the art of building great products.'),
       ],
     },
   ];
