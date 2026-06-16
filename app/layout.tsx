@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://sunzhi-will.github.io';
-const ogImage = `${baseUrl}/og`;
+const ogImage = `${baseUrl}/og-image.png`;
 
 // 定義靜態 metadata
 export const metadata: Metadata = {
