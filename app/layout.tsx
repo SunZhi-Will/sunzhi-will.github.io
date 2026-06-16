@@ -32,6 +32,21 @@ export const metadata: Metadata = {
       'zh-TW': '謝上智 - 軟體工程師 | AI 開發者'
     }
   },
+  openGraph: {
+    title: '謝上智 - 軟體工程師 | AI 開發者',
+    description: 'Full-stack engineer specializing in AI application development and Unity game development',
+    url: 'https://sunzhi-will.github.io',
+    siteName: 'Sun',
+    locale: 'zh_TW',
+    type: 'website',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Sun - Software Engineer' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '謝上智 - 軟體工程師 | AI 開發者',
+    description: 'Full-stack engineer specializing in AI application development and Unity game development',
+    images: ['/og-image.jpg'],
+  },
   // 安全標頭配置（部分標頭在靜態導出時可能需要在部署平台配置）
   other: {
     'X-Content-Type-Options': 'nosniff',

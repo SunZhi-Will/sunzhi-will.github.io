@@ -813,6 +813,12 @@ html, * {
   max-width: 100%;
 }
 
+/* 確保圖片不溢出容器 */
+.prose img {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
 /* 優化長 URL 和連結 */
 .prose a[href^="http"] {
   word-break: break-all;

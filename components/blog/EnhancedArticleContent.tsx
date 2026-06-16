@@ -200,7 +200,7 @@ export function EnhancedArticleContent({
                         prose-blockquote:border-l-2 prose-blockquote:border-opacity-40 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-none prose-blockquote:font-normal prose-blockquote:not-italic prose-blockquote:my-10 prose-blockquote:leading-relaxed prose-blockquote:bg-opacity-30
                         prose-ul:my-7 prose-ol:my-7
                         prose-li:leading-relaxed prose-li:break-words
-                        prose-img:rounded-lg prose-img:my-10 prose-img:border prose-img:border-opacity-20 prose-img:transition-opacity prose-img:hover:opacity-90
+                        prose-img:max-w-full prose-img:h-auto prose-img:rounded-lg prose-img:my-10 prose-img:border prose-img:border-opacity-20 prose-img:transition-opacity prose-img:hover:opacity-90
                         prose-hr:my-14 prose-hr:border-opacity-20 prose-hr:has(+h2):my-4
                         prose-th:border-opacity-30 prose-th:px-4 prose-th:py-2 prose-th:font-semibold
                         prose-td:border-opacity-30 prose-td:px-4 prose-td:py-2 prose-td:break-words
@@ -265,7 +265,7 @@ export function EnhancedArticleContent({
                     prose-blockquote:border-l-2 prose-blockquote:border-opacity-40 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-none prose-blockquote:font-normal prose-blockquote:not-italic prose-blockquote:my-10 prose-blockquote:leading-relaxed prose-blockquote:bg-opacity-30
                     prose-ul:my-7 prose-ol:my-7
                     prose-li:leading-relaxed prose-li:break-words
-                    prose-img:rounded-lg prose-img:my-10 prose-img:border prose-img:border-opacity-20 prose-img:transition-opacity prose-img:hover:opacity-90
+                    prose-img:max-w-full prose-img:h-auto prose-img:rounded-lg prose-img:my-10 prose-img:border prose-img:border-opacity-20 prose-img:transition-opacity prose-img:hover:opacity-90
                     prose-hr:my-14 prose-hr:border-opacity-20
                     prose-th:border-opacity-30 prose-th:px-4 prose-th:py-2 prose-th:font-semibold
                     prose-td:border-opacity-30 prose-td:px-4 prose-td:py-2 prose-td:break-words
