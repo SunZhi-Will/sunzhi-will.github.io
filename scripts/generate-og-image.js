@@ -6,6 +6,7 @@ const path = require('path');
 const OG_WIDTH = 1200;
 const OG_HEIGHT = 630;
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
+const PROFILE_PATH = path.join(__dirname, '..', 'public', 'profile.jpg');
 
 const excludePatterns = [/Braille/i, /Symbol/i, /Dingbats?/i, /Wingdings/i, /LastResort/i, /Keyboard/i, /Webdings/i];
 const isExcluded = (name) => excludePatterns.some(p => p.test(name));
@@ -28,6 +29,18 @@ const notoSansPath = path.join(
   __dirname, '..', 'node_modules', 'next', 'dist', 'compiled', '@vercel', 'og',
   'noto-sans-v27-latin-regular.ttf'
 );
+
+const BG_GRADIENT = 'linear-gradient(135deg, #0a0a0a 0%, #18181b 30%, #0f172a 60%, #09090b 100%)';
+const ACCENT = '#facc15';
+const ACCENT_RGB = 'rgba(250,204,21,';
+
+const vnode = (type, props = {}, children) => {
+  const node = { type, props: { ...props } };
+  if (children !== undefined) node.props.children = children;
+  return node;
+};
+
+const el = (type, style, children) => vnode(type, { style }, children);
 
 function resolveFont() {
   for (const dir of fontDirs) {
@@ -61,25 +74,27 @@ function resolveFont() {
   return null;
 }
 
-const vnode = (type, props = {}, children) => {
-  const node = { type, props: { ...props } };
-  if (children !== undefined) node.props.children = children;
-  return node;
-};
-
-const el = (type, style, children) => vnode(type, { style }, children);
-
-function buildBackground(accentColor, glowColor) {
+function buildBackground() {
   return [
     el('div', {
       position: 'absolute', inset: 0, opacity: 0.04,
       backgroundImage: 'linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)',
       backgroundSize: '48px 48px',
     }),
-    el('div', { position: 'absolute', top: '-25%', left: '-10%', width: 600, height: 600, borderRadius: '50%', background: `radial-gradient(circle, ${accentColor}, transparent)` }),
-    el('div', { position: 'absolute', bottom: '-20%', right: '-10%', width: 500, height: 500, borderRadius: '50%', background: `radial-gradient(circle, ${glowColor}, transparent)` }),
-    el('div', { position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: `linear-gradient(90deg, transparent, ${accentColor.replace(/[\d.]+\)$/, '1)')}, transparent)` }),
+    el('div', { position: 'absolute', top: '-25%', left: '-10%', width: 600, height: 600, borderRadius: '50%', background: 'radial-gradient(circle, rgba(250,204,21,0.08), transparent)' }),
+    el('div', { position: 'absolute', bottom: '-20%', right: '-10%', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle, rgba(124,58,237,0.06), transparent)' }),
   ];
+}
+
+function buildAccentLine() {
+  return el('div', { position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: `linear-gradient(90deg, transparent, ${ACCENT}, transparent)` });
+}
+
+function buildAvatar(profileDataUrl) {
+  return el('div', { position: 'relative', flexShrink: 0, display: 'flex' }, [
+    el('div', { position: 'absolute', inset: -4, borderRadius: '50%', width: 136, height: 136, background: 'linear-gradient(135deg, #facc15, #f59e0b, #7c3aed)', opacity: 0.6 }),
+    vnode('img', { src: profileDataUrl, alt: 'Sun', width: 128, height: 128, style: { borderRadius: '50%', objectFit: 'cover', position: 'relative', zIndex: 2 } }),
+  ]);
 }
 
 function buildBranding(url) {
@@ -88,116 +103,96 @@ function buildBranding(url) {
   ]);
 }
 
-// --- Homepage OG: personal brand card ---
-function buildHomeTree() {
+function buildPageLabel(label) {
+  return el('div', { fontSize: 14, fontWeight: 700, color: ACCENT, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 2 }, label);
+}
+
+function buildCard(children) {
+  return el('div', { display: 'flex', alignItems: 'center', gap: 40, padding: '48px 64px', position: 'relative', zIndex: 10 }, children);
+}
+
+// Shared shell for all OG images
+function buildShell(profileDataUrl, pageLabel, bodyChildren) {
   return el('div', {
     width: OG_WIDTH, height: OG_HEIGHT,
     display: 'flex', alignItems: 'center', justifyContent: 'center',
-    background: 'linear-gradient(135deg, #0a0a0a 0%, #18181b 30%, #0f172a 60%, #09090b 100%)',
+    background: BG_GRADIENT,
     position: 'relative', overflow: 'hidden', fontFamily: 'System',
   }, [
-    ...buildBackground('rgba(250,204,21,0.08)', 'rgba(124,58,237,0.06)'),
-    el('div', { position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: 'linear-gradient(90deg, transparent, #facc15, transparent)' }),
-    el('div', { display: 'flex', flexDirection: 'column', gap: 12, padding: '48px 64px', position: 'relative', zIndex: 10 }, [
-      el('div', { fontSize: 56, fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em', lineHeight: 1.1 }, 'Sun'),
-      el('div', { display: 'flex', alignItems: 'center', gap: 10, fontSize: 20, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5, marginTop: 4 }, [
-        el('span', {}, 'Software Engineer'), el('span', { width: 4, height: 4, borderRadius: '50%', background: '#facc15' }), el('span', {}, 'AI Developer'), el('span', { width: 4, height: 4, borderRadius: '50%', background: '#facc15' }), el('span', {}, 'Instructor'),
+    ...buildBackground(),
+    buildAccentLine(),
+    buildCard([
+      buildAvatar(profileDataUrl),
+      el('div', { display: 'flex', flexDirection: 'column', gap: 6 }, [
+        buildPageLabel(pageLabel),
+        ...bodyChildren,
       ]),
-      el('div', { fontSize: 17, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5, maxWidth: 560, marginTop: 4 }, 'Building tools that combine frontend excellence with AI-driven intelligence.'),
-      el('div', { display: 'flex', gap: 10, marginTop: 10 },
-        ['Next.js', 'React', 'TypeScript', 'Python', 'Unity'].map((label, i) =>
-          el('div', {
-            padding: '5px 14px', borderRadius: 999, fontSize: 13, fontWeight: 600,
-            background: i === 0 ? 'rgba(250,204,21,0.12)' : 'rgba(39,39,42,0.8)',
-            border: i === 0 ? '1px solid rgba(250,204,21,0.25)' : '1px solid rgba(63,63,70,0.6)',
-            color: i === 0 ? '#facc15' : 'rgba(255,255,255,0.65)',
-          }, label)
-        ),
-      ),
     ]),
     buildBranding('sunzhi-will.github.io'),
   ]);
 }
 
-// --- Links OG: simpler card with purple accent ---
-function buildLinksTree() {
-  return el('div', {
-    width: OG_WIDTH, height: OG_HEIGHT,
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    background: 'linear-gradient(135deg, #0a0a0a 0%, #1c0a2e 30%, #0f172a 60%, #09090b 100%)',
-    position: 'relative', overflow: 'hidden', fontFamily: 'System',
-  }, [
-    ...buildBackground('rgba(168,85,247,0.08)', 'rgba(59,130,246,0.06)'),
-    el('div', { position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: 'linear-gradient(90deg, transparent, #a855f7, transparent)' }),
-    el('div', { display: 'flex', flexDirection: 'column', gap: 10, padding: '48px 64px', position: 'relative', zIndex: 10 }, [
-      el('div', { fontSize: 18, fontWeight: 700, color: '#a855f7', letterSpacing: '0.08em', textTransform: 'uppercase' }, 'Links'),
-      el('div', { fontSize: 48, fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em', lineHeight: 1.15, marginTop: 2 }, 'Sun'),
-      el('div', { fontSize: 17, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5, maxWidth: 560, marginTop: 4 }, 'Software Engineer · AI Developer · Instructor'),
-      el('div', { fontSize: 15, color: 'rgba(255,255,255,0.35)', lineHeight: 1.5, maxWidth: 560 }, 'Connect with me across social media and explore my work.'),
-    ]),
-    buildBranding('sunzhi-will.github.io/links'),
-  ]);
-}
-
-// --- Blog OG: content-focused, different layout ---
-function buildBlogTree() {
-  return el('div', {
-    width: OG_WIDTH, height: OG_HEIGHT,
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 30%, #0f172a 60%, #09090b 100%)',
-    position: 'relative', overflow: 'hidden', fontFamily: 'System',
-  }, [
-    ...buildBackground('rgba(34,211,238,0.07)', 'rgba(99,102,241,0.05)'),
-    el('div', { position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: 'linear-gradient(90deg, transparent, #22d3ee, transparent)' }),
-    el('div', { display: 'flex', flexDirection: 'column', gap: 10, padding: '48px 64px', position: 'relative', zIndex: 10 }, [
-      el('div', { fontSize: 16, fontWeight: 700, color: '#22d3ee', letterSpacing: '0.08em', textTransform: 'uppercase' }, 'Blog'),
-      el('div', { fontSize: 44, fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em', lineHeight: 1.15, marginTop: 2 }, 'Thoughts & Insights'),
-      el('div', { fontSize: 18, color: 'rgba(255,255,255,0.6)', lineHeight: 1.5, marginTop: 4 }, 'by Sun'),
-      el('div', { fontSize: 16, color: 'rgba(255,255,255,0.45)', lineHeight: 1.5, maxWidth: 560, marginTop: 4 }, 'Exploring software engineering, AI development, and the art of building great products.'),
-    ]),
-    buildBranding('sunzhi-will.github.io/blog'),
-  ]);
-}
-
-async function generateImage(name, treeBuilder) {
-  const fontData = resolveFont();
-  if (!fontData) {
-    console.error(`  \u2717 Skipping ${name}: no font available`);
-    return;
-  }
-
-  const tree = treeBuilder();
-  const svg = await satori(tree, {
-    width: OG_WIDTH, height: OG_HEIGHT,
-    fonts: [{ name: 'System', data: fontData, weight: 400, style: 'normal' }],
-  });
-
-  const resvg = new Resvg(svg, { fitTo: { mode: 'width', value: OG_WIDTH } });
-  const pngBuffer = resvg.render().asPng();
-  const outputPath = path.join(PUBLIC_DIR, name);
-  fs.writeFileSync(outputPath, pngBuffer);
-  const stats = fs.statSync(outputPath);
-  console.log(`  \u2713 ${name} (${(stats.size / 1024).toFixed(1)}KB)`);
-}
-
 async function main() {
   console.log('Generating OG images...\n');
 
-  const images = [
-    { name: 'og-home.png', builder: buildHomeTree },
-    { name: 'og-links.png', builder: buildLinksTree },
-    { name: 'og-blog.png', builder: buildBlogTree },
-  ];
-
-  // Resolve font once, share across all images
   const fontData = resolveFont();
   if (!fontData) {
     console.error('  \u2717 No suitable font found. Skipping OG image generation.');
     process.exit(0);
   }
 
-  for (const { name, builder } of images) {
-    const tree = builder();
+  if (!fs.existsSync(PROFILE_PATH)) {
+    console.error('  \u2717 profile.jpg not found, skipping');
+    process.exit(0);
+  }
+  const profileBase64 = fs.readFileSync(PROFILE_PATH).toString('base64');
+  const profileDataUrl = `data:image/jpeg;base64,${profileBase64}`;
+
+  const tags = ['Next.js', 'React', 'TypeScript', 'Python', 'Unity'];
+  const tagEls = tags.map((label, i) =>
+    el('div', {
+      padding: '5px 14px', borderRadius: 999, fontSize: 13, fontWeight: 600,
+      background: i === 0 ? `${ACCENT_RGB}0.12)` : 'rgba(39,39,42,0.8)',
+      border: i === 0 ? `1px solid ${ACCENT_RGB}0.25)` : '1px solid rgba(63,63,70,0.6)',
+      color: i === 0 ? ACCENT : 'rgba(255,255,255,0.65)',
+    }, label)
+  );
+
+  const images = [
+    {
+      name: 'og-home.png',
+      label: '',
+      body: [
+        el('div', { fontSize: 48, fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em', lineHeight: 1.15 }, 'Sun'),
+        el('div', { display: 'flex', alignItems: 'center', gap: 10, fontSize: 18, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5, marginTop: 2 }, [
+          el('span', {}, 'Software Engineer'), el('span', { width: 4, height: 4, borderRadius: '50%', background: ACCENT }), el('span', {}, 'AI Developer'), el('span', { width: 4, height: 4, borderRadius: '50%', background: ACCENT }), el('span', {}, 'Instructor'),
+        ]),
+        el('div', { fontSize: 16, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5, maxWidth: 560, marginTop: 2 }, 'Building tools that combine frontend excellence with AI-driven intelligence.'),
+        el('div', { display: 'flex', gap: 10, marginTop: 6 }, tagEls),
+      ],
+    },
+    {
+      name: 'og-links.png',
+      label: 'Links',
+      body: [
+        el('div', { fontSize: 44, fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em', lineHeight: 1.15 }, 'Sun'),
+        el('div', { fontSize: 17, color: 'rgba(255,255,255,0.55)', lineHeight: 1.5, maxWidth: 500, marginTop: 2 }, 'Software Engineer \u00B7 AI Developer \u00B7 Instructor'),
+        el('div', { fontSize: 15, color: 'rgba(255,255,255,0.35)', lineHeight: 1.5, maxWidth: 500, marginTop: 2 }, 'Connect with me across social media and explore my work.'),
+      ],
+    },
+    {
+      name: 'og-blog.png',
+      label: 'Blog',
+      body: [
+        el('div', { fontSize: 36, fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em', lineHeight: 1.15 }, 'Thoughts & Insights'),
+        el('div', { fontSize: 18, color: 'rgba(255,255,255,0.6)', lineHeight: 1.5, marginTop: 4 }, 'by Sun'),
+        el('div', { fontSize: 15, color: 'rgba(255,255,255,0.4)', lineHeight: 1.5, maxWidth: 500, marginTop: 2 }, 'Exploring software engineering, AI development, and the art of building great products.'),
+      ],
+    },
+  ];
+
+  for (const { name, label, body } of images) {
+    const tree = buildShell(profileDataUrl, label, body);
     const svg = await satori(tree, {
       width: OG_WIDTH, height: OG_HEIGHT,
       fonts: [{ name: 'System', data: fontData, weight: 400, style: 'normal' }],
