@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/"
+     xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Sun&apos;s Blog</title>
+    <link>https://sunzhi-will.github.io</link>
+    <description>Exploring software engineering, AI development, and the art of building great products.</description>
+    <language>zh-TW</language>
+    <lastBuildDate>Tue, 16 Jun 2026 18:26:34 GMT</lastBuildDate>
+    <atom:link href="https://sunzhi-will.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+    <atom:link href="https://sunzhi-will.github.io/blog" rel="alternate" type="text/html"/>
+    
+    <item>
+      <title><![CDATA[AI Won't Replace You — But It Will Replace Someone Who Only Follows Steps]]></title>
+      <link>https://sunzhi-will.github.io/blog/2026-06-16-ai-judgement</link>
+      <guid isPermaLink="true">https://sunzhi-will.github.io/blog/2026-06-16-ai-judgement</guid>
+      <pubDate>Tue, 16 Jun 2026 00:00:00 GMT</pubDate>
+      <description><![CDATA[In the AI era, the real skill isn&apos;t knowing how to use tools. It&apos;s whether you can still judge: Is this answer correct? Suitable? Risky?]]></description>
+      <content:encoded><![CDATA[The Bottom Line
+
+!AI Won&apos;t Replace You — But It Will Replace Someone Who Only Follows Steps(/blog/2026-06-16-ai-judgement/image-1.png)
+
+The more I use AI, the less I see it as a mere &quot;productivity tool.&quot;
+
+It&apos;s more like a very smart, very diligent intern — capable of getting things done, but occasio]]></content:encoded>
+      
+    </item>
+  </channel>
+</rss>

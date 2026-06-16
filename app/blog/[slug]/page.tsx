@@ -80,22 +80,42 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
         title: defaultPost.title,
         description: defaultPost.description,
         alternates: {
-            languages: titles,
+            canonical: `${baseUrl}/blog/${slug}`,
+            languages: {
+                ...(postZhTW ? { 'zh-TW': `${baseUrl}/blog/${slug}` } : {}),
+                ...(postEn ? { 'en': `${baseUrl}/blog/${slug}` } : {}),
+            },
+            types: {
+                'application/rss+xml': `${baseUrl}/feed.xml`,
+                'application/atom+xml': `${baseUrl}/feed.atom`,
+            },
         },
         openGraph: {
             title: defaultPost.title,
             description: defaultPost.description,
             type: 'article',
             publishedTime: defaultPost.date,
+            modifiedTime: defaultPost.date,
+            authors: [`${baseUrl}/#person`],
             url: `${baseUrl}/blog/${slug}`,
-            images: imageUrl ? [{ url: imageUrl, alt: defaultPost.title }] : [],
+            images: imageUrl ? [{ url: imageUrl, alt: defaultPost.title, width: 1200, height: 630 }] : [],
+            tags: defaultPost.tags || [],
+            locale: defaultPost.lang === 'zh-TW' ? 'zh_TW' : 'en_US',
+            siteName: 'Sun',
         },
         twitter: {
             card: 'summary_large_image',
             title: defaultPost.title,
             description: defaultPost.description,
             images: imageUrl ? [imageUrl] : [],
-        }
+        },
+        robots: {
+            index: true,
+            follow: true,
+            'max-snippet': -1,
+            'max-image-preview': 'large',
+        },
+        verification: {},
     };
 }
 
@@ -229,16 +249,81 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const defaultLang: Lang = postsByLang['zh-TW'] ? 'zh-TW' : 'en';
     const defaultPostData = postsByLang[defaultLang]!;
 
+    const defaultPost = defaultPostData.post;
+    const imageUrl = defaultPost.coverImage
+        ? (defaultPost.coverImage.startsWith('http') ? defaultPost.coverImage : `${baseUrl}${defaultPost.coverImage}`)
+        : undefined;
+
+    const blogPostingJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        '@id': `${baseUrl}/blog/${slug}#article`,
+        url: `${baseUrl}/blog/${slug}`,
+        headline: defaultPost.title,
+        description: defaultPost.description,
+        datePublished: defaultPost.date,
+        dateModified: defaultPost.date,
+        mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': `${baseUrl}/blog/${slug}`,
+        },
+        author: {
+            '@type': 'Person',
+            '@id': `${baseUrl}/#person`,
+            name: 'Sun (謝上智)',
+            url: baseUrl,
+        },
+        publisher: {
+            '@type': 'Person',
+            '@id': `${baseUrl}/#person`,
+            name: 'Sun (謝上智)',
+        },
+        ...(imageUrl ? { image: { '@type': 'ImageObject', url: imageUrl, width: 1200, height: 630 } } : {}),
+        ...(defaultPost.tags && defaultPost.tags.length > 0 ? { keywords: defaultPost.tags.join(', ') } : {}),
+        inLanguage: defaultPost.lang === 'zh-TW' ? 'zh-TW' : 'en',
+        wordCount: defaultPostData.contentLength || undefined,
+    };
+
+    const breadcrumbJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        '@id': `${baseUrl}/blog/${slug}#breadcrumb`,
+        itemListElement: [
+            {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Blog',
+                item: `${baseUrl}/blog`,
+            },
+            {
+                '@type': 'ListItem',
+                position: 2,
+                name: defaultPost.title,
+                item: `${baseUrl}/blog/${slug}`,
+            },
+        ],
+    };
+
     return (
-        <BlogPostClient
-            defaultPost={defaultPostData.post}
-            defaultContentLength={defaultPostData.contentLength}
-            defaultHtmlContent={defaultPostData.htmlContent}
-            defaultMdxSource={defaultPostData.mdxSource}
-            defaultAllPosts={allPostsByLang[defaultLang] || []}
-            postsByLang={postsByLang}
-            allPostsByLang={allPostsByLang}
-            baseUrl={baseUrl}
-        />
+        <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingJsonLd) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+            />
+            <BlogPostClient
+                defaultPost={defaultPost}
+                defaultContentLength={defaultPostData.contentLength}
+                defaultHtmlContent={defaultPostData.htmlContent}
+                defaultMdxSource={defaultPostData.mdxSource}
+                defaultAllPosts={allPostsByLang[defaultLang] || []}
+                postsByLang={postsByLang}
+                allPostsByLang={allPostsByLang}
+                baseUrl={baseUrl}
+            />
+        </>
     );
 }

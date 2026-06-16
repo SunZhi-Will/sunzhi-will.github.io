@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "node scripts/copy-blog-images.js && next dev --turbopack",
     "clean-dev": "rm -rf .next tsconfig.tsbuildinfo && npm run dev",
-    "prebuild": "node scripts/copy-blog-images.js && node scripts/generate-og-image.js",
+    "prebuild": "node scripts/copy-blog-images.js && node scripts/generate-og-image.js && node scripts/generate-rss.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

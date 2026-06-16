@@ -1,0 +1,11 @@
+User-agent: Googlebot-News
+Allow: /blog/
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /_next/
+Disallow: /unsubscribe
+Disallow: /verify
+
+Sitemap: https://sunzhi-will.github.io/sitemap.xml

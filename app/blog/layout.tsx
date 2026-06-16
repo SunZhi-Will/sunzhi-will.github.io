@@ -9,6 +9,17 @@ export const metadata: Metadata = {
     template: "%s | Sun's Blog"
   },
   description: "Exploring software engineering, AI development, and the art of building great products.",
+  alternates: {
+    canonical: `${baseUrl}/blog`,
+    languages: {
+      'zh-TW': `${baseUrl}/blog`,
+      'en': `${baseUrl}/blog`,
+    },
+    types: {
+      'application/rss+xml': `${baseUrl}/feed.xml`,
+      'application/atom+xml': `${baseUrl}/feed.atom`,
+    },
+  },
   openGraph: {
     title: "Blog | Sun",
     description: "Exploring software engineering, AI development, and the art of building great products.",
@@ -16,7 +27,10 @@ export const metadata: Metadata = {
     siteName: "Sun",
     locale: "en_US",
     type: "website",
-    images: [{ url: `${baseUrl}/og-blog.png`, width: 1200, height: 630, alt: "Sun's Blog" }],
+    images: [
+      { url: `${baseUrl}/og-blog-square.png`, width: 800, height: 800, alt: "Sun's Blog" },
+      { url: `${baseUrl}/og-blog.png`, width: 1200, height: 630, alt: "Sun's Blog" },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
