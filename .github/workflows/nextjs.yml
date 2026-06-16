@@ -97,11 +97,14 @@ jobs:
           if [ -f "scripts/copy-blog-images.js" ]; then
             node scripts/copy-blog-images.js
           fi
+      - name: Generate OG image
+        if: ${{ hashFiles('scripts/generate-og-image.js') != '' }}
+        run: node scripts/generate-og-image.js
       - name: Build with Next.js
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_URL: ${{ secrets.GOOGLE_APPS_SCRIPT_URL }}
-        run: ${{ steps.detect-package-manager.outputs.runner }} next build
+        run: npm run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

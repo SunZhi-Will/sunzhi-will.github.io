@@ -44,8 +44,13 @@ async function main() {
     path.join(require('os').homedir(), 'Library', 'Fonts'),
     '/usr/share/fonts/truetype',
     '/usr/share/fonts',
-    path.join(__dirname, '..', 'node_modules'),
   ];
+
+  // Bundled with @vercel/og (next/og) — reliable cross-platform fallback
+  const notoSansPath = path.join(
+    __dirname, '..', 'node_modules', 'next', 'dist', 'compiled', '@vercel', 'og',
+    'noto-sans-v27-latin-regular.ttf'
+  );
 
   let fontData;
   // First pass: look for preferred fonts by name
@@ -75,6 +80,13 @@ async function main() {
         }
       } catch {}
     }
+  }
+  // Third pass: bundled Noto Sans from @vercel/og (works on macOS, Linux, CI)
+  if (!fontData) {
+    try {
+      fontData = fs.readFileSync(notoSansPath);
+      console.log(`  Font (bundled): noto-sans-v27-latin-regular.ttf`);
+    } catch {}
   }
 
   if (!fontData) {
