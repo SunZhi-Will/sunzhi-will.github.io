@@ -13,6 +13,9 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://sunzhi-will.github.io';
+const ogImage = `${baseUrl}/og`;
+
 // 定義靜態 metadata
 export const metadata: Metadata = {
   title: {
@@ -39,13 +42,13 @@ export const metadata: Metadata = {
     siteName: 'Sun',
     locale: 'zh_TW',
     type: 'website',
-    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Sun - Software Engineer' }],
+    images: [{ url: ogImage, width: 1200, height: 630, alt: 'Sun - Software Engineer' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: '謝上智 - 軟體工程師 | AI 開發者',
     description: 'Full-stack engineer specializing in AI application development and Unity game development',
-    images: ['/og-image.jpg'],
+    images: [ogImage],
   },
   // 安全標頭配置（部分標頭在靜態導出時可能需要在部署平台配置）
   other: {
