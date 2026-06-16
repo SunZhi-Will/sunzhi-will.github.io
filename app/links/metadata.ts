@@ -14,5 +14,10 @@ export const metadata: Metadata = {
     siteName: "Sun Zhi",
     locale: "zh_TW",
     type: "website",
+    images: [{ url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://sunzhi-will.github.io'}/og-links.png`, width: 1200, height: 630, alt: 'Sun - Links' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: [`${process.env.NEXT_PUBLIC_SITE_URL || 'https://sunzhi-will.github.io'}/og-links.png`],
   },
 }; 
