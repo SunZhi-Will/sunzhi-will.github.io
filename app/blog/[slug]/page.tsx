@@ -70,6 +70,11 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
         titles['en'] = postEn.title;
     }
 
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://sunzhi-will.github.io';
+    const imageUrl = defaultPost.coverImage
+        ? (defaultPost.coverImage.startsWith('http') ? defaultPost.coverImage : `${baseUrl}${defaultPost.coverImage}`)
+        : undefined;
+
     // 設定標題為「文章標題」，支援多語言
     return {
         title: defaultPost.title,
@@ -77,6 +82,20 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
         alternates: {
             languages: titles,
         },
+        openGraph: {
+            title: defaultPost.title,
+            description: defaultPost.description,
+            type: 'article',
+            publishedTime: defaultPost.date,
+            url: `${baseUrl}/blog/${slug}`,
+            images: imageUrl ? [{ url: imageUrl, alt: defaultPost.title }] : [],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: defaultPost.title,
+            description: defaultPost.description,
+            images: imageUrl ? [imageUrl] : [],
+        }
     };
 }
 

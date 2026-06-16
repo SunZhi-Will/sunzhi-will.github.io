@@ -90,13 +90,13 @@ export const Projects = forwardRef<HTMLElement, ProjectsProps>(({ lang, projects
                   <div className="absolute top-4 right-4">
                     <span className="
                       px-4 py-2 
-                      bg-[#18181b]/95
+                      bg-gradient-to-r from-gray-500/30 to-slate-500/30
                       backdrop-blur-md 
-                      border border-[#3f3f46]/60
+                      border border-gray-400/30
                       rounded-full 
                       text-sm font-semibold
-                      text-white
-                      shadow-glow-yellow
+                      text-gray-100
+                      shadow-glow
                       flex items-center gap-2
                       transition-all duration-300
                       group-hover:scale-105

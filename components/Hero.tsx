@@ -176,6 +176,31 @@ export const Hero = ({ lang, typedSubtitle, scrollToSection }: HeroProps) => {
                     </div>
                   </GlowingButton>
                 </motion.div>
+
+                {/* Sunkoro 課程網站按鈕 */}
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <GlowingButton
+                    href="https://sunkoro.com"
+                    className="bg-white text-black font-semibold
+                              shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.3)]
+                              border border-white hover:bg-slate-100
+                              group relative overflow-hidden glow-button
+                              !px-0 !py-0 transition-all duration-300"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/5 via-black/10 to-transparent 
+                                  translate-x-[-100%] group-hover:translate-x-[100%] 
+                                  transition-transform duration-700" />
+                    <div className="relative flex items-center gap-2 px-4 py-2 text-sm font-semibold">
+                      <svg className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                      </svg>
+                      <span>{translations[lang].footer.courseWebsite}</span>
+                    </div>
+                  </GlowingButton>
+                </motion.div>
               </motion.div>
             </motion.div>
           </div>

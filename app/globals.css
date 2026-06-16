@@ -369,7 +369,7 @@ html {
   display: none;
 }
 
-/* 全域自定義滾動條樣式 - 深色預設 */
+/* 全域自定義滾動條樣式 - 預設 */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -394,25 +394,28 @@ html {
 }
 
 /* 深色模式 scrollbar */
+.dark::-webkit-scrollbar-thumb,
 .dark ::-webkit-scrollbar-thumb {
   background: #3f3f46;
 }
 
+.dark::-webkit-scrollbar-thumb:hover,
 .dark ::-webkit-scrollbar-thumb:hover {
   background: #fbbf24;
 }
 
+.dark::-webkit-scrollbar-thumb:active,
 .dark ::-webkit-scrollbar-thumb:active {
   background: #f59e0b;
 }
 
 /* For Firefox */
-* {
+html, * {
   scrollbar-width: thin;
   scrollbar-color: #d1d5db transparent;
 }
 
-.dark * {
+.dark, .dark * {
   scrollbar-color: #3f3f46 transparent;
 }
 
@@ -422,6 +425,7 @@ html {
   scrollbar-color: #d1d5db transparent;
 }
 
+.dark.scrollbar-custom,
 .dark .scrollbar-custom {
   scrollbar-color: #3f3f46 transparent;
 }
@@ -440,6 +444,7 @@ html {
   border-radius: 9999px;
 }
 
+.dark.scrollbar-custom::-webkit-scrollbar-thumb,
 .dark .scrollbar-custom::-webkit-scrollbar-thumb {
   background: #3f3f46;
 }
@@ -448,6 +453,7 @@ html {
   background: #d97706;
 }
 
+.dark.scrollbar-custom::-webkit-scrollbar-thumb:hover,
 .dark .scrollbar-custom::-webkit-scrollbar-thumb:hover {
   background: #fbbf24;
 }
@@ -456,6 +462,7 @@ html {
   background: #b45309;
 }
 
+.dark.scrollbar-custom::-webkit-scrollbar-thumb:active,
 .dark .scrollbar-custom::-webkit-scrollbar-thumb:active {
   background: #f59e0b;
 }
