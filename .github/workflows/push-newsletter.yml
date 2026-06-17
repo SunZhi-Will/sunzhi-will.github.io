@@ -1,0 +1,41 @@
+name: Auto Send Newsletter on Push
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'content/blog/**'
+
+jobs:
+  send-newsletter:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Need history to run git diff against HEAD~1 or commits range
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm config set fetch-retries 5
+          npm config set fetch-timeout 300000
+          npm ci
+
+      - name: Run Push Newsletter Script
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          BLOG_URL: ${{ secrets.BLOG_URL || 'https://sunzhi-will.github.io' }}
+          GOOGLE_APPS_SCRIPT_URL: ${{ secrets.GOOGLE_APPS_SCRIPT_URL }}
+          GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
+          GOOGLE_SHEETS_ID: ${{ secrets.GOOGLE_SHEETS_ID }}
+        run: |
+          echo "🚀 Processing newsletter for push..."
+          node scripts/send-newsletter-on-push.js

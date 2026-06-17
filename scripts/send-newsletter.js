@@ -316,18 +316,56 @@ function markdownToHtml(markdown) {
             const hrefMatch = attrs.match(/href="([^"]+)"/);
             const titleMatch = attrs.match(/title="([^"]+)"/);
             const descriptionMatch = attrs.match(/description="([^"]+)"/);
-            const authorMatch = attrs.match(/author="([^"]+)"/);
-            const publisherMatch = attrs.match(/publisher="([^"]+)"/);
+            const iconMatch = attrs.match(/icon="([^"]+)"/);
+            const thumbnailMatch = attrs.match(/thumbnail="([^"]+)"/);
 
             const href = hrefMatch ? hrefMatch[1] : '';
             const title = titleMatch ? titleMatch[1] : '';
             const description = descriptionMatch ? descriptionMatch[1] : '';
+            const icon = iconMatch ? iconMatch[1] : '';
+            const thumbnail = thumbnailMatch ? thumbnailMatch[1] : '';
+
+            // 處理相對路徑圖片
+            const blogUrl = process.env.BLOG_URL || 'https://sunzhi-will.github.io';
+            let imageHtml = '';
+            if (thumbnail) {
+                const thumbnailUrl = thumbnail.startsWith('http') ? thumbnail : `${blogUrl}${thumbnail}`;
+                imageHtml = `
+<td style="width: 140px; padding-left: 20px; vertical-align: middle;">
+    <img src="${thumbnailUrl}" alt="" style="width: 140px; height: 100px; object-fit: cover; border-radius: 6px; display: block;" />
+</td>
+                `;
+            }
+
+            let iconHtml = '';
+            if (icon) {
+                const iconUrl = icon.startsWith('http') ? icon : `${blogUrl}${icon}`;
+                iconHtml = `<img src="${iconUrl}" alt="" style="width: 16px; height: 16px; border-radius: 50%; display: inline-block; vertical-align: middle; margin-right: 6px;" />`;
+            }
+
+            let hostname = '';
+            try {
+                hostname = new URL(href).hostname;
+            } catch (e) {
+                hostname = href;
+            }
 
             return `
-<div style="margin: 24px 0; padding: 20px; background-color: #1a1a1a; border: 1px solid #333333; border-radius: 8px;">
+<div style="margin: 24px 0; padding: 20px; background-color: #202023; border: 1px solid #3f3f46; border-radius: 8px;">
     <a href="${href}" style="text-decoration: none; color: inherit; display: block;" target="_blank" rel="noopener noreferrer">
-        <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px; color: #e8e8e8; line-height: 1.4;">${title}</div>
-        <div style="font-size: 14px; margin-bottom: 12px; color: #d4d4d4; line-height: 1.5;">${description}</div>
+        <table role="presentation" style="width: 100%; border-collapse: collapse; border: none;">
+            <tr>
+                <td style="vertical-align: top;">
+                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px; color: #e8e8e8; line-height: 1.4;">${title}</div>
+                    <div style="font-size: 14px; margin-bottom: 12px; color: #a1a1aa; line-height: 1.5;">${description}</div>
+                    <div style="font-size: 12px; color: #71717a;">
+                        ${iconHtml}
+                        <span style="vertical-align: middle;">${hostname}</span>
+                    </div>
+                </td>
+                ${imageHtml}
+            </tr>
+        </table>
     </a>
 </div>
             `.trim();
@@ -349,36 +387,40 @@ function markdownToHtml(markdown) {
             const author = authorMatch ? authorMatch[1] : '';
             const role = roleMatch ? roleMatch[1] : '';
 
-            // 根據類型決定樣式
+            // 根據類型決定樣式 (與網站的 bg-opacity 和 border 同步)
             const getTypeConfig = (type) => {
                 const configs = {
-                    insight: { icon: '🔍', title: '內行人的深度點評' },
-                    experience: { icon: '💭', title: '我的親身體驗' },
-                    warning: { icon: '⚠️', title: '重要提醒' },
-                    tip: { icon: '💡', title: '實用技巧' }
+                    insight: { icon: '🔍', title: '內行人的深度點評', bgColor: '#202023', borderColor: '#2d2d30', textColor: '#d4d4d4' },
+                    experience: { icon: '💭', title: '我的親身體驗', bgColor: '#142b1b', borderColor: '#1e3f20', textColor: '#a7f3d0' },
+                    warning: { icon: '⚠️', title: '重要提醒', bgColor: '#2e2916', borderColor: '#4a3f1a', textColor: '#fef08a' },
+                    tip: { icon: '💡', title: '實用技巧', bgColor: '#2e2916', borderColor: '#4a3f1a', textColor: '#fef08a' }
                 };
                 return configs[type] || configs.insight;
             };
 
             const config = getTypeConfig(type);
-            const authorHtml = author ? `<div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #333333; font-size: 13px; color: #999999;">${author}${role ? ` • ${role}` : ''}</div>` : '';
+            const authorHtml = author ? `<div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid ${config.borderColor}; font-size: 13px; color: #999999;">${author}${role ? ` • ${role}` : ''}</div>` : '';
 
             return `
-<div style="margin: 32px 0; padding: 24px; background-color: #0a0a0a; border: 1px solid #333333; border-radius: 8px;">
-    <div style="display: flex; align-items: flex-start; gap: 16px;">
-        <div style="flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%; background-color: #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 24px;">
-            ${config.icon}
-        </div>
-        <div style="flex: 1;">
-            <div style="font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #e8e8e8;">
-                ${config.title}
-            </div>
-            <div style="font-size: 15px; line-height: 1.7; margin-bottom: 16px; color: #d4d4d4;">
-                ${content}
-            </div>
-            ${authorHtml}
-        </div>
-    </div>
+<div style="margin: 32px 0; padding: 24px; background-color: ${config.bgColor}; border: 1px solid ${config.borderColor}; border-radius: 8px;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td style="vertical-align: top; width: 48px; padding-right: 16px;">
+                <div style="width: 48px; height: 48px; border-radius: 50%; background-color: #27272a; display: flex; align-items: center; justify-content: center; font-size: 24px; text-align: center; line-height: 48px;">
+                    ${config.icon}
+                </div>
+            </td>
+            <td style="vertical-align: top;">
+                <div style="font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #e8e8e8;">
+                    ${config.title}
+                </div>
+                <div style="font-size: 15px; line-height: 1.7; color: ${config.textColor};">
+                    ${content}
+                </div>
+                ${authorHtml}
+            </td>
+        </tr>
+    </table>
 </div>
             `.trim();
         }
@@ -398,11 +440,11 @@ function markdownToHtml(markdown) {
             // 根據類型決定樣式
             const getTypeConfig = (type) => {
                 const configs = {
-                    info: { icon: 'ℹ️', title: '資訊', bgColor: '#1a1a1a', borderColor: '#333333', textColor: '#d4d4d4' },
-                    success: { icon: '✅', title: '成功', bgColor: '#1a1a1a', borderColor: '#333333', textColor: '#d4d4d4' },
-                    warning: { icon: '⚠️', title: '警告', bgColor: '#1a1a1a', borderColor: '#333333', textColor: '#d4d4d4' },
-                    error: { icon: '❌', title: '錯誤', bgColor: '#1a1a1a', borderColor: '#333333', textColor: '#d4d4d4' },
-                    tip: { icon: '💡', title: '提示', bgColor: '#1a1a1a', borderColor: '#333333', textColor: '#d4d4d4' }
+                    info: { icon: 'ℹ️', title: '資訊', bgColor: '#202023', borderColor: '#2d2d30', textColor: '#d4d4d4' },
+                    success: { icon: '✅', title: '成功', bgColor: '#142b1b', borderColor: '#1e3f20', textColor: '#a7f3d0' },
+                    warning: { icon: '⚠️', title: '警告', bgColor: '#2e2916', borderColor: '#4a3f1a', textColor: '#fef08a' },
+                    error: { icon: '❌', title: '錯誤', bgColor: '#2d1919', borderColor: '#4a1e1e', textColor: '#fecaca' },
+                    tip: { icon: '💡', title: '提示', bgColor: '#2e2916', borderColor: '#4a3f1a', textColor: '#fef08a' }
                 };
                 return configs[type] || configs.info;
             };
@@ -412,46 +454,78 @@ function markdownToHtml(markdown) {
 
             return `
 <div style="margin: 24px 0; padding: 16px 20px; background-color: ${config.bgColor}; border: 1px solid ${config.borderColor}; border-radius: 8px;">
-    ${titleHtml}
-    <div style="color: ${config.textColor}; line-height: 1.6;">${content.trim()}</div>
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            ${!title ? `<td style="vertical-align: top; width: 24px; padding-right: 12px; font-size: 16px; line-height: 1.6;">${config.icon}</td>` : ''}
+            <td style="vertical-align: top;">
+                ${titleHtml}
+                <div style="color: ${config.textColor}; line-height: 1.6; font-size: 14px;">${content.trim()}</div>
+            </td>
+        </tr>
+    </table>
 </div>
             `.trim();
         }
     );
 
-    // 處理 StatsHighlight 組件
+    // 處理 StatsHighlight 組件 (支援多個數據水平排列)
     html = html.replace(
         /<StatsHighlight\s+([^>]+)\s*\/>/g,
         (match, attrs) => {
-            // 解析屬性
             const titleMatch = attrs.match(/title="([^"]+)"/);
             const title = titleMatch ? titleMatch[1] : '';
 
-            // 嘗試解析 stats 陣列
-            const statsMatch = attrs.match(/stats=\{([^}]+)\}/);
-            let statsHtml = '';
+            // 解析 stats 陣列屬性
+            let statsData = [];
+            const statsStart = attrs.indexOf('stats={');
+            if (statsStart !== -1) {
+                let bracketCount = 1;
+                let i = statsStart + 7;
+                let statsStr = '';
+                while (i < attrs.length && bracketCount > 0) {
+                    const char = attrs[i];
+                    if (char === '{') bracketCount++;
+                    else if (char === '}') bracketCount--;
+                    if (bracketCount > 0) {
+                        statsStr += char;
+                    }
+                    i++;
+                }
 
-            if (statsMatch) {
                 try {
-                    // 簡化的 stats 解析 - 處理簡單的情況
-                    const statsStr = statsMatch[1];
-                    // 查找 value 和 label
-                    const valueMatch = statsStr.match(/value:\s*"([^"]+)"/);
-                    const labelMatch = statsStr.match(/label:\s*"([^"]+)"/);
-
-                    if (valueMatch && labelMatch) {
-                        statsHtml = `
-    <div style="display: flex; justify-content: center; align-items: center; gap: 12px;">
-        <div style="text-align: center;">
-            <div style="font-size: 28px; font-weight: 700; color: #c0c0c0; margin-bottom: 4px;">${valueMatch[1]}</div>
-            <div style="font-size: 14px; color: #888888;">${labelMatch[1]}</div>
-        </div>
-    </div>
-                        `.trim();
+                    // 比對以提取 value 與 label
+                    const objectRegex = /\{\s*value:\s*['"]([^'"]+)['"]\s*,\s*label:\s*['"]([^'"]+)['"](?:[^}]*)?\}/g;
+                    let m;
+                    while ((m = objectRegex.exec(statsStr)) !== null) {
+                        statsData.push({ value: m[1], label: m[2] });
+                    }
+                    if (statsData.length === 0) {
+                        const objectRegex2 = /\{\s*["']?value["']?\s*:\s*['"]([^'"]+)['"]\s*,\s*["']?label["']?\s*:\s*['"]([^'"]+)['"](?:[^}]*)?\}/g;
+                        let m2;
+                        while ((m2 = objectRegex2.exec(statsStr)) !== null) {
+                            statsData.push({ value: m2[1], label: m2[2] });
+                        }
                     }
                 } catch (e) {
-                    statsHtml = '<div style="font-size: 16px; color: #d4d4d4;">統計數據</div>';
+                    console.error('StatsHighlight parsing error:', e);
                 }
+            }
+
+            let statsHtml = '';
+            if (statsData.length > 0) {
+                statsHtml = '<table role="presentation" style="width: 100%; border-collapse: collapse; margin-top: 16px;"><tr>';
+                const cellWidth = Math.floor(100 / statsData.length);
+                for (const stat of statsData) {
+                    statsHtml += `
+<td style="width: ${cellWidth}%; text-align: center; padding: 12px; vertical-align: top;">
+    <div style="font-size: 28px; font-weight: 700; color: #c084fc; margin-bottom: 4px;">${stat.value}</div>
+    <div style="font-size: 14px; color: #a1a1aa;">${stat.label}</div>
+</td>
+                    `;
+                }
+                statsHtml += '</tr></table>';
+            } else {
+                statsHtml = '<div style="font-size: 15px; color: #a1a1aa; text-align: center; padding: 12px;">統計數據</div>';
             }
 
             return `
