@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react';
 import type { BlogPost } from '@/types/blog';
 import type { Lang } from '@/types';
-import { blogTranslations, filterTagsByLanguage } from '@/lib/blog-translations';
+import { blogTranslations, filterTagsByLanguage, translateTag } from '@/lib/blog-translations';
 import { formatDate } from '@/lib/blog-utils';
 
 interface ArticleHeroProps {
@@ -31,6 +31,7 @@ function ArticleMetaPill({ children, isDark }: {
 export function ArticleHero({ post, lang, readingTime, isDark }: ArticleHeroProps) {
     const t = blogTranslations[lang];
     const filteredTags = filterTagsByLanguage(post.tags, lang);
+    const translatedTags = Array.from(new Set(filteredTags.map(tag => translateTag(tag, lang)))).filter(Boolean);
 
     return (
         <header className="relative overflow-hidden rounded-lg border px-5 py-8 sm:px-8 md:px-10 md:py-10" style={{
@@ -54,7 +55,7 @@ export function ArticleHero({ post, lang, readingTime, isDark }: ArticleHeroProp
                     <ArticleMetaPill isDark={isDark}>
                         {readingTime} {t.readTime}
                     </ArticleMetaPill>
-                    {filteredTags.map((tag) => (
+                    {translatedTags.map((tag) => (
                         <span
                             key={tag}
                             className={`rounded-full px-3 py-1.5 text-xs font-medium ${

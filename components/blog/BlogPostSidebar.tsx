@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { formatDate } from '@/lib/blog-utils';
 import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
-import { blogTranslations, filterTagsByLanguage } from '@/lib/blog-translations';
+import { blogTranslations, filterTagsByLanguage, translateTag } from '@/lib/blog-translations';
 import { useTheme } from '@/app/blog/ThemeProvider';
 import { NewsletterSubscribe } from './NewsletterSubscribe';
 
@@ -182,13 +182,14 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                         </div>
                         {(() => {
                             const filteredTags = filterTagsByLanguage(post.tags, lang);
-                            return filteredTags.length > 0 && (
+                            const translatedTags = Array.from(new Set(filteredTags.map(tag => translateTag(tag, lang)))).filter(Boolean);
+                            return translatedTags.length > 0 && (
                                 <div className="flex flex-col gap-2">
                                     <div className="text-xs text-gray-600 uppercase tracking-wider font-medium">
                                         {t.tags}
                                     </div>
                                     <div className="flex flex-wrap gap-2">
-                                        {filteredTags.map((tag) => (
+                                        {translatedTags.map((tag) => (
                                             <span
                                                 key={tag}
                                                 className={`px-2.5 py-1 text-xs uppercase tracking-wider border rounded-md

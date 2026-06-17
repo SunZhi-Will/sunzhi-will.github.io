@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
@@ -54,18 +54,18 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
         return Array.from(new Set(translated)).filter(Boolean);
     }, [tags, lang]);
 
-    // 從 localStorage 讀取語言選擇，如果沒有則偵測瀏覽器語言
-    useEffect(() => {
-        const savedLang = localStorage.getItem('blog-lang') as Lang | null;
-        if (savedLang && (savedLang === 'zh-TW' || savedLang === 'en')) {
-            setLang(savedLang);
-        } else {
-            const browserLang = navigator.language;
-            const detectedLang = browserLang.includes('zh') ? 'zh-TW' : 'en';
-            setLang(detectedLang);
-            localStorage.setItem('blog-lang', detectedLang);
-        }
-    }, []);
+    // 從 localStorage 讀取語言選擇，如果沒有則偵測瀏覽器語言 (暫時停用，固定為中文)
+    // useEffect(() => {
+    //     const savedLang = localStorage.getItem('blog-lang') as Lang | null;
+    //     if (savedLang && (savedLang === 'zh-TW' || savedLang === 'en')) {
+    //         setLang(savedLang);
+    //     } else {
+    //         const browserLang = navigator.language;
+    //         const detectedLang = browserLang.includes('zh') ? 'zh-TW' : 'en';
+    //         setLang(detectedLang);
+    //         localStorage.setItem('blog-lang', detectedLang);
+    //     }
+    // }, []);
 
     // 當語言改變時，保存到 localStorage
     const handleLangChange = (newLang: Lang) => {

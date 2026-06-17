@@ -26,6 +26,11 @@ const mdxComponents = {
     StatsHighlight,
     ArticleConclusion,
     BookmarkCard,
+    table: (props: React.TableHTMLAttributes<HTMLTableElement>) => (
+        <div className="table-wrapper overflow-x-auto my-6">
+            <table {...props} />
+        </div>
+    ),
 };
 
 export function EnhancedArticleContent({
@@ -74,16 +79,18 @@ export function EnhancedArticleContent({
             };
         });
 
-        // 增強表格 - 添加滾動容器
-        const tables = contentRef.current.querySelectorAll('table');
-        tables.forEach((table) => {
-            if (!table.parentElement?.classList.contains('table-wrapper')) {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'table-wrapper overflow-x-auto my-6';
-                table.parentElement?.insertBefore(wrapper, table);
-                wrapper.appendChild(table);
-            }
-        });
+        // 增強表格 - 添加滾動容器 (僅在 HTML 渲染時手動操作 DOM，MDX 已由 custom table component 處理)
+        if (!mdxSource) {
+            const tables = contentRef.current.querySelectorAll('table');
+            tables.forEach((table) => {
+                if (!table.parentElement?.classList.contains('table-wrapper')) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'table-wrapper overflow-x-auto my-6';
+                    table.parentElement?.insertBefore(wrapper, table);
+                    wrapper.appendChild(table);
+                }
+            });
+        }
 
         // 高亮重要數字（保留原有的 HTML 結構，特別是 strong 標籤）
         const paragraphs = contentRef.current.querySelectorAll('p');

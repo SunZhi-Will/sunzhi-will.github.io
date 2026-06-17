@@ -4,6 +4,7 @@ import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
 import { useTheme } from '@/app/blog/ThemeProvider';
 import { BlogCard } from './BlogCard';
+import { translateTag } from '@/lib/blog-translations';
 
 interface RelatedPostsProps {
     posts: BlogPost[];
@@ -21,8 +22,10 @@ export function RelatedPosts({ posts, currentSlug, lang }: RelatedPostsProps) {
     const relatedPosts = posts
         .filter(post => post.slug !== currentSlug)
         .map(post => {
-            // 計算標籤相似度
-            const commonTags = currentPost?.tags.filter(tag => post.tags.includes(tag)).length || 0;
+            // 計算標籤相似度（使用翻譯後的 canonical 標籤進行比對）
+            const currentPostTranslatedTags = currentPost?.tags.map(t => translateTag(t, lang)) || [];
+            const postTranslatedTags = post.tags.map(t => translateTag(t, lang));
+            const commonTags = currentPostTranslatedTags.filter(tag => postTranslatedTags.includes(tag)).length;
             return { post, score: commonTags };
         })
         .sort((a, b) => {

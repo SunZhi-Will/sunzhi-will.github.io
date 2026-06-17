@@ -183,31 +183,31 @@ export const tagTranslations: Record<string, { 'zh-TW': string[]; 'en': string[]
     
     // AI 相關
     'AI': {
-        'zh-TW': ['AI', '人工智能'],
-        'en': ['AI', 'Artificial Intelligence'],
-        'ja': ['AI', '人工知能'],
-        'ko': ['AI', '인공지능'],
-        'es': ['AI', 'Inteligencia Artificial'],
-        'fr': ['AI', 'Intelligence Artificielle'],
-        'de': ['AI', 'Künstliche Intelligenz']
+        'zh-TW': ['AI', '人工智能', 'AI Agent', '醫療AI'],
+        'en': ['AI', 'Artificial Intelligence', 'AI Agent', 'Medical AI'],
+        'ja': ['AI', '人工知能', 'AI Agent'],
+        'ko': ['AI', '인공지능', 'AI Agent'],
+        'es': ['AI', 'Inteligencia Artificial', 'AI Agent'],
+        'fr': ['AI', 'Intelligence Artificielle', 'AI Agent'],
+        'de': ['AI', 'Künstliche Intelligenz', 'AI Agent']
     },
     '人工智能': {
-        'zh-TW': ['AI', '人工智能'],
-        'en': ['AI', 'Artificial Intelligence'],
-        'ja': ['AI', '人工知能'],
-        'ko': ['AI', '인공지능'],
-        'es': ['AI', 'Inteligencia Artificial'],
-        'fr': ['AI', 'Intelligence Artificielle'],
-        'de': ['AI', 'Künstliche Intelligenz']
+        'zh-TW': ['AI', '人工智能', 'AI Agent', '醫療AI'],
+        'en': ['AI', 'Artificial Intelligence', 'AI Agent', 'Medical AI'],
+        'ja': ['AI', '人工知能', 'AI Agent'],
+        'ko': ['AI', '인공지능', 'AI Agent'],
+        'es': ['AI', 'Inteligencia Artificial', 'AI Agent'],
+        'fr': ['AI', 'Intelligence Artificielle', 'AI Agent'],
+        'de': ['AI', 'Künstliche Intelligenz', 'AI Agent']
     },
     'Artificial Intelligence': {
-        'zh-TW': ['AI', '人工智能'],
-        'en': ['AI', 'Artificial Intelligence'],
-        'ja': ['AI', '人工知能'],
-        'ko': ['AI', '인공지능'],
-        'es': ['AI', 'Inteligencia Artificial'],
-        'fr': ['AI', 'Intelligence Artificielle'],
-        'de': ['AI', 'Künstliche Intelligenz']
+        'zh-TW': ['AI', '人工智能', 'AI Agent', '醫療AI'],
+        'en': ['AI', 'Artificial Intelligence', 'AI Agent', 'Medical AI'],
+        'ja': ['AI', '人工知能', 'AI Agent'],
+        'ko': ['AI', '인공지능', 'AI Agent'],
+        'es': ['AI', 'Inteligencia Artificial', 'AI Agent'],
+        'fr': ['AI', 'Intelligence Artificielle', 'AI Agent'],
+        'de': ['AI', 'Künstliche Intelligenz', 'AI Agent']
     },
     
     // Blockchain 相關

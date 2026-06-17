@@ -41,9 +41,9 @@ interface BlogPostClientProps {
     baseUrl: string;
 }
 
-function isSupportedLang(value: string | null): value is Lang {
-    return value === 'zh-TW' || value === 'en';
-}
+// function isSupportedLang(value: string | null): value is Lang {
+//     return value === 'zh-TW' || value === 'en';
+// }
 
 export default function BlogPostClient({
     defaultPost,
@@ -94,30 +94,30 @@ export default function BlogPostClient({
         setCurrentAllPosts(allPostsByLang[targetLang] || []);
     };
 
-    // 從 localStorage 讀取語言選擇，如果沒有則偵測瀏覽器語言
-    useEffect(() => {
-        // 確保在客戶端執行
-        if (typeof window === 'undefined') return;
-        
-        const savedLang = localStorage.getItem('blog-lang');
-        if (isSupportedLang(savedLang)) {
-            setLang(savedLang);
-            // 如果保存的語言與預設語言不同，切換到該語言版本
-            if (savedLang !== defaultPost.lang) {
-                switchToLang(savedLang);
-            }
-        } else {
-            const browserLang = navigator.language;
-            const detectedLang = browserLang.includes('zh') ? 'zh-TW' : 'en';
-            setLang(detectedLang);
-            localStorage.setItem('blog-lang', detectedLang);
-            // 如果偵測的語言與預設語言不同，切換到該語言版本
-            if (detectedLang !== defaultPost.lang) {
-                switchToLang(detectedLang);
-            }
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    // 從 localStorage 讀取語言選擇，如果沒有則偵測瀏覽器語言 (暫時停用，固定為中文)
+    // useEffect(() => {
+    //     // 確保在客戶端執行
+    //     if (typeof window === 'undefined') return;
+    //     
+    //     const savedLang = localStorage.getItem('blog-lang');
+    //     if (isSupportedLang(savedLang)) {
+    //         setLang(savedLang);
+    //         // 如果保存的語言與預設語言不同，切換到該語言版本
+    //         if (savedLang !== defaultPost.lang) {
+    //             switchToLang(savedLang);
+    //         }
+    //     } else {
+    //         const browserLang = navigator.language;
+    //         const detectedLang = browserLang.includes('zh') ? 'zh-TW' : 'en';
+    //         setLang(detectedLang);
+    //         localStorage.setItem('blog-lang', detectedLang);
+    //         // 如果偵測的語言與預設語言不同，切換到該語言版本
+    //         if (detectedLang !== defaultPost.lang) {
+    //             switchToLang(detectedLang);
+    //         }
+    //     }
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, []);
 
     // 當語言改變時，保存到 localStorage 並切換到對應語言版本
     const handleLangChange = (newLang: Lang) => {

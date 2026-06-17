@@ -15,7 +15,7 @@ interface BlogDynamicIslandProps {
 
 export function BlogDynamicIsland({
     lang,
-    setLang,
+    setLang: _setLang, // eslint-disable-line @typescript-eslint/no-unused-vars
     searchQuery,
     setSearchQuery,
 }: BlogDynamicIslandProps) {
@@ -108,23 +108,6 @@ export function BlogDynamicIsland({
                         )}
                     </button>
 
-                    {/* 分隔線 */}
-                    <div
-                        className={`w-px h-5 ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-400/50'
-                            }`}
-                    />
-
-                    {/* 語言切換按鈕 */}
-                    <button
-                        onClick={() => setLang(lang === 'zh-TW' ? 'en' : 'zh-TW')}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium
-                        transition-all duration-200 whitespace-nowrap flex-shrink-0 ${theme === 'dark'
-                                ? 'text-white/80 hover:text-yellow-400 hover:bg-white/5'
-                                : 'text-gray-700 hover:text-gray-900 hover:bg-black/5'
-                            }`}
-                    >
-                        {t.langSwitch}
-                    </button>
                 </div>
             </div>
         </div>

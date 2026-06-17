@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { formatDate } from '@/lib/blog-utils';
 import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
-import { blogTranslations, filterTagsByLanguage } from '@/lib/blog-translations';
+import { blogTranslations, filterTagsByLanguage, translateTag } from '@/lib/blog-translations';
 import { useTheme } from '@/app/blog/ThemeProvider';
 
 interface BlogCardProps {
@@ -112,10 +112,11 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
 
                                 {(() => {
                                     const filteredTags = filterTagsByLanguage(post.tags, lang);
-                                    return filteredTags.length > 0 && (
+                                    const translatedTags = Array.from(new Set(filteredTags.map(tag => translateTag(tag, lang)))).filter(Boolean);
+                                    return translatedTags.length > 0 && (
                                         <div className="flex items-center gap-1.5 flex-wrap">
                                             <span className={`w-0.5 h-3 rounded-full ${isDark ? 'bg-white/15' : 'bg-stone-200'}`} />
-                                            {filteredTags.slice(0, 2).map((tag, idx) => (
+                                            {translatedTags.slice(0, 2).map((tag, idx) => (
                                                 <span
                                                     key={idx}
                                                     className={`px-2 py-0.5 rounded-md text-[10px] font-semibold tracking-wide transition-all duration-200

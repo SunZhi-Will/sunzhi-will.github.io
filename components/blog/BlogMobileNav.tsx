@@ -23,7 +23,7 @@ interface BlogMobileNavProps {
 
 export function BlogMobileNav({
     lang,
-    setLang,
+    setLang: _setLang, // eslint-disable-line @typescript-eslint/no-unused-vars
     searchQuery,
     setSearchQuery,
     selectedTag,
@@ -180,20 +180,6 @@ export function BlogMobileNav({
                                 </motion.button>
                             )}
 
-                            {/* 語言切換 */}
-                            <motion.button
-                                onClick={() => setLang(lang === 'zh-TW' ? 'en' : 'zh-TW')}
-                                    className={`px-3 py-1.5 rounded-lg text-xs font-medium
-                                transition-all duration-200 whitespace-nowrap ${
-                                    isDark
-                                        ? 'text-white/80 hover:text-yellow-400 hover:bg-[#27272a]/70'
-                                        : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200/70'
-                                }`}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                            >
-                                {t.langSwitch}
-                            </motion.button>
                         </div>
                     </div>
                 </div>
