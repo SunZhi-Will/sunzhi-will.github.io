@@ -26,9 +26,11 @@ export const metadata: Metadata = {
   description: "Full-stack engineer specializing in AI application development and Unity game development",
   icons: {
     icon: [
-      { url: '/favicon.svg', type: 'image/svg+xml' }
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.png', type: 'image/png', sizes: '512x512' }
     ],
-    apple: '/favicon.svg',
+    apple: '/apple-icon.png',
   },
   alternates: {
     languages: {
