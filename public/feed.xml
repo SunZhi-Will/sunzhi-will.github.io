@@ -8,10 +8,27 @@
     <link>https://sunzhi-will.github.io</link>
     <description>Exploring software engineering, AI development, and the art of building great products.</description>
     <language>zh-TW</language>
-    <lastBuildDate>Tue, 16 Jun 2026 18:56:38 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 17 Jun 2026 14:57:11 GMT</lastBuildDate>
     <atom:link href="https://sunzhi-will.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <atom:link href="https://sunzhi-will.github.io/blog" rel="alternate" type="text/html"/>
     
+    <item>
+      <title><![CDATA[My Medical AI Agent Takeaway: The Value of AI Products Often Doesn't Depend on How Smart They Are]]></title>
+      <link>https://sunzhi-will.github.io/blog/2026-06-17-medical-ai-agent</link>
+      <guid isPermaLink="true">https://sunzhi-will.github.io/blog/2026-06-17-medical-ai-agent</guid>
+      <pubDate>Wed, 17 Jun 2026 00:00:00 GMT</pubDate>
+      <description><![CDATA[Key insights from a dinner conversation with a Medical AI Agent startup founder: The true value of AI products isn&apos;t determined by technical complexity, but by where it resides in the business workflow.]]></description>
+      <content:encoded><![CDATA[Initially, I thought the hardest part of building a Medical AI Agent was the technology.
+But after our conversation, I realized the real key is: Where do you place the AI?
+
+Two days ago, I had dinner with a founder who runs a startup building Medical AI Agents.
+
+I had assumed they were building the ]]></content:encoded>
+      <category>AI Agent</category>
+      <category>Medical AI</category>
+      <category>Business Model</category>
+      <category>Product Design</category>
+    </item>
     <item>
       <title><![CDATA[AI Won't Replace You — But It Will Replace Someone Who Only Follows Steps]]></title>
       <link>https://sunzhi-will.github.io/blog/2026-06-16-ai-judgement</link>

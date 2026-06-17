@@ -4,12 +4,28 @@
   <link rel="alternate" type="text/html" href="https://sunzhi-will.github.io"/>
   <link rel="self" type="application/atom+xml" href="https://sunzhi-will.github.io/feed.atom"/>
   <id>https://sunzhi-will.github.io/</id>
-  <updated>2026-06-16T18:56:38.782Z</updated>
+  <updated>2026-06-17T14:57:11.186Z</updated>
   <author>
     <name>Sun (謝上智)</name>
     <uri>https://sunzhi-will.github.io</uri>
   </author>
   
+  <entry>
+    <title type="html"><![CDATA[My Medical AI Agent Takeaway: The Value of AI Products Often Doesn't Depend on How Smart They Are]]></title>
+    <link rel="alternate" type="text/html" href="https://sunzhi-will.github.io/blog/2026-06-17-medical-ai-agent"/>
+    <id>https://sunzhi-will.github.io/blog/2026-06-17-medical-ai-agent</id>
+    <published>2026-06-17T00:00:00.000Z</published>
+    <updated>2026-06-17T00:00:00.000Z</updated>
+    <summary type="html"><![CDATA[Key insights from a dinner conversation with a Medical AI Agent startup founder: The true value of AI products isn&apos;t determined by technical complexity, but by where it resides in the business workflow.]]></summary>
+    <category term="AI Agent"/>
+    <category term="Medical AI"/>
+    <category term="Business Model"/>
+    <category term="Product Design"/>
+    <author>
+      <name>Sun (謝上智)</name>
+      <uri>https://sunzhi-will.github.io</uri>
+    </author>
+  </entry>
   <entry>
     <title type="html"><![CDATA[AI Won't Replace You — But It Will Replace Someone Who Only Follows Steps]]></title>
     <link rel="alternate" type="text/html" href="https://sunzhi-will.github.io/blog/2026-06-16-ai-judgement"/>

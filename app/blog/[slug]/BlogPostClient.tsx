@@ -67,6 +67,8 @@ export default function BlogPostClient({
     const [currentBaseUrl, setCurrentBaseUrl] = useState<string>(baseUrl);
     const { theme } = useTheme();
     const isDark = theme === 'dark';
+    const [isMobileTOCOpen, setIsMobileTOCOpen] = useState(false);
+    const [hasHeadings, setHasHeadings] = useState(false);
 
     // 在客戶端更新 baseUrl（僅在客戶端執行，不影響 SSR）
     useEffect(() => {
@@ -148,6 +150,8 @@ export default function BlogPostClient({
             <BlogMobileNav
                 lang={lang}
                 setLang={handleLangChange}
+                hasTOC={hasHeadings}
+                onTOCClick={() => setIsMobileTOCOpen(true)}
             />
 
             {/* 電腦版左側導航動態島 - 在文章詳情頁面會自動隱藏 */}
@@ -174,7 +178,12 @@ export default function BlogPostClient({
             <ReadingProgress />
 
             {/* 目錄 - 左側固定 */}
-            <TableOfContents lang={lang} />
+            <TableOfContents 
+                lang={lang}
+                isMobileOpen={isMobileTOCOpen}
+                setIsMobileOpen={setIsMobileTOCOpen}
+                onHasHeadings={setHasHeadings}
+            />
 
             {/* 主要內容區域 - 全寬 */}
             <main className="overflow-y-auto h-full scrollbar-custom">

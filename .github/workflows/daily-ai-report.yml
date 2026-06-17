@@ -127,8 +127,8 @@ jobs:
           find content/blog/ -type f -newermt "$TODAY" -ls || echo "No files found with find"
           
           # 添加所有變更（包括新文件）
-          echo "Adding content/blog/ and public/blog/ to git..."
-          git add -A content/blog/ public/blog/ scripts/newsletter-sent.log
+          echo "Adding content/blog/ and scripts/newsletter-sent.log to git..."
+          git add -A content/blog/ scripts/newsletter-sent.log
           
           echo ""
           echo "Git status after add:"

@@ -17,6 +17,8 @@ interface BlogMobileNavProps {
     setSearchQuery?: (query: string) => void;
     selectedTag?: string | null;
     setSelectedTag?: (tag: string | null) => void;
+    hasTOC?: boolean;
+    onTOCClick?: () => void;
 }
 
 export function BlogMobileNav({
@@ -26,6 +28,8 @@ export function BlogMobileNav({
     setSearchQuery,
     selectedTag,
     setSelectedTag,
+    hasTOC = false,
+    onTOCClick,
 }: BlogMobileNavProps) {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -153,6 +157,26 @@ export function BlogMobileNav({
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
+                                </motion.button>
+                            )}
+
+                            {/* 目錄按鈕 - 只在文章頁面且有目錄時顯示 */}
+                            {isPostPage && hasTOC && onTOCClick && (
+                                <motion.button
+                                    onClick={onTOCClick}
+                                    className={`p-2 rounded-lg transition-all ${
+                                        isDark
+                                            ? 'text-white/80 hover:text-yellow-400 hover:bg-[#27272a]/70'
+                                            : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200/70'
+                                    }`}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    aria-label={lang === 'zh-TW' ? '目錄' : 'Table of Contents'}
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                            d="M4 6h16M4 10h10M4 14h16M4 18h10" />
+                                    </svg>
                                 </motion.button>
                             )}
 

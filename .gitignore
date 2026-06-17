@@ -46,3 +46,6 @@ next-env.d.ts
 # Cursor IDE
 # .cursor 目錄應該提交（包含規則文件）
 # .cursorrules 應該提交
+
+# Blog static images (copied from content/blog during build)
+/public/blog/

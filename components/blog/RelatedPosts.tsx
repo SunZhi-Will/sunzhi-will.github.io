@@ -1,12 +1,9 @@
 'use client'
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { formatDate } from '@/lib/blog-utils';
 import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
-import { filterTagsByLanguage } from '@/lib/blog-translations';
 import { useTheme } from '@/app/blog/ThemeProvider';
+import { BlogCard } from './BlogCard';
 
 interface RelatedPostsProps {
     posts: BlogPost[];
@@ -50,93 +47,14 @@ export function RelatedPosts({ posts, currentSlug, lang }: RelatedPostsProps) {
                 {lang === 'zh-TW' ? '推薦閱讀' : 'Related Articles'}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedPosts.map((post) => (
-                    <article
+                {relatedPosts.map((post, idx) => (
+                    <BlogCard
                         key={post.slug}
-                        className="group flex flex-col"
-                    >
-                        <Link href={`/blog/${post.slug}`} className="flex-1 flex flex-col">
-                            <div className={`relative overflow-hidden rounded-lg border transition-all duration-300 flex flex-col h-full ${
-                                isDark
-                                    ? 'border-white/10 bg-white/5 hover:border-yellow-500/50 hover:bg-white/10'
-                                    : 'border-black/10 bg-black/5 hover:border-yellow-500/50 hover:bg-black/10'
-                            }`}>
-                                {/* 封面圖片 */}
-                                <div className={`relative w-full aspect-[16/9] overflow-hidden flex-shrink-0 border-b ${
-                                    isDark ? 'bg-[#18181b] border-white/10' : 'bg-gray-100 border-black/10'
-                                }`}>
-                                    {post.coverImage ? (
-                                        <Image
-                                            src={post.coverImage}
-                                            alt={post.title}
-                                            fill
-                                            className="object-contain transition-opacity duration-500 group-hover:opacity-90"
-                                            sizes="(max-width: 768px) 100vw, 33vw"
-                                        />
-                                    ) : (
-                                        <div className={`w-full h-full flex items-center justify-center ${
-                                            isDark
-                                                ? 'bg-[#18181b]'
-                                                : 'bg-gray-100'
-                                        }`}>
-                                            <svg className={`w-8 h-8 ${isDark ? 'text-white/40' : 'text-black/40'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                            </svg>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* 內容 */}
-                                <div className="p-4 flex flex-col flex-1">
-                                    {/* 日期 */}
-                                    <time className={`text-xs mb-3 block flex-shrink-0 ${
-                                        isDark ? 'text-white/50' : 'text-black/50'
-                                    }`}>
-                                        {formatDate(post.date, lang === 'zh-TW' ? 'zh-TW' : 'en-US')}
-                                    </time>
-
-                                    {/* 標題 */}
-                                    <h3 className={`text-base font-light mb-3 line-clamp-2 transition-colors flex-shrink-0 ${
-                                        isDark
-                                            ? 'text-white group-hover:text-yellow-400'
-                                            : 'text-black group-hover:text-yellow-600'
-                                    }`}>
-                                        {post.title}
-                                    </h3>
-
-                                    {/* 描述 */}
-                                    <p className={`text-sm line-clamp-2 leading-relaxed flex-1 font-light ${
-                                        isDark ? 'text-white/70' : 'text-black/75'
-                                    }`}>
-                                        {post.description}
-                                    </p>
-
-                                    {/* 標籤 */}
-                                    {(() => {
-                                        const filteredTags = filterTagsByLanguage(post.tags, lang);
-                                        return filteredTags.length > 0 && (
-                                            <div className="flex flex-wrap gap-2 mt-4 flex-shrink-0 pt-3 border-t" style={{
-                                                borderColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'
-                                            }}>
-                                                {filteredTags.slice(0, 2).map((tag) => (
-                                                    <span
-                                                        key={tag}
-                                                        className={`px-2 py-0.5 text-xs font-light rounded ${
-                                                            isDark
-                                                                ? 'text-white/60 bg-white/5 border border-white/10'
-                                                                : 'text-black/60 bg-black/5 border border-black/10'
-                                                        }`}
-                                                    >
-                                                        {tag}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        );
-                                    })()}
-                                </div>
-                            </div>
-                        </Link>
-                    </article>
+                        post={post}
+                        lang={lang}
+                        index={idx}
+                        layout="vertical"
+                    />
                 ))}
             </div>
         </section>

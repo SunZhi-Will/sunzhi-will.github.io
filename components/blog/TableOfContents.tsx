@@ -12,13 +12,25 @@ interface Heading {
 
 interface TableOfContentsProps {
     lang: Lang;
+    isMobileOpen?: boolean;
+    setIsMobileOpen?: (open: boolean) => void;
+    onHasHeadings?: (hasHeadings: boolean) => void;
 }
 
-export function TableOfContents({ lang }: TableOfContentsProps) {
+export function TableOfContents({
+    lang,
+    isMobileOpen: controlledIsMobileOpen,
+    setIsMobileOpen: controlledSetIsMobileOpen,
+    onHasHeadings
+}: TableOfContentsProps) {
     const [headings, setHeadings] = useState<Heading[]>([]);
     const [activeId, setActiveId] = useState<string>('');
     const [leftPosition, setLeftPosition] = useState<number>(0);
-    const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const [localIsMobileOpen, setLocalIsMobileOpen] = useState(false);
+    
+    const isMobileOpen = controlledIsMobileOpen !== undefined ? controlledIsMobileOpen : localIsMobileOpen;
+    const setIsMobileOpen = controlledSetIsMobileOpen !== undefined ? controlledSetIsMobileOpen : setLocalIsMobileOpen;
+    
     const { theme } = useTheme();
     const isDark = theme === 'dark';
 
@@ -134,6 +146,13 @@ export function TableOfContents({ lang }: TableOfContentsProps) {
         }, 300);
         return () => clearTimeout(timer);
     }, [lang]);
+
+    // 觸發 hasHeadings 回呼
+    useEffect(() => {
+        if (onHasHeadings) {
+            onHasHeadings(headings.length > 0);
+        }
+    }, [headings, onHasHeadings]);
 
     // 計算文章容器的左邊位置，讓目錄貼在文章左邊
     useEffect(() => {
@@ -312,24 +331,8 @@ export function TableOfContents({ lang }: TableOfContentsProps) {
                 <TocList clamp />
             </nav>
 
-            {/* ── 手機／平板版：浮動按鈕 + 底部抽屜 ── */}
+            {/* ── 手機／平板版：底部抽屜 ── */}
             <div className="xl:hidden">
-                {/* 浮動目錄按鈕 */}
-                <button
-                    onClick={() => setIsMobileOpen(true)}
-                    aria-label={tocLabel}
-                    className={`fixed bottom-24 right-4 z-40 flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium shadow-lg backdrop-blur-md transition-all duration-300 active:scale-95 ${isDark
-                        ? 'bg-gray-800/90 border border-white/15 text-gray-200 hover:bg-gray-700/90'
-                        : 'bg-white/90 border border-black/10 text-gray-700 hover:bg-gray-50/90'
-                        }`}
-                >
-                    {/* List / TOC icon */}
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                            d="M4 6h16M4 10h10M4 14h16M4 18h10" />
-                    </svg>
-                    <span>{tocLabel}</span>
-                </button>
 
                 {/* 遮罩 */}
                 {isMobileOpen && (
