@@ -8,10 +8,38 @@
     <link>https://sunzhi-will.github.io</link>
     <description>Exploring software engineering, AI development, and the art of building great products.</description>
     <language>zh-TW</language>
-    <lastBuildDate>Wed, 17 Jun 2026 15:11:11 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 24 Jun 2026 19:23:45 GMT</lastBuildDate>
     <atom:link href="https://sunzhi-will.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <atom:link href="https://sunzhi-will.github.io/blog" rel="alternate" type="text/html"/>
     
+    <item>
+      <title><![CDATA[回高雄後，我開始重新思考：我到底敢不敢創業？]]></title>
+      <link>https://sunzhi-will.github.io/blog/2026-06-25-entrepreneurship-after-kaohsiung</link>
+      <guid isPermaLink="true">https://sunzhi-will.github.io/blog/2026-06-25-entrepreneurship-after-kaohsiung</guid>
+      <pubDate>Thu, 25 Jun 2026 00:00:00 GMT</pubDate>
+      <description><![CDATA[回了一趟高雄，聽完親戚與父母的創業故事，我才發現自己卡住的從來不是要不要衝，而是怎麼在不確定裡，用可以承擔的方式往前走。]]></description>
+      <content:encoded><![CDATA[&gt; 我不是在問「要不要創業」，而是在學著問：
+&gt; 怎麼用可以承擔的方式開始？
+
+最近回了一趟高雄。
+
+原本只是普通的回家：見見親戚、陪陪家人、吃點熟悉的東西。
+
+但沒想到，這趟回去反而讓我想了很多事情。
+
+我聽了親戚的創業故事，也聽了父母年輕時曾經想創業的念頭。那些故事不是熱血雞湯，也不是成功學裡「只要相信自己就會成功」的劇情。
+
+反而很真實。
+
+有壓力、有不確定、有錢的問題、有家庭的問題，也有很多「做了才知道」的現實。
+
+而我也突然發現，其實我一直是一個很矛盾的人。
+
+我不斷想找到機會創業；可是當機會真的出現在眼前，我又會開始想一堆問題。
+
+這個市場夠大嗎？會不會只是小眾需求？現在有人問，不]]></content:encoded>
+
+    </item>
     <item>
       <title><![CDATA[My Medical AI Agent Takeaway: The Value of AI Products Often Doesn't Depend on How Smart They Are]]></title>
       <link>https://sunzhi-will.github.io/blog/2026-06-17-medical-ai-agent</link>

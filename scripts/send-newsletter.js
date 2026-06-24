@@ -206,23 +206,25 @@ function getArticleTypes(article) {
 /**
  * 讀取最新生成的文章內容
  * @param {string} slug - 文章 slug (日期時間戳)
- * @returns {Object} 包含中英文文章內容
+ * @returns {Object} 包含可用語言文章內容
  */
 function getLatestArticle(slug) {
     const postFolder = path.join(blogDir, slug);
     const articlePathZh = path.join(postFolder, 'article.zh-TW.mdx');
     const articlePathEn = path.join(postFolder, 'article.en.mdx');
+    const hasZh = fs.existsSync(articlePathZh);
+    const hasEn = fs.existsSync(articlePathEn);
 
-    if (!fs.existsSync(articlePathZh) || !fs.existsSync(articlePathEn)) {
-        throw new Error(`Article files not found for slug: ${slug}`);
+    if (!hasZh && !hasEn) {
+        throw new Error(`No article files found for slug: ${slug}`);
     }
 
-    const contentZh = fs.readFileSync(articlePathZh, 'utf8');
-    const contentEn = fs.readFileSync(articlePathEn, 'utf8');
+    const contentZh = hasZh ? fs.readFileSync(articlePathZh, 'utf8') : null;
+    const contentEn = hasEn ? fs.readFileSync(articlePathEn, 'utf8') : null;
 
     // 解析 frontmatter
-    const frontmatterZh = contentZh.match(/^---\n([\s\S]*?)\n---/);
-    const frontmatterEn = contentEn.match(/^---\n([\s\S]*?)\n---/);
+    const frontmatterZh = contentZh?.match(/^---\n([\s\S]*?)\n---/);
+    const frontmatterEn = contentEn?.match(/^---\n([\s\S]*?)\n---/);
 
     const parseFrontmatter = (fm) => {
         if (!fm) return {};
@@ -247,19 +249,43 @@ function getLatestArticle(slug) {
 
     const metaZh = parseFrontmatter(frontmatterZh);
     const metaEn = parseFrontmatter(frontmatterEn);
-    const bodyZh = contentZh.replace(/^---\n[\s\S]*?\n---\n\n/, '');
-    const bodyEn = contentEn.replace(/^---\n[\s\S]*?\n---\n\n/, '');
+    const bodyZh = contentZh?.replace(/^---\n[\s\S]*?\n---\n\n/, '');
+    const bodyEn = contentEn?.replace(/^---\n[\s\S]*?\n---\n\n/, '');
 
     return {
-        zh: {
+        zh: hasZh ? {
             meta: metaZh,
             body: bodyZh
-        },
-        en: {
+        } : null,
+        en: hasEn ? {
             meta: metaEn,
             body: bodyEn
-        }
+        } : null
     };
+}
+
+/**
+ * 依訂閱者偏好的語言選擇可寄送的文章版本。
+ * 若偏好語言尚未提供，會回退到另一個可用版本。
+ */
+function resolveArticleLanguage(article, requestedLang = 'zh-TW') {
+    if (requestedLang === 'zh-TW' && article.zh) {
+        return 'zh-TW';
+    }
+
+    if (requestedLang !== 'zh-TW' && article.en) {
+        return 'en';
+    }
+
+    if (article.zh) {
+        return 'zh-TW';
+    }
+
+    if (article.en) {
+        return 'en';
+    }
+
+    throw new Error('Article does not contain a sendable language version');
 }
 
 /**
@@ -900,8 +926,14 @@ async function sendNewsletter(slug) {
         }
 
         try {
-            const lang = subscription.lang || 'zh-TW';
+            const requestedLang = subscription.lang || 'zh-TW';
+            const lang = resolveArticleLanguage(article, requestedLang);
             const data = lang === 'zh-TW' ? article.zh : article.en;
+
+            if (lang !== requestedLang) {
+                console.log(`   ℹ️  ${requestedLang} version is unavailable. Sending the ${lang} version instead.`);
+            }
+
             const meta = data.meta;
 
             // 生成 HTML 電子報
@@ -1119,9 +1151,9 @@ async function main() {
 
     // 檢查文章是否存在
     const postFolder = path.join(blogDir, slug);
-    if (!fs.existsSync(path.join(postFolder, 'article.zh-TW.mdx')) ||
+    if (!fs.existsSync(path.join(postFolder, 'article.zh-TW.mdx')) &&
         !fs.existsSync(path.join(postFolder, 'article.en.mdx'))) {
-        console.error(`❌ Error: Article files not found for slug: ${slug}`);
+        console.error(`❌ Error: No article files found for slug: ${slug}`);
         process.exit(1);
     }
 
@@ -1171,6 +1203,7 @@ if (require.main === module) {
 module.exports = {
     sendNewsletter,
     getLatestArticle,
+    resolveArticleLanguage,
     generateNewsletterHtml,
     updateLastArticleSent
 };
