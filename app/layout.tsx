@@ -15,7 +15,6 @@ const geistMono = Geist_Mono({
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://sunzhi-will.github.io';
 const ogImageWide = `${baseUrl}/og-home.png`;
-const ogImageSquare = `${baseUrl}/og-home-square.png`;
 
 // 定義靜態 metadata
 export const metadata: Metadata = {
@@ -27,7 +26,6 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
-      { url: '/favicon.svg', type: 'image/svg+xml' },
       { url: '/favicon.png', type: 'image/png', sizes: '512x512' }
     ],
     apple: '/apple-icon.png',
@@ -50,8 +48,7 @@ export const metadata: Metadata = {
     locale: 'zh_TW',
     type: 'website',
     images: [
-      { url: ogImageSquare, width: 800, height: 800, alt: 'Sun - Software Engineer' },
-      { url: ogImageWide, width: 1200, height: 630, alt: 'Sun - Software Engineer' },
+      { url: ogImageWide, width: 1200, height: 630, alt: 'Sun Zhi - Software Engineer and AI Developer' },
     ],
   },
   twitter: {
