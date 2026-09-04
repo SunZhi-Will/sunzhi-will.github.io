@@ -77,7 +77,7 @@ Sun 目前主導多個核心專案：
 
 <strong>Skyvize</strong>：社群聲量監控與 AI 情報分析 SaaS，使用 Next.js 16 + Drizzle ORM，整合 Threads、RSS、CSE 三路資料流，提供競品矩陣與 KOL 雷達圖表。
 
-<strong>AutoLens</strong>：Windows 桌面 AI 螢幕錄製工具（Electron），透過 uiohook-napi 全局 Hook 和 Gemini 自動偵測重要畫面區域，支援時間軸編輯器與 GIF 匯出。
+<strong>KapZoom</strong>（前身 AutoLens）：Windows／Mac 桌面 AI 螢幕錄製與剪輯工具，自動聚焦操作、離線 Whisper 生成字幕，並開放 MCP 橋接讓 Claude Code 驅動錄製到匯出的完整流程。
 
 除了開發工作，Sun 積極透過工作坊和企業技術分享會傳授實務知識，涵蓋 Gemini API、OpenAI、Notion 整合等主題。他的技術廣度橫跨 Unity 遊戲、.NET 系統、全棧 Web、AI 工具與桌面應用。
 
@@ -264,7 +264,7 @@ Sun currently leads several core projects:
 
 <strong>Skyvize</strong>: A social media intelligence SaaS built on Next.js 16 + Drizzle ORM, aggregating Threads, RSS, and CSE data streams to deliver competitor matrices and KOL radar charts.
 
-<strong>AutoLens</strong>: A Windows desktop AI screen recording tool (Electron) using uiohook-napi for global hooks and Gemini to auto-detect key screen regions, with a timeline editor and GIF export.
+<strong>KapZoom</strong> (formerly AutoLens): A Windows/Mac desktop AI screen recording and editing tool with auto-focus zoom, offline Whisper captioning, and an MCP bridge that lets Claude Code drive the full record-to-export workflow.
 
 In addition to development, Sun actively shares his expertise through workshops and enterprise tech sessions covering Gemini APIs, OpenAI, and Notion integrations. His technical breadth spans Unity games, .NET systems, full-stack web, AI tools, and desktop applications.
 

@@ -1,3 +1,7 @@
+import { vozmira } from './vozmira';
+import { mountainsUnreturned } from './mountains-unreturned';
+import { sunkoro } from './sunkoro';
+import { fangjie } from './fangjie';
 import { threadsSaver } from './threads-saver';
 import { postly } from './postly';
 import { lexitechly } from './lexitechly';
@@ -19,7 +23,6 @@ import { cardflow } from './cardflow';
 import { aiDebtScanner } from './ai-debt-scanner';
 import { skyvize } from './skyvize';
 import { allvibe } from './allvibe';
-import { voxelWorld } from './voxel-world';
 import { vibegame } from './vibegame';
 import { ticktive } from './ticktive';
 import { promptly } from './promptly';
@@ -34,7 +37,7 @@ import { liminal } from './liminal';
 import { taipeiCityDashboard } from './taipei-city-dashboard';
 import { vibeacademy } from './vibeacademy';
 import { vibeWorkshop } from './vibe-workshop';
-import { autolens } from './autolens';
+import { kapzoom } from './kapzoom';
 import { zettelify } from './zettelify';
 import { toolnest } from './toolnest';
 import { carbon } from './carbon';
@@ -73,6 +76,10 @@ type ProjectEntry = {
 };
 
 const projectEntries: ProjectEntry[] = [
+    { project: vozmira, timelineOrder: 45, startYear: 2026 },
+    { project: mountainsUnreturned, timelineOrder: 44, startYear: 2026 },
+    { project: sunkoro, timelineOrder: 43, startYear: 2026 },
+    { project: fangjie, timelineOrder: 42, startYear: 2026 },
     { project: nexusos, timelineOrder: 41, startYear: 2026 },
     { project: openring, timelineOrder: 40, startYear: 2026 },
     { project: broadvize, timelineOrder: 39, startYear: 2025 },
@@ -82,7 +89,6 @@ const projectEntries: ProjectEntry[] = [
     { project: codeltp, timelineOrder: 35, startYear: 2025 },
     { project: aiDebtScanner, timelineOrder: 34, startYear: 2025 },
     { project: vibegame, timelineOrder: 33, startYear: 2026 },
-    { project: voxelWorld, timelineOrder: 32, startYear: 2026 },
     { project: allvibe, timelineOrder: 31, startYear: 2025 },
     { project: ticktive, timelineOrder: 30, startYear: 2025 },
     { project: threadsStoryRecap, timelineOrder: 29, startYear: 2025 },
@@ -94,7 +100,7 @@ const projectEntries: ProjectEntry[] = [
     { project: taipeiCityDashboard, timelineOrder: 23, startYear: 2025 },
     { project: vibeacademy, timelineOrder: 22, startYear: 2026 },
     { project: vibeWorkshop, timelineOrder: 21, startYear: 2025 },
-    { project: autolens, timelineOrder: 20, startYear: 2025 },
+    { project: kapzoom, timelineOrder: 20, startYear: 2025 },
     { project: specformula, timelineOrder: 19, startYear: 2025 },
     { project: zettelify, timelineOrder: 18, startYear: 2025 },
     { project: toolnest, timelineOrder: 17, startYear: 2025 },
