@@ -17,6 +17,7 @@ export const mountainsUnreturned = {
             "Next.js",
             "TypeScript",
         ],
+        link: "https://wtma.synvize.com"
     },
     'en': {
         title: "Where the Mountains Await - Wuxia Narrative RPG",
@@ -36,5 +37,6 @@ export const mountainsUnreturned = {
             "Next.js",
             "TypeScript",
         ],
+        link: "https://wtma.synvize.com"
     }
 };

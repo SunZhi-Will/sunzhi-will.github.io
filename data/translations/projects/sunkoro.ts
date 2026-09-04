@@ -17,6 +17,7 @@ export const sunkoro = {
             "Next.js",
             "TypeScript",
         ],
+        link: "https://sunkoro.com"
     },
     'en': {
         title: "Sunkoro - Hands-On AI & Game Dev Course Platform",
@@ -36,5 +37,6 @@ export const sunkoro = {
             "Next.js",
             "TypeScript",
         ],
+        link: "https://sunkoro.com"
     }
 };

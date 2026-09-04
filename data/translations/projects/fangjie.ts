@@ -22,6 +22,7 @@ export const fangjie = {
             "WebSocket",
             "Node.js",
         ],
+        link: "https://fangjie.synvize.com"
     },
     'en': {
         title: "Fangjie: Shattered Altars - Voxel Co-op Action RPG",
@@ -46,5 +47,6 @@ export const fangjie = {
             "WebSocket",
             "Node.js",
         ],
+        link: "https://fangjie.synvize.com"
     }
 };
