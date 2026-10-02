@@ -84,13 +84,13 @@ function FeaturedCard({ item, index, total, progress, pinned, detailsLabel, achi
           </div>
 
           <h3 className="mt-6 text-3xl font-semibold leading-tight tracking-tight text-white md:text-4xl">{name}</h3>
-          <p className="mt-1.5 text-base text-zinc-400">{tagline}</p>
-          <p className="mt-5 line-clamp-4 text-[15px] leading-relaxed text-zinc-400">{item.description}</p>
+          <p className="mt-1.5 text-base text-zinc-200">{tagline}</p>
+          <p className="mt-5 line-clamp-4 text-[15px] leading-relaxed text-zinc-200">{item.description}</p>
 
           {item.achievements && item.achievements.length > 0 && (
             <ul className="mt-5 hidden space-y-2 md:block [@media(max-height:780px)]:md:hidden" aria-label={achievementsLabel}>
               {item.achievements.slice(0, 3).map((achievement) => (
-                <li key={achievement} className="flex gap-3 text-sm text-zinc-300">
+                <li key={achievement} className="flex gap-3 text-sm text-zinc-200">
                   <span aria-hidden="true" className="mt-[0.6em] h-1 w-1 shrink-0 rounded-full bg-yellow-400/80" />
                   <span className="line-clamp-1">{achievement}</span>
                 </li>
@@ -112,7 +112,7 @@ function FeaturedCard({ item, index, total, progress, pinned, detailsLabel, achi
                 href={item.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="link-draw text-sm font-medium text-zinc-400 hover:text-white"
+                className="link-draw text-sm font-medium text-zinc-200 hover:text-white"
               >
                 {item.link.replace(/^https?:\/\/(www\.)?/, '').replace(/\/.*$/, '')} <span aria-hidden="true">↗</span>
               </a>
@@ -158,9 +158,9 @@ const WorkCard = forwardRef<HTMLLIElement, { item: ShowcaseItem; onOpen: () => v
         </div>
         <div className="mt-3.5 flex items-baseline justify-between gap-3">
           <h3 className="truncate text-base font-medium text-zinc-100 transition-colors duration-200 group-hover:text-yellow-400">{name}</h3>
-          {item.startYear && <span className="font-geist-mono text-xs text-zinc-400">{item.startYear}</span>}
+          {item.startYear && <span className="font-geist-mono text-xs text-zinc-200">{item.startYear}</span>}
         </div>
-        <p className="mt-0.5 truncate text-sm text-zinc-400">{tagline}</p>
+        <p className="mt-0.5 truncate text-sm text-zinc-200">{tagline}</p>
       </button>
     </motion.li>
   );
@@ -246,7 +246,7 @@ export function Work({ lang }: { lang: Lang }) {
                       setExpanded(false);
                     }}
                     className={`relative whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200 ${
-                      isActive ? 'text-zinc-950' : 'text-zinc-400 hover:text-white'
+                      isActive ? 'text-zinc-950' : 'text-zinc-200 hover:text-yellow-400'
                     }`}
                   >
                     {isActive ? (
@@ -260,7 +260,7 @@ export function Work({ lang }: { lang: Lang }) {
                     )}
                     <span className="relative">
                       {chip.label}
-                      <span className={`ml-1.5 font-geist-mono text-[11px] ${isActive ? 'text-zinc-500' : 'text-zinc-400'}`}>{chip.count}</span>
+                      <span className={`ml-1.5 font-geist-mono text-[11px] ${isActive ? 'text-zinc-600' : 'text-zinc-200'}`}>{chip.count}</span>
                     </span>
                   </button>
                 );

@@ -102,7 +102,7 @@ export function SiteNav({ lang, setLang }: SiteNavProps) {
                 onClick={(e) => go(e, section.id)}
                 aria-current={active === section.id ? 'true' : undefined}
                 className={`relative rounded-2xl px-3.5 py-2 text-[13px] font-medium transition-colors duration-200 ${
-                  active === section.id ? 'text-white' : 'text-zinc-400 hover:text-zinc-100'
+                  active === section.id ? 'text-white' : 'text-zinc-200 hover:text-yellow-400'
                 }`}
               >
                 {active === section.id && (
@@ -118,7 +118,7 @@ export function SiteNav({ lang, setLang }: SiteNavProps) {
             <span className="mx-2 h-4 w-px bg-white/10" />
             <Link
               href="/blog"
-              className="rounded-2xl px-3.5 py-2 text-[13px] font-medium text-zinc-400 transition-colors duration-200 hover:text-zinc-100"
+              className="rounded-2xl px-3.5 py-2 text-[13px] font-medium text-zinc-200 transition-colors duration-200 hover:text-yellow-400"
             >
               {nav.blog}
             </Link>
@@ -144,7 +144,7 @@ export function SiteNav({ lang, setLang }: SiteNavProps) {
               </motion.span>
             </AnimatePresence>
             <motion.svg
-              className="h-3.5 w-3.5 text-zinc-400"
+              className="h-3.5 w-3.5 text-zinc-200"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -159,7 +159,7 @@ export function SiteNav({ lang, setLang }: SiteNavProps) {
           <button
             type="button"
             onClick={() => setLang(lang === 'zh-TW' ? 'en' : 'zh-TW')}
-            className="font-geist-mono rounded-2xl px-3 py-2 text-xs text-zinc-400 transition-colors duration-200 hover:text-zinc-100"
+            className="font-geist-mono rounded-2xl px-3 py-2 text-xs text-zinc-200 transition-colors duration-200 hover:text-yellow-400"
             aria-label={lang === 'zh-TW' ? 'Switch to English' : '切換為中文'}
           >
             {lang === 'zh-TW' ? 'EN' : '中'}
@@ -183,7 +183,7 @@ export function SiteNav({ lang, setLang }: SiteNavProps) {
                     href={`#${section.id}`}
                     onClick={(e) => go(e, section.id)}
                     className={`flex items-center justify-between rounded-2xl px-3 py-3 text-base font-medium ${
-                      active === section.id ? 'bg-white/10 text-white' : 'text-zinc-300'
+                      active === section.id ? 'bg-white/10 text-white' : 'text-zinc-200'
                     }`}
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -195,7 +195,7 @@ export function SiteNav({ lang, setLang }: SiteNavProps) {
                 ))}
                 <Link
                   href="/blog"
-                  className="mt-1 flex items-center justify-between rounded-2xl border border-white/10 px-3 py-3 text-base font-medium text-zinc-300"
+                  className="mt-1 flex items-center justify-between rounded-2xl border border-white/10 px-3 py-3 text-base font-medium text-zinc-200"
                 >
                   {nav.blog}
                   <span aria-hidden="true">→</span>

@@ -62,7 +62,7 @@ export function FloatingDock({ lang }: { lang: Lang }) {
   }, [open]);
 
   const buttonClass =
-    'flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-[#141416]/85 text-zinc-300 shadow-[0_8px_30px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-colors duration-200 hover:border-white/30 hover:text-white';
+    'flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-[#141416]/85 text-zinc-200 shadow-[0_8px_30px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-colors duration-200 hover:border-white/30 hover:text-white';
 
   return (
     <AnimatePresence>

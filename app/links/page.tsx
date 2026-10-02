@@ -133,7 +133,7 @@ export default function LinksPage() {
   const zh = lang === 'zh-TW';
 
   const controlClass =
-    'flex h-9 items-center justify-center rounded-full border border-white/10 bg-[#141416]/80 text-zinc-400 backdrop-blur-xl transition-colors duration-200 hover:border-white/30 hover:text-white';
+    'flex h-9 items-center justify-center rounded-full border border-white/10 bg-[#141416]/80 text-zinc-200 backdrop-blur-xl transition-colors duration-200 hover:border-white/30 hover:text-white';
 
   return (
     <MotionConfig reducedMotion="user">
@@ -232,7 +232,7 @@ export default function LinksPage() {
                     type="button"
                     onClick={() => setShowQR(false)}
                     aria-label={zh ? '關閉' : 'Close'}
-                    className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-zinc-400 transition-colors duration-200 hover:border-white/30 hover:text-white"
+                    className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-zinc-200 transition-colors duration-200 hover:border-white/30 hover:text-white"
                   >
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -255,12 +255,12 @@ export default function LinksPage() {
                 </div>
 
                 <div className="mt-4 flex items-center gap-2 border-t border-white/10 pt-4">
-                  <p className="flex-1 truncate text-xs text-zinc-400">{currentUrl}</p>
+                  <p className="flex-1 truncate text-xs text-zinc-200">{currentUrl}</p>
                   <button
                     type="button"
                     onClick={copyToClipboard}
                     className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors duration-200 ${
-                      copySuccess ? 'border-emerald-400/40 text-emerald-300' : 'border-white/15 text-zinc-300 hover:border-white/40 hover:text-white'
+                      copySuccess ? 'border-emerald-400/40 text-emerald-300' : 'border-white/15 text-zinc-200 hover:border-white/40 hover:text-white'
                     }`}
                   >
                     <span aria-live="polite">
@@ -296,7 +296,7 @@ export default function LinksPage() {
               <SplitText text={zh ? '謝上智 Sun' : 'Sun Zhi'} immediate delay={0.15} stagger={0.05} />
             </h1>
             <motion.p
-              className="mt-3 text-base text-zinc-400"
+              className="mt-3 text-base text-zinc-200"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: EASE_OUT, delay: 0.4 }}
@@ -354,12 +354,12 @@ export default function LinksPage() {
                       )}
                     </span>
                     {link.description && (
-                      <span className={`mt-0.5 block text-sm text-zinc-400 ${viewMode === 'list' ? 'truncate' : 'line-clamp-2'}`}>{link.description}</span>
+                      <span className={`mt-0.5 block text-sm text-zinc-200 ${viewMode === 'list' ? 'truncate' : 'line-clamp-2'}`}>{link.description}</span>
                     )}
                   </span>
                   <span
                     aria-hidden="true"
-                    className={`text-zinc-500 transition-all duration-300 group-hover:translate-x-1 group-hover:text-yellow-400 ${
+                    className={`text-zinc-200 transition-all duration-300 group-hover:translate-x-1 group-hover:text-yellow-400 ${
                       viewMode === 'grid' ? 'absolute right-5 top-5' : ''
                     }`}
                   >
@@ -371,15 +371,15 @@ export default function LinksPage() {
           </motion.ul>
 
           <motion.footer
-            className="mt-12 flex items-center justify-between text-sm text-zinc-400"
+            className="mt-12 flex items-center justify-between text-sm text-zinc-200"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.2, duration: 0.8 }}
           >
             <span className="eyebrow">Sun · {new Date().getFullYear()}</span>
             <span className="flex items-center gap-5">
-              <Link href="/blog" className="link-draw text-zinc-400 hover:text-white">{zh ? '部落格' : 'Blog'}</Link>
-              <Link href="/pricing" className="link-draw text-zinc-400 hover:text-white">{zh ? '服務費用' : 'Pricing'}</Link>
+              <Link href="/blog" className="link-draw text-zinc-200 hover:text-white">{zh ? '部落格' : 'Blog'}</Link>
+              <Link href="/pricing" className="link-draw text-zinc-200 hover:text-white">{zh ? '服務費用' : 'Pricing'}</Link>
             </span>
           </motion.footer>
         </div>

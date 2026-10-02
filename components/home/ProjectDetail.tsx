@@ -123,7 +123,7 @@ export function ProjectDetail({ items, index, lang, onChange, onClose }: Project
                   type="button"
                   onClick={onClose}
                   aria-label={copy.close}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-zinc-300 transition-colors duration-200 hover:border-white/30 hover:text-white"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-zinc-200 transition-colors duration-200 hover:border-white/30 hover:text-white"
                 >
                   <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -156,9 +156,9 @@ export function ProjectDetail({ items, index, lang, onChange, onClose }: Project
                     <h3 id="project-detail-title" className="text-2xl font-semibold tracking-tight text-white md:text-3xl">
                       {title.name}
                     </h3>
-                    {title.tagline !== item.category && <p className="mt-1 text-sm text-zinc-400">{title.tagline}</p>}
+                    {title.tagline !== item.category && <p className="mt-1 text-sm text-zinc-200">{title.tagline}</p>}
 
-                    <p className="mt-5 text-[15px] leading-relaxed text-zinc-300">{item.description}</p>
+                    <p className="mt-5 text-[15px] leading-relaxed text-zinc-200">{item.description}</p>
 
                     {links.length > 0 && (
                       <div className="mt-6 flex flex-wrap gap-2.5">
@@ -185,7 +185,7 @@ export function ProjectDetail({ items, index, lang, onChange, onClose }: Project
                         <span className="eyebrow">{t.mainAchievements.replace(/[：:]\s*$/, '')}</span>
                         <ul className="mt-3 space-y-2.5">
                           {item.achievements.map((achievement) => (
-                            <li key={achievement} className="flex gap-3 text-sm leading-relaxed text-zinc-300">
+                            <li key={achievement} className="flex gap-3 text-sm leading-relaxed text-zinc-200">
                               <span aria-hidden="true" className="mt-[0.6em] h-1 w-1 shrink-0 rounded-full bg-yellow-400/80" />
                               {achievement}
                             </li>
@@ -197,7 +197,7 @@ export function ProjectDetail({ items, index, lang, onChange, onClose }: Project
                     {item.technologies && item.technologies.length > 0 && (
                       <ul className="mt-8 flex flex-wrap gap-1.5">
                         {item.technologies.map((tech) => (
-                          <li key={tech} className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-400">
+                          <li key={tech} className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-200">
                             {tech}
                           </li>
                         ))}
@@ -213,14 +213,14 @@ export function ProjectDetail({ items, index, lang, onChange, onClose }: Project
                 <button
                   type="button"
                   onClick={() => onChange((index - 1 + total) % total)}
-                  className="rounded-full px-3 py-2 text-sm text-zinc-400 transition-colors duration-200 hover:text-white"
+                  className="rounded-full px-3 py-2 text-sm text-zinc-200 transition-colors duration-200 hover:text-yellow-400"
                 >
                   <span aria-hidden="true">←</span> {copy.prev}
                 </button>
                 <button
                   type="button"
                   onClick={() => onChange((index + 1) % total)}
-                  className="rounded-full px-3 py-2 text-sm text-zinc-400 transition-colors duration-200 hover:text-white"
+                  className="rounded-full px-3 py-2 text-sm text-zinc-200 transition-colors duration-200 hover:text-yellow-400"
                 >
                   {copy.next} <span aria-hidden="true">→</span>
                 </button>

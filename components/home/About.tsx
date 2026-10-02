@@ -72,15 +72,15 @@ function ExperienceRow({ exp, delay, labels }: { exp: Experience; delay: number;
           className="group flex w-full items-start justify-between gap-4 py-6 text-left"
         >
           <span className="grid gap-1 md:grid-cols-[11rem_1fr] md:items-baseline md:gap-8">
-            <span className="font-geist-mono text-xs text-zinc-400">{exp.period}</span>
+            <span className="font-geist-mono text-xs text-zinc-200">{exp.period}</span>
             <span>
               <span className="block text-lg font-semibold text-white md:text-xl">{company}</span>
-              {role && <span className="mt-0.5 block text-sm text-zinc-400">{role}</span>}
+              {role && <span className="mt-0.5 block text-sm text-zinc-200">{role}</span>}
             </span>
           </span>
           <motion.span
             aria-hidden="true"
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/10 text-zinc-400 transition-colors duration-200 group-hover:border-white/30 group-hover:text-white"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/10 text-zinc-200 transition-colors duration-200 group-hover:border-white/30 group-hover:text-white"
             animate={{ rotate: open ? 45 : 0 }}
             transition={{ duration: 0.3, ease: EASE_OUT }}
           >
@@ -97,12 +97,12 @@ function ExperienceRow({ exp, delay, labels }: { exp: Experience; delay: number;
               transition={{ duration: 0.6, ease: EASE_OUT }}
             >
               <div className="pb-8 md:pl-[13rem]">
-                <p className="max-w-2xl text-[15px] leading-relaxed text-zinc-300">{exp.description}</p>
+                <p className="max-w-2xl text-[15px] leading-relaxed text-zinc-200">{exp.description}</p>
                 <ul className="mt-4 grid max-w-2xl gap-x-8 gap-y-2 sm:grid-cols-2">
                   {exp.achievements.map((achievement, i) => (
                     <motion.li
                       key={achievement}
-                      className="flex gap-2.5 text-sm leading-relaxed text-zinc-400"
+                      className="flex gap-2.5 text-sm leading-relaxed text-zinc-200"
                       initial={{ opacity: 0, x: -8 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.4, ease: EASE_OUT, delay: 0.15 + i * 0.06 }}
@@ -159,7 +159,7 @@ export function About({ lang }: { lang: Lang }) {
                 <CountUp to={stat.value} />
                 {stat.suffix && <span className="text-yellow-400">{stat.suffix}</span>}
               </p>
-              <p className="mt-2 text-xs text-zinc-400 md:text-sm">{stat.label}</p>
+              <p className="mt-2 text-xs text-zinc-200 md:text-sm">{stat.label}</p>
             </Reveal>
           ))}
         </div>
@@ -170,7 +170,7 @@ export function About({ lang }: { lang: Lang }) {
             <Reveal>
               <span className="eyebrow">{copy.focusLabel}</span>
               {bodyParagraphs.map((paragraph) => (
-                <p key={paragraph} className="mt-5 text-[15px] leading-relaxed text-zinc-400">
+                <p key={paragraph} className="mt-5 text-[15px] leading-relaxed text-zinc-200">
                   {paragraph}
                 </p>
               ))}
@@ -184,9 +184,9 @@ export function About({ lang }: { lang: Lang }) {
                     <h3 className="text-lg font-semibold text-white transition-colors duration-300 group-hover:text-yellow-400">
                       {item.name}
                     </h3>
-                    {item.note && <p className="mt-0.5 text-xs text-zinc-400">{item.note}</p>}
+                    {item.note && <p className="mt-0.5 text-xs text-zinc-200">{item.note}</p>}
                   </div>
-                  <p className="text-[15px] leading-relaxed text-zinc-400">{item.text}</p>
+                  <p className="text-[15px] leading-relaxed text-zinc-200">{item.text}</p>
                 </Reveal>
               </li>
             ))}
@@ -225,7 +225,7 @@ export function About({ lang }: { lang: Lang }) {
               <span className="eyebrow">{t.about.services.title}</span>
               <p className="mt-4 text-xl leading-relaxed text-zinc-200 md:text-2xl">{t.about.services.description}</p>
             </div>
-            <Link href="/pricing" className="link-draw text-sm font-medium text-zinc-300 hover:text-yellow-400">
+            <Link href="/pricing" className="link-draw text-sm font-medium text-zinc-200 hover:text-yellow-400">
               {copy.pricingLink} <span aria-hidden="true">→</span>
             </Link>
           </Reveal>
@@ -240,7 +240,7 @@ export function About({ lang }: { lang: Lang }) {
                 <Spotlight className="h-full p-6">
                   <span className="eyebrow">{String(i + 1).padStart(2, '0')}</span>
                   <h3 className="mt-8 text-base font-semibold text-white">{service.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-zinc-400">{service.description}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-zinc-200">{service.description}</p>
                 </Spotlight>
               </Reveal>
             ))}
@@ -249,7 +249,7 @@ export function About({ lang }: { lang: Lang }) {
           <div className="mt-16 grid gap-8 md:grid-cols-12 md:gap-10">
             <Reveal className="md:col-span-4">
               <span className="eyebrow">{t.about.teaching.title}</span>
-              <p className="mt-5 text-[15px] leading-relaxed text-zinc-400">{t.about.teaching.description}</p>
+              <p className="mt-5 text-[15px] leading-relaxed text-zinc-200">{t.about.teaching.description}</p>
             </Reveal>
             <ol className="md:col-span-8">
               {t.teaching.courses.map((course, i) => (

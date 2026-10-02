@@ -66,7 +66,7 @@ export function Contact({ lang }: { lang: Lang }) {
           <button
             type="button"
             onClick={copyEmail}
-            className="rounded-full border border-white/15 px-5 py-4 text-sm font-medium text-zinc-300 transition-colors duration-300 hover:border-white/40 hover:text-white"
+            className="rounded-full border border-white/15 px-5 py-4 text-sm font-medium text-zinc-200 transition-colors duration-300 hover:border-white/40 hover:text-white"
           >
             <span aria-live="polite">{copied ? copy.copied : copy.copy}</span>
           </button>
@@ -80,9 +80,9 @@ export function Contact({ lang }: { lang: Lang }) {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="link-draw text-lg font-medium text-zinc-300 hover:text-white md:text-xl"
+                  className="link-draw text-lg font-medium text-zinc-200 hover:text-white md:text-xl"
                 >
-                  {social.label} <span aria-hidden="true" className="text-zinc-500">↗</span>
+                  {social.label} <span aria-hidden="true" className="text-zinc-200">↗</span>
                 </a>
               </li>
             ))}
@@ -97,13 +97,13 @@ export function Contact({ lang }: { lang: Lang }) {
           transition={{ duration: 1.1, ease: EASE_OUT }}
         />
 
-        <div className="flex flex-col gap-5 py-8 text-sm text-zinc-400 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-5 py-8 text-sm text-zinc-200 md:flex-row md:items-center md:justify-between">
           <p>
             © {new Date().getFullYear()} {t.footer.portfolio}
           </p>
           <nav aria-label={copy.label} className="flex flex-wrap items-center gap-x-6 gap-y-2">
             {pages.map((page) => (
-              <Link key={page.href} href={page.href} className="link-draw text-zinc-400 hover:text-white">
+              <Link key={page.href} href={page.href} className="link-draw text-zinc-200 hover:text-white">
                 {page.label}
               </Link>
             ))}
@@ -111,7 +111,7 @@ export function Contact({ lang }: { lang: Lang }) {
               href="https://sunkoro.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="link-draw text-zinc-400 hover:text-yellow-400"
+              className="link-draw text-zinc-200 hover:text-yellow-400"
             >
               {t.footer.courseWebsite} <span aria-hidden="true">↗</span>
             </a>
@@ -121,7 +121,7 @@ export function Contact({ lang }: { lang: Lang }) {
                 e.preventDefault();
                 scrollToSection('home');
               }}
-              className="link-draw text-zinc-400 hover:text-white"
+              className="link-draw text-zinc-200 hover:text-white"
             >
               {copy.backToTop} <span aria-hidden="true">↑</span>
             </a>

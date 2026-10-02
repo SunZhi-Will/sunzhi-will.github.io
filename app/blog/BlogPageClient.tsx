@@ -12,23 +12,24 @@ import { BlogDynamicIsland } from '@/components/blog/BlogDynamicIsland';
 import { BlogNavIsland } from '@/components/blog/BlogNavIsland';
 import { BlogMobileNav } from '@/components/blog/BlogMobileNav';
 import { NewsletterSubscribe } from '@/components/blog/NewsletterSubscribe';
+import { SplitText } from '@/components/motion/SplitText';
+import { EASE_OUT } from '@/components/motion/ease';
+import { useMediaQuery } from '@/lib/use-media-query';
 import { useTheme } from './ThemeProvider';
 
-// Helper: Section label with accent indicator
+// 區塊小標：等寬字體，與首頁的編號小標同一套語言
 function SectionLabel({ children, isDark, color }: { children: React.ReactNode; isDark: boolean; color: 'amber' | 'neutral' }) {
     return (
-        <div className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.12em]
+        <div className={`font-geist-mono flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.12em]
             ${color === 'amber'
-                ? isDark ? 'text-yellow-400/80' : 'text-amber-600/80'
-                : isDark ? 'text-white/25' : 'text-stone-400'
+                ? isDark ? 'text-yellow-400' : 'text-amber-700'
+                : isDark ? 'text-white/55' : 'text-stone-500'
             }
         `}>
-            <span className={`w-1 h-2.5 rounded-full flex-shrink-0
-                ${color === 'amber'
-                    ? isDark ? 'bg-yellow-400/60' : 'bg-amber-500/60'
-                    : isDark ? 'bg-white/20' : 'bg-stone-300'
-                }
-            `} />
+            <span className={`h-px w-5 flex-shrink-0 ${color === 'amber'
+                ? isDark ? 'bg-yellow-400/70' : 'bg-amber-600/70'
+                : isDark ? 'bg-white/25' : 'bg-stone-300'
+            }`} />
             {children}
         </div>
     );
@@ -45,6 +46,7 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
     const [selectedTag, setSelectedTag] = useState<string | null>(null);
     const [lang, setLang] = useState<Lang>('zh-TW');
     const [showAllTags, setShowAllTags] = useState(false);
+    const isDesktop = useMediaQuery('(min-width: 768px)');
     const { theme } = useTheme();
 
     const t = blogTranslations[lang];
@@ -68,7 +70,9 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
     }, [posts, lang]);
 
     const VISIBLE_TAGS = 6;
-    const visibleTags = showAllTags ? tagCounts : tagCounts.slice(0, VISIBLE_TAGS);
+    // 手機是單行橫向滑動，全部標籤都放進去；桌面空間夠但太多會變成一牆，才摺疊
+    const collapsible = isDesktop && tagCounts.length > VISIBLE_TAGS;
+    const visibleTags = !collapsible || showAllTags ? tagCounts : tagCounts.slice(0, VISIBLE_TAGS);
     // 已選的標籤如果被收起來了，仍然要顯示，不然看不出目前在篩選什麼
     const selectedHidden = selectedTag && !visibleTags.some(([tag]) => tag === selectedTag)
         ? tagCounts.find(([tag]) => tag === selectedTag)
@@ -223,86 +227,86 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
             <main className="relative">
                 <div className="max-w-4xl mx-auto px-4 pb-20 md:px-6 pt-[5.5rem] md:pt-24">
                     {/* 頁面標題：讓第一次來的人知道這是誰的部落格、寫些什麼 */}
-                    <motion.header
-                        initial={{ opacity: 0, y: -8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4 }}
-                        className="mb-7"
-                    >
-                        <h1 className={`text-3xl font-bold tracking-tight md:text-4xl ${isDark ? 'text-white/95' : 'text-stone-900'}`}>
-                            {lang === 'zh-TW' ? 'Sun 的部落格' : "Sun's Blog"}
+                    <header className="mb-10 md:mb-12">
+                        <span className={`font-geist-mono text-xs font-medium uppercase tracking-[0.14em] ${isDark ? 'text-white/55' : 'text-stone-500'}`}>
+                            {String(filteredPosts.length).padStart(2, '0')} {lang === 'zh-TW' ? '篇文章' : 'posts'}
+                        </span>
+                        <h1 key={lang} className={`mt-3 text-[2.5rem] font-semibold leading-[1.1] tracking-tight md:text-6xl ${isDark ? 'text-white' : 'text-stone-900'}`}>
+                            <SplitText text={lang === 'zh-TW' ? 'Sun 的部落格' : "Sun's Blog"} immediate stagger={0.05} />
                         </h1>
-                        <p className={`mt-2.5 max-w-xl text-[15px] leading-relaxed ${isDark ? 'text-white/50' : 'text-stone-500'}`}>
+                        <motion.p
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.7, ease: EASE_OUT, delay: 0.35 }}
+                            className={`mt-4 max-w-xl text-base leading-relaxed md:text-lg ${isDark ? 'text-white/70' : 'text-stone-600'}`}
+                        >
                             {lang === 'zh-TW'
                                 ? '寫 AI、產品、創業和遊戲開發，都是自己動手做過之後的想法。'
                                 : 'Notes on AI, product, startups and game development, written after building things myself.'}
-                        </p>
-                    </motion.header>
+                        </motion.p>
+                    </header>
 
-                    {/* 標籤篩選 */}
+                    {/* 標籤篩選：選中的底色在標籤之間滑動 */}
                     {tagCounts.length > 0 && (
                         <motion.div
-                            initial={{ opacity: 0, y: -8 }}
+                            initial={{ opacity: 0, y: 12 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.4, delay: 0.05 }}
-                            className="mb-8"
+                            transition={{ duration: 0.6, ease: EASE_OUT, delay: 0.45 }}
+                            className="mb-10"
                         >
-                            <div className="flex flex-wrap items-center gap-2">
-                                {/* 全部按鈕 */}
-                                <button
-                                    onClick={() => setSelectedTag(null)}
-                                    aria-pressed={selectedTag === null}
-                                    className={`min-h-[2.25rem] px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
-                                        selectedTag === null
-                                            ? isDark
-                                                ? 'bg-yellow-400 text-black shadow-sm shadow-yellow-400/25'
-                                                : 'bg-stone-900 text-white shadow-sm'
-                                            : isDark
-                                                ? 'bg-white/[0.05] text-white/55 border border-white/[0.07] hover:bg-white/[0.08] hover:text-white/80'
-                                                : 'bg-stone-100 text-stone-500 border border-stone-200/80 hover:bg-stone-200/70 hover:text-stone-700'
-                                    }`}
-                                >
-                                    {t.allPosts}
-                                </button>
-                                {/* 個別標籤 */}
-                                {shownTags.map(([tag, count]) => {
-                                    const active = selectedTag === tag;
-                                    return (
+                            <div className="-mx-4 overflow-x-auto px-4 scrollbar-hide md:mx-0 md:overflow-visible md:px-0">
+                                <div className="flex w-max items-center gap-2 md:w-auto md:flex-wrap" role="group" aria-label={t.allPosts}>
+                                    {[{ tag: null as string | null, label: t.allPosts, count: 0 }, ...shownTags.map(([tag, count]) => ({ tag: tag as string | null, label: tag, count }))].map((chip) => {
+                                        const active = selectedTag === chip.tag;
+                                        return (
+                                            <button
+                                                key={chip.label}
+                                                type="button"
+                                                onClick={() => setSelectedTag(chip.tag === null || active ? null : chip.tag)}
+                                                aria-pressed={active}
+                                                className={`relative whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+                                                    active
+                                                        ? isDark ? 'text-zinc-950' : 'text-white'
+                                                        : isDark ? 'text-white/70 hover:text-white' : 'text-stone-600 hover:text-stone-900'
+                                                }`}
+                                            >
+                                                {active ? (
+                                                    <motion.span
+                                                        layoutId="blog-filter"
+                                                        className={`absolute inset-0 rounded-full ${isDark ? 'bg-yellow-400' : 'bg-stone-900'}`}
+                                                        transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                                                    />
+                                                ) : (
+                                                    <span className={`absolute inset-0 rounded-full border ${isDark ? 'border-white/12' : 'border-stone-300'}`} />
+                                                )}
+                                                <span className="relative">
+                                                    {chip.label}
+                                                    {chip.count > 1 && (
+                                                        <span className={`font-geist-mono ml-1.5 text-[11px] ${active ? (isDark ? 'text-zinc-700' : 'text-white/60') : (isDark ? 'text-white/40' : 'text-stone-400')}`}>
+                                                            {chip.count}
+                                                        </span>
+                                                    )}
+                                                </span>
+                                            </button>
+                                        );
+                                    })}
+                                    {collapsible && (
                                         <button
-                                            key={tag}
-                                            onClick={() => setSelectedTag(active ? null : tag)}
-                                            aria-pressed={active}
-                                            className={`min-h-[2.25rem] px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
-                                                active
-                                                    ? isDark
-                                                        ? 'bg-yellow-400 text-black shadow-sm shadow-yellow-400/25'
-                                                        : 'bg-amber-500 text-white shadow-sm shadow-amber-500/25'
-                                                    : isDark
-                                                        ? 'bg-white/[0.05] text-white/55 border border-white/[0.07] hover:bg-white/[0.08] hover:text-white/80'
-                                                        : 'bg-stone-100 text-stone-500 border border-stone-200/80 hover:bg-stone-200/70 hover:text-stone-700'
+                                            type="button"
+                                            onClick={() => setShowAllTags((value) => !value)}
+                                            aria-expanded={showAllTags}
+                                            className={`rounded-full px-3 py-2 text-sm font-medium transition-colors ${
+                                                isDark ? 'text-yellow-400 hover:text-yellow-300' : 'text-amber-700 hover:text-amber-800'
                                             }`}
                                         >
-                                            {tag}
-                                            {count > 1 && <span className="ml-1.5 opacity-60">{count}</span>}
+                                            {showAllTags
+                                                ? (lang === 'zh-TW' ? '收起' : 'Less')
+                                                : (lang === 'zh-TW' ? `更多（${tagCounts.length - VISIBLE_TAGS}）` : `More (${tagCounts.length - VISIBLE_TAGS})`)}
                                         </button>
-                                    );
-                                })}
-                                {tagCounts.length > VISIBLE_TAGS && (
-                                    <button
-                                        onClick={() => setShowAllTags((value) => !value)}
-                                        aria-expanded={showAllTags}
-                                        className={`min-h-[2.25rem] px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                                            isDark ? 'text-yellow-300/80 hover:text-yellow-200' : 'text-amber-700 hover:text-amber-800'
-                                        }`}
-                                    >
-                                        {showAllTags
-                                            ? (lang === 'zh-TW' ? '收起' : 'Less')
-                                            : (lang === 'zh-TW' ? `更多標籤（${tagCounts.length - VISIBLE_TAGS}）` : `More (${tagCounts.length - VISIBLE_TAGS})`)}
-                                    </button>
-                                )}
+                                    )}
+                                </div>
                             </div>
-                            {/* 分隔線 */}
-                            <div className={`mt-5 h-px w-full ${isDark ? 'bg-white/[0.06]' : 'bg-stone-200/70'}`} />
+                            <div className={`mt-6 h-px w-full ${isDark ? 'bg-white/10' : 'bg-stone-200'}`} />
                         </motion.div>
                     )}
 

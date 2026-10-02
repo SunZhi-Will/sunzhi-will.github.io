@@ -288,7 +288,7 @@ export default function PricingPage() {
 
     const t = content[lang];
     const controlClass =
-        'flex h-9 items-center justify-center rounded-full border border-white/10 bg-[#141416]/80 text-zinc-400 backdrop-blur-xl transition-colors duration-200 hover:border-white/30 hover:text-white';
+        'flex h-9 items-center justify-center rounded-full border border-white/10 bg-[#141416]/80 text-zinc-200 backdrop-blur-xl transition-colors duration-200 hover:border-white/30 hover:text-white';
 
     return (
         <MotionConfig reducedMotion="user">
@@ -331,7 +331,7 @@ export default function PricingPage() {
                             <SplitText text={t.pageTitle} immediate delay={0.1} stagger={0.05} />
                         </h1>
                         <motion.p
-                            className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-400 md:text-xl"
+                            className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-200 md:text-xl"
                             initial={{ opacity: 0, y: 16 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, ease: EASE_OUT, delay: 0.45 }}
@@ -350,7 +350,7 @@ export default function PricingPage() {
                                     <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                                         <span className="eyebrow">{String(sIdx + 1).padStart(2, '0')}</span>
                                         {service.badge && (
-                                            <span className="flex items-center gap-2 rounded-full border border-white/10 px-3 py-1 text-xs font-medium text-zinc-300">
+                                            <span className="flex items-center gap-2 rounded-full border border-white/10 px-3 py-1 text-xs font-medium text-zinc-200">
                                                 <span className="relative flex h-2 w-2">
                                                     <span className="animate-status-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400" />
                                                     <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
@@ -360,7 +360,7 @@ export default function PricingPage() {
                                         )}
                                     </div>
                                     <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white md:text-5xl">{service.title}</h2>
-                                    <p className="mt-2 text-sm text-zinc-400">{service.subtitle}</p>
+                                    <p className="mt-2 text-sm text-zinc-200">{service.subtitle}</p>
                                 </Reveal>
                                 <motion.div
                                     className="mt-8 h-px origin-left bg-white/10"
@@ -369,7 +369,7 @@ export default function PricingPage() {
                                     viewport={{ once: true }}
                                     transition={{ duration: 1.1, ease: EASE_OUT }}
                                 />
-                                <Reveal className="mt-8 max-w-3xl text-base leading-relaxed text-zinc-300 md:text-lg">
+                                <Reveal className="mt-8 max-w-3xl text-base leading-relaxed text-zinc-200 md:text-lg">
                                     {service.description}
                                 </Reveal>
 
@@ -398,15 +398,15 @@ export default function PricingPage() {
                                                 </div>
 
                                                 <p className="mt-6 flex flex-wrap items-baseline gap-x-2">
-                                                    <span className="font-geist-mono text-xs text-zinc-400">{t.currency}</span>
+                                                    <span className="font-geist-mono text-xs text-zinc-200">{t.currency}</span>
                                                     <span className="text-3xl font-semibold tracking-tight text-white md:text-4xl">{tier.price}</span>
-                                                    <span className="text-sm text-zinc-400">{tier.unit}</span>
+                                                    <span className="text-sm text-zinc-200">{tier.unit}</span>
                                                 </p>
-                                                <p className="mt-2 text-sm leading-relaxed text-zinc-400">{tier.description}</p>
+                                                <p className="mt-2 text-sm leading-relaxed text-zinc-200">{tier.description}</p>
 
                                                 <ul className="mt-6 flex-1 space-y-2.5 border-t border-white/10 pt-6">
                                                     {tier.features.map((feat) => (
-                                                        <li key={feat} className="flex items-start gap-2.5 text-sm text-zinc-300">
+                                                        <li key={feat} className="flex items-start gap-2.5 text-sm text-zinc-200">
                                                             <svg className="mt-0.5 h-4 w-4 shrink-0 text-yellow-400/80" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                                             </svg>
@@ -416,7 +416,7 @@ export default function PricingPage() {
                                                 </ul>
 
                                                 {tier.note && (
-                                                    <p className="mt-6 border-t border-white/10 pt-4 text-xs text-zinc-400">
+                                                    <p className="mt-6 border-t border-white/10 pt-4 text-xs text-zinc-200">
                                                         ＊ {tier.note}
                                                     </p>
                                                 )}
@@ -427,7 +427,7 @@ export default function PricingPage() {
                             </section>
                         ))}
 
-                        <Reveal className="max-w-2xl text-sm text-zinc-400">
+                        <Reveal className="max-w-2xl text-sm text-zinc-200">
                             {t.disclaimer}
                         </Reveal>
                     </div>
@@ -451,26 +451,26 @@ export default function PricingPage() {
                                     <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                                 </a>
                             </Magnetic>
-                            <p className="text-sm text-zinc-400">{t.ctaNote}</p>
+                            <p className="text-sm text-zinc-200">{t.ctaNote}</p>
                         </Reveal>
 
                         <div className="mt-16 grid gap-10 border-t border-white/10 pt-10 sm:grid-cols-2 md:mt-24">
                             <Reveal>
                                 <h3 className="eyebrow">{t.currency} · TWD</h3>
-                                <p className="mt-3 text-sm leading-relaxed text-zinc-400">{t.contactNote}</p>
+                                <p className="mt-3 text-sm leading-relaxed text-zinc-200">{t.contactNote}</p>
                             </Reveal>
                             <Reveal delay={0.08}>
                                 <h3 className="eyebrow">{t.paymentNote}</h3>
-                                <p className="mt-3 text-sm leading-relaxed text-zinc-400">{t.paymentNoteDetail}</p>
+                                <p className="mt-3 text-sm leading-relaxed text-zinc-200">{t.paymentNoteDetail}</p>
                             </Reveal>
                         </div>
 
-                        <div className="mt-16 flex flex-col gap-4 border-t border-white/10 py-8 text-sm text-zinc-400 md:flex-row md:items-center md:justify-between">
+                        <div className="mt-16 flex flex-col gap-4 border-t border-white/10 py-8 text-sm text-zinc-200 md:flex-row md:items-center md:justify-between">
                             <p>© {new Date().getFullYear()} {STUDIO_NAME} · 謝上智</p>
                             <nav className="flex items-center gap-6" aria-label={STUDIO_NAME}>
-                                <Link href="/" className="link-draw text-zinc-400 hover:text-white">{t.back.replace(/^←\s*/, '')}</Link>
-                                <Link href="/blog" className="link-draw text-zinc-400 hover:text-white">{zh ? '部落格' : 'Blog'}</Link>
-                                <Link href="/links" className="link-draw text-zinc-400 hover:text-white">{zh ? '個人連結' : 'Links'}</Link>
+                                <Link href="/" className="link-draw text-zinc-200 hover:text-white">{t.back.replace(/^←\s*/, '')}</Link>
+                                <Link href="/blog" className="link-draw text-zinc-200 hover:text-white">{zh ? '部落格' : 'Blog'}</Link>
+                                <Link href="/links" className="link-draw text-zinc-200 hover:text-white">{zh ? '個人連結' : 'Links'}</Link>
                             </nav>
                         </div>
                     </div>

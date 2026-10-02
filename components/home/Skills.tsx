@@ -21,7 +21,7 @@ function MarqueeItem({ tech }: { tech: Tech }) {
         height={40}
         className="h-7 w-7 opacity-50 grayscale transition-all duration-300 group-hover:opacity-100 group-hover:grayscale-0 md:h-10 md:w-10"
       />
-      <span className="whitespace-nowrap text-3xl font-semibold tracking-tight text-zinc-500 transition-colors duration-300 group-hover:text-white md:text-6xl">
+      <span className="whitespace-nowrap text-3xl font-semibold tracking-tight text-zinc-200 transition-colors duration-300 group-hover:text-yellow-400 md:text-6xl">
         {tech.name}
       </span>
     </span>
@@ -65,7 +65,7 @@ export function Skills({ lang }: { lang: Lang }) {
               <h3 className="eyebrow border-t border-white/10 pt-4">{t.techCategories[stack.category]}</h3>
               <ul className="mt-4 space-y-2">
                 {stack.items.map((tech) => (
-                  <li key={tech.name} className="text-[15px] text-zinc-300">
+                  <li key={tech.name} className="text-[15px] text-zinc-200">
                     {tech.name}
                   </li>
                 ))}

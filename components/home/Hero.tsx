@@ -129,23 +129,19 @@ export function Hero({ lang }: { lang: Lang }) {
           <Portrait alt={`${copy.hero.name} ${copy.hero.alias}`} status={t.about.services.available} />
           <div className="order-2 min-w-0 lg:order-1">
         <h1 key={lang}>
-          <motion.span className="block text-lg text-zinc-400 md:text-2xl" {...fadeUp(0.25)}>
+          <motion.span className="block text-lg text-zinc-200 md:text-2xl" {...fadeUp(0.25)}>
             {copy.hero.greeting}
           </motion.span>
           <span className="mt-1 block text-[clamp(3rem,10vw,7rem)] font-semibold leading-[0.95] tracking-[-0.04em] text-white">
             <SplitText text={copy.hero.name} immediate delay={0.3} stagger={0.06} />
-            <span className="text-zinc-500">
-              {' '}
-              <SplitText text={copy.hero.alias} immediate delay={0.5} stagger={0.06} />
-            </span>
           </span>
         </h1>
 
-        <motion.p className="mt-6 text-xl text-zinc-400 md:mt-8 md:text-3xl" {...fadeUp(0.75)}>
+        <motion.p className="mt-6 text-xl text-zinc-200 md:mt-8 md:text-3xl" {...fadeUp(0.75)}>
           <RoleRotator key={lang} roles={roles} />
         </motion.p>
 
-        <motion.p className="mt-5 max-w-xl text-base leading-relaxed text-zinc-400 md:text-lg" {...fadeUp(0.85)}>
+        <motion.p className="mt-5 max-w-xl text-base leading-relaxed text-zinc-200 md:text-lg" {...fadeUp(0.85)}>
           {copy.hero.tagline}
         </motion.p>
 
@@ -176,7 +172,7 @@ export function Hero({ lang }: { lang: Lang }) {
             href="https://sunkoro.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="link-draw ml-2 text-sm font-medium text-zinc-400 hover:text-yellow-400"
+            className="link-draw ml-2 text-sm font-medium text-zinc-200 hover:text-yellow-400"
           >
             {t.footer.courseWebsite} <span aria-hidden="true">↗</span>
           </a>
@@ -203,7 +199,7 @@ export function Hero({ lang }: { lang: Lang }) {
           <span className="relative block h-10 w-px overflow-hidden bg-white/15">
             <span className="animate-scroll-cue absolute inset-0 bg-yellow-400" />
           </span>
-          <span className="eyebrow transition-colors duration-200 group-hover:text-zinc-300">{t.hero.scrollDown}</span>
+          <span className="eyebrow transition-colors duration-200 group-hover:text-yellow-400">{t.hero.scrollDown}</span>
         </a>
         <ul className="flex items-center gap-5">
           {SOCIALS.map((social) => (
@@ -212,7 +208,7 @@ export function Hero({ lang }: { lang: Lang }) {
                 href={social.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="eyebrow link-draw hover:text-zinc-200"
+                className="eyebrow link-draw hover:text-yellow-400"
               >
                 {social.label}
               </a>

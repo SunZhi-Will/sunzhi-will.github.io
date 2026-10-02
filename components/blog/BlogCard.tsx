@@ -26,27 +26,18 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
     return (
         <motion.article
             initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.08, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '0px 0px -8% 0px' }}
+            transition={{ delay: (index % 2) * 0.08, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             className="group h-full"
         >
             <Link href={`/blog/${post.slug}`} className="block h-full">
-                <div className={`relative overflow-hidden rounded-2xl h-full
-                    transition-all duration-300 ease-out
-                    hover:-translate-y-1
+                <div className={`relative overflow-hidden rounded-2xl h-full transition-colors duration-300
                     ${isDark
-                        ? 'bg-[#111111] border border-white/[0.06] hover:border-yellow-500/30 shadow-[0_1px_3px_rgba(0,0,0,0.5)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.4),0_0_0_1px_rgba(250,204,21,0.12)]'
-                        : 'bg-white border border-black/[0.06] hover:border-amber-400/40 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.08),0_0_0_1px_rgba(251,191,36,0.15)]'
+                        ? 'bg-[#111113] border border-white/10 hover:border-white/25'
+                        : 'bg-white border border-stone-200 hover:border-stone-400'
                     }
                 `}>
-
-                    {/* Hover glow overlay */}
-                    <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none
-                        ${isDark
-                            ? 'bg-gradient-to-br from-yellow-500/[0.04] via-transparent to-transparent'
-                            : 'bg-gradient-to-br from-amber-50/80 via-transparent to-transparent'
-                        }
-                    `} />
 
                     <div className={`relative flex gap-0
                         ${isHorizontal ? 'flex-col md:flex-row' : 'flex-col'}
@@ -70,7 +61,7 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
                                         src={post.coverImageDisplay ?? post.coverImage}
                                         alt={post.title}
                                         fill
-                                        className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                                        className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.05]"
                                         sizes={featured
                                             ? "(max-width: 768px) 100vw, 450px"
                                             : isHorizontal
@@ -85,14 +76,6 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
                                         </svg>
                                     </div>
                                 )}
-
-                                {/* Image gradient shimmer on hover */}
-                                <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500
-                                    ${isDark
-                                        ? 'bg-gradient-to-t from-black/30 via-transparent to-transparent'
-                                        : 'bg-gradient-to-t from-amber-500/10 via-transparent to-transparent'
-                                    }
-                                `} />
                             </div>
                         </div>
 
@@ -102,7 +85,7 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
                         `}>
 
                             {/* Meta: Date + Tags */}
-                            <div className={`flex items-center flex-wrap gap-2 ${isDark ? 'text-white/35' : 'text-stone-400'}`}>
+                            <div className={`flex items-center flex-wrap gap-2 ${isDark ? 'text-white/60' : 'text-stone-500'}`}>
                                 <time className="flex items-center gap-1.5 text-xs whitespace-nowrap font-medium">
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -119,10 +102,10 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
                                             {translatedTags.slice(0, 2).map((tag, idx) => (
                                                 <span
                                                     key={idx}
-                                                    className={`px-2 py-0.5 rounded-md text-[10px] font-semibold tracking-wide transition-all duration-200
+                                                    className={`px-2.5 py-0.5 rounded-full border text-[11px] font-medium transition-colors duration-200
                                                         ${isDark
-                                                            ? 'bg-white/[0.06] text-white/50 group-hover:bg-yellow-400/15 group-hover:text-yellow-300/90'
-                                                            : 'bg-stone-100 text-stone-500 group-hover:bg-amber-50 group-hover:text-amber-700'
+                                                            ? 'border-white/12 text-white/65 group-hover:border-yellow-400/40 group-hover:text-yellow-300'
+                                                            : 'border-stone-200 text-stone-600 group-hover:border-amber-400 group-hover:text-amber-700'
                                                         }
                                                     `}
                                                 >
@@ -135,23 +118,11 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
                             </div>
 
                             {/* Title */}
-                            <h2 className={`font-bold leading-snug relative
+                            <h2 className={`font-semibold leading-snug transition-colors duration-300
                                 ${featured ? 'line-clamp-3 text-xl md:text-[1.4rem]' : 'line-clamp-2 text-base md:text-lg lg:text-xl'}
-                                ${isDark ? 'text-white/90' : 'text-stone-900'}
+                                ${isDark ? 'text-white group-hover:text-yellow-300' : 'text-stone-900 group-hover:text-amber-700'}
                             `}>
-                                <span className="relative z-0 transition-all duration-300">
-                                    {post.title}
-                                </span>
-                                {/* Gradient title on hover */}
-                                <span className={`absolute inset-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300
-                                    bg-clip-text text-transparent bg-gradient-to-r
-                                    ${isDark
-                                        ? 'from-white/95 via-yellow-200 to-white/95'
-                                        : 'from-stone-900 via-amber-600 to-stone-800'
-                                    }
-                                `} style={{ willChange: 'opacity' }}>
-                                    {post.title}
-                                </span>
+                                {post.title}
                             </h2>
 
                             {/* Description */}
@@ -160,17 +131,17 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
                                     ? 'text-sm md:text-[0.9375rem] line-clamp-3'
                                     : 'text-sm line-clamp-2'
                                 }
-                                ${isDark ? 'text-white/45' : 'text-stone-500'}
+                                ${isDark ? 'text-white/70' : 'text-stone-600'}
                             `}>
                                 {post.description}
                             </p>
 
                             {/* Read more CTA */}
                             <div className="flex items-center pt-0.5">
-                                <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-wider uppercase transition-all duration-200
+                                <span className={`inline-flex items-center gap-1.5 font-geist-mono text-xs font-medium tracking-wider uppercase transition-colors duration-200
                                     ${isDark
-                                        ? 'text-white/30 group-hover:text-yellow-400'
-                                        : 'text-stone-400 group-hover:text-amber-600'
+                                        ? 'text-white/60 group-hover:text-yellow-400'
+                                        : 'text-stone-500 group-hover:text-amber-700'
                                     }
                                 `}>
                                     {t.readMore}

@@ -92,8 +92,7 @@ const CARDS = [
     name: 'og-home',
     label: 'Portfolio',
     pre: "Hi, I'm",
-    title: 'Sun',
-    alt: '謝上智',
+    title: 'Sun Zhi',
     lead: 'Software Engineer · AI Developer',
     body: 'I turn ideas into products people actually use.',
     topics: ['AI Apps', 'Full-Stack Web', 'Unity'],
@@ -106,7 +105,6 @@ const CARDS = [
     label: 'Blog',
     pre: "Sun's",
     title: 'Blog',
-    alt: '部落格',
     body: 'Notes on AI, product, startups and game development, written after building things myself.',
     rows: ['AI', 'Product', 'Startups', 'Game Dev'],
     topics: ['Essays', 'Field Notes'],
@@ -117,7 +115,6 @@ const CARDS = [
     label: 'Links',
     pre: "Sun's",
     title: 'Links',
-    alt: '連結',
     body: 'Everywhere you can find me, in one place.',
     rows: ['Portfolio', 'Sunkoro Courses', 'GitHub', 'LinkedIn'],
     rowArrow: '↗',
@@ -129,7 +126,6 @@ const CARDS = [
     label: 'Pricing',
     pre: 'SunCodeStudio',
     title: 'Pricing',
-    alt: '報價',
     body: 'Transparent pricing, tailored to your needs.',
     rows: ['Software Development', 'Teaching & Consulting'],
     topics: ['Quoted in TWD'],
@@ -160,7 +156,7 @@ function cardHtml(card, shape, portraitSrc) {
 <meta charset="utf-8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Noto+Sans+TC:wght@500;600&display=block" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=block" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { width: 100%; height: 100%; }
@@ -171,7 +167,7 @@ function cardHtml(card, shape, portraitSrc) {
     overflow: hidden;
     background: ${BG};
     color: #e4e4e7;
-    font-family: 'Geist', 'Noto Sans TC', 'PingFang TC', system-ui, sans-serif;
+    font-family: 'Geist', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
   .grid, .glow { position: absolute; pointer-events: none; }
@@ -196,7 +192,7 @@ function cardHtml(card, shape, portraitSrc) {
     letter-spacing: 0.12em;
     text-transform: uppercase;
     white-space: nowrap;
-    color: #a1a1aa;
+    color: #e4e4e7;
   }
   header, main, footer { position: relative; }
   header { display: flex; align-items: center; justify-content: space-between; }
@@ -204,11 +200,10 @@ function cardHtml(card, shape, portraitSrc) {
   .brand svg { width: 38px; height: 38px; }
   main { flex: 1; display: flex; min-height: 0; }
   .copy { min-width: 0; }
-  .pre { color: #d4d4d8; }
+  .pre { color: #e4e4e7; }
   h1 { font-weight: 600; line-height: 1; letter-spacing: -0.04em; color: #fff; white-space: nowrap; }
-  h1 .alt { color: #71717a; font-family: 'Noto Sans TC', 'PingFang TC', sans-serif; letter-spacing: -0.02em; }
   .lead { color: #fff; }
-  .body { color: #d4d4d8; line-height: 1.45; text-wrap: balance; }
+  .body { color: #e4e4e7; line-height: 1.45; text-wrap: balance; }
   footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255, 255, 255, 0.14); }
   .topics { display: flex; align-items: center; gap: 16px; }
   .topics::before { content: ''; width: 40px; height: 2px; background: ${ACCENT}; }
@@ -254,13 +249,13 @@ function cardHtml(card, shape, portraitSrc) {
   .rows li { display: flex; align-items: center; gap: 20px; border-top: 1px solid rgba(255, 255, 255, 0.14); }
   .rows li:last-child { border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
   .row-title { flex: 1; font-weight: 500; color: #f4f4f5; white-space: nowrap; }
-  .row-arrow { color: #a1a1aa; }
+  .row-arrow { color: #e4e4e7; }
 
   /* 1200x630 */
   .wide { padding: 52px 64px 0; }
   .wide main { align-items: center; justify-content: space-between; gap: 48px; }
   .wide .pre { font-size: 28px; }
-  .wide h1 { margin-top: 6px; font-size: 118px; }
+  .wide h1 { margin-top: 6px; font-size: 136px; }
   .wide .lead { margin-top: 26px; font-size: 34px; }
   .wide .body { margin-top: 22px; max-width: 590px; font-size: 25px; }
   .wide .lead + .body { margin-top: 12px; }
@@ -275,7 +270,7 @@ function cardHtml(card, shape, portraitSrc) {
   .square { padding: 52px 56px 0; }
   .square main { flex-direction: column; justify-content: flex-end; gap: 40px; padding-bottom: 40px; }
   .square .pre { font-size: 26px; }
-  .square h1 { margin-top: 6px; font-size: 104px; }
+  .square h1 { margin-top: 6px; font-size: 124px; }
   .square .lead { margin-top: 22px; font-size: 30px; }
   .square .body { margin-top: 18px; max-width: 600px; font-size: 24px; }
   .square .lead + .body { margin-top: 10px; }
@@ -299,7 +294,7 @@ function cardHtml(card, shape, portraitSrc) {
   <main>
     <div class="copy">
       <p class="pre">${escapeHtml(card.pre)}</p>
-      <h1>${escapeHtml(card.title)} <span class="alt">${card.alt}</span></h1>
+      <h1>${escapeHtml(card.title)}</h1>
       ${card.lead ? `<p class="lead">${escapeHtml(card.lead)}</p>` : ''}
       <p class="body">${escapeHtml(card.body)}</p>
     </div>
