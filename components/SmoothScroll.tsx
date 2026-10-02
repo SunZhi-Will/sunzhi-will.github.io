@@ -34,6 +34,8 @@ export default function SmoothScroll() {
       });
 
       lenisRef.current = lenis;
+      // 只有整頁捲動的實例才對外公開，部落格的內層捲動容器不適用
+      if (!scrollContainer) window.__lenis = lenis;
 
       // Lenis v1 sets overflow:clip on <html> which breaks position:sticky.
       // Use MutationObserver to clear it whenever Lenis (re-)sets it.
@@ -70,10 +72,11 @@ export default function SmoothScroll() {
       }
 
       if (lenisRef.current) {
+        if (window.__lenis === lenisRef.current) delete window.__lenis;
         lenisRef.current.destroy();
         lenisRef.current = null;
       }
-      
+
       document.documentElement.style.removeProperty("overflow");
     };
   }, [pathname]);

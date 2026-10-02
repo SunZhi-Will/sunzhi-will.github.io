@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDownIcon, MagnifyingGlassPlusIcon, PhotoIcon } from '@heroicons/react/24/outline';
 import { InteractiveFrame, useFrameTheme } from './InteractiveFrame';
+import { Lightbox } from './Lightbox';
 
 const IMAGE_BASE = '/blog/2026-10-02-inspiration-vs-plagiarism';
 
@@ -148,15 +148,6 @@ export function ComparisonMatrix() {
     const [open, setOpen] = useState<string | null>('角色');
     const [marks, setMarks] = useState<Record<string, Mark>>({});
     const [zoomed, setZoomed] = useState<{ src: string; label: string } | null>(null);
-
-    useEffect(() => {
-        if (!zoomed) return;
-        const onKey = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') setZoomed(null);
-        };
-        window.addEventListener('keydown', onKey);
-        return () => window.removeEventListener('keydown', onKey);
-    }, [zoomed]);
 
     const renderShot = (game: string, shot: Shot) => {
         const src = shot.file ? `${IMAGE_BASE}/${shot.file}` : null;
@@ -336,34 +327,7 @@ export function ComparisonMatrix() {
                 Cube World 的畫面取自官方 Steam 商店頁的截圖與宣傳影片，著作權屬 Picroma 所有，此處僅供比較說明。《方界》的畫面是作者自己的實機截圖與試玩版宣傳片。
             </div>
 
-            {typeof document !== 'undefined' &&
-                createPortal(
-                    <AnimatePresence>
-                        {zoomed && (
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                onClick={() => setZoomed(null)}
-                                role="dialog"
-                                aria-modal="true"
-                                aria-label={zoomed.label}
-                                className="fixed inset-0 z-[70] flex cursor-zoom-out flex-col items-center justify-center gap-3 bg-black/85 p-4 backdrop-blur-sm"
-                            >
-                                <motion.img
-                                    src={zoomed.src}
-                                    alt={zoomed.label}
-                                    initial={{ scale: 0.92 }}
-                                    animate={{ scale: 1 }}
-                                    exit={{ scale: 0.92 }}
-                                    className="max-h-[82vh] max-w-full rounded-lg object-contain"
-                                />
-                                <div className="text-sm text-white/80">{zoomed.label}</div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>,
-                    document.body,
-                )}
+            <Lightbox image={zoomed} onClose={() => setZoomed(null)} />
         </InteractiveFrame>
     );
 }

@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowPathIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { ArrowPathIcon, CheckIcon, MagnifyingGlassPlusIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import { InteractiveFrame, Verdict, useFrameTheme } from './InteractiveFrame';
+import { Lightbox } from './Lightbox';
 
 const IMAGE_BASE = '/blog/2026-10-02-inspiration-vs-plagiarism';
 
@@ -36,6 +37,7 @@ export function VoxelLineup() {
     const [shots, setShots] = useState(shuffled);
     const [picked, setPicked] = useState<string[]>([]);
     const [revealed, setRevealed] = useState(false);
+    const [zoomIndex, setZoomIndex] = useState<number | null>(null);
 
     const toggle = (file: string) => {
         if (revealed) return;
@@ -54,67 +56,85 @@ export function VoxelLineup() {
 
     const hits = shots.filter((shot) => shot.mine && picked.includes(shot.file)).length;
 
+    // 揭曉前不能在放大檢視裡洩漏是哪款遊戲
+    const labelOf = (index: number) => (revealed ? shots[index].game : `第 ${index + 1} 張截圖`);
+    const zoomedShot = zoomIndex === null ? null : shots[zoomIndex];
+    const step = (delta: number) =>
+        setZoomIndex((current) => (current === null ? current : (current + delta + shots.length) % shots.length));
+
     return (
         <InteractiveFrame
             title="這裡面只有兩張是《方界》"
             kicker="視覺直覺測試"
-            hint="八張截圖來自七款不同的遊戲，順序是打亂的。點選你覺得是《方界》的兩張，再按揭曉。"
+            hint="八張截圖來自七款不同的遊戲，順序是打亂的。點選你覺得是《方界》的兩張，再按揭曉。看不清楚可以按圖上的放大鏡。"
         >
             <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
                 {shots.map((shot, index) => {
                     const isPicked = picked.includes(shot.file);
                     const dimmed = revealed && !shot.mine && !isPicked;
                     return (
-                        <motion.button
+                        <motion.div
                             key={shot.file}
                             layout
-                            type="button"
-                            aria-pressed={isPicked}
-                            aria-label={revealed ? shot.game : `第 ${index + 1} 張截圖`}
-                            onClick={() => toggle(shot.file)}
-                            whileHover={revealed ? undefined : { y: -3 }}
-                            whileTap={revealed ? undefined : { scale: 0.97 }}
                             animate={{ opacity: dimmed ? 0.55 : 1 }}
                             transition={{ layout: { type: 'spring', stiffness: 260, damping: 26 } }}
-                            className={`relative aspect-video overflow-hidden rounded-md border-2 bg-black bg-cover bg-center ${
-                                revealed && shot.mine
-                                    ? 'border-yellow-400'
-                                    : isPicked
-                                        ? revealed ? 'border-red-400' : 'border-yellow-400'
-                                        : t.isDark ? 'border-zinc-800' : 'border-zinc-200'
-                            } ${revealed ? 'cursor-default' : ''}`}
-                            style={{ backgroundImage: `url(${IMAGE_BASE}/${shot.file})` }}
+                            className="relative"
                         >
-                            <AnimatePresence>
-                                {isPicked && (
-                                    <motion.span
-                                        key="pick"
-                                        initial={{ scale: 0 }}
-                                        animate={{ scale: 1 }}
-                                        exit={{ scale: 0 }}
-                                        transition={{ type: 'spring', stiffness: 420, damping: 18 }}
-                                        className={`absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full ${
-                                            revealed && !shot.mine ? 'bg-red-500 text-white' : 'bg-yellow-400 text-black'
-                                        }`}
-                                    >
-                                        {revealed && !shot.mine ? <XMarkIcon className="h-4 w-4" /> : <CheckIcon className="h-4 w-4" />}
-                                    </motion.span>
-                                )}
-                                {revealed && (
-                                    <motion.span
-                                        key="name"
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: 0.05 * index }}
-                                        className={`absolute inset-x-0 bottom-0 px-2 py-1 text-left text-xs font-semibold ${
-                                            shot.mine ? 'bg-yellow-400 text-black' : 'bg-black/75 text-white'
-                                        }`}
-                                    >
-                                        {shot.game}
-                                    </motion.span>
-                                )}
-                            </AnimatePresence>
-                        </motion.button>
+                            <motion.button
+                                type="button"
+                                aria-pressed={isPicked}
+                                aria-label={labelOf(index)}
+                                onClick={() => toggle(shot.file)}
+                                whileHover={revealed ? undefined : { y: -3 }}
+                                whileTap={revealed ? undefined : { scale: 0.97 }}
+                                className={`relative block aspect-video w-full overflow-hidden rounded-md border-2 bg-black bg-cover bg-center ${
+                                    revealed && shot.mine
+                                        ? 'border-yellow-400'
+                                        : isPicked
+                                            ? revealed ? 'border-red-400' : 'border-yellow-400'
+                                            : t.isDark ? 'border-zinc-800' : 'border-zinc-200'
+                                } ${revealed ? 'cursor-default' : ''}`}
+                                style={{ backgroundImage: `url(${IMAGE_BASE}/${shot.file})` }}
+                            >
+                                <AnimatePresence>
+                                    {isPicked && (
+                                        <motion.span
+                                            key="pick"
+                                            initial={{ scale: 0 }}
+                                            animate={{ scale: 1 }}
+                                            exit={{ scale: 0 }}
+                                            transition={{ type: 'spring', stiffness: 420, damping: 18 }}
+                                            className={`absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full ${
+                                                revealed && !shot.mine ? 'bg-red-500 text-white' : 'bg-yellow-400 text-black'
+                                            }`}
+                                        >
+                                            {revealed && !shot.mine ? <XMarkIcon className="h-4 w-4" /> : <CheckIcon className="h-4 w-4" />}
+                                        </motion.span>
+                                    )}
+                                    {revealed && (
+                                        <motion.span
+                                            key="name"
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: 0.05 * index }}
+                                            className={`absolute inset-x-0 bottom-0 px-2 py-1 text-left text-xs font-semibold ${
+                                                shot.mine ? 'bg-yellow-400 text-black' : 'bg-black/75 text-white'
+                                            }`}
+                                        >
+                                            {shot.game}
+                                        </motion.span>
+                                    )}
+                                </AnimatePresence>
+                            </motion.button>
+                            <button
+                                type="button"
+                                aria-label={`放大檢視${labelOf(index)}`}
+                                onClick={() => setZoomIndex(index)}
+                                className="absolute left-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-black/65 text-white transition-colors hover:bg-black/90"
+                            >
+                                <MagnifyingGlassPlusIcon className="h-4 w-4" />
+                            </button>
+                        </motion.div>
                     );
                 })}
             </div>
@@ -151,6 +171,27 @@ export function VoxelLineup() {
             <div className={`text-[11px] leading-relaxed ${t.faint}`}>
                 其他遊戲的截圖取自各自的官方 Steam 商店頁或官方網站，著作權屬各開發者所有，此處僅供比較說明。
             </div>
+
+            <Lightbox
+                image={zoomedShot && zoomIndex !== null ? { src: `${IMAGE_BASE}/${zoomedShot.file}`, label: labelOf(zoomIndex) } : null}
+                onClose={() => setZoomIndex(null)}
+                onPrev={() => step(-1)}
+                onNext={() => step(1)}
+            >
+                {zoomedShot && !revealed && (
+                    <button
+                        type="button"
+                        onClick={() => toggle(zoomedShot.file)}
+                        className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
+                            picked.includes(zoomedShot.file)
+                                ? 'border-yellow-400 bg-yellow-400 text-black'
+                                : 'border-white/40 bg-white/10 text-white hover:bg-white/20'
+                        }`}
+                    >
+                        {picked.includes(zoomedShot.file) ? '已選這張（再按一次取消）' : '我猜這張是《方界》'}
+                    </button>
+                )}
+            </Lightbox>
         </InteractiveFrame>
     );
 }

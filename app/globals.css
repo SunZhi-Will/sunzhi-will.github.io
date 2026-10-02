@@ -93,6 +93,158 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ───────────────────────────────────────────
+   首頁／連結頁／報價頁共用的深色版面
+   顏色寫死在 .site 範圍內，不跟隨系統或部落格的主題切換，
+   避免淺色偏好下出現「白底淺字」
+   ─────────────────────────────────────────── */
+html.site-dark {
+  background: #0a0a0a;
+  color-scheme: dark;
+}
+
+.site {
+  --site-bg: #0a0a0a;
+  --site-surface: #111113;
+  --site-line: rgba(255, 255, 255, 0.08);
+  --site-accent: #facc15;
+  background: var(--site-bg);
+  color: #e4e4e7;
+}
+
+.site ::selection {
+  background: rgba(250, 204, 21, 0.9);
+  color: #0a0a0a;
+}
+
+.site :focus-visible {
+  outline: 2px solid var(--site-accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* 等寬小標：區塊編號、年份、分類 */
+.eyebrow {
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #71717a;
+}
+
+.font-geist-mono {
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* 點陣底紋 */
+.dot-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* 跟隨游標的微光，座標由 components/motion/Spotlight.tsx 寫入 */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+
+.spotlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgba(250, 204, 21, 0.09), transparent 65%);
+}
+
+.spotlight:hover::before {
+  opacity: 1;
+}
+
+/* 文字連結：滑過時底線由左往右畫出 */
+.link-draw {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size 0.4s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s ease;
+}
+
+.link-draw:hover,
+.link-draw:focus-visible {
+  background-size: 100% 1px;
+}
+
+@keyframes site-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate3d(0, 2%, 0) scale(1.08);
+  }
+}
+
+.animate-breathe {
+  animation: site-breathe 14s ease-in-out infinite;
+}
+
+@keyframes site-scroll-cue {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  60%,
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.animate-scroll-cue {
+  animation: site-scroll-cue 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes site-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+
+  80%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.animate-status-ping {
+  animation: site-ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* 尊重「減少動態效果」偏好：裝飾性循環動畫全部停下 */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-breathe,
+  .animate-scroll-cue,
+  .animate-status-ping {
+    animation: none;
+  }
+
+  .link-draw,
+  .spotlight::before {
+    transition: none;
+  }
+}
+
 .hex-container {
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
