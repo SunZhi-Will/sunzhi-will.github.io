@@ -25,6 +25,9 @@ const nextConfig: NextConfig = {
   },
   // MDX 配置
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
+  // next-mdx-remote 預設會被當成外部套件，伺服器端渲染時拿到另一份 React 而出錯
+  // （Cannot read properties of null (reading 'useState')）。一起打包後，文章內文才能進靜態 HTML
+  transpilePackages: ['next-mdx-remote'],
 };
 
 const withMDX = createMDX({

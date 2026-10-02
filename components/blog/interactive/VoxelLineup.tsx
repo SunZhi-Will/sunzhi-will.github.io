@@ -10,14 +10,14 @@ const IMAGE_BASE = '/blog/2026-10-02-inspiration-vs-plagiarism';
 
 // 其他遊戲的截圖取自各自的官方 Steam 商店頁或官方網站
 const SHOTS = [
-    { file: 'lineup-cube-world.jpg', game: 'Cube World', mine: false },
-    { file: 'lineup-veloren.jpg', game: 'Veloren', mine: false },
-    { file: 'lineup-trove.jpg', game: 'Trove', mine: false },
-    { file: 'lineup-portal-knights.jpg', game: 'Portal Knights', mine: false },
-    { file: 'lineup-staxel.jpg', game: 'Staxel', mine: false },
-    { file: 'lineup-stonehearth.jpg', game: 'Stonehearth', mine: false },
-    { file: 'lineup-fangjie-1.jpg', game: '方界', mine: true },
-    { file: 'lineup-fangjie-2.jpg', game: '方界', mine: true },
+    { file: 'lineup-cube-world.webp', game: 'Cube World', mine: false },
+    { file: 'lineup-veloren.webp', game: 'Veloren', mine: false },
+    { file: 'lineup-trove.webp', game: 'Trove', mine: false },
+    { file: 'lineup-portal-knights.webp', game: 'Portal Knights', mine: false },
+    { file: 'lineup-staxel.webp', game: 'Staxel', mine: false },
+    { file: 'lineup-stonehearth.webp', game: 'Stonehearth', mine: false },
+    { file: 'lineup-fangjie-1.webp', game: '方界', mine: true },
+    { file: 'lineup-fangjie-2.webp', game: '方界', mine: true },
 ];
 
 const MINE_COUNT = SHOTS.filter((shot) => shot.mine).length;

@@ -121,6 +121,24 @@ export default function BlogPostClient({
     //     // eslint-disable-next-line react-hooks/exhaustive-deps
     // }, []);
 
+    // 直接開帶錨點的網址時捲到那一節。瀏覽器原生的錨點捲動會被換頁時的「回到頂端」蓋掉，
+    // 所以等平滑捲動初始化完再自己捲一次
+    useEffect(() => {
+        const id = decodeURIComponent(window.location.hash.slice(1));
+        if (!id) return;
+        const timer = setTimeout(() => {
+            const element = document.getElementById(id);
+            if (!element) return;
+            const top = Math.max(0, element.getBoundingClientRect().top + window.scrollY - 96);
+            if (window.__lenis) {
+                window.__lenis.scrollTo(top, { immediate: true });
+            } else {
+                window.scrollTo(0, top);
+            }
+        }, 250);
+        return () => clearTimeout(timer);
+    }, []);
+
     // 當語言改變時，保存到 localStorage 並切換到對應語言版本
     const handleLangChange = (newLang: Lang) => {
         if (newLang === lang) return; // 如果語言相同，不需要切換

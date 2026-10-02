@@ -345,10 +345,10 @@ export default function LinksPage() {
                     )}
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="flex items-center gap-2">
+                    <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
                       <span className="text-base font-medium text-zinc-100 transition-colors duration-200 group-hover:text-yellow-400">{link.title}</span>
                       {link.badge && (
-                        <span className="rounded-full border border-yellow-400/30 px-2 py-0.5 text-[10px] font-medium text-yellow-400/90">
+                        <span className="shrink-0 whitespace-nowrap rounded-full border border-yellow-400/30 px-2 py-0.5 text-[10px] font-medium text-yellow-400/90">
                           {link.badge}
                         </span>
                       )}

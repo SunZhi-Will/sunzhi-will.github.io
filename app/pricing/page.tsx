@@ -456,7 +456,7 @@ export default function PricingPage() {
 
                         <div className="mt-16 grid gap-10 border-t border-white/10 pt-10 sm:grid-cols-2 md:mt-24">
                             <Reveal>
-                                <h3 className="eyebrow">{t.contactLabel}</h3>
+                                <h3 className="eyebrow">{t.currency} · TWD</h3>
                                 <p className="mt-3 text-sm leading-relaxed text-zinc-400">{t.contactNote}</p>
                             </Reveal>
                             <Reveal delay={0.08}>

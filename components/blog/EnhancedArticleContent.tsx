@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, Suspense } from 'react';
+import { useEffect, useRef } from 'react';
 import { MDXRemote } from 'next-mdx-remote';
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { useTheme } from '@/app/blog/ThemeProvider';
@@ -242,9 +242,8 @@ export function EnhancedArticleContent({
                             prose-td:border-gray-300/30`
                         }`}
                 >
-                    <Suspense fallback={<div>Loading...</div>}>
-                        <MDXRemote {...mdxSource} components={mdxComponents} />
-                    </Suspense>
+                    {/* 不包 Suspense：包了之後這一段會晚一步 hydrate，上面的 useEffect 會先改到還沒接管的 DOM，造成 hydration 不一致 */}
+                    <MDXRemote {...mdxSource} components={mdxComponents} />
                 </div>
             </div>
         );

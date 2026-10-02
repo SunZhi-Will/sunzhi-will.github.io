@@ -22,7 +22,7 @@ export function useSiteLang(): [Lang, (lang: Lang) => void] {
   }, []);
 
   useEffect(() => {
-    document.documentElement.lang = lang;
+    document.documentElement.lang = lang === 'zh-TW' ? 'zh-Hant-TW' : 'en';
   }, [lang]);
 
   const setLang = useCallback((next: Lang) => {

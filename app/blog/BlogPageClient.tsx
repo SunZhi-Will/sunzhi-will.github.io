@@ -53,8 +53,13 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
     // 所以預設只顯示最常用的幾個，其餘收在「更多」裡
     const tagCounts = useMemo(() => {
         const counts = new Map<string, number>();
-        posts
-            .filter((post) => post.lang === undefined || post.lang === lang)
+        // posts 同時包含各語言的清單，沒有翻譯的文章會重複出現，先依 slug 去重
+        const unique = new Map(
+            posts
+                .filter((post) => post.lang === undefined || post.lang === lang)
+                .map((post) => [post.slug, post]),
+        );
+        Array.from(unique.values())
             .forEach((post) => {
                 const translated = new Set(filterTagsByLanguage(post.tags, lang).map((tag) => translateTag(tag, lang)).filter(Boolean));
                 translated.forEach((tag) => counts.set(tag, (counts.get(tag) ?? 0) + 1));

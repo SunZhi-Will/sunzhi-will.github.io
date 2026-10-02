@@ -60,9 +60,10 @@ export function Hero({ lang }: { lang: Lang }) {
   const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
   // 往下捲時首屏內容淡出並微微後退，讓下一區塊像是蓋上來
-  const opacity = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
-  const y = useTransform(scrollYProgress, [0, 1], [0, -90]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.95]);
+  // 偏好減少動態時把終點設成與起點相同，等於不動。style 屬性本身不分支，避免 hydration 前後不一致
+  const opacity = useTransform(scrollYProgress, [0, 0.75], [1, reduceMotion ? 1 : 0]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, reduceMotion ? 0 : -90]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, reduceMotion ? 1 : 0.95]);
 
   const t = translations[lang];
   const copy = homeCopy[lang];
@@ -77,7 +78,7 @@ export function Hero({ lang }: { lang: Lang }) {
     <section id="home" ref={ref} className="relative flex min-h-[100svh] flex-col px-5 pb-8 pt-28 md:px-10 md:pt-32">
       <motion.div
         className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center"
-        style={reduceMotion ? undefined : { opacity, y, scale }}
+        style={{ opacity, y, scale }}
       >
         <motion.div className="flex items-center gap-4" {...fadeUp(0.15)}>
           <div className="relative h-14 w-14 overflow-hidden rounded-full ring-1 ring-white/15">
@@ -147,7 +148,7 @@ export function Hero({ lang }: { lang: Lang }) {
         </motion.div>
       </motion.div>
 
-      <motion.div className="mx-auto mt-10 w-full max-w-6xl" style={reduceMotion ? undefined : { opacity }}>
+      <motion.div className="mx-auto mt-10 w-full max-w-6xl" style={{ opacity }}>
       <motion.div
         className="flex items-end justify-between"
         initial={{ opacity: 0 }}

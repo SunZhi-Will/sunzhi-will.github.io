@@ -38,8 +38,8 @@ const ROWS: Row[] = [
         compare: ['頭身比例', '臉型五官', '手腳尺寸', '髮型服裝', '配色材質', '種族特徵'],
         pairs: [
             {
-                cubeWorld: { file: 'compare-cw-character.jpg', note: '官方截圖中的玩家角色' },
-                fangjie: { file: 'compare-fj-character.jpg', note: '目前的角色三視圖' },
+                cubeWorld: { file: 'compare-cw-character.webp', note: '官方截圖中的玩家角色' },
+                fangjie: { file: 'compare-fj-character.webp', note: '目前的角色三視圖' },
             },
         ],
     },
@@ -50,13 +50,13 @@ const ROWS: Row[] = [
         pairs: [
             {
                 label: '遊戲中的主畫面',
-                cubeWorld: { file: 'compare-cw-ui.jpg', note: '村莊裡的遊戲畫面' },
-                fangjie: { file: 'compare-fj-ui.jpg', note: '城鎮裡的遊戲畫面' },
+                cubeWorld: { file: 'compare-cw-ui.webp', note: '村莊裡的遊戲畫面' },
+                fangjie: { file: 'compare-fj-ui.webp', note: '城鎮裡的遊戲畫面' },
             },
             {
                 label: '裝備與背包',
-                cubeWorld: { file: 'compare-cw-gear.jpg', note: '裝備欄與商人介面' },
-                fangjie: { file: 'compare-fj-gear.jpg', note: '裝備與背包介面' },
+                cubeWorld: { file: 'compare-cw-gear.webp', note: '裝備欄與商人介面' },
+                fangjie: { file: 'compare-fj-gear.webp', note: '裝備與背包介面' },
             },
         ],
     },
@@ -66,8 +66,8 @@ const ROWS: Row[] = [
         compare: ['流程', '可調選項', '介面排版', '預覽方式'],
         pairs: [
             {
-                cubeWorld: { file: 'compare-cw-creator.jpg', note: '建立角色畫面（官方影片）' },
-                fangjie: { file: 'compare-fj-creator.jpg', note: '建立角色畫面' },
+                cubeWorld: { file: 'compare-cw-creator.webp', note: '建立角色畫面（官方影片）' },
+                fangjie: { file: 'compare-fj-creator.webp', note: '建立角色畫面' },
             },
         ],
     },
@@ -77,8 +77,8 @@ const ROWS: Row[] = [
         compare: ['地形生成', '生態分區', '地標', '地圖呈現方式'],
         pairs: [
             {
-                cubeWorld: { file: 'compare-cw-map.jpg', note: '世界地圖（官方影片）' },
-                fangjie: { file: 'compare-fj-map.jpg', note: '世界地圖畫面' },
+                cubeWorld: { file: 'compare-cw-map.webp', note: '世界地圖（官方影片）' },
+                fangjie: { file: 'compare-fj-map.webp', note: '世界地圖畫面' },
             },
         ],
     },
@@ -88,8 +88,8 @@ const ROWS: Row[] = [
         compare: ['模型比例', '貼圖配色', '展開動畫', '角色姿勢'],
         pairs: [
             {
-                cubeWorld: { file: 'compare-cw-glider.jpg', note: '滑翔翼飛行中（官方影片）' },
-                fangjie: { file: 'compare-fj-glider.jpg', note: '滑翔翼飛行中（試玩版宣傳片，局部放大）' },
+                cubeWorld: { file: 'compare-cw-glider.webp', note: '滑翔翼飛行中（官方影片）' },
+                fangjie: { file: 'compare-fj-glider.webp', note: '滑翔翼飛行中（試玩版宣傳片，局部放大）' },
             },
         ],
     },
@@ -99,8 +99,8 @@ const ROWS: Row[] = [
         compare: ['造型', '招式', '機制', '場地'],
         pairs: [
             {
-                cubeWorld: { file: 'compare-cw-boss.jpg', note: '官方截圖中的大型敵人' },
-                fangjie: { file: 'compare-fj-boss.jpg', note: '區域 Boss「雷角巨獸」' },
+                cubeWorld: { file: 'compare-cw-boss.webp', note: '官方截圖中的大型敵人' },
+                fangjie: { file: 'compare-fj-boss.webp', note: '區域 Boss「雷角巨獸」' },
             },
         ],
     },
@@ -110,8 +110,8 @@ const ROWS: Row[] = [
         compare: ['效果', '特效', '圖示', '施放方式'],
         pairs: [
             {
-                cubeWorld: { file: 'compare-cw-skill.jpg', note: '法師施放火焰法術（官方影片）' },
-                fangjie: { file: 'compare-fj-skill.jpg', note: '法師施放火焰法術（試玩版宣傳片）' },
+                cubeWorld: { file: 'compare-cw-skill.webp', note: '法師施放火焰法術（官方影片）' },
+                fangjie: { file: 'compare-fj-skill.webp', note: '法師施放火焰法術（試玩版宣傳片）' },
             },
         ],
     },
@@ -122,7 +122,7 @@ const ROWS: Row[] = [
         pairs: [
             {
                 cubeWorld: { note: '官方商店頁列出四種職業：Warrior、Ranger、Mage、Rogue' },
-                fangjie: { file: 'compare-fj-class.jpg', note: '六種職業：戰士、法師、遊俠、槍手、忍者、死靈法師（圖為技能樹）' },
+                fangjie: { file: 'compare-fj-class.webp', note: '六種職業：戰士、法師、遊俠、槍手、忍者、死靈法師（圖為技能樹）' },
             },
         ],
     },

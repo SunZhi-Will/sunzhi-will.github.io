@@ -10,10 +10,10 @@ export function formatDate(dateString: string, locale: string = 'zh-TW'): string
     });
 }
 
-// 中文每分鐘約 400 字，英文約 220 字；互動元件每個另外算半分鐘
+// 中文每分鐘約 400 字，英文約 220 字；互動元件每個另外算 15 秒
 const CJK_PER_MINUTE = 400;
 const WORDS_PER_MINUTE = 220;
-const MINUTES_PER_WIDGET = 0.5;
+const MINUTES_PER_WIDGET = 0.25;
 
 /**
  * 由文章原始碼（Markdown / MDX）估算閱讀時間，單位為分鐘。
