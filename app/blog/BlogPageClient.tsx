@@ -10,7 +10,8 @@ import { blogTranslations, filterTagsByLanguage, getTagVariants, translateTag } 
 import { BlogCard } from '@/components/blog/BlogCard';
 import { BlogNavTools } from '@/components/blog/BlogNavTools';
 import { PageNav } from '@/components/PageNav';
-import { BlogMobileNav } from '@/components/blog/BlogMobileNav';
+import { BlogMobileTools } from '@/components/blog/BlogMobileTools';
+import { TabBar } from '@/components/TabBar';
 import { NewsletterSubscribe } from '@/components/blog/NewsletterSubscribe';
 import { SplitText } from '@/components/motion/SplitText';
 import { EASE_OUT } from '@/components/motion/ease';
@@ -44,6 +45,8 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
     const searchParams = useSearchParams();
     const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') || '');
     const [selectedTag, setSelectedTag] = useState<string | null>(null);
+    // 語言切換暫時停用，固定為中文（切換介面回來時會用到 setLang）
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [lang, setLang] = useState<Lang>('zh-TW');
     const [showAllTags, setShowAllTags] = useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -91,12 +94,6 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
     //         localStorage.setItem('blog-lang', detectedLang);
     //     }
     // }, []);
-
-    // 當語言改變時，保存到 localStorage
-    const handleLangChange = (newLang: Lang) => {
-        setLang(newLang);
-        localStorage.setItem('blog-lang', newLang);
-    };
 
     // 標籤匹配規則
     const getMatchingTags = (tag: string | null): string[] => {
@@ -194,21 +191,13 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                 backgroundPosition: '0 0, 0 0',
             } as React.CSSProperties}
         >
-            {/* 手機版單一導覽列 */}
-            <BlogMobileNav
-                lang={lang}
-                setLang={handleLangChange}
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-            />
-
-            {/* 電腦版置中導覽：與首頁同一套外觀，手機版由上方的 BlogMobileNav 負責 */}
+            {/* 電腦版置中導覽；手機版是底部分頁列 */}
+            <TabBar current="blog" lang={lang} theme={theme} />
             <PageNav
                 current="blog"
                 lang={lang}
                 theme={theme}
                 hideOnScroll
-                desktopOnly
                 tools={<BlogNavTools lang={lang} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />}
             />
 
@@ -234,6 +223,11 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                                 : 'Notes on AI, product, startups and game development, written after building things myself.'}
                         </motion.p>
                     </header>
+
+                    {/* 手機版：搜尋與主題切換（桌面版在導覽膠囊裡） */}
+                    <div className="-mt-4 mb-6 md:hidden">
+                        <BlogMobileTools lang={lang} variant="list" searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+                    </div>
 
                     {/* 標籤篩選：選中的底色在標籤之間滑動 */}
                     {tagCounts.length > 0 && (

@@ -7,6 +7,7 @@ import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import QRCode from 'qrcode';
 import { Backdrop } from '@/components/home/Backdrop';
 import { PageNav } from '@/components/PageNav';
+import { TabBar } from '@/components/TabBar';
 import { SplitText } from '@/components/motion/SplitText';
 import { EASE_OUT } from '@/components/motion/ease';
 import { useSiteLang } from '@/lib/use-site-lang';
@@ -140,6 +141,7 @@ export default function LinksPage() {
       <main className="site relative isolate min-h-screen antialiased [overflow-x:clip]">
         <Backdrop />
         <PageNav current="links" lang={lang} />
+        <TabBar current="links" lang={lang} />
 
         {/* 頂部控制列 */}
         <motion.div

@@ -9,6 +9,7 @@ import { Contact } from '@/components/home/Contact';
 import { FloatingDock } from '@/components/home/FloatingDock';
 import { Hero } from '@/components/home/Hero';
 import { SiteNav } from '@/components/home/SiteNav';
+import { TabBar } from '@/components/TabBar';
 import { Skills } from '@/components/home/Skills';
 import { Work } from '@/components/home/Work';
 import { useSiteLang } from '@/lib/use-site-lang';
@@ -40,6 +41,16 @@ export default function Home() {
         </a>
         <Backdrop />
         <SiteNav lang={lang} setLang={setLang} />
+        <TabBar current="home" lang={lang} />
+        {/* 手機版沒有頂部導覽列，語言切換放在右上角，跟著頁面捲走 */}
+        <button
+          type="button"
+          onClick={() => setLang(lang === 'zh-TW' ? 'en' : 'zh-TW')}
+          className="font-geist-mono absolute right-4 top-4 z-30 flex h-10 items-center rounded-full border border-white/15 bg-[#141416]/80 px-4 text-xs text-zinc-200 backdrop-blur-xl md:hidden"
+          aria-label={lang === 'zh-TW' ? 'Switch to English' : '切換為中文'}
+        >
+          {lang === 'zh-TW' ? 'EN' : '中'}
+        </button>
         <main>
           <Hero lang={lang} />
           <About lang={lang} />

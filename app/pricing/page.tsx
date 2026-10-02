@@ -5,6 +5,7 @@ import { motion, MotionConfig } from 'framer-motion';
 import Link from 'next/link';
 import { Backdrop } from '@/components/home/Backdrop';
 import { PageNav } from '@/components/PageNav';
+import { TabBar } from '@/components/TabBar';
 import { Magnetic } from '@/components/motion/Magnetic';
 import { Reveal } from '@/components/motion/Reveal';
 import { Spotlight } from '@/components/motion/Spotlight';
@@ -295,6 +296,7 @@ export default function PricingPage() {
             <div className="site relative isolate min-h-screen [overflow-x:clip]">
                 <Backdrop />
                 <PageNav current="pricing" lang={lang} />
+                <TabBar current="pricing" lang={lang} />
 
                 {/* 頂部控制列 */}
                 <motion.header

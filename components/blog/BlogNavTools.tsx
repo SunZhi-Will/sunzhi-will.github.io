@@ -55,7 +55,7 @@ export function BlogNavTools({ lang, searchQuery, setSearchQuery }: BlogNavTools
                             placeholder={t.searchPlaceholder}
                             aria-label={t.searchPlaceholder}
                             className={`h-8 w-[200px] bg-transparent px-3 text-[13px] focus:outline-none ${
-                                dark ? 'text-white placeholder:text-white/45' : 'text-stone-900 placeholder:text-stone-400'
+                                dark ? 'text-white placeholder:text-zinc-200' : 'text-stone-900 placeholder:text-stone-400'
                             }`}
                         />
                     </motion.div>

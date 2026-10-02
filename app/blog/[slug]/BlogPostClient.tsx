@@ -14,7 +14,8 @@ import { PostPager } from '@/components/blog/PostPager';
 // 動態導入使用 framer-motion 的組件，避免預渲染問題
 const PageNav = dynamic(() => import('@/components/PageNav').then(mod => ({ default: mod.PageNav })), { ssr: false });
 const BlogNavTools = dynamic(() => import('@/components/blog/BlogNavTools').then(mod => ({ default: mod.BlogNavTools })), { ssr: false });
-const BlogMobileNav = dynamic(() => import('@/components/blog/BlogMobileNav').then(mod => ({ default: mod.BlogMobileNav })), { ssr: false });
+const TabBar = dynamic(() => import('@/components/TabBar').then(mod => ({ default: mod.TabBar })), { ssr: false });
+const BlogMobileTools = dynamic(() => import('@/components/blog/BlogMobileTools').then(mod => ({ default: mod.BlogMobileTools })), { ssr: false });
 const RelatedPosts = dynamic(() => import('@/components/blog/RelatedPosts').then(mod => ({ default: mod.RelatedPosts })), { ssr: false });
 const CommentSection = dynamic(() => import('@/components/blog/CommentSection').then(mod => ({ default: mod.CommentSection })), { ssr: false });
 const ReadingProgress = dynamic(() => import('@/components/blog/ReadingProgress').then(mod => ({ default: mod.ReadingProgress })), { ssr: false });
@@ -57,6 +58,8 @@ export default function BlogPostClient({
     allPostsByLang,
     baseUrl,
 }: BlogPostClientProps) {
+    // 語言切換暫時停用，固定為中文（切換介面回來時會用到 setLang 與 switchToLang）
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [lang, setLang] = useState<Lang>('zh-TW');
     const [searchQuery, setSearchQuery] = useState('');
     const router = useRouter();
@@ -70,7 +73,6 @@ export default function BlogPostClient({
     const { theme } = useTheme();
     const isDark = theme === 'dark';
     const [isMobileTOCOpen, setIsMobileTOCOpen] = useState(false);
-    const [hasHeadings, setHasHeadings] = useState(false);
 
     // 在客戶端更新 baseUrl（僅在客戶端執行，不影響 SSR）
     useEffect(() => {
@@ -83,7 +85,8 @@ export default function BlogPostClient({
     const contentLength = currentContentLength ?? (currentHtmlContent?.length || 0) + (currentMdxSource ? 9000 : 0);
     const readingTime = currentPost.readingMinutes ?? Math.max(1, Math.ceil(contentLength / 700));
 
-    // 切換到指定語言版本的文章
+    // 切換到指定語言版本的文章（語言切換暫時停用，尚未使用）
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const switchToLang = (targetLang: Lang) => {
         const postData = postsByLang[targetLang];
         if (postData) {
@@ -139,15 +142,6 @@ export default function BlogPostClient({
         return () => clearTimeout(timer);
     }, []);
 
-    // 當語言改變時，保存到 localStorage 並切換到對應語言版本
-    const handleLangChange = (newLang: Lang) => {
-        if (newLang === lang) return; // 如果語言相同，不需要切換
-
-        setLang(newLang);
-        localStorage.setItem('blog-lang', newLang);
-        switchToLang(newLang);
-    };
-
     // 當語言或文章標題改變時，更新頁面標題
     useEffect(() => {
         if (currentPost.title) {
@@ -166,13 +160,8 @@ export default function BlogPostClient({
                 backgroundSize: '50px 50px',
             } satisfies CSSProperties}
         >
-            {/* 手機版單一導覽列 */}
-            <BlogMobileNav
-                lang={lang}
-                setLang={handleLangChange}
-                hasTOC={hasHeadings}
-                onTOCClick={() => setIsMobileTOCOpen(true)}
-            />
+            {/* 手機版：底部分頁列，往下閱讀時收起 */}
+            <TabBar current="blog" lang={lang} theme={theme} hideOnScroll />
 
             {/* 電腦版置中導覽：往下閱讀時自動收起 */}
             <PageNav
@@ -180,7 +169,6 @@ export default function BlogPostClient({
                 lang={lang}
                 theme={theme}
                 hideOnScroll
-                desktopOnly
                 back={{ href: '/blog', label: lang === 'zh-TW' ? '所有文章' : 'All posts' }}
                 tools={
                     <BlogNavTools
@@ -202,14 +190,16 @@ export default function BlogPostClient({
                 lang={lang}
                 isMobileOpen={isMobileTOCOpen}
                 setIsMobileOpen={setIsMobileTOCOpen}
-                onHasHeadings={setHasHeadings}
             />
 
             {/* 主要內容區域 - 全寬 */}
             <main>
                 <article className="relative">
                     {/* 文章內容 - 統一的內容區域 */}
-                    <div data-article-content="true" className="max-w-3xl mx-auto px-4 pt-10 pb-6 md:px-8 md:pt-24 md:pb-8 lg:pb-10">
+                    <div data-article-content="true" className="max-w-3xl mx-auto px-4 pt-4 pb-6 md:px-8 md:pt-24 md:pb-8 lg:pb-10">
+                        <div className="mb-6 md:hidden">
+                            <BlogMobileTools lang={lang} variant="post" />
+                        </div>
                         <div className="space-y-10">
                             <ArticleHero
                                 post={currentPost}
