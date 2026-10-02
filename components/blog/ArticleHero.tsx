@@ -228,16 +228,19 @@ export function ArticleHero({ post, lang, readingTime, isDark }: ArticleHeroProp
 
             {post.coverImage && (
                 <div
-                    className={`relative mt-9 flex w-full justify-center overflow-hidden rounded-xl border ${cover.className} ${
+                    className={`relative mt-9 aspect-[16/9] w-full overflow-hidden rounded-xl border ${cover.className} ${
                         isDark ? 'border-zinc-800 bg-zinc-900/60 shadow-2xl shadow-black/50' : 'border-zinc-200 bg-zinc-50 shadow-xl shadow-zinc-200/70'
                     }`}
                     style={cover.style}
                 >
+                    {/* 容器固定 16:9，圖片載入前後版面不會跳；封面是首屏最大的圖，優先載入 */}
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                        src={post.coverImage}
+                        src={post.coverImageDisplay ?? post.coverImage}
                         alt={post.title}
-                        className="block h-auto max-h-[70vh] w-full object-contain"
+                        fetchPriority="high"
+                        decoding="async"
+                        className="absolute inset-0 h-full w-full object-contain"
                     />
                 </div>
             )}

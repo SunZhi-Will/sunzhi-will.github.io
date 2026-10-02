@@ -9,6 +9,7 @@ import { Lang } from '@/types';
 import { blogTranslations } from '@/lib/blog-translations';
 import { useTheme } from '@/app/blog/ThemeProvider';
 import { LogoIcon } from '@/components/LogoIcon';
+import { useHideOnScroll } from '@/lib/use-hide-on-scroll';
 
 interface BlogMobileNavProps {
     lang: Lang;
@@ -37,6 +38,8 @@ export function BlogMobileNav({
     const { theme } = useTheme();
     const isDark = theme === 'dark';
     const t = blogTranslations[lang];
+    // 往下閱讀時收起；選單或搜尋開著的時候不收
+    const hidden = useHideOnScroll() && !isMenuOpen && !isSearchOpen;
 
     // 判斷是否在文章詳情頁面
     const isPostPage = pathname?.startsWith('/blog/') && pathname !== '/blog';
@@ -70,8 +73,8 @@ export function BlogMobileNav({
             <motion.div
                 className="fixed top-0 left-0 right-0 z-50 pointer-events-auto md:hidden"
                 initial={{ y: -100, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
+                animate={{ y: hidden ? -100 : 0, opacity: hidden ? 0 : 1 }}
+                transition={{ duration: 0.3 }}
             >
                 <div className={`mx-2 mt-2 rounded-2xl backdrop-blur-2xl shadow-2xl transition-colors duration-300 ${
                     isDark

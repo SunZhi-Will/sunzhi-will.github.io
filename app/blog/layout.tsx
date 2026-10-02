@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from './ThemeProvider';
+import './blog.css';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://sunzhi-will.github.io';
 
@@ -47,9 +48,7 @@ export default function BlogLayout({
 }>) {
   return (
     <ThemeProvider>
-      <div className="fixed inset-0 overflow-hidden">
-        {children}
-      </div>
+      <div className="blog-root">{children}</div>
     </ThemeProvider>
   );
 }

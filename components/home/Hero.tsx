@@ -147,8 +147,9 @@ export function Hero({ lang }: { lang: Lang }) {
         </motion.div>
       </motion.div>
 
+      <motion.div className="mx-auto mt-10 w-full max-w-6xl" style={reduceMotion ? undefined : { opacity }}>
       <motion.div
-        className="mx-auto mt-10 flex w-full max-w-6xl items-end justify-between"
+        className="flex items-end justify-between"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 1.3 }}
@@ -180,6 +181,7 @@ export function Hero({ lang }: { lang: Lang }) {
             </li>
           ))}
         </ul>
+      </motion.div>
       </motion.div>
     </section>
   );

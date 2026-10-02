@@ -132,7 +132,7 @@ export function ProjectDetail({ items, index, lang, onChange, onClose }: Project
               </div>
             </div>
 
-            <div ref={scrollRef} data-lenis-prevent className="scrollbar-custom flex-1 overflow-y-auto overscroll-contain">
+            <div ref={scrollRef} data-lenis-prevent className="flex-1 overflow-y-auto overscroll-contain">
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={item.title}

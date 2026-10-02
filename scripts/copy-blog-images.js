@@ -4,6 +4,56 @@ const path = require('path');
 const postsDirectory = path.join(process.cwd(), 'content/blog');
 const publicBlogDirectory = path.join(process.cwd(), 'public/blog');
 
+// 文章圖片最佳化：另外輸出一份縮到 MAX_WIDTH 的 WebP，並記錄每張圖的尺寸。
+// 原檔照樣複製（社群預覽圖要用 PNG/JPG），頁面顯示時改用 WebP。
+const MAX_WIDTH = 1600;
+const WEBP_QUALITY = 82;
+const OPTIMIZABLE = ['.png', '.jpg', '.jpeg'];
+const manifestPath = path.join(publicBlogDirectory, 'image-manifest.json');
+const manifest = {};
+
+let sharp = null;
+try {
+    sharp = require('sharp');
+} catch {
+    console.warn('\u26a0\ufe0f  找不到 sharp，略過圖片最佳化（只複製原檔）');
+}
+
+async function optimizeImage(slug, imageFile) {
+    if (!sharp) return;
+    const ext = path.extname(imageFile).toLowerCase();
+    const sourcePath = path.join(postsDirectory, slug, imageFile);
+    const publicPath = `/blog/${slug}/${imageFile}`;
+
+    try {
+        const meta = await sharp(sourcePath, { animated: true }).metadata();
+        // 動圖的 height 是所有影格相加，要用單一影格的高度
+        const entry = { width: meta.width, height: meta.pageHeight || meta.height };
+
+        if (OPTIMIZABLE.includes(ext)) {
+            const webpName = imageFile.slice(0, -ext.length) + '.webp';
+            // 資料夾裡已經有同名 WebP 原檔時不覆蓋
+            if (!fs.existsSync(path.join(postsDirectory, slug, webpName))) {
+                const destPath = path.join(publicBlogDirectory, slug, webpName);
+                const upToDate = fs.existsSync(destPath) && fs.statSync(destPath).mtimeMs >= fs.statSync(sourcePath).mtimeMs;
+                if (!upToDate) {
+                    await sharp(sourcePath)
+                        .resize({ width: MAX_WIDTH, withoutEnlargement: true })
+                        .webp({ quality: WEBP_QUALITY })
+                        .toFile(destPath);
+                }
+                const scale = Math.min(1, MAX_WIDTH / entry.width);
+                entry.webp = `/blog/${slug}/${webpName}`;
+                entry.width = Math.round(entry.width * scale);
+                entry.height = Math.round(entry.height * scale);
+            }
+        }
+        manifest[publicPath] = entry;
+    } catch (error) {
+        console.error(`  \u2717 最佳化失敗: ${sourcePath}`, error.message);
+    }
+}
+
 if (!fs.existsSync(publicBlogDirectory)) {
     fs.mkdirSync(publicBlogDirectory, { recursive: true });
 }
@@ -72,7 +122,7 @@ function processPostFolder(slug) {
     });
 }
 
-function main() {
+async function main() {
     console.log('\u958b\u59cb\u8907\u88fd\u90e8\u843d\u683c\u5716\u7247...\n');
     console.log(`\u4f86\u6e90\u76ee\u9304: ${postsDirectory}`);
     console.log(`\u76ee\u6a19\u76ee\u9304: ${publicBlogDirectory}\n`);
@@ -102,6 +152,22 @@ function main() {
         }
     });
     console.log(`\n\u2713 \u5716\u7247\u8907\u88fd\u5b8c\u6210\uff01\u5171\u8655\u7406 ${totalCopied} \u500b\u5716\u7247\u6587\u4ef6`);
+    // 產生 WebP 與尺寸清單
+    let optimized = 0;
+    for (const slug of postFolders) {
+        const files = fs.readdirSync(path.join(postsDirectory, slug));
+        for (const file of files) {
+            const ext = path.extname(file).toLowerCase();
+            if (['.png', '.jpg', '.jpeg', '.webp', '.gif'].includes(ext)) {
+                await optimizeImage(slug, file);
+                optimized++;
+            }
+        }
+    }
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest));
+    const webpCount = Object.values(manifest).filter((entry) => entry.webp).length;
+    console.log(`\n\u2713 圖片最佳化完成：${optimized} 張已記錄尺寸，其中 ${webpCount} 張另存 WebP`);
+
     console.log('\n\u9a57\u8b49\u8907\u88fd\u7d50\u679c:');
     postFolders.forEach(slug => {
         const destFolder = path.join(publicBlogDirectory, slug);
@@ -114,4 +180,7 @@ function main() {
     });
 }
 
-main();
+main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+});

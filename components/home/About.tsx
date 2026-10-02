@@ -70,7 +70,7 @@ export function About({ lang }: { lang: Lang }) {
   const bodyParagraphs = closing ? intro.body.slice(0, -1) : intro.body;
 
   return (
-    <section id="about" className="px-5 py-24 md:px-10 md:py-40">
+    <section id="about" className="px-5 py-20 md:px-10 md:py-32">
       <div className="mx-auto max-w-6xl">
         <SectionHeading index="01" title={t.about.title} />
 

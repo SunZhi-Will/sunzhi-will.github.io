@@ -1,0 +1,65 @@
+/*
+ * 部落格專用樣式。
+ * 放在這裡而不是 globals.css，避免影響首頁、連結頁等其他頁面。
+ * 選擇器都掛在 [data-article-content] 底下，優先度會高過 globals.css 的 .prose 規則。
+ */
+
+/* 深色主題時，捲軸與表單控制項也跟著變深 */
+html.dark:has(.blog-root) {
+  color-scheme: dark;
+}
+
+/* 內文一行約 38 個中文字，比原本的 47 字好讀 */
+[data-article-content] .prose {
+  max-width: none;
+}
+
+/* 清單：原本每一項上下各有 padding 和 margin，六個短項目就佔掉半個螢幕 */
+[data-article-content] .prose ul > li,
+[data-article-content] .prose ol > li {
+  margin: 0.35rem 0 !important;
+  padding-top: 0.15rem !important;
+  padding-bottom: 0.15rem !important;
+}
+
+/* 引言：typography 外掛會自動加英文引號，和中文的「」疊成兩層 */
+[data-article-content] .prose blockquote p::before,
+[data-article-content] .prose blockquote p::after {
+  content: none !important;
+}
+
+/* 標題錨點：捲到標題時留出導覽列的高度 */
+[data-article-content] .prose :is(h2, h3, h4) {
+  scroll-margin-top: 6rem;
+}
+
+[data-article-content] .prose .heading-anchor {
+  margin-left: 0.4em;
+  border: 0 !important;
+  padding: 0 !important;
+  font-weight: 400;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+[data-article-content] .prose .heading-anchor::after {
+  content: '#';
+}
+
+[data-article-content] .prose :is(h2, h3, h4):hover .heading-anchor,
+[data-article-content] .prose .heading-anchor:focus-visible {
+  opacity: 0.6;
+}
+
+/* 觸控裝置沒有 hover，錨點常駐但調淡 */
+@media (hover: none) {
+  [data-article-content] .prose .heading-anchor {
+    opacity: 0.3;
+  }
+}
+
+/* 內文圖片有寬高屬性後，高度要跟著寬度等比縮放 */
+[data-article-content] .prose img {
+  height: auto;
+}

@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
-import { blogTranslations, getTagVariants, translateTag } from '@/lib/blog-translations';
+import { blogTranslations, filterTagsByLanguage, getTagVariants, translateTag } from '@/lib/blog-translations';
 import { BlogCard } from '@/components/blog/BlogCard';
 import { BlogDynamicIsland } from '@/components/blog/BlogDynamicIsland';
 import { BlogNavIsland } from '@/components/blog/BlogNavIsland';
@@ -39,20 +39,36 @@ interface BlogPageClientProps {
     tags: string[];
 }
 
-export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
+export default function BlogPageClient({ posts }: BlogPageClientProps) {
     const searchParams = useSearchParams();
     const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') || '');
     const [selectedTag, setSelectedTag] = useState<string | null>(null);
     const [lang, setLang] = useState<Lang>('zh-TW');
+    const [showAllTags, setShowAllTags] = useState(false);
     const { theme } = useTheme();
 
     const t = blogTranslations[lang];
 
-    // 取得當前語言下唯一的翻譯後標籤列表
-    const uniqueTags = useMemo(() => {
-        const translated = tags.map(tag => translateTag(tag, lang));
-        return Array.from(new Set(translated)).filter(Boolean);
-    }, [tags, lang]);
+    // 標籤只取目前語言的文章，依文章數排序。文章不多時標籤很容易比文章還多，
+    // 所以預設只顯示最常用的幾個，其餘收在「更多」裡
+    const tagCounts = useMemo(() => {
+        const counts = new Map<string, number>();
+        posts
+            .filter((post) => post.lang === undefined || post.lang === lang)
+            .forEach((post) => {
+                const translated = new Set(filterTagsByLanguage(post.tags, lang).map((tag) => translateTag(tag, lang)).filter(Boolean));
+                translated.forEach((tag) => counts.set(tag, (counts.get(tag) ?? 0) + 1));
+            });
+        return Array.from(counts.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], lang));
+    }, [posts, lang]);
+
+    const VISIBLE_TAGS = 6;
+    const visibleTags = showAllTags ? tagCounts : tagCounts.slice(0, VISIBLE_TAGS);
+    // 已選的標籤如果被收起來了，仍然要顯示，不然看不出目前在篩選什麼
+    const selectedHidden = selectedTag && !visibleTags.some(([tag]) => tag === selectedTag)
+        ? tagCounts.find(([tag]) => tag === selectedTag)
+        : undefined;
+    const shownTags = selectedHidden ? [...visibleTags, selectedHidden] : visibleTags;
 
     // 從 localStorage 讀取語言選擇，如果沒有則偵測瀏覽器語言 (暫時停用，固定為中文)
     // useEffect(() => {
@@ -159,7 +175,7 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
 
     return (
         <div
-            className="h-screen overflow-hidden relative transition-colors duration-300"
+            className="min-h-screen relative transition-colors duration-300"
             style={{
                 backgroundColor: isDark ? '#0a0a0a' : '#faf9f7',
                 backgroundImage: isDark
@@ -199,21 +215,39 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
             </div>
 
             {/* 主要內容區域 */}
-            <main className="h-full overflow-y-auto relative scrollbar-custom">
+            <main className="relative">
                 <div className="max-w-4xl mx-auto px-4 pb-20 md:px-6 pt-[5.5rem] md:pt-24">
-                    {/* 標籤雲 / 探索標籤 */}
-                    {uniqueTags.length > 0 && (
+                    {/* 頁面標題：讓第一次來的人知道這是誰的部落格、寫些什麼 */}
+                    <motion.header
+                        initial={{ opacity: 0, y: -8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4 }}
+                        className="mb-7"
+                    >
+                        <h1 className={`text-3xl font-bold tracking-tight md:text-4xl ${isDark ? 'text-white/95' : 'text-stone-900'}`}>
+                            {lang === 'zh-TW' ? 'Sun 的部落格' : "Sun's Blog"}
+                        </h1>
+                        <p className={`mt-2.5 max-w-xl text-[15px] leading-relaxed ${isDark ? 'text-white/50' : 'text-stone-500'}`}>
+                            {lang === 'zh-TW'
+                                ? '寫 AI、產品、創業和遊戲開發，都是自己動手做過之後的想法。'
+                                : 'Notes on AI, product, startups and game development, written after building things myself.'}
+                        </p>
+                    </motion.header>
+
+                    {/* 標籤篩選 */}
+                    {tagCounts.length > 0 && (
                         <motion.div
                             initial={{ opacity: 0, y: -8 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.4 }}
+                            transition={{ duration: 0.4, delay: 0.05 }}
                             className="mb-8"
                         >
                             <div className="flex flex-wrap items-center gap-2">
                                 {/* 全部按鈕 */}
                                 <button
                                     onClick={() => setSelectedTag(null)}
-                                    className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                                    aria-pressed={selectedTag === null}
+                                    className={`min-h-[2.25rem] px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
                                         selectedTag === null
                                             ? isDark
                                                 ? 'bg-yellow-400 text-black shadow-sm shadow-yellow-400/25'
@@ -226,13 +260,14 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
                                     {t.allPosts}
                                 </button>
                                 {/* 個別標籤 */}
-                                {uniqueTags.map((tag) => {
+                                {shownTags.map(([tag, count]) => {
                                     const active = selectedTag === tag;
                                     return (
                                         <button
                                             key={tag}
                                             onClick={() => setSelectedTag(active ? null : tag)}
-                                            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                                            aria-pressed={active}
+                                            className={`min-h-[2.25rem] px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
                                                 active
                                                     ? isDark
                                                         ? 'bg-yellow-400 text-black shadow-sm shadow-yellow-400/25'
@@ -243,9 +278,23 @@ export default function BlogPageClient({ posts, tags }: BlogPageClientProps) {
                                             }`}
                                         >
                                             {tag}
+                                            {count > 1 && <span className="ml-1.5 opacity-60">{count}</span>}
                                         </button>
                                     );
                                 })}
+                                {tagCounts.length > VISIBLE_TAGS && (
+                                    <button
+                                        onClick={() => setShowAllTags((value) => !value)}
+                                        aria-expanded={showAllTags}
+                                        className={`min-h-[2.25rem] px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                                            isDark ? 'text-yellow-300/80 hover:text-yellow-200' : 'text-amber-700 hover:text-amber-800'
+                                        }`}
+                                    >
+                                        {showAllTags
+                                            ? (lang === 'zh-TW' ? '收起' : 'Less')
+                                            : (lang === 'zh-TW' ? `更多標籤（${tagCounts.length - VISIBLE_TAGS}）` : `More (${tagCounts.length - VISIBLE_TAGS})`)}
+                                    </button>
+                                )}
                             </div>
                             {/* 分隔線 */}
                             <div className={`mt-5 h-px w-full ${isDark ? 'bg-white/[0.06]' : 'bg-stone-200/70'}`} />

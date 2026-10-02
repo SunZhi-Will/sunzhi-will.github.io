@@ -6,6 +6,7 @@ import type { BlogPost } from '@/types/blog';
 import type { Metadata } from 'next';
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import remarkGfm from 'remark-gfm';
+import { rehypeBlog } from '@/lib/rehype-blog';
 // MDX 組件現在由 Next.js 內建處理
 
 // 強制靜態生成
@@ -43,6 +44,24 @@ interface BlogPostPageProps {
 
 // 導入必要的組件
 import { serialize } from 'next-mdx-remote/serialize';
+
+// 傳給客戶端的文章資料：不含內文原始碼
+function toPostMeta(post: BlogPost, descriptionHtml: string): Omit<BlogPost, 'content'> {
+    return {
+        slug: post.slug,
+        title: post.title,
+        date: post.date,
+        description: post.description,
+        descriptionHtml,
+        tags: post.tags,
+        coverImage: post.coverImage,
+        coverImageDisplay: post.coverImageDisplay,
+        readingMinutes: post.readingMinutes,
+        lang: post.lang,
+        availableLangs: post.availableLangs,
+        isMdx: post.isMdx,
+    };
+}
 
 // 生成頁面 metadata（標題）
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
@@ -171,23 +190,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         const mdxSource = await serialize(content, {
                             mdxOptions: {
                                 remarkPlugins: [remarkGfm],
-                                rehypePlugins: [],
+                                rehypePlugins: [rehypeBlog],
                             },
                         });
 
                         postsByLang[lang] = {
-                            post: {
-                                slug: post.slug,
-                                title: post.title,
-                                date: post.date,
-                                description: post.description,
-                                descriptionHtml,
-                                tags: post.tags,
-                                coverImage: post.coverImage,
-                                lang: post.lang,
-                                availableLangs: post.availableLangs,
-                                isMdx: post.isMdx,
-                            },
+                            post: toPostMeta(post, descriptionHtml),
                             contentLength: content.length,
                             mdxSource,
                         };
@@ -195,18 +203,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 } catch (error) {
                     console.error('Error processing MDX file:', error);
                     postsByLang[lang] = {
-                        post: {
-                            slug: post.slug,
-                            title: post.title,
-                            date: post.date,
-                            description: post.description,
-                            descriptionHtml,
-                            tags: post.tags,
-                            coverImage: post.coverImage,
-                            lang: post.lang,
-                            availableLangs: post.availableLangs,
-                            isMdx: post.isMdx,
-                        },
+                        post: toPostMeta(post, descriptionHtml),
                         contentLength: post.content?.length,
                         htmlContent: '<p>無法載入內容</p>',
                     };
@@ -215,18 +212,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 // 普通 Markdown 文件：轉換為 HTML
                 const htmlContent = post.content ? await markdownToHtml(post.content) : '';
                 postsByLang[lang] = {
-                    post: {
-                        slug: post.slug,
-                        title: post.title,
-                        date: post.date,
-                        description: post.description,
-                        descriptionHtml,
-                        tags: post.tags,
-                        coverImage: post.coverImage,
-                        lang: post.lang,
-                        availableLangs: post.availableLangs,
-                        isMdx: post.isMdx,
-                    },
+                    post: toPostMeta(post, descriptionHtml),
                     contentLength: post.content?.length,
                     htmlContent,
                 };
@@ -239,6 +225,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             description: p.description,
             tags: p.tags,
             coverImage: p.coverImage,
+            coverImageDisplay: p.coverImageDisplay,
             lang: p.lang,
             availableLangs: p.availableLangs,
         }));

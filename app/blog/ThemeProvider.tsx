@@ -26,10 +26,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         if (savedTheme && (savedTheme === 'dark' || savedTheme === 'light')) {
             setTheme(savedTheme);
         } else {
-            // 如果沒有保存的主題，使用預設深色
-            const defaultTheme: Theme = 'dark';
-            setTheme(defaultTheme);
-            localStorage.setItem('blog-theme', defaultTheme);
+            // 沒有儲存過偏好時跟著系統設定。這裡不寫入 localStorage，
+            // 之後訪客改了系統設定，或自己按了切換鈕，才會以新的為準
+            setTheme(window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
         }
     }, []);
 
@@ -37,8 +36,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         // 只有在客戶端 mounted 後才執行
         if (!mounted || typeof window === 'undefined') return;
         
-        // 保存主題到 localStorage
-        localStorage.setItem('blog-theme', theme);
         // 同時設定 class 到 document，讓 CSS 變數和 Tailwind dark: 前綴都能正確運作
         if (theme === 'dark') {
             document.documentElement.classList.add('dark');
@@ -50,7 +47,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }, [theme, mounted]);
 
     const toggleTheme = () => {
-        setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+        const next: Theme = theme === 'dark' ? 'light' : 'dark';
+        setTheme(next);
+        // 只有訪客自己切換時才記住，否則繼續跟著系統設定
+        localStorage.setItem('blog-theme', next);
     };
 
     return (

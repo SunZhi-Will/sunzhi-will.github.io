@@ -125,7 +125,7 @@ export function EnhancedArticleContent({
                             }
                             // 創建高亮 span
                             const span = document.createElement('span');
-                            span.className = `font-bold ${isDark ? 'text-purple-400' : 'text-purple-600'}`;
+                            span.className = `font-semibold ${isDark ? 'text-yellow-300' : 'text-yellow-700'}`;
                             span.textContent = match[0];
                             parts.push(span);
                             lastIndex = match.index + match[0].length;

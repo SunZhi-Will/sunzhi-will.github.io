@@ -101,6 +101,21 @@ html {
 html.site-dark {
   background: #0a0a0a;
   color-scheme: dark;
+  scrollbar-color: #3f3f46 transparent;
+}
+
+html.site-dark * {
+  scrollbar-color: #3f3f46 transparent;
+}
+
+html.site-dark::-webkit-scrollbar-thumb,
+html.site-dark ::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+}
+
+html.site-dark::-webkit-scrollbar-thumb:hover,
+html.site-dark ::-webkit-scrollbar-thumb:hover {
+  background: #fbbf24;
 }
 
 .site {
@@ -126,8 +141,8 @@ html.site-dark {
 /* 等寬小標：區塊編號、年份、分類 */
 .eyebrow {
   font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.6875rem;
-  letter-spacing: 0.14em;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #71717a;
 }

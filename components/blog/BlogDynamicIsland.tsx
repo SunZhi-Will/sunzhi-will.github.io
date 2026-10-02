@@ -5,6 +5,7 @@ import { MagnifyingGlassIcon, XMarkIcon, SunIcon, MoonIcon } from '@heroicons/re
 import { Lang } from '@/types';
 import { blogTranslations } from '@/lib/blog-translations';
 import { useTheme } from '@/app/blog/ThemeProvider';
+import { useHideOnScroll } from '@/lib/use-hide-on-scroll';
 
 interface BlogDynamicIslandProps {
     lang: Lang;
@@ -24,9 +25,15 @@ export function BlogDynamicIsland({
     const t = blogTranslations[lang];
 
     const isExpanded = isFocused || searchQuery.length > 0;
+    // 往下閱讀時收起；正在搜尋時不收
+    const hidden = useHideOnScroll() && !isExpanded;
 
     return (
-        <div className="fixed top-0 right-0 z-50 pointer-events-auto">
+        <div
+            className={`fixed top-0 right-0 z-50 pointer-events-auto transition-all duration-300 focus-within:translate-y-0 focus-within:opacity-100 ${
+                hidden ? '-translate-y-24 opacity-0' : ''
+            }`}
+        >
             <div
                 className={`relative overflow-hidden mt-4 mr-4 rounded-3xl backdrop-blur-2xl shadow-2xl transition-all duration-300 ${theme === 'dark'
                     ? 'bg-[#1c1c1e]/95 border border-white/20'

@@ -81,7 +81,7 @@ Sun 目前主導多個核心專案：
 
 除了開發工作，Sun 積極透過工作坊和企業技術分享會傳授實務知識，涵蓋 Gemini API、OpenAI、Notion 整合等主題。他的技術廣度橫跨 Unity 遊戲、.NET 系統、全棧 Web、AI 工具與桌面應用。
 
-Sun 相信偉大的技術不僅僅是演算法——而是要建構人們信任、理解並樂於使用的直觀工具。`,
+Sun 相信偉大的技術不僅僅是演算法，而是要建構人們信任、理解並樂於使用的直觀工具。`,
             experiences: [
                 {
                     title: "英業達股份有限公司 - 軟體工程師",
@@ -268,7 +268,7 @@ Sun currently leads several core projects:
 
 In addition to development, Sun actively shares his expertise through workshops and enterprise tech sessions covering Gemini APIs, OpenAI, and Notion integrations. His technical breadth spans Unity games, .NET systems, full-stack web, AI tools, and desktop applications.
 
-Sun believes great technology isn't just about algorithms—it's about building intuitive tools that people trust, understand, and enjoy using.`,
+Sun believes great technology isn't just about algorithms. It's about building intuitive tools that people trust, understand, and enjoy using.`,
             experiences: [
                 {
                     title: "Inventec Corporation - Software Engineer",

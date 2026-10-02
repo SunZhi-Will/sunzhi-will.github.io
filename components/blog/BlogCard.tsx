@@ -56,23 +56,23 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
                         <div className={`relative flex-shrink-0 overflow-hidden
                             ${isHorizontal
                                 ? featured
-                                    ? 'w-full md:w-[280px] lg:w-[340px] md:rounded-l-2xl md:rounded-tr-none rounded-t-2xl'
+                                    ? 'w-full md:w-[52%] md:rounded-l-2xl md:rounded-tr-none rounded-t-2xl'
                                     : 'w-full md:w-[200px] lg:w-[240px] md:rounded-l-2xl md:rounded-tr-none rounded-t-2xl'
                                 : 'w-full rounded-t-2xl'
                             }
                         `}>
                             <div className={`relative w-full overflow-hidden
-                                ${isHorizontal ? 'h-full min-h-[160px] md:min-h-[180px]' : 'aspect-[16/9]'}
+                                ${isHorizontal ? 'aspect-[16/9] md:aspect-auto md:h-full md:min-h-[200px]' : 'aspect-[16/9]'}
                                 ${isDark ? 'bg-[#1a1a1a]' : 'bg-stone-50'}
                             `}>
                                 {post.coverImage ? (
                                     <Image
-                                        src={post.coverImage}
+                                        src={post.coverImageDisplay ?? post.coverImage}
                                         alt={post.title}
                                         fill
-                                        className="object-contain object-center transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                                        className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                                         sizes={featured
-                                            ? "(max-width: 768px) 100vw, (max-width: 1024px) 340px, 400px"
+                                            ? "(max-width: 768px) 100vw, 450px"
                                             : isHorizontal
                                                 ? "(max-width: 768px) 100vw, (max-width: 1024px) 240px, 280px"
                                                 : "(max-width: 768px) 100vw, 50vw"
@@ -135,8 +135,8 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
                             </div>
 
                             {/* Title */}
-                            <h2 className={`font-bold leading-snug line-clamp-2 relative
-                                ${featured ? 'text-xl md:text-2xl lg:text-[1.65rem]' : 'text-base md:text-lg lg:text-xl'}
+                            <h2 className={`font-bold leading-snug relative
+                                ${featured ? 'line-clamp-3 text-xl md:text-[1.4rem]' : 'line-clamp-2 text-base md:text-lg lg:text-xl'}
                                 ${isDark ? 'text-white/90' : 'text-stone-900'}
                             `}>
                                 <span className="relative z-0 transition-all duration-300">

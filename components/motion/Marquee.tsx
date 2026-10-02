@@ -54,10 +54,7 @@ export function Marquee({ children, speed = 2, repeat = 2, className = '' }: Mar
     baseX.set(baseX.get() - direction.current * step * (1 + Math.abs(factor)));
   });
 
-  if (reduceMotion) {
-    return <div className={`flex flex-wrap items-center gap-y-4 ${className}`}>{children}</div>;
-  }
-
+  // 偏好減少動態時不移動，維持同一個版面，只是靜止的一排
   const half = Array.from({ length: repeat }, (_, i) => (
     <div key={i} className="flex shrink-0 items-center">
       {children}

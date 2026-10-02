@@ -9,6 +9,8 @@ import rehypeSanitize from 'rehype-sanitize';
 import { rehype } from 'rehype';
 import type { BlogPost } from '@/types/blog';
 import type { Lang } from '@/types';
+import { getBlogImageInfo } from './blog-images';
+import { estimateReadingMinutes } from './blog-utils';
 
 // 部落格文章存放目錄
 const postsDirectory = path.join(process.cwd(), 'content/blog');
@@ -188,6 +190,10 @@ export function getPostBySlug(slug: string, lang?: Lang): BlogPost | null {
                     }
                 }
 
+                // 頁面顯示用最佳化後的 WebP，社群預覽（coverImage）維持原檔
+                const coverImageDisplay = getBlogImageInfo(coverImage)?.webp ?? coverImage;
+                const readingMinutes = estimateReadingMinutes(content);
+
                 // 對於 MDX 文件，使用 Next.js 內建處理
                 if (mdFile.endsWith('.mdx')) {
                     return {
@@ -197,6 +203,8 @@ export function getPostBySlug(slug: string, lang?: Lang): BlogPost | null {
                         description: data.description || '',
                         tags: data.tags || [],
                         coverImage,
+                        coverImageDisplay,
+                        readingMinutes,
                         content: undefined, // MDX 文件由 Next.js 直接處理，不需要 content
                         lang: targetLang || undefined,
                         availableLangs,
@@ -212,6 +220,8 @@ export function getPostBySlug(slug: string, lang?: Lang): BlogPost | null {
                     description: data.description || '',
                     tags: data.tags || [],
                     coverImage,
+                    coverImageDisplay,
+                    readingMinutes,
                     content,
                     lang: targetLang || undefined,
                     availableLangs,

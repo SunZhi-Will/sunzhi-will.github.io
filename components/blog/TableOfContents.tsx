@@ -198,26 +198,14 @@ export function TableOfContents({
 
         if (headingElements.length === 0) return;
 
-        const scrollContainer = document.querySelector('main.overflow-y-auto') as HTMLElement;
-        if (!scrollContainer) return;
-
-        // 預先快取每個標題相對於 scrollContainer 頂部的 offsetTop
-        const getOffsets = () =>
-            headingElements.map((el) => {
-                const rect = el.getBoundingClientRect();
-                const cRect = scrollContainer.getBoundingClientRect();
-                return rect.top - cRect.top + scrollContainer.scrollTop;
-            });
-
-        let offsets = getOffsets();
         let rafId: number | null = null;
 
+        // 每次都重新量位置：互動元件與圖片載入後版面會變，快取的位置會失準
         const updateActive = () => {
-            const scrollPos = scrollContainer.scrollTop + 100;
             let active = headingElements[0].id;
-            for (let i = 0; i < headingElements.length; i++) {
-                if (offsets[i] <= scrollPos) {
-                    active = headingElements[i].id;
+            for (const element of headingElements) {
+                if (element.getBoundingClientRect().top <= 120) {
+                    active = element.id;
                 } else {
                     break;
                 }
@@ -233,20 +221,13 @@ export function TableOfContents({
             });
         };
 
-        // 視窗 resize 時重算 offsets
-        const onResize = () => {
-            offsets = getOffsets();
-            updateActive();
-        };
-
-        // 初始化
         updateActive();
-        scrollContainer.addEventListener('scroll', onScroll, { passive: true });
-        window.addEventListener('resize', onResize);
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll);
 
         return () => {
-            scrollContainer.removeEventListener('scroll', onScroll);
-            window.removeEventListener('resize', onResize);
+            window.removeEventListener('scroll', onScroll);
+            window.removeEventListener('resize', onScroll);
             if (rafId !== null) cancelAnimationFrame(rafId);
         };
     }, [headings]);
@@ -257,16 +238,15 @@ export function TableOfContents({
         const element = document.getElementById(id);
         if (!element) return;
 
-        const scrollContainer = document.querySelector('main.overflow-y-auto') as HTMLElement;
-        if (!scrollContainer) return;
-
-        const offset = 120;
-        const elementRect = element.getBoundingClientRect();
-        const containerRect = scrollContainer.getBoundingClientRect();
-        const elementTop = elementRect.top - containerRect.top + scrollContainer.scrollTop;
-        const targetPosition = elementTop - offset;
-
-        scrollContainer.scrollTo({ top: Math.max(0, targetPosition), behavior: 'smooth' });
+        // 留出浮動導覽列的高度
+        const top = Math.max(0, element.getBoundingClientRect().top + window.scrollY - 96);
+        if (window.__lenis) {
+            window.__lenis.scrollTo(top);
+        } else {
+            window.scrollTo({ top, behavior: 'smooth' });
+        }
+        // 網址帶上錨點，方便直接複製分享這一節
+        history.replaceState(null, '', `#${id}`);
         setActiveId(id);
         // 手機點擊後關閉抽屜
         setIsMobileOpen(false);
@@ -297,7 +277,7 @@ export function TableOfContents({
                         <a
                             href={`#${heading.id}`}
                             onClick={(e) => handleClick(heading.id, e)}
-                            className={`block py-1.5 text-xs leading-snug transition-all duration-200 ${clamp ? 'line-clamp-2' : ''
+                            className={`block leading-snug transition-all duration-200 ${clamp ? 'py-1.5 text-xs line-clamp-2' : 'py-3 text-sm'
                                 } ${isActive
                                     ? isDark
                                         ? 'text-yellow-300 font-medium'
@@ -334,6 +314,23 @@ export function TableOfContents({
             {/* ── 手機／平板版：底部抽屜 ── */}
             <div className="xl:hidden">
 
+                {/* 開啟目錄的浮動按鈕：導覽列收起時也找得到目錄 */}
+                {!isMobileOpen && (
+                    <button
+                        type="button"
+                        onClick={() => setIsMobileOpen(true)}
+                        aria-label={tocLabel}
+                        className={`fixed bottom-5 right-5 z-40 flex h-12 w-12 items-center justify-center rounded-full border shadow-xl backdrop-blur-xl transition-colors ${isDark
+                            ? 'border-white/15 bg-[#1c1c1e]/90 text-yellow-300 hover:bg-[#2a2a2c]'
+                            : 'border-stone-300/70 bg-white/90 text-yellow-700 hover:bg-stone-50'
+                            }`}
+                    >
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h10M4 14h16M4 18h10" />
+                        </svg>
+                    </button>
+                )}
+
                 {/* 遮罩 */}
                 {isMobileOpen && (
                     <div
@@ -352,7 +349,7 @@ export function TableOfContents({
                         : 'bg-white/95 border-black/10'
                         }`}>
                         {/* 抽屜頭部 */}
-                        <div className={`flex items-center justify-between px-5 py-4 border-b ${isDark ? 'border-white/10' : 'border-black/8'
+                        <div className={`flex items-center justify-between px-5 py-2 border-b ${isDark ? 'border-white/10' : 'border-black/8'
                             }`}>
                             <div className="flex items-center gap-2">
                                 <svg className={`w-4 h-4 ${isDark ? 'text-yellow-300' : 'text-yellow-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -365,9 +362,9 @@ export function TableOfContents({
                             </div>
                             <button
                                 onClick={() => setIsMobileOpen(false)}
-                                className={`w-7 h-7 flex items-center justify-center rounded-full transition-colors ${isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-white/10' : 'text-gray-500 hover:text-gray-800 hover:bg-black/5'
+                                className={`w-11 h-11 -mr-2 flex items-center justify-center rounded-full transition-colors ${isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-white/10' : 'text-gray-500 hover:text-gray-800 hover:bg-black/5'
                                     }`}
-                                aria-label="Close"
+                                aria-label={lang === 'zh-TW' ? '關閉目錄' : 'Close'}
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

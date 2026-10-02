@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Lang } from '@/types';
 import { useTheme } from '@/app/blog/ThemeProvider';
 import { LogoIcon } from '@/components/LogoIcon';
+import { useHideOnScroll } from '@/lib/use-hide-on-scroll';
 
 
 interface BlogNavIslandProps {
@@ -16,6 +17,8 @@ interface BlogNavIslandProps {
 export function BlogNavIsland({ lang }: BlogNavIslandProps) {
     const { theme } = useTheme();
     const isDark = theme === 'dark';
+    // 往下閱讀時收起，往上捲才出現，避免一直蓋住內文
+    const hidden = useHideOnScroll();
 
     // 始終展開，與 /blog 列表頁保持一致
     const shouldExpand = true;
@@ -24,8 +27,8 @@ export function BlogNavIsland({ lang }: BlogNavIslandProps) {
         <motion.div
             className="fixed top-0 left-0 z-50 pointer-events-auto"
             initial={{ y: -100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            animate={{ y: hidden ? -100 : 0, opacity: hidden ? 0 : 1 }}
+            transition={{ duration: 0.3 }}
         >
             <motion.div
                 className={`relative overflow-hidden mt-4 ml-4 rounded-3xl backdrop-blur-2xl shadow-2xl transition-colors duration-300 ${

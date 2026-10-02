@@ -1,9 +1,16 @@
 'use client'
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import ParticlesBackground from '@/components/ParticlesBackground';
+import { useEffect } from 'react';
+import { motion, MotionConfig } from 'framer-motion';
 import Link from 'next/link';
+import { Backdrop } from '@/components/home/Backdrop';
+import { LogoIcon } from '@/components/LogoIcon';
+import { Magnetic } from '@/components/motion/Magnetic';
+import { Reveal } from '@/components/motion/Reveal';
+import { Spotlight } from '@/components/motion/Spotlight';
+import { SplitText } from '@/components/motion/SplitText';
+import { EASE_OUT } from '@/components/motion/ease';
+import { useSiteLang } from '@/lib/use-site-lang';
 
 type Lang = 'zh-TW' | 'en';
 
@@ -22,7 +29,6 @@ interface PricingTier {
 
 interface ServiceSection {
     id: string;
-    icon: string;
     title: string;
     subtitle: string;
     description: string;
@@ -59,7 +65,6 @@ const content: Record<Lang, {
         services: [
             {
                 id: 'project',
-                icon: '💻',
                 badge: '可接受委託',
                 title: '軟體專案接案',
                 subtitle: 'Custom Software Development',
@@ -94,7 +99,6 @@ const content: Record<Lang, {
             },
             {
                 id: 'teaching',
-                icon: '🎓',
                 title: '軟體教學顧問',
                 subtitle: 'Software Teaching & Consulting',
                 description: '結合業界實務經驗的程式設計教學，涵蓋 Unity、Web 開發等主題，適合個人進修、企業培訓或學生專案指導。',
@@ -157,7 +161,6 @@ const content: Record<Lang, {
         services: [
             {
                 id: 'project',
-                icon: '💻',
                 badge: 'Available for Hire',
                 title: 'Software Development',
                 subtitle: 'Custom Software Development',
@@ -220,7 +223,6 @@ const content: Record<Lang, {
             },
             {
                 id: 'teaching',
-                icon: '🎓',
                 title: 'Teaching & Consulting',
                 subtitle: 'Software Teaching & Consulting',
                 description: 'Industry-practice-based programming instruction covering Unity, web development, and system integration for individuals, enterprises, or student project guidance.',
@@ -271,241 +273,209 @@ const content: Record<Lang, {
 };
 
 export default function PricingPage() {
-    const [lang, setLang] = useState<Lang>('zh-TW');
+    const [lang, setLang] = useSiteLang();
+    const zh = lang === 'zh-TW';
 
     useEffect(() => {
-        const browserLang = navigator.language;
-        setLang(browserLang.includes('zh') ? 'zh-TW' : 'en');
-        document.title = browserLang.includes('zh')
-            ? `服務費用 | ${STUDIO_NAME}`
-            : `Service Pricing | ${STUDIO_NAME}`;
+        document.title = zh ? `服務費用 | ${STUDIO_NAME}` : `Service Pricing | ${STUDIO_NAME}`;
+    }, [zh]);
+
+    // 與首頁共用深色版面的捲軸與底色
+    useEffect(() => {
+        document.documentElement.classList.add('site-dark');
+        return () => document.documentElement.classList.remove('site-dark');
     }, []);
 
     const t = content[lang];
+    const controlClass =
+        'flex h-9 items-center justify-center rounded-full border border-white/10 bg-[#141416]/80 text-zinc-400 backdrop-blur-xl transition-colors duration-200 hover:border-white/30 hover:text-white';
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100 relative">
-            <ParticlesBackground />
+        <MotionConfig reducedMotion="user">
+            <div className="site relative isolate min-h-screen [overflow-x:clip]">
+                <Backdrop />
 
-            <div className="relative z-10">
-                {/* Header */}
-                <header className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-xl border-b border-slate-700/50">
-                    <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-                        <Link
-                            href="/"
-                            className="text-slate-300 hover:text-white text-sm transition-colors flex items-center gap-1"
-                        >
-                            {t.back}
-                        </Link>
-                        <span className="text-slate-200 font-semibold text-sm tracking-wide">{STUDIO_NAME}</span>
-                        <button
-                            onClick={() => setLang(lang === 'zh-TW' ? 'en' : 'zh-TW')}
-                            className="text-xs px-3 py-1.5 rounded-full border border-slate-600 text-slate-300 hover:text-white hover:border-slate-400 transition-all"
-                        >
-                            {lang === 'zh-TW' ? 'EN' : '中文'}
-                        </button>
-                    </div>
-                </header>
+                {/* 頂部控制列 */}
+                <motion.header
+                    className="fixed inset-x-0 top-0 z-40 flex items-center justify-between px-4 pt-4"
+                    initial={{ opacity: 0, y: -16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7, ease: EASE_OUT }}
+                >
+                    <Link href="/" className={`${controlClass} group gap-2 px-3.5`} aria-label={t.back.replace(/^←\s*/, '')}>
+                        <LogoIcon className="h-5 w-5 text-zinc-100 transition-transform duration-500 group-hover:rotate-180" />
+                        <span className="text-sm font-semibold text-zinc-100">Sun</span>
+                    </Link>
+                    <button
+                        type="button"
+                        onClick={() => setLang(zh ? 'en' : 'zh-TW')}
+                        className={`${controlClass} font-geist-mono px-3.5 text-xs`}
+                        aria-label={zh ? 'Switch to English' : '切換為中文'}
+                    >
+                        {zh ? 'EN' : '中'}
+                    </button>
+                </motion.header>
 
                 {/* Hero */}
-                <section className="py-16 sm:py-24 text-center px-4">
-                    <motion.div
-                        initial={{ opacity: 0, y: 24 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                    >
-                        <span className="inline-block text-xs font-semibold tracking-widest text-slate-400 uppercase mb-4 border border-slate-600/60 px-3 py-1 rounded-full">
+                <section className="px-5 pb-16 pt-36 md:px-10 md:pb-24 md:pt-48">
+                    <div className="mx-auto max-w-6xl">
+                        <motion.span
+                            className="eyebrow"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.8 }}
+                        >
                             {STUDIO_NAME}
-                        </span>
-                        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold bg-gradient-to-r from-slate-200 via-white to-slate-300 bg-clip-text text-transparent mb-4">
-                            {t.pageTitle}
+                        </motion.span>
+                        <h1 key={lang} className="mt-4 text-[clamp(3rem,10vw,8rem)] font-semibold leading-[1.02] tracking-[-0.03em] text-white">
+                            <SplitText text={t.pageTitle} immediate delay={0.1} stagger={0.05} />
                         </h1>
-                        <p className="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+                        <motion.p
+                            className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-400 md:text-xl"
+                            initial={{ opacity: 0, y: 16 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, ease: EASE_OUT, delay: 0.45 }}
+                        >
                             {t.pageSubtitle}
-                        </p>
-                    </motion.div>
+                        </motion.p>
+                    </div>
                 </section>
 
                 {/* Services */}
-                <main className="container mx-auto px-4 pb-16 space-y-20">
-                    {t.services.map((service, sIdx) => (
-                        <motion.section
-                            key={service.id}
-                            id={service.id}
-                            initial={{ opacity: 0, y: 32 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: '-80px' }}
-                            transition={{ duration: 0.55, delay: sIdx * 0.1 }}
-                        >
-                            {/* Section header */}
-                            <div className="flex flex-col sm:flex-row sm:items-end gap-4 mb-8">
-                                <div className="flex items-center gap-3">
-                                    <span className="text-4xl" role="img" aria-label={service.title}>{service.icon}</span>
-                                    <div>
-                                        <div className="flex items-center gap-2 flex-wrap">
-                                            <h2 className="text-2xl sm:text-3xl font-bold text-white">{service.title}</h2>
-                                            {service.badge && (
-                                                <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                                                    {service.badge}
+                <main className="px-5 pb-20 md:px-10 md:pb-32">
+                    <div className="mx-auto max-w-6xl space-y-24 md:space-y-36">
+                        {t.services.map((service, sIdx) => (
+                            <section key={service.id} id={service.id}>
+                                <Reveal>
+                                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                                        <span className="eyebrow">{String(sIdx + 1).padStart(2, '0')}</span>
+                                        {service.badge && (
+                                            <span className="flex items-center gap-2 rounded-full border border-white/10 px-3 py-1 text-xs font-medium text-zinc-300">
+                                                <span className="relative flex h-2 w-2">
+                                                    <span className="animate-status-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400" />
+                                                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
                                                 </span>
-                                            )}
-                                        </div>
-                                        <p className="text-slate-400 text-sm mt-0.5">{service.subtitle}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-8 max-w-3xl">
-                                {service.description}
-                            </p>
-
-                            {/* Pricing cards */}
-                            <div className={`grid gap-5 ${service.tiers.length === 4
-                                ? 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-4'
-                                : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-                                }`}>
-                                {service.tiers.map((tier, tIdx) => (
-                                    <motion.div
-                                        key={tier.name}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ duration: 0.4, delay: tIdx * 0.08 }}
-                                        className={`relative rounded-2xl border p-6 flex flex-col gap-4 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl ${tier.highlight
-                                            ? 'bg-gradient-to-br from-slate-700/70 to-slate-800/80 border-slate-400/50 shadow-lg shadow-slate-500/10'
-                                            : 'bg-slate-800/50 border-slate-700/50 hover:border-slate-600/60'
-                                            }`}
-                                    >
-                                        {tier.highlight && (
-                                            <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-slate-400 to-slate-300 text-slate-900 shadow">
-                                                {lang === 'zh-TW' ? '最熱門' : 'Most Popular'}
+                                                {service.badge}
                                             </span>
                                         )}
+                                    </div>
+                                    <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white md:text-5xl">{service.title}</h2>
+                                    <p className="mt-2 text-sm text-zinc-500">{service.subtitle}</p>
+                                </Reveal>
+                                <motion.div
+                                    className="mt-8 h-px origin-left bg-white/10"
+                                    initial={{ scaleX: 0 }}
+                                    whileInView={{ scaleX: 1 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 1.1, ease: EASE_OUT }}
+                                />
+                                <Reveal className="mt-8 max-w-3xl text-base leading-relaxed text-zinc-300 md:text-lg">
+                                    {service.description}
+                                </Reveal>
 
-                                        {/* Tier name & price */}
-                                        <div>
-                                            <h3 className="text-lg font-bold text-white mb-1">{tier.name}</h3>
-                                            <div className="flex items-baseline gap-1 flex-wrap">
-                                                <span className="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-slate-200 to-white bg-clip-text text-transparent">
-                                                    {t.currency} {tier.price}
-                                                </span>
-                                                <span className="text-slate-400 text-sm">{tier.unit}</span>
-                                            </div>
-                                            <p className="text-slate-400 text-xs mt-1 leading-relaxed">{tier.description}</p>
-                                        </div>
+                                {/* Pricing cards */}
+                                <div className={`mt-10 grid gap-4 ${service.tiers.length === 4
+                                    ? 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-4'
+                                    : service.tiers.length === 2
+                                        ? 'grid-cols-1 sm:grid-cols-2'
+                                        : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+                                    }`}>
+                                    {service.tiers.map((tier, tIdx) => (
+                                        <Reveal key={tier.name} delay={tIdx * 0.08} className="h-full">
+                                            <Spotlight
+                                                className={`flex h-full flex-col rounded-[24px] border p-6 transition-colors duration-300 md:p-7 ${tier.highlight
+                                                    ? 'border-yellow-400/40 bg-yellow-400/[0.03]'
+                                                    : 'border-white/10 bg-[#111113] hover:border-white/20'
+                                                    }`}
+                                            >
+                                                <div className="flex items-center justify-between gap-3">
+                                                    <h3 className="text-base font-semibold text-white">{tier.name}</h3>
+                                                    {tier.highlight && (
+                                                        <span className="rounded-full bg-yellow-400 px-2.5 py-0.5 text-[11px] font-semibold text-zinc-950">
+                                                            {zh ? '最熱門' : 'Most Popular'}
+                                                        </span>
+                                                    )}
+                                                </div>
 
-                                        {/* Divider */}
-                                        <div className="h-px bg-slate-700/60" />
+                                                <p className="mt-6 flex flex-wrap items-baseline gap-x-2">
+                                                    <span className="font-geist-mono text-xs text-zinc-500">{t.currency}</span>
+                                                    <span className="text-3xl font-semibold tracking-tight text-white md:text-4xl">{tier.price}</span>
+                                                    <span className="text-sm text-zinc-500">{tier.unit}</span>
+                                                </p>
+                                                <p className="mt-2 text-sm leading-relaxed text-zinc-500">{tier.description}</p>
 
-                                        {/* Features */}
-                                        <ul className="space-y-2 flex-1">
-                                            {tier.features.map((feat, fIdx) => (
-                                                <li key={fIdx} className="flex items-start gap-2 text-sm text-slate-200">
-                                                    <svg className="w-4 h-4 mt-0.5 flex-shrink-0 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                                                    </svg>
-                                                    <span className="leading-snug">{feat}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
+                                                <ul className="mt-6 flex-1 space-y-2.5 border-t border-white/10 pt-6">
+                                                    {tier.features.map((feat) => (
+                                                        <li key={feat} className="flex items-start gap-2.5 text-sm text-zinc-300">
+                                                            <svg className="mt-0.5 h-4 w-4 shrink-0 text-yellow-400/80" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                            <span className="leading-snug">{feat}</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
 
-                                        {/* Note */}
-                                        {tier.note && (
-                                            <p className="text-xs text-slate-400 italic border-t border-slate-700/50 pt-3">
-                                                ＊ {tier.note}
-                                            </p>
-                                        )}
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </motion.section>
-                    ))}
+                                                {tier.note && (
+                                                    <p className="mt-6 border-t border-white/10 pt-4 text-xs text-zinc-500">
+                                                        ＊ {tier.note}
+                                                    </p>
+                                                )}
+                                            </Spotlight>
+                                        </Reveal>
+                                    ))}
+                                </div>
+                            </section>
+                        ))}
 
-                    {/* Disclaimer */}
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
-                        className="text-center text-slate-500 text-xs max-w-2xl mx-auto"
-                    >
-                        {t.disclaimer}
-                    </motion.p>
+                        <Reveal className="max-w-2xl text-sm text-zinc-500">
+                            {t.disclaimer}
+                        </Reveal>
+                    </div>
                 </main>
 
-                {/* Contact & Payment section */}
-                <section className="border-t border-slate-700/50 bg-slate-950/60 backdrop-blur-sm">
-                    <div className="container mx-auto px-4 py-12">
-                        <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-8">
-                            {/* Contact */}
-                            <motion.div
-                                initial={{ opacity: 0, x: -20 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
-                                className="space-y-3"
-                            >
-                                <div className="flex items-center gap-2 text-slate-300 font-semibold">
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                    </svg>
-                                    {t.contactLabel}
-                                </div>
+                {/* Contact & Payment */}
+                <footer className="border-t border-white/10 px-5 pt-20 md:px-10 md:pt-32">
+                    <div className="mx-auto max-w-6xl">
+                        <span className="eyebrow">{t.contactLabel}</span>
+                        <h2 key={lang} className="mt-4 text-[clamp(2.25rem,6.5vw,5.5rem)] font-semibold leading-[1.05] tracking-[-0.03em] text-white">
+                            <SplitText text={t.cta} />
+                        </h2>
+
+                        <Reveal className="mt-10 flex flex-wrap items-center gap-4">
+                            <Magnetic>
                                 <a
-                                    href={`mailto:${CONTACT_EMAIL}`}
-                                    className="inline-block text-yellow-300 hover:text-yellow-200 underline underline-offset-4 font-mono text-sm transition-colors"
+                                    href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(zh ? '[SunCodeStudio] 服務詢問' : '[SunCodeStudio] Service Inquiry')}`}
+                                    className="group inline-flex items-center gap-3 rounded-full bg-yellow-400 px-7 py-4 text-base font-semibold text-zinc-950 transition-colors duration-300 hover:bg-white md:text-lg"
                                 >
                                     {CONTACT_EMAIL}
+                                    <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                                 </a>
-                                <p className="text-slate-400 text-xs leading-relaxed">{t.contactNote}</p>
-                            </motion.div>
+                            </Magnetic>
+                            <p className="text-sm text-zinc-500">{t.ctaNote}</p>
+                        </Reveal>
 
-                            {/* Payment */}
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
-                                className="space-y-3"
-                            >
-                                <div className="flex items-center gap-2 text-slate-300 font-semibold">
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                                    </svg>
-                                    {t.paymentNote}
-                                </div>
-                                <p className="text-slate-300 text-xs leading-relaxed">{t.paymentNoteDetail}</p>
-                            </motion.div>
+                        <div className="mt-16 grid gap-10 border-t border-white/10 pt-10 sm:grid-cols-2 md:mt-24">
+                            <Reveal>
+                                <h3 className="eyebrow">{t.contactLabel}</h3>
+                                <p className="mt-3 text-sm leading-relaxed text-zinc-400">{t.contactNote}</p>
+                            </Reveal>
+                            <Reveal delay={0.08}>
+                                <h3 className="eyebrow">{t.paymentNote}</h3>
+                                <p className="mt-3 text-sm leading-relaxed text-zinc-400">{t.paymentNoteDetail}</p>
+                            </Reveal>
                         </div>
 
-                        {/* CTA */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 16 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            className="mt-10 text-center space-y-3"
-                        >
-                            <a
-                                href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(lang === 'zh-TW' ? '[SunCodeStudio] 服務詢問' : '[SunCodeStudio] Service Inquiry')}`}
-                                className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-gradient-to-r from-slate-600 to-slate-500 hover:from-slate-500 hover:to-slate-400 text-white font-semibold transition-all duration-300 shadow-lg hover:shadow-slate-500/30 hover:scale-105"
-                            >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                </svg>
-                                {t.cta}
-                            </a>
-                            <p className="text-slate-500 text-xs">{t.ctaNote}</p>
-                        </motion.div>
+                        <div className="mt-16 flex flex-col gap-4 border-t border-white/10 py-8 text-sm text-zinc-500 md:flex-row md:items-center md:justify-between">
+                            <p>© {new Date().getFullYear()} {STUDIO_NAME} · 謝上智</p>
+                            <nav className="flex items-center gap-6" aria-label={STUDIO_NAME}>
+                                <Link href="/" className="link-draw text-zinc-400 hover:text-white">{t.back.replace(/^←\s*/, '')}</Link>
+                                <Link href="/blog" className="link-draw text-zinc-400 hover:text-white">{zh ? '部落格' : 'Blog'}</Link>
+                                <Link href="/links" className="link-draw text-zinc-400 hover:text-white">{zh ? '個人連結' : 'Links'}</Link>
+                            </nav>
+                        </div>
                     </div>
-                </section>
-
-                {/* Footer */}
-                <footer className="py-6 text-center border-t border-slate-800">
-                    <p className="text-slate-600 text-xs">
-                        © {new Date().getFullYear()} {STUDIO_NAME} · 謝上智 ·&nbsp;
-                        <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-slate-400 transition-colors">
-                            {CONTACT_EMAIL}
-                        </a>
-                    </p>
                 </footer>
             </div>
-        </div>
+        </MotionConfig>
     );
 }

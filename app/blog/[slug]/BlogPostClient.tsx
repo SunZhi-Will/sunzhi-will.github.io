@@ -7,6 +7,9 @@ import type { BlogPost } from '@/types/blog';
 import type { Lang } from '@/types';
 import dynamic from 'next/dynamic';
 import { ArticleHero } from '@/components/blog/ArticleHero';
+// 內文直接匯入（不延後到瀏覽器端才渲染），靜態 HTML 裡才會有文章內容
+import { EnhancedArticleContent } from '@/components/blog/EnhancedArticleContent';
+import { PostPager } from '@/components/blog/PostPager';
 
 // 動態導入使用 framer-motion 的組件，避免預渲染問題
 const BlogNavIsland = dynamic(() => import('@/components/blog/BlogNavIsland').then(mod => ({ default: mod.BlogNavIsland })), { ssr: false });
@@ -15,7 +18,6 @@ const BlogMobileNav = dynamic(() => import('@/components/blog/BlogMobileNav').th
 const RelatedPosts = dynamic(() => import('@/components/blog/RelatedPosts').then(mod => ({ default: mod.RelatedPosts })), { ssr: false });
 const CommentSection = dynamic(() => import('@/components/blog/CommentSection').then(mod => ({ default: mod.CommentSection })), { ssr: false });
 const ReadingProgress = dynamic(() => import('@/components/blog/ReadingProgress').then(mod => ({ default: mod.ReadingProgress })), { ssr: false });
-const EnhancedArticleContent = dynamic(() => import('@/components/blog/EnhancedArticleContent').then(mod => ({ default: mod.EnhancedArticleContent })), { ssr: false });
 const ShareButtons = dynamic(() => import('@/components/blog/ShareButtons').then(mod => ({ default: mod.ShareButtons })), { ssr: false });
 const TableOfContents = dynamic(() => import('@/components/blog/TableOfContents').then(mod => ({ default: mod.TableOfContents })), { ssr: false });
 const NewsletterSubscribe = dynamic(() => import('@/components/blog/NewsletterSubscribe').then(mod => ({ default: mod.NewsletterSubscribe })), { ssr: false });
@@ -77,9 +79,9 @@ export default function BlogPostClient({
         }
     }, []);
 
-    // 估算閱讀時間（根據內容類型）
+    // 閱讀時間在建置時依實際字數算好；舊資料沒有這個欄位時才退回用長度估
     const contentLength = currentContentLength ?? (currentHtmlContent?.length || 0) + (currentMdxSource ? 9000 : 0);
-    const readingTime = Math.max(1, Math.ceil(contentLength / 1500));
+    const readingTime = currentPost.readingMinutes ?? Math.max(1, Math.ceil(contentLength / 700));
 
     // 切換到指定語言版本的文章
     const switchToLang = (targetLang: Lang) => {
@@ -137,7 +139,7 @@ export default function BlogPostClient({
 
     return (
         <div
-            className="h-screen overflow-hidden relative transition-colors duration-300"
+            className="min-h-screen relative transition-colors duration-300"
             style={{
                 backgroundColor: isDark ? '#000000' : '#ffffff',
                 backgroundImage: isDark
@@ -186,10 +188,10 @@ export default function BlogPostClient({
             />
 
             {/* 主要內容區域 - 全寬 */}
-            <main className="overflow-y-auto h-full scrollbar-custom">
+            <main>
                 <article className="relative">
                     {/* 文章內容 - 統一的內容區域 */}
-                    <div data-article-content="true" className="max-w-4xl mx-auto px-4 pt-20 pb-6 md:px-8 md:pt-24 md:pb-8 lg:px-12 lg:pb-10">
+                    <div data-article-content="true" className="max-w-3xl mx-auto px-4 pt-20 pb-6 md:px-8 md:pt-24 md:pb-8 lg:pb-10">
                         <div className="space-y-10">
                             <ArticleHero
                                 post={currentPost}
@@ -214,7 +216,7 @@ export default function BlogPostClient({
                     </div>
 
                     {/* 文章底部 */}
-                    <div className="max-w-4xl mx-auto px-4 md:px-8 lg:px-12 pb-20">
+                    <div className="max-w-3xl mx-auto px-4 md:px-8 pb-20">
                         {/* 內容結束分界線 */}
                         <div className="pt-6 border-t" style={{
                             borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
@@ -224,6 +226,13 @@ export default function BlogPostClient({
                             <ShareButtons
                                 title={currentPost.title}
                                 url={`${currentBaseUrl}/blog/${currentPost.slug}`}
+                                lang={lang}
+                            />
+
+                            {/* 上一篇、下一篇、回列表 */}
+                            <PostPager
+                                posts={currentAllPosts}
+                                currentSlug={currentPost.slug}
                                 lang={lang}
                             />
 
