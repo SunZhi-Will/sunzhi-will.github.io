@@ -46,7 +46,7 @@ export function Contact({ lang }: { lang: Lang }) {
   ];
 
   return (
-    <footer id="contact" className="border-t border-white/10 px-5 pt-20 md:px-10 md:pt-32">
+    <footer id="contact" className="border-t border-white/10 px-5 pb-20 pt-20 md:px-10 md:pb-0 md:pt-32">
       <div className="mx-auto max-w-6xl">
         <span className="eyebrow">{copy.label}</span>
         <h2 key={lang} className="mt-4 max-w-4xl text-[clamp(2.5rem,7.5vw,6.5rem)] font-semibold leading-[1.05] tracking-[-0.03em] text-white">

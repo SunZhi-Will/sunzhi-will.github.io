@@ -66,7 +66,7 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                                 {lang === 'zh-TW' ? '謝上智' : 'Sun Zhi'}
                             </h1>
                             <p className={`text-xs line-clamp-2 font-light ${
-                                isDark ? 'text-gray-400' : 'text-gray-600'
+                                isDark ? 'text-zinc-200' : 'text-gray-600'
                             }`}>
                                 {lang === 'zh-TW' ? '軟體工程師 | AI 開發者' : 'Software Engineer | AI Developer'}
                             </p>
@@ -81,7 +81,7 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                             rel="noopener noreferrer"
                             className={`group w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg ${
                                 isDark
-                                    ? 'bg-gray-700/70 hover:bg-gray-600/80 text-gray-300 hover:text-gray-200 border border-gray-600/60 hover:border-gray-500/70 hover:shadow-gray-600/30'
+                                    ? 'bg-gray-700/70 hover:bg-gray-600/80 text-zinc-200 hover:text-yellow-400 border border-gray-600/60 hover:border-gray-500/70 hover:shadow-gray-600/30'
                                     : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 hover:shadow-gray-400/30'
                             }`}
                             aria-label="GitHub"
@@ -96,7 +96,7 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                             rel="noopener noreferrer"
                             className={`group w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg ${
                                 isDark
-                                    ? 'bg-gray-700/70 hover:bg-gray-600/80 text-gray-300 hover:text-gray-200 border border-gray-600/60 hover:border-gray-500/70 hover:shadow-gray-600/30'
+                                    ? 'bg-gray-700/70 hover:bg-gray-600/80 text-zinc-200 hover:text-yellow-400 border border-gray-600/60 hover:border-gray-500/70 hover:shadow-gray-600/30'
                                     : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 hover:shadow-gray-400/30'
                             }`}
                             aria-label="LinkedIn"
@@ -109,7 +109,7 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                             href="mailto:sun055676@gmail.com"
                             className={`group w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg ${
                                 isDark
-                                    ? 'bg-gray-700/70 hover:bg-gray-600/80 text-gray-300 hover:text-gray-200 border border-gray-600/60 hover:border-gray-500/70 hover:shadow-gray-600/30'
+                                    ? 'bg-gray-700/70 hover:bg-gray-600/80 text-zinc-200 hover:text-yellow-400 border border-gray-600/60 hover:border-gray-500/70 hover:shadow-gray-600/30'
                                     : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 hover:shadow-gray-400/30'
                             }`}
                             aria-label="Email"
@@ -124,7 +124,7 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                             rel="noopener noreferrer"
                             className={`group w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg ${
                                 isDark
-                                    ? 'bg-gray-700/70 hover:bg-gray-600/80 text-gray-300 hover:text-gray-200 border border-gray-600/60 hover:border-gray-500/70 hover:shadow-gray-600/30'
+                                    ? 'bg-gray-700/70 hover:bg-gray-600/80 text-zinc-200 hover:text-yellow-400 border border-gray-600/60 hover:border-gray-500/70 hover:shadow-gray-600/30'
                                     : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 hover:shadow-gray-400/30'
                             }`}
                             aria-label="Instagram"
@@ -164,19 +164,19 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                     <div className="flex flex-col gap-4 text-xs">
                         <div className="space-y-1">
                             <div className={`text-xs uppercase tracking-wider mb-1.5 font-medium ${
-                                isDark ? 'text-gray-400' : 'text-gray-600'
+                                isDark ? 'text-zinc-200' : 'text-gray-600'
                             }`}>
                                 {t.published}
                             </div>
-                            <time className={`font-light ${isDark ? 'text-gray-300' : 'text-gray-800'}`}>{formatDate(post.date, lang === 'zh-TW' ? 'zh-TW' : 'en-US')}</time>
+                            <time className={`font-light ${isDark ? 'text-zinc-200' : 'text-gray-800'}`}>{formatDate(post.date, lang === 'zh-TW' ? 'zh-TW' : 'en-US')}</time>
                         </div>
                         <div className="space-y-1">
                             <div className={`text-xs uppercase tracking-wider mb-1.5 font-medium ${
-                                isDark ? 'text-gray-400' : 'text-gray-600'
+                                isDark ? 'text-zinc-200' : 'text-gray-600'
                             }`}>
                                 {t.readTime}
                             </div>
-                            <div className={`font-light ${isDark ? 'text-gray-300' : 'text-gray-800'}`}>
+                            <div className={`font-light ${isDark ? 'text-zinc-200' : 'text-gray-800'}`}>
                                 {readingTime} {lang === 'zh-TW' ? '分鐘' : 'min'}
                             </div>
                         </div>
@@ -195,7 +195,7 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                                                 className={`px-2.5 py-1 text-xs uppercase tracking-wider border rounded-md
                                                          transition-all duration-300 hover:scale-105 ${
                                     isDark
-                                        ? 'text-gray-300 bg-gradient-to-br from-gray-700/70 to-gray-600/70 border-gray-600/60 hover:border-gray-500/70 hover:bg-gradient-to-br hover:from-gray-600/80 hover:to-gray-500/80'
+                                        ? 'text-zinc-200 bg-gradient-to-br from-gray-700/70 to-gray-600/70 border-gray-600/60 hover:border-gray-500/70 hover:bg-gradient-to-br hover:from-gray-600/80 hover:to-gray-500/80'
                                         : 'text-gray-800 bg-gradient-to-br from-gray-200/70 to-gray-300/70 border-gray-300/60 hover:border-gray-500/70 hover:bg-gradient-to-br hover:from-gray-300/80 hover:to-gray-400/80'
                                 }`}
                                             >
@@ -225,7 +225,7 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                         href="/"
                         className={`group block w-full px-3 py-2 text-xs transition-all duration-300 rounded-lg text-left mb-3 hover:scale-[1.02] hover:shadow-md ${
                             isDark
-                                ? 'text-gray-300 hover:text-gray-200 bg-gray-700/50 hover:bg-gray-600/70 border border-gray-600/60 hover:border-gray-500/70'
+                                ? 'text-zinc-200 hover:text-yellow-400 bg-gray-700/50 hover:bg-gray-600/70 border border-gray-600/60 hover:border-gray-500/70'
                                 : 'text-gray-700 hover:text-gray-900 bg-gray-200/50 hover:bg-gray-300/70 border border-gray-300/60 hover:border-gray-400/70'
                         }`}
                     >
@@ -241,7 +241,7 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                         onClick={() => setLang(lang === 'zh-TW' ? 'en' : 'zh-TW')}
                         className={`group w-full px-3 py-2 text-xs transition-all duration-300 rounded-lg text-left mb-4 hover:scale-[1.02] hover:shadow-md ${
                             isDark
-                                ? 'text-gray-300 hover:text-gray-200 bg-gray-700/50 hover:bg-gray-600/70 border border-gray-600/60 hover:border-gray-500/70'
+                                ? 'text-zinc-200 hover:text-yellow-400 bg-gray-700/50 hover:bg-gray-600/70 border border-gray-600/60 hover:border-gray-500/70'
                                 : 'text-gray-700 hover:text-gray-900 bg-gray-200/50 hover:bg-gray-300/70 border border-gray-300/60 hover:border-gray-400/70'
                         }`}
                     >
@@ -253,7 +253,7 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                         </span>
                     </button>
                     <div className={`text-xs text-center font-light ${
-                        isDark ? 'text-gray-500' : 'text-gray-600'
+                        isDark ? 'text-zinc-200' : 'text-gray-600'
                     }`}>
                         © {new Date().getFullYear()} Sun
                     </div>

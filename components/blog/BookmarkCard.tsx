@@ -43,7 +43,7 @@ export function BookmarkCard(props: BookmarkCardProps) {
 
           {description && (
             <div className={`kg-bookmark-description mb-4 text-sm leading-relaxed ${
-              isDark ? 'text-white/70' : 'text-black/60'
+              isDark ? 'text-zinc-200' : 'text-black/60'
             }`}>
               {description}
             </div>

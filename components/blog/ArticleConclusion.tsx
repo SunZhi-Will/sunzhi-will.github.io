@@ -69,7 +69,7 @@ export function ArticleConclusion({
                   {index + 1}
                 </span>
                 <span className={`leading-relaxed ${
-                  isDark ? 'text-gray-300' : 'text-gray-700'
+                  isDark ? 'text-zinc-200' : 'text-gray-700'
                 }`}>
                   {takeaway}
                 </span>
@@ -136,7 +136,7 @@ export function ArticleConclusion({
                 }`}
               >
                 <div className={`font-medium group-hover:underline ${
-                  isDark ? 'text-gray-300' : 'text-gray-700'
+                  isDark ? 'text-zinc-200' : 'text-gray-700'
                 }`}>
                   {content.title}
                 </div>

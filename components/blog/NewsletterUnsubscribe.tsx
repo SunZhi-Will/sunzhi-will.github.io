@@ -208,7 +208,7 @@ export function NewsletterUnsubscribe({ lang }: NewsletterUnsubscribeProps) {
             <h3 className={`text-sm font-semibold mb-2 ${isDark ? 'text-white/90' : 'text-black'}`}>
                 {t.title}
             </h3>
-            <p className={`text-xs mb-3 ${isDark ? 'text-white/60' : 'text-black/60'}`}>
+            <p className={`text-xs mb-3 ${isDark ? 'text-zinc-200' : 'text-black/60'}`}>
                 {t.subtitle}
             </p>
 

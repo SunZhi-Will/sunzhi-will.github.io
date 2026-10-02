@@ -283,7 +283,7 @@ export function TableOfContents({
                                         ? 'text-yellow-300 font-medium'
                                         : 'text-yellow-700 font-medium'
                                     : isDark
-                                        ? 'text-gray-400 hover:text-gray-200'
+                                        ? 'text-zinc-200 hover:text-yellow-400'
                                         : 'text-gray-600 hover:text-gray-900'
                                 }`}
                         >
@@ -299,12 +299,12 @@ export function TableOfContents({
         <>
             {/* ── 桌面版：固定在左側，更長的高度 ── */}
             <nav
-                className={`hidden xl:block fixed top-[6rem] w-44 max-h-[calc(100vh-5rem)] overflow-hidden overflow-y-auto z-10 transition-all duration-300 scrollbar-hide ${isDark ? 'text-gray-300' : 'text-gray-700'
+                className={`hidden xl:block fixed top-[6rem] w-44 max-h-[calc(100vh-5rem)] overflow-hidden overflow-y-auto z-10 transition-all duration-300 scrollbar-hide ${isDark ? 'text-zinc-200' : 'text-gray-700'
                     }`}
                 style={{ left: `${leftPosition}px` }}
                 aria-label={lang === 'zh-TW' ? '目錄' : 'Table of Contents'}
             >
-                <p className={`mb-3 text-[11px] font-bold tracking-widest uppercase ${isDark ? 'text-white/30' : 'text-gray-400'
+                <p className={`mb-3 text-[11px] font-bold tracking-widest uppercase ${isDark ? 'text-zinc-200' : 'text-gray-400'
                     }`}>
                     {tocLabel}
                 </p>
@@ -320,7 +320,7 @@ export function TableOfContents({
                         type="button"
                         onClick={() => setIsMobileOpen(true)}
                         aria-label={tocLabel}
-                        className={`fixed bottom-5 right-5 z-40 flex h-12 w-12 items-center justify-center rounded-full border shadow-xl backdrop-blur-xl transition-colors ${isDark
+                        className={`fixed bottom-[5.5rem] right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full border shadow-xl backdrop-blur-xl transition-colors ${isDark
                             ? 'border-white/15 bg-[#1c1c1e]/90 text-yellow-300 hover:bg-[#2a2a2c]'
                             : 'border-stone-300/70 bg-white/90 text-yellow-700 hover:bg-stone-50'
                             }`}
@@ -362,7 +362,7 @@ export function TableOfContents({
                             </div>
                             <button
                                 onClick={() => setIsMobileOpen(false)}
-                                className={`w-11 h-11 -mr-2 flex items-center justify-center rounded-full transition-colors ${isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-white/10' : 'text-gray-500 hover:text-gray-800 hover:bg-black/5'
+                                className={`w-11 h-11 -mr-2 flex items-center justify-center rounded-full transition-colors ${isDark ? 'text-zinc-200 hover:text-yellow-400 hover:bg-white/10' : 'text-gray-500 hover:text-gray-800 hover:bg-black/5'
                                     }`}
                                 aria-label={lang === 'zh-TW' ? '關閉目錄' : 'Close'}
                             >

@@ -12,8 +12,8 @@ import { EnhancedArticleContent } from '@/components/blog/EnhancedArticleContent
 import { PostPager } from '@/components/blog/PostPager';
 
 // 動態導入使用 framer-motion 的組件，避免預渲染問題
-const BlogNavIsland = dynamic(() => import('@/components/blog/BlogNavIsland').then(mod => ({ default: mod.BlogNavIsland })), { ssr: false });
-const BlogDynamicIsland = dynamic(() => import('@/components/blog/BlogDynamicIsland').then(mod => ({ default: mod.BlogDynamicIsland })), { ssr: false });
+const PageNav = dynamic(() => import('@/components/PageNav').then(mod => ({ default: mod.PageNav })), { ssr: false });
+const BlogNavTools = dynamic(() => import('@/components/blog/BlogNavTools').then(mod => ({ default: mod.BlogNavTools })), { ssr: false });
 const BlogMobileNav = dynamic(() => import('@/components/blog/BlogMobileNav').then(mod => ({ default: mod.BlogMobileNav })), { ssr: false });
 const RelatedPosts = dynamic(() => import('@/components/blog/RelatedPosts').then(mod => ({ default: mod.RelatedPosts })), { ssr: false });
 const CommentSection = dynamic(() => import('@/components/blog/CommentSection').then(mod => ({ default: mod.CommentSection })), { ssr: false });
@@ -174,25 +174,25 @@ export default function BlogPostClient({
                 onTOCClick={() => setIsMobileTOCOpen(true)}
             />
 
-            {/* 電腦版左側導航動態島 - 在文章詳情頁面會自動隱藏 */}
-            <div className="hidden md:block">
-                <BlogNavIsland lang={lang} />
-            </div>
-
-            {/* 電腦版右側動態島 - 搜尋、主題切換和語言切換 */}
-            <div className="hidden md:block">
-                <BlogDynamicIsland
-                    lang={lang}
-                    setLang={handleLangChange}
-                    searchQuery={searchQuery}
-                    setSearchQuery={(query) => {
-                        setSearchQuery(query);
-                        if (query) {
-                            router.push(`/blog?q=${encodeURIComponent(query)}`);
-                        }
-                    }}
-                />
-            </div>
+            {/* 電腦版置中導覽：往下閱讀時自動收起 */}
+            <PageNav
+                current="blog"
+                lang={lang}
+                theme={theme}
+                hideOnScroll
+                desktopOnly
+                back={{ href: '/blog', label: lang === 'zh-TW' ? '所有文章' : 'All posts' }}
+                tools={
+                    <BlogNavTools
+                        lang={lang}
+                        searchQuery={searchQuery}
+                        setSearchQuery={(query) => {
+                            setSearchQuery(query);
+                            if (query) router.push(`/blog?q=${encodeURIComponent(query)}`);
+                        }}
+                    />
+                }
+            />
 
             {/* 閱讀進度條 */}
             <ReadingProgress />
@@ -209,7 +209,7 @@ export default function BlogPostClient({
             <main>
                 <article className="relative">
                     {/* 文章內容 - 統一的內容區域 */}
-                    <div data-article-content="true" className="max-w-3xl mx-auto px-4 pt-20 pb-6 md:px-8 md:pt-24 md:pb-8 lg:pb-10">
+                    <div data-article-content="true" className="max-w-3xl mx-auto px-4 pt-10 pb-6 md:px-8 md:pt-24 md:pb-8 lg:pb-10">
                         <div className="space-y-10">
                             <ArticleHero
                                 post={currentPost}
@@ -234,7 +234,7 @@ export default function BlogPostClient({
                     </div>
 
                     {/* 文章底部 */}
-                    <div className="max-w-3xl mx-auto px-4 md:px-8 pb-20">
+                    <div className="max-w-3xl mx-auto px-4 md:px-8 pb-36 md:pb-20">
                         {/* 內容結束分界線 */}
                         <div className="pt-6 border-t" style={{
                             borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'

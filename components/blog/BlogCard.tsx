@@ -71,7 +71,7 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
                                     />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center">
-                                        <svg className={`w-8 h-8 ${isDark ? 'text-white/20' : 'text-stone-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className={`w-8 h-8 ${isDark ? 'text-zinc-200' : 'text-stone-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                         </svg>
                                     </div>
@@ -85,7 +85,7 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
                         `}>
 
                             {/* Meta: Date + Tags */}
-                            <div className={`flex items-center flex-wrap gap-2 ${isDark ? 'text-white/60' : 'text-stone-500'}`}>
+                            <div className={`flex items-center flex-wrap gap-2 ${isDark ? 'text-zinc-200' : 'text-stone-500'}`}>
                                 <time className="flex items-center gap-1.5 text-xs whitespace-nowrap font-medium">
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -104,7 +104,7 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
                                                     key={idx}
                                                     className={`px-2.5 py-0.5 rounded-full border text-[11px] font-medium transition-colors duration-200
                                                         ${isDark
-                                                            ? 'border-white/12 text-white/65 group-hover:border-yellow-400/40 group-hover:text-yellow-300'
+                                                            ? 'border-white/12 text-zinc-200 group-hover:border-yellow-400/40 group-hover:text-yellow-300'
                                                             : 'border-stone-200 text-stone-600 group-hover:border-amber-400 group-hover:text-amber-700'
                                                         }
                                                     `}
@@ -131,7 +131,7 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
                                     ? 'text-sm md:text-[0.9375rem] line-clamp-3'
                                     : 'text-sm line-clamp-2'
                                 }
-                                ${isDark ? 'text-white/70' : 'text-stone-600'}
+                                ${isDark ? 'text-zinc-200' : 'text-stone-600'}
                             `}>
                                 {post.description}
                             </p>
@@ -140,7 +140,7 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
                             <div className="flex items-center pt-0.5">
                                 <span className={`inline-flex items-center gap-1.5 font-geist-mono text-xs font-medium tracking-wider uppercase transition-colors duration-200
                                     ${isDark
-                                        ? 'text-white/60 group-hover:text-yellow-400'
+                                        ? 'text-zinc-200 group-hover:text-yellow-400'
                                         : 'text-stone-500 group-hover:text-amber-700'
                                     }
                                 `}>

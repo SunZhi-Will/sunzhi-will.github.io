@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import QRCode from 'qrcode';
 import { Backdrop } from '@/components/home/Backdrop';
-import { LogoIcon } from '@/components/LogoIcon';
+import { PageNav } from '@/components/PageNav';
 import { SplitText } from '@/components/motion/SplitText';
 import { EASE_OUT } from '@/components/motion/ease';
 import { useSiteLang } from '@/lib/use-site-lang';
@@ -139,19 +139,15 @@ export default function LinksPage() {
     <MotionConfig reducedMotion="user">
       <main className="site relative isolate min-h-screen antialiased [overflow-x:clip]">
         <Backdrop />
+        <PageNav current="links" lang={lang} />
 
         {/* 頂部控制列 */}
         <motion.div
-          className="fixed inset-x-0 top-0 z-40 flex items-center justify-between px-4 pt-4"
+          className="pointer-events-none fixed inset-x-0 top-0 z-40 flex items-center justify-end px-4 pt-4 [&>*]:pointer-events-auto"
           initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: EASE_OUT }}
         >
-          <Link href="/" className={`${controlClass} group gap-2 px-3.5`} aria-label={zh ? '回首頁' : 'Back to home'}>
-            <LogoIcon className="h-5 w-5 text-zinc-100 transition-transform duration-500 group-hover:rotate-180" />
-            <span className="text-sm font-semibold text-zinc-100">Sun</span>
-          </Link>
-
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -274,7 +270,7 @@ export default function LinksPage() {
         </AnimatePresence>
 
         {/* 主內容 */}
-        <div className={`relative mx-auto px-5 pb-16 pt-28 transition-[max-width] duration-500 ${viewMode === 'grid' ? 'max-w-2xl' : 'max-w-xl'}`}>
+        <div className={`relative mx-auto px-5 pb-28 pt-28 transition-[max-width] md:pb-16 duration-500 ${viewMode === 'grid' ? 'max-w-2xl' : 'max-w-xl'}`}>
           {/* 個人資料 */}
           <div className="mb-12">
             <motion.div

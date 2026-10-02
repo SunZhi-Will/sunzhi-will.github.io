@@ -4,11 +4,12 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { MagnifyingGlassIcon, XMarkIcon, Bars3Icon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, XMarkIcon, Bars3Icon, SunIcon, MoonIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { Lang } from '@/types';
 import { blogTranslations } from '@/lib/blog-translations';
 import { useTheme } from '@/app/blog/ThemeProvider';
 import { LogoIcon } from '@/components/LogoIcon';
+import { NAV_PAGES } from '@/components/PageNav';
 import { useHideOnScroll } from '@/lib/use-hide-on-scroll';
 
 interface BlogMobileNavProps {
@@ -16,8 +17,6 @@ interface BlogMobileNavProps {
     setLang: (lang: Lang) => void;
     searchQuery?: string;
     setSearchQuery?: (query: string) => void;
-    selectedTag?: string | null;
-    setSelectedTag?: (tag: string | null) => void;
     hasTOC?: boolean;
     onTOCClick?: () => void;
 }
@@ -27,15 +26,13 @@ export function BlogMobileNav({
     setLang: _setLang, // eslint-disable-line @typescript-eslint/no-unused-vars
     searchQuery,
     setSearchQuery,
-    selectedTag,
-    setSelectedTag,
     hasTOC = false,
     onTOCClick,
 }: BlogMobileNavProps) {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const pathname = usePathname();
-    const { theme } = useTheme();
+    const { theme, toggleTheme } = useTheme();
     const isDark = theme === 'dark';
     const t = blogTranslations[lang];
     // 往下閱讀時收起；選單或搜尋開著的時候不收
@@ -44,51 +41,41 @@ export function BlogMobileNav({
     // 判斷是否在文章詳情頁面
     const isPostPage = pathname?.startsWith('/blog/') && pathname !== '/blog';
 
-    const navItems = [
-        {
-            id: 'all',
-            tag: null,
-            label: lang === 'zh-TW' ? '全部' : 'All',
-        },
-        {
-            id: 'sun',
-            tag: 'Sun',
-            label: lang === 'zh-TW' ? '日常' : 'Daily',
-        },
-        {
-            id: 'ai',
-            tag: 'AI',
-            label: lang === 'zh-TW' ? 'AI' : 'AI',
-        },
-        {
-            id: 'blockchain',
-            tag: '區塊鏈',
-            label: lang === 'zh-TW' ? '區塊鏈' : 'Blockchain',
-        },
-    ];
-
     return (
         <>
             {/* 主要導覽列 */}
             <motion.div
-                className="fixed top-0 left-0 right-0 z-50 pointer-events-auto md:hidden"
-                initial={{ y: -100, opacity: 0 }}
-                animate={{ y: hidden ? -100 : 0, opacity: hidden ? 0 : 1 }}
+                className="fixed bottom-0 left-0 right-0 z-50 pointer-events-auto pb-[max(0.5rem,env(safe-area-inset-bottom))] md:hidden"
+                initial={{ y: 100, opacity: 0 }}
+                animate={{ y: hidden ? 100 : 0, opacity: hidden ? 0 : 1 }}
                 transition={{ duration: 0.3 }}
             >
-                <div className={`mx-2 mt-2 rounded-2xl backdrop-blur-2xl shadow-2xl transition-colors duration-300 ${
+                <div className={`mx-2 rounded-2xl backdrop-blur-2xl shadow-2xl transition-colors duration-300 ${
                     isDark
                         ? 'bg-[#1c1c1e]/95 border border-white/20'
                         : 'bg-[#f0ece4]/92 border border-stone-300/60'
                 }`}>
                     {/* 第一行：LOGO 和主要操作 */}
                     <div className="flex items-center justify-between px-4 py-3 min-h-[3.5rem]">
+                        {/* 文章頁：明確的返回，回到所有文章 */}
+                        {isPostPage && (
+                            <Link
+                                href="/blog"
+                                aria-label={lang === 'zh-TW' ? '返回所有文章' : 'Back to all posts'}
+                                className={`-ml-1 mr-1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors ${
+                                    isDark ? 'text-zinc-200 hover:text-yellow-400' : 'text-gray-700 hover:text-gray-900'
+                                }`}
+                            >
+                                <ChevronLeftIcon className="h-5 w-5" />
+                            </Link>
+                        )}
+
                         {/* LOGO */}
                         <Link
-                            href="/blog"
+                            href="/"
                             className={`flex items-center gap-2 transition-colors flex-shrink-0 ${
                                 isDark
-                                    ? 'text-gray-200 hover:text-gray-300'
+                                    ? 'text-gray-200 hover:text-yellow-400'
                                     : 'text-gray-900 hover:text-gray-700'
                             }`}
                         >
@@ -112,7 +99,7 @@ export function BlogMobileNav({
                                     }}
                                     className={`p-2 rounded-lg transition-all ${
                                         isDark
-                                            ? 'text-white/80 hover:text-yellow-400 hover:bg-[#27272a]/70'
+                                            ? 'text-zinc-200 hover:text-yellow-400 hover:bg-[#27272a]/70'
                                             : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200/70'
                                     }`}
                                     whileHover={{ scale: 1.05 }}
@@ -122,8 +109,8 @@ export function BlogMobileNav({
                                 </motion.button>
                             )}
 
-                            {/* 導航選單按鈕 - 只在列表頁面顯示 */}
-                            {!isPostPage && setSelectedTag && (
+                            {/* 頁面選單：前往作品集、服務費用、個人連結 */}
+                            {(
                                 <motion.button
                                     onClick={() => {
                                         setIsMenuOpen(!isMenuOpen);
@@ -131,11 +118,13 @@ export function BlogMobileNav({
                                     }}
                                     className={`p-2 rounded-lg transition-all relative ${
                                         isDark
-                                            ? 'text-white/80 hover:text-yellow-400 hover:bg-[#27272a]/70'
+                                            ? 'text-zinc-200 hover:text-yellow-400 hover:bg-[#27272a]/70'
                                             : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200/70'
                                     }`}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
+                                    aria-expanded={isMenuOpen}
+                                    aria-label={lang === 'zh-TW' ? '頁面選單' : 'Pages menu'}
                                 >
                                     <AnimatePresence mode="wait">
                                         {isMenuOpen ? (
@@ -169,7 +158,7 @@ export function BlogMobileNav({
                                     onClick={onTOCClick}
                                     className={`p-2 rounded-lg transition-all ${
                                         isDark
-                                            ? 'text-white/80 hover:text-yellow-400 hover:bg-[#27272a]/70'
+                                            ? 'text-zinc-200 hover:text-yellow-400 hover:bg-[#27272a]/70'
                                             : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200/70'
                                     }`}
                                     whileHover={{ scale: 1.05 }}
@@ -190,75 +179,84 @@ export function BlogMobileNav({
 
             {/* 全屏導航選單覆蓋層 */}
             <AnimatePresence>
-                {isMenuOpen && !isPostPage && setSelectedTag && (
+                {isMenuOpen && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3 }}
-                        className={`fixed top-[5.5rem] left-0 right-0 bottom-0 z-40 backdrop-blur-2xl md:hidden ${
+                        className={`fixed top-0 left-0 right-0 bottom-[4.75rem] z-40 backdrop-blur-2xl md:hidden ${
                             isDark ? 'bg-gray-900/50' : 'bg-gray-900/30'
                         }`}
                         onClick={() => setIsMenuOpen(false)}
                     >
                         <motion.div
-                            initial={{ y: -20, opacity: 0 }}
+                            initial={{ y: 20, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
-                            exit={{ y: -20, opacity: 0 }}
+                            exit={{ y: 20, opacity: 0 }}
                             transition={{
                                 type: "spring",
                                 stiffness: 300,
                                 damping: 30,
                                 delay: 0.05,
                             }}
-                            className="h-full flex flex-col pt-6 pb-8 px-4 overflow-y-auto"
+                            className="h-full flex flex-col pt-6 pb-4 px-4 overflow-y-auto"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <div className="max-w-md mx-auto w-full flex-1 flex flex-col">
-                                {/* 導航選項列表 */}
-                                <div className="flex-1 space-y-2">
-                                    {navItems.map((item, index) => {
-                                        const active = selectedTag === item.tag;
+                            <div className="max-w-md mx-auto w-full flex-1 flex flex-col justify-end">
+                                {/* 頁面列表：目前所在的部落格有黃點標示 */}
+                                <div className="space-y-2">
+                                    {NAV_PAGES.map((page, index) => {
+                                        const active = page.id === 'blog';
                                         return (
-                                            <motion.button
-                                                key={item.id}
-                                                onClick={() => {
-                                                    setSelectedTag(item.tag);
-                                                    setIsMenuOpen(false);
-                                                }}
+                                            <motion.div
+                                                key={page.id}
                                                 initial={{ x: -20, opacity: 0 }}
                                                 animate={{ x: 0, opacity: 1 }}
-                                                transition={{
-                                                    duration: 0.3,
-                                                    delay: 0.1 + index * 0.05,
-                                                    ease: [0.4, 0, 0.2, 1],
-                                                }}
-                                                whileHover={{ x: 4 }}
-                                                whileTap={{ scale: 0.98 }}
-                                                className={`
-                                                    w-full text-left px-4 py-4 rounded-xl
-                                                    transition-all duration-200 relative
-                                                    ${active
-                                                        ? isDark ? 'text-yellow-400 font-semibold' : 'text-gray-900 font-semibold'
-                                                        : isDark ? 'text-white/60 bg-[#18181b]/30 hover:text-white hover:bg-[#27272a]/50' : 'text-gray-600 bg-gray-50/30 hover:text-gray-800 hover:bg-gray-100/50'
-                                                    }
-                                                `}
+                                                transition={{ duration: 0.3, delay: 0.1 + index * 0.05, ease: [0.4, 0, 0.2, 1] }}
                                             >
-                                                {active && (
-                                                    <motion.div
-                                                        className={`absolute bottom-0 left-0 right-0 h-0.5 rounded-full ${
-                                                            isDark ? 'bg-yellow-400' : 'bg-gray-700'
-                                                        }`}
-                                                        layoutId="activeMobileNavIndicator"
-                                                        transition={{ duration: 0.3, ease: "easeOut" }}
-                                                    />
-                                                )}
-                                                <span className="relative z-10 text-base font-medium">
-                                                    {item.label}
-                                                </span>
-                                            </motion.button>
+                                                <Link
+                                                    href={page.href}
+                                                    onClick={() => setIsMenuOpen(false)}
+                                                    aria-current={active ? 'page' : undefined}
+                                                    className={`flex w-full items-center justify-between rounded-xl px-4 py-4 text-base font-medium transition-colors duration-200 ${
+                                                        active
+                                                            ? isDark ? 'bg-[#27272a]/60 text-yellow-400' : 'bg-white text-gray-900 shadow-sm'
+                                                            : isDark ? 'bg-[#18181b]/30 text-zinc-200 hover:text-yellow-400' : 'bg-white/70 text-gray-800 hover:text-gray-900'
+                                                    }`}
+                                                >
+                                                    {lang === 'zh-TW' ? page.zh : page.en}
+                                                    {active && <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-yellow-400" />}
+                                                </Link>
+                                            </motion.div>
                                         );
                                     })}
+                                    <motion.a
+                                        href="https://sunkoro.com"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        initial={{ x: -20, opacity: 0 }}
+                                        animate={{ x: 0, opacity: 1 }}
+                                        transition={{ duration: 0.3, delay: 0.1 + NAV_PAGES.length * 0.05, ease: [0.4, 0, 0.2, 1] }}
+                                        className={`flex w-full items-center justify-between rounded-xl border px-4 py-4 text-base font-medium ${
+                                            isDark ? 'border-white/10 text-amber-400' : 'border-gray-300 text-amber-700'
+                                        }`}
+                                    >
+                                        Sunkoro <span aria-hidden="true">↗</span>
+                                    </motion.a>
+                                    <motion.button
+                                        type="button"
+                                        onClick={toggleTheme}
+                                        initial={{ x: -20, opacity: 0 }}
+                                        animate={{ x: 0, opacity: 1 }}
+                                        transition={{ duration: 0.3, delay: 0.1 + (NAV_PAGES.length + 1) * 0.05, ease: [0.4, 0, 0.2, 1] }}
+                                        className={`flex w-full items-center justify-between rounded-xl px-4 py-4 text-base font-medium ${
+                                            isDark ? 'text-zinc-200' : 'text-gray-800'
+                                        }`}
+                                    >
+                                        {isDark ? (lang === 'zh-TW' ? '切換為淺色主題' : 'Switch to light theme') : (lang === 'zh-TW' ? '切換為深色主題' : 'Switch to dark theme')}
+                                        {isDark ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
+                                    </motion.button>
                                 </div>
                             </div>
                         </motion.div>
@@ -274,7 +272,7 @@ export function BlogMobileNav({
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2 }}
-                        className={`fixed top-[5.5rem] left-0 right-0 bottom-0 z-40 backdrop-blur-2xl md:hidden ${
+                        className={`fixed top-0 left-0 right-0 bottom-[4.75rem] z-40 backdrop-blur-2xl md:hidden ${
                             isDark ? 'bg-black/50' : 'bg-black/20'
                         }`}
                         onClick={() => setIsSearchOpen(false)}
@@ -324,7 +322,7 @@ export function BlogMobileNav({
                                         }}
                                     >
                                         <MagnifyingGlassIcon className={`w-5 h-5 flex-shrink-0 ${
-                                            isDark ? 'text-white/60' : 'text-gray-600'
+                                            isDark ? 'text-zinc-200' : 'text-gray-600'
                                         }`} />
                                     </motion.div>
                                     <input
@@ -356,7 +354,7 @@ export function BlogMobileNav({
                                                 }}
                                                 className={`p-1.5 rounded-lg transition-all ${
                                                     isDark
-                                                        ? 'text-white/60 hover:text-white hover:bg-white/10'
+                                                        ? 'text-zinc-200 hover:text-yellow-400 hover:bg-white/10'
                                                         : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                                                 }`}
                                                 whileHover={{ scale: 1.1 }}
@@ -370,7 +368,7 @@ export function BlogMobileNav({
                                         onClick={() => setIsSearchOpen(false)}
                                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                                             isDark
-                                                ? 'text-white/80 hover:text-yellow-400 hover:bg-white/8'
+                                                ? 'text-zinc-200 hover:text-yellow-400 hover:bg-white/8'
                                                 : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
                                         }`}
                                         whileHover={{ scale: 1.05 }}

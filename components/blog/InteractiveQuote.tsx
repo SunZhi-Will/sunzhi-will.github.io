@@ -52,7 +52,7 @@ export function InteractiveQuote({
                     </blockquote>
                     {(author || source) && (
                         <div className={`mt-4 text-sm ${
-                            isDark ? 'text-gray-400' : 'text-gray-600'
+                            isDark ? 'text-zinc-200' : 'text-gray-600'
                         }`}>
                             {author && <span className="font-medium">— {author}</span>}
                             {source && (

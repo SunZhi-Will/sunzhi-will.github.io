@@ -69,9 +69,9 @@ export function SiteNav({ lang, setLang }: SiteNavProps) {
 
   return (
     <motion.header
-      className="fixed inset-x-0 top-0 z-50 flex justify-center px-3 pt-3 md:pt-4"
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
+      className="fixed inset-x-0 bottom-0 z-50 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:bottom-auto md:top-0 md:pb-0 md:pt-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.8, ease: EASE_OUT, delay: 0.1 }}
     >
       <nav
@@ -79,9 +79,11 @@ export function SiteNav({ lang, setLang }: SiteNavProps) {
         className={`relative w-full overflow-hidden rounded-[22px] border transition-[background-color,border-color,box-shadow] duration-500 md:w-auto ${
           scrolled || open
             ? 'border-white/10 bg-[#141416]/85 shadow-[0_8px_40px_rgba(0,0,0,0.45)] backdrop-blur-xl'
-            : 'border-transparent bg-transparent'
+            : 'border-white/10 bg-[#141416]/85 shadow-[0_8px_40px_rgba(0,0,0,0.45)] backdrop-blur-xl md:border-transparent md:bg-transparent md:shadow-none md:backdrop-blur-none'
         }`}
       >
+        {/* 手機：選單在上、列在下，用 reverse 讓選單向上長出來 */}
+        <div className="flex flex-col-reverse md:flex-col">
         <div className="flex items-center gap-1 px-2 py-1.5">
           <a
             href="#home"
@@ -149,7 +151,7 @@ export function SiteNav({ lang, setLang }: SiteNavProps) {
               fill="none"
               stroke="currentColor"
               strokeWidth={2.5}
-              animate={{ rotate: open ? 180 : 0 }}
+              animate={{ rotate: open ? 0 : 180 }}
               transition={{ duration: 0.3, ease: EASE_OUT }}
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 9l6 6 6-6" />
@@ -176,7 +178,7 @@ export function SiteNav({ lang, setLang }: SiteNavProps) {
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.4, ease: EASE_OUT }}
             >
-              <div className="flex flex-col px-2 pb-3 pt-1">
+              <div className="flex flex-col px-2 pb-1 pt-3">
                 {[...sections, { id: 'contact', name: homeCopy[lang].nav.contact }].map((section, i) => (
                   <motion.a
                     key={section.id}
@@ -204,6 +206,8 @@ export function SiteNav({ lang, setLang }: SiteNavProps) {
             </motion.div>
           )}
         </AnimatePresence>
+
+        </div>
 
         {/* 閱讀進度：膠囊底部的一條細線 */}
         <motion.div

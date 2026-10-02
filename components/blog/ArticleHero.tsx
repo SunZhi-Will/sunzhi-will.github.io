@@ -159,7 +159,7 @@ export function ArticleHero({ post, lang, readingTime, isDark }: ArticleHeroProp
         <header className="relative pt-2 md:pt-6">
             <div
                 className={`flex flex-wrap items-center gap-x-3 gap-y-1 text-sm ${meta.className} ${
-                    isDark ? 'text-zinc-400' : 'text-zinc-500'
+                    isDark ? 'text-zinc-200' : 'text-zinc-500'
                 }`}
                 style={meta.style}
             >
@@ -167,7 +167,7 @@ export function ArticleHero({ post, lang, readingTime, isDark }: ArticleHeroProp
                     <span aria-hidden="true" className="h-2 w-2 rounded-[2px] bg-yellow-400" />
                     {formatDate(post.date, lang === 'zh-TW' ? 'zh-TW' : 'en-US')}
                 </span>
-                <span aria-hidden="true" className={isDark ? 'text-zinc-700' : 'text-zinc-300'}>/</span>
+                <span aria-hidden="true" className={isDark ? 'text-zinc-200' : 'text-zinc-300'}>/</span>
                 <span>
                     {readingTime} {t.readTime}
                 </span>
@@ -183,7 +183,7 @@ export function ArticleHero({ post, lang, readingTime, isDark }: ArticleHeroProp
                 {rest && (
                     <span
                         className={`mt-3 block text-xl font-semibold leading-snug sm:text-2xl md:mt-4 md:text-[1.7rem] md:leading-[1.4] ${
-                            isDark ? 'text-zinc-400' : 'text-zinc-500'
+                            isDark ? 'text-zinc-200' : 'text-zinc-500'
                         }`}
                     >
                         <BalancedText text={rest} segmenter={segmenter} />
@@ -198,7 +198,7 @@ export function ArticleHero({ post, lang, readingTime, isDark }: ArticleHeroProp
                     <div
                         className={`mt-6 max-w-2xl text-balance text-[17px] font-normal leading-8 md:text-lg md:leading-9 ${
                             isDark
-                                ? 'text-zinc-300 prose-strong:text-zinc-50'
+                                ? 'text-zinc-200 prose-strong:text-zinc-50'
                                 : 'text-zinc-700 prose-strong:text-zinc-950'
                         }`}
                         dangerouslySetInnerHTML={{
@@ -214,7 +214,7 @@ export function ArticleHero({ post, lang, readingTime, isDark }: ArticleHeroProp
                                 key={tag}
                                 className={`rounded-md border px-2.5 py-1 text-xs font-medium ${
                                     isDark
-                                        ? 'border-zinc-800 bg-zinc-900/80 text-zinc-300'
+                                        ? 'border-zinc-800 bg-zinc-900/80 text-zinc-200'
                                         : 'border-zinc-200 bg-white text-zinc-600'
                                 }`}
                             >

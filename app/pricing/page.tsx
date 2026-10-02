@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { motion, MotionConfig } from 'framer-motion';
 import Link from 'next/link';
 import { Backdrop } from '@/components/home/Backdrop';
-import { LogoIcon } from '@/components/LogoIcon';
+import { PageNav } from '@/components/PageNav';
 import { Magnetic } from '@/components/motion/Magnetic';
 import { Reveal } from '@/components/motion/Reveal';
 import { Spotlight } from '@/components/motion/Spotlight';
@@ -294,18 +294,15 @@ export default function PricingPage() {
         <MotionConfig reducedMotion="user">
             <div className="site relative isolate min-h-screen [overflow-x:clip]">
                 <Backdrop />
+                <PageNav current="pricing" lang={lang} />
 
                 {/* 頂部控制列 */}
                 <motion.header
-                    className="fixed inset-x-0 top-0 z-40 flex items-center justify-between px-4 pt-4"
+                    className="pointer-events-none fixed inset-x-0 top-0 z-40 flex items-center justify-end px-4 pt-4 [&>*]:pointer-events-auto"
                     initial={{ opacity: 0, y: -16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.7, ease: EASE_OUT }}
                 >
-                    <Link href="/" className={`${controlClass} group gap-2 px-3.5`} aria-label={t.back.replace(/^←\s*/, '')}>
-                        <LogoIcon className="h-5 w-5 text-zinc-100 transition-transform duration-500 group-hover:rotate-180" />
-                        <span className="text-sm font-semibold text-zinc-100">Sun</span>
-                    </Link>
                     <button
                         type="button"
                         onClick={() => setLang(zh ? 'en' : 'zh-TW')}
@@ -465,7 +462,7 @@ export default function PricingPage() {
                             </Reveal>
                         </div>
 
-                        <div className="mt-16 flex flex-col gap-4 border-t border-white/10 py-8 text-sm text-zinc-200 md:flex-row md:items-center md:justify-between">
+                        <div className="mt-16 flex flex-col gap-4 border-t border-white/10 pb-24 pt-8 text-sm text-zinc-200 md:flex-row md:items-center md:justify-between md:pb-8">
                             <p>© {new Date().getFullYear()} {STUDIO_NAME} · 謝上智</p>
                             <nav className="flex items-center gap-6" aria-label={STUDIO_NAME}>
                                 <Link href="/" className="link-draw text-zinc-200 hover:text-white">{t.back.replace(/^←\s*/, '')}</Link>

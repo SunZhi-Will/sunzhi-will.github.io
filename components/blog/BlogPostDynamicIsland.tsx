@@ -45,7 +45,7 @@ export function BlogPostDynamicIsland({
                         onClick={() => setLang(lang === 'zh-TW' ? 'en' : 'zh-TW')}
                         className={`px-3 py-1.5 rounded-lg text-xs font-medium
                         transition-all duration-200 whitespace-nowrap ${isDark
-                                ? 'text-white/80 hover:text-yellow-400 hover:bg-white/5'
+                                ? 'text-zinc-200 hover:text-yellow-400 hover:bg-white/5'
                                 : 'text-gray-700 hover:text-gray-900 hover:bg-black/5'
                             }`}
                         whileHover={{ scale: 1.05 }}

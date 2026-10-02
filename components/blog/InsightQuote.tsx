@@ -62,14 +62,14 @@ export function InsightQuote({ content, author, role, type = 'insight', emoji }:
           </div>
 
           <div className={`leading-relaxed mb-4 ${
-            isDark ? 'text-gray-300' : 'text-gray-700'
+            isDark ? 'text-zinc-200' : 'text-gray-700'
           }`}>
             {content}
           </div>
 
           {author && (
             <div className={`text-sm border-t pt-3 ${
-              isDark ? 'border-gray-600 text-gray-400' : 'border-gray-300 text-gray-600'
+              isDark ? 'border-gray-600 text-zinc-200' : 'border-gray-300 text-gray-600'
             }`}>
               {author}
               {role && <span className="ml-2">• {role}</span>}

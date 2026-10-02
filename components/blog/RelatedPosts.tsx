@@ -44,8 +44,8 @@ export function RelatedPosts({ posts, currentSlug, lang }: RelatedPostsProps) {
 
     return (
         <section className="pt-6">
-            <h2 className={`text-lg font-light mb-6 ${
-                isDark ? 'text-white' : 'text-black font-semibold'
+            <h2 className={`text-lg font-semibold mb-6 ${
+                isDark ? 'text-white' : 'text-black'
             }`}>
                 {lang === 'zh-TW' ? '推薦閱讀' : 'Related Articles'}
             </h2>

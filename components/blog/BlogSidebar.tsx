@@ -35,7 +35,7 @@ export function BlogSidebar({ lang, setLang, post }: BlogSidebarProps) {
                         href="/"
                         className={`inline-flex items-center text-xs transition-colors mb-4 ${
                             isDark
-                                ? 'text-gray-400 hover:text-gray-300'
+                                ? 'text-zinc-200 hover:text-yellow-400'
                                 : 'text-gray-600 hover:text-gray-900'
                         }`}
                     >
@@ -72,7 +72,7 @@ export function BlogSidebar({ lang, setLang, post }: BlogSidebarProps) {
                             {lang === 'zh-TW' ? '謝上智' : 'Sun Zhi'}
                         </h1>
                         <p className={`text-xs line-clamp-2 ${
-                            isDark ? 'text-gray-400' : 'text-gray-600'
+                            isDark ? 'text-zinc-200' : 'text-gray-600'
                         }`}>
                             {lang === 'zh-TW' ? '軟體工程師 | AI 開發者' : 'Software Engineer | AI Developer'}
                         </p>
@@ -87,7 +87,7 @@ export function BlogSidebar({ lang, setLang, post }: BlogSidebarProps) {
                         rel="noopener noreferrer"
                         className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all ${
                             isDark
-                                ? 'bg-gray-700/70 hover:bg-gray-600/80 text-gray-300 hover:text-gray-200'
+                                ? 'bg-gray-700/70 hover:bg-gray-600/80 text-zinc-200 hover:text-yellow-400'
                                 : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900'
                         }`}
                         aria-label="GitHub"
@@ -102,7 +102,7 @@ export function BlogSidebar({ lang, setLang, post }: BlogSidebarProps) {
                         rel="noopener noreferrer"
                         className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all ${
                             isDark
-                                ? 'bg-gray-700/70 hover:bg-gray-600/80 text-gray-300 hover:text-gray-200'
+                                ? 'bg-gray-700/70 hover:bg-gray-600/80 text-zinc-200 hover:text-yellow-400'
                                 : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900'
                         }`}
                         aria-label="LinkedIn"
@@ -115,7 +115,7 @@ export function BlogSidebar({ lang, setLang, post }: BlogSidebarProps) {
                         href="mailto:sun055676@gmail.com"
                         className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all ${
                             isDark
-                                ? 'bg-gray-700/70 hover:bg-gray-600/80 text-gray-300 hover:text-gray-200'
+                                ? 'bg-gray-700/70 hover:bg-gray-600/80 text-zinc-200 hover:text-yellow-400'
                                 : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900'
                         }`}
                         aria-label="Email"
@@ -130,7 +130,7 @@ export function BlogSidebar({ lang, setLang, post }: BlogSidebarProps) {
                         rel="noopener noreferrer"
                         className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all ${
                             isDark
-                                ? 'bg-gray-700/70 hover:bg-gray-600/80 text-gray-300 hover:text-gray-200'
+                                ? 'bg-gray-700/70 hover:bg-gray-600/80 text-zinc-200 hover:text-yellow-400'
                                 : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900'
                         }`}
                         aria-label="Instagram"
@@ -178,7 +178,7 @@ export function BlogSidebar({ lang, setLang, post }: BlogSidebarProps) {
                         href="/"
                         className={`block w-full px-2.5 py-1.5 text-xs transition-colors rounded-lg text-left mb-3 ${
                             isDark
-                                ? 'text-gray-300 hover:text-gray-200 hover:bg-gray-700/70'
+                                ? 'text-zinc-200 hover:text-yellow-400 hover:bg-gray-700/70'
                                 : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200/70'
                         }`}
                     >
@@ -197,7 +197,7 @@ export function BlogSidebar({ lang, setLang, post }: BlogSidebarProps) {
                 )}
 
                 <div className={`text-xs text-center ${
-                    isDark ? 'text-gray-500' : 'text-gray-600'
+                    isDark ? 'text-zinc-200' : 'text-gray-600'
                 }`}>
                     © {new Date().getFullYear()} Sun
                 </div>

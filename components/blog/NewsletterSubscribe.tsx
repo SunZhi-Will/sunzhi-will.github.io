@@ -153,13 +153,13 @@ export function NewsletterSubscribe({ lang, variant = 'section' }: NewsletterSub
     if (variant === 'inline') {
         return (
             <div>
-                <p className={`text-[11px] font-bold tracking-widest uppercase mb-3 ${isDark ? 'text-white/40' : 'text-black/35'}`}>
+                <p className={`text-[11px] font-bold tracking-widest uppercase mb-3 ${isDark ? 'text-zinc-200' : 'text-black/35'}`}>
                     {t.eyebrow}
                 </p>
                 <p className={`text-sm font-semibold mb-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                     {t.title}
                 </p>
-                <p className={`text-xs leading-relaxed mb-4 ${isDark ? 'text-white/50' : 'text-gray-600'}`}>
+                <p className={`text-xs leading-relaxed mb-4 ${isDark ? 'text-zinc-200' : 'text-gray-600'}`}>
                     {t.subtitle}
                 </p>
                 <form onSubmit={handleSubmit} className="space-y-2">
@@ -193,8 +193,8 @@ export function NewsletterSubscribe({ lang, variant = 'section' }: NewsletterSub
                     )}
                 </form>
                 <div className="mt-3 flex items-center justify-between">
-                    <span className={`text-[10px] ${isDark ? 'text-white/25' : 'text-black/45'}`}>{t.privacy}</span>
-                    <a href="/unsubscribe" className={`text-[10px] transition-colors ${isDark ? 'text-white/30 hover:text-yellow-400' : 'text-black/40 hover:text-yellow-600'}`}>
+                    <span className={`text-[10px] ${isDark ? 'text-zinc-200' : 'text-black/45'}`}>{t.privacy}</span>
+                    <a href="/unsubscribe" className={`text-[10px] transition-colors ${isDark ? 'text-zinc-200 hover:text-yellow-400' : 'text-black/40 hover:text-yellow-600'}`}>
                         {t.unsubscribe}
                     </a>
                 </div>
@@ -256,7 +256,7 @@ export function NewsletterSubscribe({ lang, variant = 'section' }: NewsletterSub
                 </h2>
 
                 {/* Subtitle */}
-                <p className={`text-sm md:text-base leading-relaxed mb-8 ${isDark ? 'text-white/55' : 'text-black/60'}`}>
+                <p className={`text-sm md:text-base leading-relaxed mb-8 ${isDark ? 'text-zinc-200' : 'text-black/60'}`}>
                     {t.subtitle}
                 </p>
 
@@ -320,7 +320,7 @@ export function NewsletterSubscribe({ lang, variant = 'section' }: NewsletterSub
                 )}
 
                 {/* Privacy note + unsubscribe */}
-                <div className={`mt-6 flex items-center justify-center gap-4 text-[11px] ${isDark ? 'text-white/25' : 'text-black/45'}`}>
+                <div className={`mt-6 flex items-center justify-center gap-4 text-[11px] ${isDark ? 'text-zinc-200' : 'text-black/45'}`}>
                     <span>{t.privacy}</span>
                     <span aria-hidden="true">·</span>
                     <a

@@ -5,6 +5,7 @@
  *   node scripts/generate-brand-assets.js          全部重新產生
  *   node scripts/generate-brand-assets.js icons    只產生 LOGO 與 favicon
  *   node scripts/generate-brand-assets.js og       只產生 OG 圖片
+ *   node scripts/generate-brand-assets.js posts    只產生文章的封面與分享卡
  *
  * 圖示用 resvg 把 SVG 轉成 PNG。OG 圖片用 Playwright 開一頁 HTML 後截圖，
  * 這樣可以直接沿用網站的字體與 CSS 寫法（需要網路載入 Google Fonts，
@@ -16,6 +17,7 @@ const path = require('path');
 const { Resvg } = require('@resvg/resvg-js');
 
 const PUBLIC = path.join(__dirname, '../public');
+const POSTS = path.join(__dirname, '../content/blog');
 
 // 顏色與 docs/uiux-redesign-2026.md 的設計語言一致
 const BG = '#0a0a0a';
@@ -72,6 +74,7 @@ function buildIco(images) {
 }
 
 function write(name, data) {
+  fs.mkdirSync(path.dirname(path.join(PUBLIC, name)), { recursive: true });
   fs.writeFileSync(path.join(PUBLIC, name), data);
   console.log(`✅ ${name}`);
 }
@@ -135,6 +138,50 @@ const CARDS = [
   },
 ];
 
+// 文章卡片的介面文字，跟著文章語言走，同一張圖不混用兩種語言
+const POST_COPY = {
+  'zh-TW': { pre: 'Sun 的部落格' },
+  en: { pre: "Sun's Blog" },
+};
+const SENTENCE_END = '？！。?!';
+
+// 與 components/blog/ArticleHero.tsx 相同：「一句話＋補充說明」的標題拆成主標與副標
+function splitTitle(title) {
+  for (let i = 0; i < title.length - 1; i++) {
+    if (!SENTENCE_END.includes(title[i])) continue;
+    const rest = title.slice(i + 1).trim();
+    if (rest.length >= 4) return { lead: title.slice(0, i + 1), rest };
+    break;
+  }
+  return { lead: title, rest: '' };
+}
+
+// 讀出每篇文章每個語言版本的標題、日期、標籤
+function loadPostCards() {
+  const matter = require('gray-matter');
+  const cards = [];
+  for (const slug of fs.readdirSync(POSTS).sort()) {
+    const folder = path.join(POSTS, slug);
+    if (!fs.statSync(folder).isDirectory()) continue;
+    for (const lang of Object.keys(POST_COPY)) {
+      const file = ['mdx', 'md'].map((ext) => path.join(folder, `article.${lang}.${ext}`)).find((f) => fs.existsSync(f));
+      if (!file) continue;
+      const { data } = matter(fs.readFileSync(file, 'utf8'));
+      if (!data.title) continue;
+      cards.push({
+        slug,
+        lang,
+        label: String(data.date || slug).slice(0, 10).replace(/-/g, '.'),
+        pre: POST_COPY[lang].pre,
+        post: splitTitle(String(data.title)),
+        topics: (data.tags || []).slice(0, 3).map(String),
+        url: `${SITE}/blog`,
+      });
+    }
+  }
+  return cards;
+}
+
 const escapeHtml = (text) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 function cardHtml(card, shape, portraitSrc) {
@@ -151,12 +198,12 @@ function cardHtml(card, shape, portraitSrc) {
     : `<ul class="rows">${rows}</ul>`;
 
   return `<!doctype html>
-<html lang="en">
+<html lang="${card.lang || 'en'}">
 <head>
 <meta charset="utf-8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=block" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500${card.lang === 'zh-TW' ? '&family=Noto+Sans+TC:wght@400;500;700' : ''}&display=block" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { width: 100%; height: 100%; }
@@ -167,7 +214,7 @@ function cardHtml(card, shape, portraitSrc) {
     overflow: hidden;
     background: ${BG};
     color: #e4e4e7;
-    font-family: 'Geist', system-ui, sans-serif;
+    font-family: 'Geist', 'Noto Sans TC', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
   .grid, .glow { position: absolute; pointer-events: none; }
@@ -187,7 +234,7 @@ function cardHtml(card, shape, portraitSrc) {
     background: radial-gradient(closest-side, rgba(250, 204, 21, 0.11), transparent);
   }
   .eyebrow {
-    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-family: 'Geist Mono', 'Noto Sans TC', ui-monospace, monospace;
     font-size: 17px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -251,6 +298,33 @@ function cardHtml(card, shape, portraitSrc) {
   .row-title { flex: 1; font-weight: 500; color: #f4f4f5; white-space: nowrap; }
   .row-arrow { color: #e4e4e7; }
 
+  /* 文章卡片：標題字級由頁面內的腳本縮到放得下為止 */
+  body.post .copy { width: 100%; }
+  body.post h1 {
+    margin-top: 14px;
+    max-width: 1040px;
+    font-size: var(--title, 84px);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    white-space: normal;
+    text-wrap: balance;
+  }
+  body.post:lang(en) h1 { font-weight: 600; line-height: 1.08; letter-spacing: -0.035em; }
+  body.post .rest {
+    margin-top: 22px;
+    max-width: 1000px;
+    font-size: calc(var(--title, 84px) * 0.5);
+    font-weight: 500;
+    line-height: 1.4;
+    color: #e4e4e7;
+    text-wrap: balance;
+  }
+  .nowrap { white-space: nowrap; }
+  .clause { display: inline-block; }
+  /* 封面在列表會被裁成較窄的比例，內容留在中間約 75% 寬度內才不會被切到 */
+  body.cover { padding-left: 150px; padding-right: 150px; }
+
   /* 1200x630 */
   .wide { padding: 52px 64px 0; }
   .wide main { align-items: center; justify-content: space-between; gap: 48px; }
@@ -284,7 +358,7 @@ function cardHtml(card, shape, portraitSrc) {
   .square .row-arrow { font-size: 22px; }
 </style>
 </head>
-<body class="${shape}">
+<body class="${shape}${card.post ? ' post' : ''}${card.kind === 'cover' ? ' cover' : ''}">
   <div class="grid"></div>
   <div class="glow"></div>
   <header>
@@ -294,11 +368,13 @@ function cardHtml(card, shape, portraitSrc) {
   <main>
     <div class="copy">
       <p class="pre">${escapeHtml(card.pre)}</p>
-      <h1>${escapeHtml(card.title)}</h1>
+      ${card.post
+        ? `<h1>${escapeHtml(card.post.lead)}</h1>${card.post.rest ? `<p class="rest">${escapeHtml(card.post.rest)}</p>` : ''}`
+        : `<h1>${escapeHtml(card.title)}</h1>
       ${card.lead ? `<p class="lead">${escapeHtml(card.lead)}</p>` : ''}
-      <p class="body">${escapeHtml(card.body)}</p>
+      <p class="body">${escapeHtml(card.body)}</p>`}
     </div>
-    ${visual}
+    ${card.post ? '' : visual}
   </main>
   <footer>
     <div class="topics eyebrow"><span>${card.topics.map(escapeHtml).join(' / ')}</span></div>
@@ -306,6 +382,86 @@ function cardHtml(card, shape, portraitSrc) {
   </footer>
 </body>
 </html>`;
+}
+
+// 在頁面內執行：中文標題優先在子句之間換行、詞不拆到兩行，再把字級縮到版面放得下
+function fitPostTitle() {
+  const main = document.querySelector('main');
+  const copy = document.querySelector('.copy');
+  if (document.documentElement.lang === 'zh-TW' && window.Intl && Intl.Segmenter) {
+    const segmenter = new Intl.Segmenter('zh-Hant', { granularity: 'word' });
+    const brackets = { '「': '」', '『': '』', '《': '》', '（': '）' };
+    const splitClauses = (text) => {
+      const clauses = [];
+      let current = '';
+      let closing = '';
+      for (const char of text) {
+        current += char;
+        if (closing) {
+          if (char === closing) closing = '';
+        } else if (brackets[char]) {
+          closing = brackets[char];
+        } else if ('，：；？！。'.includes(char)) {
+          clauses.push(current);
+          current = '';
+        }
+      }
+      if (current) clauses.push(current);
+      return clauses;
+    };
+    for (const node of document.querySelectorAll('h1, .rest')) {
+      const text = node.textContent;
+      node.textContent = '';
+      for (const clause of splitClauses(text)) {
+        const block = document.createElement('span');
+        block.className = 'clause';
+        for (const { segment, isWordLike } of segmenter.segment(clause)) {
+          if (isWordLike) {
+            const word = document.createElement('span');
+            word.className = 'nowrap';
+            word.textContent = segment;
+            block.appendChild(word);
+          } else {
+            block.appendChild(document.createTextNode(segment));
+          }
+        }
+        node.appendChild(block);
+      }
+    }
+  }
+  let size = 84;
+  document.body.style.setProperty('--title', `${size}px`);
+  while (size > 40 && copy.offsetHeight > main.clientHeight - 48) {
+    size -= 2;
+    document.body.style.setProperty('--title', `${size}px`);
+  }
+}
+
+async function generatePostCards() {
+  const { chromium } = require('playwright');
+  // 封面 1600x900（列表與文章首圖用），分享卡 1200x630（社群預覽用）
+  const kinds = {
+    cover: { viewport: { width: 1200, height: 675 }, deviceScaleFactor: 4 / 3 },
+    og: { viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 },
+  };
+
+  const browser = await chromium.launch();
+  try {
+    for (const card of loadPostCards()) {
+      for (const [kind, options] of Object.entries(kinds)) {
+        const page = await browser.newPage(options);
+        await page.setContent(cardHtml({ ...card, kind }, 'wide', ''), { waitUntil: 'networkidle' });
+        await page.evaluate(() => document.fonts.ready);
+        await page.evaluate(fitPostTitle);
+        await page.evaluate(() => document.fonts.ready);
+        const png = await page.screenshot({ type: 'png' });
+        await page.close();
+        write(`blog-cards/${card.slug}/${kind}.${card.lang}.png`, png);
+      }
+    }
+  } finally {
+    await browser.close();
+  }
 }
 
 async function generateOgImages() {
@@ -337,6 +493,7 @@ async function main() {
   const target = process.argv[2];
   if (!target || target === 'icons') generateIcons();
   if (!target || target === 'og') await generateOgImages();
+  if (!target || target === 'posts') await generatePostCards();
 }
 
 main().catch((error) => {

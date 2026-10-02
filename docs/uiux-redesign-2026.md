@@ -100,11 +100,13 @@ LOGO、favicon 與 OG 分享圖都由 `scripts/generate-brand-assets.js` 產生�
 - 字標：兩個圓弧接成的 S，上端筆畫收成一顆 `yellow-400` 的太陽。站內用 `components/LogoIcon.tsx`（線條跟著 `currentColor`，深淺色主題都能用），路徑數值與腳本裡的 `MARK_PATH` 相同，改了要兩邊一起改。
 - 圖示：`icon.svg`、`favicon.ico`（16、32、48）、`favicon.png`、`logo.png`、`apple-icon.png`，都是 `#0a0a0a` 底的方形圖示。
 - OG 圖片：首頁、部落格、連結頁、報價頁各一張 1200x630（首頁、部落格、連結頁另有 800x800）。版面沿用首屏的寫法：左上字標、白色英文大標、底部細線與等寬小標。文案寫在腳本的 `CARDS`。
+- 文章卡片：每篇文章每個語言各一張封面（1600x900，列表與文章首圖用）和分享卡（1200x630，社群預覽用），輸出到 `public/blog-cards/<slug>/`。標題、日期、標籤讀自文章 frontmatter。`lib/blog-images.ts` 的 `getBlogCard` 找得到卡片就優先使用，找不到才退回文章自己的 `coverImage`。卡片刻意不放在 `content/blog/`，因為 push 那個資料夾底下的任何檔案都會對該篇文章重寄電子報。新增或改標題後要重跑 `posts`。
 
 ```bash
 node scripts/generate-brand-assets.js        # 全部
 node scripts/generate-brand-assets.js icons  # 只產生 LOGO 與 favicon
 node scripts/generate-brand-assets.js og     # 只產生 OG 圖片（需要網路與 Playwright 的 Chromium）
+node scripts/generate-brand-assets.js posts  # 只產生文章封面與分享卡（同上）
 ```
 
 ## 資訊架構

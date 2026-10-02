@@ -31,7 +31,7 @@ export function PostPager({ posts, currentSlug, lang }: PostPagerProps) {
             ? 'border-white/[0.08] bg-white/[0.03] hover:border-yellow-400/40'
             : 'border-stone-200 bg-white hover:border-yellow-500/60'
     }`;
-    const label = `inline-flex items-center gap-1.5 text-xs font-medium ${isDark ? 'text-white/45' : 'text-stone-500'}`;
+    const label = `inline-flex items-center gap-1.5 text-xs font-medium ${isDark ? 'text-zinc-200' : 'text-stone-500'}`;
     const title = `line-clamp-2 text-sm font-semibold leading-snug ${isDark ? 'text-white/90' : 'text-stone-900'}`;
 
     return (
@@ -61,7 +61,7 @@ export function PostPager({ posts, currentSlug, lang }: PostPagerProps) {
             <Link
                 href="/blog"
                 className={`inline-flex min-h-[2.75rem] items-center gap-2 text-sm font-medium transition-colors ${
-                    isDark ? 'text-white/60 hover:text-yellow-300' : 'text-stone-600 hover:text-yellow-700'
+                    isDark ? 'text-zinc-200 hover:text-yellow-300' : 'text-stone-600 hover:text-yellow-700'
                 }`}
             >
                 <Squares2X2Icon className="h-4 w-4" />

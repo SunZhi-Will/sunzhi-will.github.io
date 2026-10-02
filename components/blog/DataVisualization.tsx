@@ -30,7 +30,7 @@ export function DataBar({
         <div className="my-4">
             <div className="flex justify-between items-center mb-2">
                 <span className={`text-sm font-medium ${
-                    isDark ? 'text-gray-300' : 'text-gray-700'
+                    isDark ? 'text-zinc-200' : 'text-gray-700'
                 }`}>
                     {label}
                 </span>
@@ -92,7 +92,7 @@ export function StatCard({ value, label, icon, color }: StatCardProps) {
                 {value}
             </div>
             <div className={`text-sm ${
-                isDark ? 'text-gray-400' : 'text-gray-600'
+                isDark ? 'text-zinc-200' : 'text-gray-600'
             }`}>
                 {label}
             </div>

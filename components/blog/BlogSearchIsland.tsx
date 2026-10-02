@@ -49,7 +49,7 @@ export function BlogSearchIsland({
                     {/* 搜尋框 */}
                     <div className="relative flex-1 min-w-0">
                         <MagnifyingGlassIcon className={`absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 z-10 ${
-                            isDark ? 'text-white/60' : 'text-black/50'
+                            isDark ? 'text-zinc-200' : 'text-black/50'
                         }`} />
                         <AnimatePresence mode="wait">
                             {isExpanded ? (
@@ -86,7 +86,7 @@ export function BlogSearchIsland({
                                     onClick={() => setIsFocused(true)}
                                     className={`w-full pl-9 pr-4 py-1.5 text-sm text-left transition-colors ${
                                         isDark
-                                            ? 'text-white/50 hover:text-white'
+                                            ? 'text-zinc-200 hover:text-yellow-400'
                                             : 'text-black/50 hover:text-black'
                                     }`}
                                 >
@@ -104,7 +104,7 @@ export function BlogSearchIsland({
                                 }}
                                 className={`absolute right-2 top-1/2 -translate-y-1/2 transition-colors z-10 ${
                                     isDark
-                                        ? 'text-white/50 hover:text-white'
+                                        ? 'text-zinc-200 hover:text-yellow-400'
                                         : 'text-black/50 hover:text-black'
                                 }`}
                             >
@@ -129,7 +129,7 @@ export function BlogSearchIsland({
                         onClick={() => setLang(lang === 'zh-TW' ? 'en' : 'zh-TW')}
                         className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-all duration-200 whitespace-nowrap flex-shrink-0 ${
                             isDark
-                                ? 'text-white/80 hover:text-yellow-400 hover:bg-white/8'
+                                ? 'text-zinc-200 hover:text-yellow-400 hover:bg-white/8'
                                 : 'text-black/70 hover:text-black hover:bg-black/8'
                         }`}
                         whileHover={{ scale: 1.05, y: -1 }}

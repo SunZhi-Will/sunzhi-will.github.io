@@ -69,7 +69,7 @@ export function FloatingDock({ lang }: { lang: Lang }) {
       {visible && (
         <motion.div
           ref={rootRef}
-          className="fixed bottom-5 right-4 z-40 flex flex-col items-center gap-2.5 md:bottom-8 md:right-8"
+          className="fixed bottom-[5.5rem] right-4 z-40 flex flex-col items-center gap-2.5 md:bottom-8 md:right-8"
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 24 }}

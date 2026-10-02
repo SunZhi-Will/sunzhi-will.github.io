@@ -8,8 +8,8 @@ import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
 import { blogTranslations, filterTagsByLanguage, getTagVariants, translateTag } from '@/lib/blog-translations';
 import { BlogCard } from '@/components/blog/BlogCard';
-import { BlogDynamicIsland } from '@/components/blog/BlogDynamicIsland';
-import { BlogNavIsland } from '@/components/blog/BlogNavIsland';
+import { BlogNavTools } from '@/components/blog/BlogNavTools';
+import { PageNav } from '@/components/PageNav';
 import { BlogMobileNav } from '@/components/blog/BlogMobileNav';
 import { NewsletterSubscribe } from '@/components/blog/NewsletterSubscribe';
 import { SplitText } from '@/components/motion/SplitText';
@@ -23,7 +23,7 @@ function SectionLabel({ children, isDark, color }: { children: React.ReactNode; 
         <div className={`font-geist-mono flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.12em]
             ${color === 'amber'
                 ? isDark ? 'text-yellow-400' : 'text-amber-700'
-                : isDark ? 'text-white/55' : 'text-stone-500'
+                : isDark ? 'text-zinc-200' : 'text-stone-500'
             }
         `}>
             <span className={`h-px w-5 flex-shrink-0 ${color === 'amber'
@@ -200,35 +200,24 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                 setLang={handleLangChange}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
-                selectedTag={selectedTag}
-                setSelectedTag={setSelectedTag}
             />
 
-            {/* 電腦版左側導航動態島 */}
-            <div className="hidden md:block">
-                <BlogNavIsland
-                    lang={lang}
-                    selectedTag={selectedTag}
-                    setSelectedTag={setSelectedTag}
-                />
-            </div>
-
-            {/* 電腦版右側動態島 - 搜尋和語言切換 */}
-            <div className="hidden md:block">
-                <BlogDynamicIsland
-                    lang={lang}
-                    setLang={handleLangChange}
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                />
-            </div>
+            {/* 電腦版置中導覽：與首頁同一套外觀，手機版由上方的 BlogMobileNav 負責 */}
+            <PageNav
+                current="blog"
+                lang={lang}
+                theme={theme}
+                hideOnScroll
+                desktopOnly
+                tools={<BlogNavTools lang={lang} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />}
+            />
 
             {/* 主要內容區域 */}
             <main className="relative">
-                <div className="max-w-4xl mx-auto px-4 pb-20 md:px-6 pt-[5.5rem] md:pt-24">
+                <div className="max-w-4xl mx-auto px-4 pb-32 md:pb-20 md:px-6 pt-12 md:pt-24">
                     {/* 頁面標題：讓第一次來的人知道這是誰的部落格、寫些什麼 */}
                     <header className="mb-10 md:mb-12">
-                        <span className={`font-geist-mono text-xs font-medium uppercase tracking-[0.14em] ${isDark ? 'text-white/55' : 'text-stone-500'}`}>
+                        <span className={`font-geist-mono text-xs font-medium uppercase tracking-[0.14em] ${isDark ? 'text-zinc-200' : 'text-stone-500'}`}>
                             {String(filteredPosts.length).padStart(2, '0')} {lang === 'zh-TW' ? '篇文章' : 'posts'}
                         </span>
                         <h1 key={lang} className={`mt-3 text-[2.5rem] font-semibold leading-[1.1] tracking-tight md:text-6xl ${isDark ? 'text-white' : 'text-stone-900'}`}>
@@ -238,7 +227,7 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                             initial={{ opacity: 0, y: 12 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.7, ease: EASE_OUT, delay: 0.35 }}
-                            className={`mt-4 max-w-xl text-base leading-relaxed md:text-lg ${isDark ? 'text-white/70' : 'text-stone-600'}`}
+                            className={`mt-4 max-w-xl text-base leading-relaxed md:text-lg ${isDark ? 'text-zinc-200' : 'text-stone-600'}`}
                         >
                             {lang === 'zh-TW'
                                 ? '寫 AI、產品、創業和遊戲開發，都是自己動手做過之後的想法。'
@@ -267,7 +256,7 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                                                 className={`relative whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200 ${
                                                     active
                                                         ? isDark ? 'text-zinc-950' : 'text-white'
-                                                        : isDark ? 'text-white/70 hover:text-white' : 'text-stone-600 hover:text-stone-900'
+                                                        : isDark ? 'text-zinc-200 hover:text-yellow-400' : 'text-stone-600 hover:text-stone-900'
                                                 }`}
                                             >
                                                 {active ? (
@@ -282,7 +271,7 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                                                 <span className="relative">
                                                     {chip.label}
                                                     {chip.count > 1 && (
-                                                        <span className={`font-geist-mono ml-1.5 text-[11px] ${active ? (isDark ? 'text-zinc-700' : 'text-white/60') : (isDark ? 'text-white/40' : 'text-stone-400')}`}>
+                                                        <span className={`font-geist-mono ml-1.5 text-[11px] ${active ? (isDark ? 'text-zinc-700' : 'text-white/60') : (isDark ? 'text-zinc-200' : 'text-stone-400')}`}>
                                                             {chip.count}
                                                         </span>
                                                     )}
@@ -381,10 +370,10 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                             <div className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-5
                                 ${isDark ? 'bg-white/[0.04] border border-white/[0.08]' : 'bg-stone-100 border border-stone-200/80'}
                             `}>
-                                <MagnifyingGlassIcon className={`w-6 h-6 ${isDark ? 'text-white/30' : 'text-stone-400'}`} />
+                                <MagnifyingGlassIcon className={`w-6 h-6 ${isDark ? 'text-zinc-200' : 'text-stone-400'}`} />
                             </div>
-                            <p className={`text-base font-semibold mb-1.5 ${isDark ? 'text-white/80' : 'text-stone-700'}`}>{t.noResults}</p>
-                            <p className={`text-sm ${isDark ? 'text-white/40' : 'text-stone-400'}`}>{t.noResultsDesc}</p>
+                            <p className={`text-base font-semibold mb-1.5 ${isDark ? 'text-zinc-200' : 'text-stone-700'}`}>{t.noResults}</p>
+                            <p className={`text-sm ${isDark ? 'text-zinc-200' : 'text-stone-400'}`}>{t.noResultsDesc}</p>
                         </motion.div>
                     ) : (
                         <motion.div
@@ -395,19 +384,19 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                             <div className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-5
                                 ${isDark ? 'bg-white/[0.04] border border-white/[0.08]' : 'bg-stone-100 border border-stone-200/80'}
                             `}>
-                                <svg className={`w-6 h-6 ${isDark ? 'text-white/30' : 'text-stone-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className={`w-6 h-6 ${isDark ? 'text-zinc-200' : 'text-stone-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
                             </div>
-                            <p className={`text-base font-semibold mb-1.5 ${isDark ? 'text-white/80' : 'text-stone-700'}`}>{t.noPosts}</p>
-                            <p className={`text-sm ${isDark ? 'text-white/40' : 'text-stone-400'}`}>{t.noPostsDesc}</p>
+                            <p className={`text-base font-semibold mb-1.5 ${isDark ? 'text-zinc-200' : 'text-stone-700'}`}>{t.noPosts}</p>
+                            <p className={`text-sm ${isDark ? 'text-zinc-200' : 'text-stone-400'}`}>{t.noPostsDesc}</p>
                         </motion.div>
                     )}
 
                     {/* 訂閱電子報與頁尾區 */}
                     <div className={`mt-16 pt-10 border-t ${isDark ? 'border-white/[0.06]' : 'border-stone-200/70'}`}>
                         <NewsletterSubscribe lang={lang} variant="section" />
-                        <div className={`mt-10 text-center text-xs tracking-widest uppercase ${isDark ? 'text-white/20' : 'text-stone-300'}`}>
+                        <div className={`mt-10 text-center text-xs tracking-widest uppercase ${isDark ? 'text-zinc-200' : 'text-stone-300'}`}>
                             © {new Date().getFullYear()} Sun
                         </div>
                     </div>

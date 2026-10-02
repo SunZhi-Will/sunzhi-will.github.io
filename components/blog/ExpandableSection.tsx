@@ -49,7 +49,7 @@ export function ExpandableSection({
                     transition={{ duration: 0.2 }}
                 >
                     <ChevronDownIcon className={`w-5 h-5 ${
-                        isDark ? 'text-gray-400' : 'text-gray-600'
+                        isDark ? 'text-zinc-200' : 'text-gray-600'
                     }`} />
                 </motion.div>
             </button>
@@ -63,7 +63,7 @@ export function ExpandableSection({
                         className="overflow-hidden"
                     >
                         <div className={`px-5 pb-5 ${
-                            isDark ? 'text-gray-300' : 'text-gray-700'
+                            isDark ? 'text-zinc-200' : 'text-gray-700'
                         }`}>
                             {children}
                         </div>

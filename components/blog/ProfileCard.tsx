@@ -69,7 +69,7 @@ export function ProfileCard({ lang }: ProfileCardProps) {
                                 {lang === 'zh-TW' ? '謝上智' : 'Sun Zhi'}
                             </h1>
                             <p className={`text-sm font-light leading-relaxed transition-colors duration-300 ${safeIsDark
-                                ? 'text-white/70 group-hover/profile:text-white'
+                                ? 'text-zinc-200 group-hover/profile:text-yellow-400'
                                 : 'text-gray-600 group-hover/profile:text-gray-700'
                                 }`}>
                                 {lang === 'zh-TW' ? '軟體工程師 | AI 開發者' : 'Software Engineer | AI Developer'}
@@ -87,7 +87,7 @@ export function ProfileCard({ lang }: ProfileCardProps) {
                                 e.stopPropagation();
                             }}
                             className={`group w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg cursor-pointer ${safeIsDark
-                                ? 'bg-[#18181b] hover:bg-[#27272a] text-white/70 hover:text-white border border-[#3f3f46]/40 hover:border-yellow-500/50'
+                                ? 'bg-[#18181b] hover:bg-[#27272a] text-zinc-200 hover:text-yellow-400 border border-[#3f3f46]/40 hover:border-yellow-500/50'
                                 : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 hover:shadow-gray-400/30'
                                 }`}
                             aria-label="GitHub"
@@ -104,7 +104,7 @@ export function ProfileCard({ lang }: ProfileCardProps) {
                                 e.stopPropagation();
                             }}
                             className={`group w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg cursor-pointer ${safeIsDark
-                                ? 'bg-[#18181b] hover:bg-[#27272a] text-white/70 hover:text-white border border-[#3f3f46]/40 hover:border-yellow-500/50'
+                                ? 'bg-[#18181b] hover:bg-[#27272a] text-zinc-200 hover:text-yellow-400 border border-[#3f3f46]/40 hover:border-yellow-500/50'
                                 : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 hover:shadow-gray-400/30'
                                 }`}
                             aria-label="LinkedIn"
@@ -119,7 +119,7 @@ export function ProfileCard({ lang }: ProfileCardProps) {
                                 e.stopPropagation();
                             }}
                             className={`group w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg cursor-pointer ${safeIsDark
-                                ? 'bg-[#18181b] hover:bg-[#27272a] text-white/70 hover:text-white border border-[#3f3f46]/40 hover:border-yellow-500/50'
+                                ? 'bg-[#18181b] hover:bg-[#27272a] text-zinc-200 hover:text-yellow-400 border border-[#3f3f46]/40 hover:border-yellow-500/50'
                                 : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 hover:shadow-gray-400/30'
                                 }`}
                             aria-label="Email"
@@ -136,7 +136,7 @@ export function ProfileCard({ lang }: ProfileCardProps) {
                                 e.stopPropagation();
                             }}
                             className={`group w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg cursor-pointer ${safeIsDark
-                                ? 'bg-[#18181b] hover:bg-[#27272a] text-white/70 hover:text-white border border-[#3f3f46]/40 hover:border-yellow-500/50'
+                                ? 'bg-[#18181b] hover:bg-[#27272a] text-zinc-200 hover:text-yellow-400 border border-[#3f3f46]/40 hover:border-yellow-500/50'
                                 : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 hover:shadow-gray-400/30'
                                 }`}
                             aria-label="Instagram"
@@ -152,7 +152,7 @@ export function ProfileCard({ lang }: ProfileCardProps) {
                         }`}></div>
 
                     {/* 頁尾 */}
-                    <div className={`text-xs text-center font-light ${safeIsDark ? 'text-gray-500' : 'text-gray-600'
+                    <div className={`text-xs text-center font-light ${safeIsDark ? 'text-zinc-200' : 'text-gray-600'
                         }`} suppressHydrationWarning>
                         © {new Date().getFullYear()} Sun
                     </div>

@@ -19,14 +19,14 @@ export function useFrameTheme() {
         inset: isDark ? 'bg-black/40 border-zinc-800' : 'bg-zinc-50 border-zinc-200',
         divider: isDark ? 'border-zinc-800' : 'border-zinc-200',
         text: isDark ? 'text-zinc-100' : 'text-zinc-900',
-        sub: isDark ? 'text-zinc-400' : 'text-zinc-600',
-        faint: isDark ? 'text-zinc-500' : 'text-zinc-400',
+        sub: isDark ? 'text-zinc-200' : 'text-zinc-600',
+        faint: isDark ? 'text-zinc-200' : 'text-zinc-400',
         accent: isDark ? 'text-yellow-300' : 'text-yellow-700',
         accentSoft: isDark
             ? 'bg-yellow-400/10 border-yellow-400/30 text-yellow-200'
             : 'bg-yellow-50 border-yellow-300 text-yellow-800',
         chip: isDark
-            ? 'bg-zinc-800/70 border-zinc-700 text-zinc-300 hover:border-zinc-500'
+            ? 'bg-zinc-800/70 border-zinc-700 text-zinc-200 hover:border-zinc-500'
             : 'bg-white border-zinc-300 text-zinc-700 hover:border-zinc-400',
         chipOn: isDark
             ? 'bg-yellow-400 border-yellow-400 text-black'
@@ -35,7 +35,7 @@ export function useFrameTheme() {
             ? 'bg-zinc-100 text-zinc-900 hover:bg-white'
             : 'bg-zinc-900 text-white hover:bg-zinc-800',
         ghost: isDark
-            ? 'border-zinc-700 text-zinc-300 hover:bg-zinc-800'
+            ? 'border-zinc-700 text-zinc-200 hover:bg-zinc-800'
             : 'border-zinc-300 text-zinc-700 hover:bg-zinc-100',
     };
 }

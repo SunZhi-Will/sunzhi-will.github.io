@@ -120,7 +120,7 @@ export function Hero({ lang }: { lang: Lang }) {
   };
 
   return (
-    <section id="home" ref={ref} className="relative flex min-h-[100svh] flex-col px-5 pb-8 pt-28 md:px-10 md:pt-32">
+    <section id="home" ref={ref} className="relative flex min-h-[100svh] flex-col px-5 pb-28 pt-16 md:px-10 md:pb-8 md:pt-32">
       <motion.div
         className="mx-auto flex w-full max-w-6xl flex-1 items-center"
         style={{ opacity, y, scale }}

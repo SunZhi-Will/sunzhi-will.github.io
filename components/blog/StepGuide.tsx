@@ -53,7 +53,7 @@ export function StepGuide({ steps, title }: StepGuideProps) {
                 {step.title}
                 {step.duration && (
                   <span className={`ml-2 text-sm font-normal ${
-                    isDark ? 'text-gray-400' : 'text-gray-600'
+                    isDark ? 'text-zinc-200' : 'text-gray-600'
                   }`}>
                     ({step.duration})
                   </span>
@@ -63,7 +63,7 @@ export function StepGuide({ steps, title }: StepGuideProps) {
 
             {/* Description */}
             <div className={`mb-4 leading-relaxed ${
-              isDark ? 'text-gray-300' : 'text-gray-700'
+              isDark ? 'text-zinc-200' : 'text-gray-700'
             }`}>
               {step.description}
             </div>
@@ -76,7 +76,7 @@ export function StepGuide({ steps, title }: StepGuideProps) {
                   : 'bg-gray-100 border border-gray-300'
               }`}>
                 <pre className="whitespace-pre-wrap overflow-x-auto">
-                  <code className={isDark ? 'text-gray-300' : 'text-gray-800'}>
+                  <code className={isDark ? 'text-zinc-200' : 'text-gray-800'}>
                     {step.code}
                   </code>
                 </pre>

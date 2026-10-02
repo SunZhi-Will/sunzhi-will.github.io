@@ -50,7 +50,7 @@ export function StatsHighlight({ title, stats, layout = 'grid' }: StatsHighlight
             </div>
 
             <div className={`text-sm mb-2 ${
-              isDark ? 'text-gray-300' : 'text-gray-700'
+              isDark ? 'text-zinc-200' : 'text-gray-700'
             }`}>
               {stat.label}
             </div>
@@ -59,7 +59,7 @@ export function StatsHighlight({ title, stats, layout = 'grid' }: StatsHighlight
               <div className={`text-xs flex items-center justify-center space-x-1 ${
                 stat.trend === 'up' ? (isDark ? 'text-green-400' : 'text-green-600') :
                 stat.trend === 'down' ? (isDark ? 'text-red-400' : 'text-red-600') :
-                (isDark ? 'text-gray-400' : 'text-gray-600')
+                (isDark ? 'text-zinc-200' : 'text-gray-600')
               }`}>
                 <span>
                   {stat.trend === 'up' && '↗'}

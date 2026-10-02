@@ -427,7 +427,7 @@ html, * {
 .dark .prose {
   --tw-prose-body: #e5e7eb;
   --tw-prose-headings: #f9fafb;
-  --tw-prose-lead: #d1d5db;
+  --tw-prose-lead: #e5e7eb;
   --tw-prose-links: #fbbf24;
   --tw-prose-bold: #f9fafb;
   --tw-prose-counters: #fbbf24;
@@ -435,7 +435,7 @@ html, * {
   --tw-prose-hr: #374151;
   --tw-prose-quotes: #e5e7eb;
   --tw-prose-quote-borders: #fbbf24;
-  --tw-prose-captions: #9ca3af;
+  --tw-prose-captions: #e5e7eb;
   --tw-prose-code: #e5e7eb;
   --tw-prose-pre-code: #e5e7eb;
   --tw-prose-pre-bg: #111827;
