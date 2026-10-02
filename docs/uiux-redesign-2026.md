@@ -90,6 +90,20 @@
 4. 頁面最外層包 `<MotionConfig reducedMotion="user">`。訪客開啟「減少動態效果」時，位移與縮放自動停用，跑馬燈靜止，CSS 循環動畫停止。
 5. `style` 屬性不要依 `useReducedMotion()` 分支（伺服器端與瀏覽器端結果不同會造成 hydration 不一致）。改成讓動畫的終點等於起點。
 
+## 品牌素材
+
+LOGO、favicon 與 OG 分享圖都由 `scripts/generate-brand-assets.js` 產生，產出的檔案直接進版控（CI 不會跑這支腳本）。
+
+- 字標：兩個圓弧接成的 S，上端筆畫收成一顆 `yellow-400` 的太陽。站內用 `components/LogoIcon.tsx`（線條跟著 `currentColor`，深淺色主題都能用），路徑數值與腳本裡的 `MARK_PATH` 相同，改了要兩邊一起改。
+- 圖示：`icon.svg`、`favicon.ico`（16、32、48）、`favicon.png`、`logo.png`、`apple-icon.png`，都是 `#0a0a0a` 底的方形圖示。
+- OG 圖片：首頁、部落格、連結頁、報價頁各一張 1200x630（首頁、部落格、連結頁另有 800x800）。版面沿用首屏的寫法：左上字標、白色英文大標加 `zinc-700` 中文、底部細線與等寬小標。文案寫在腳本的 `CARDS`。
+
+```bash
+node scripts/generate-brand-assets.js        # 全部
+node scripts/generate-brand-assets.js icons  # 只產生 LOGO 與 favicon
+node scripts/generate-brand-assets.js og     # 只產生 OG 圖片（需要網路與 Playwright 的 Chromium）
+```
+
 ## 資訊架構
 
 首頁順序從「關於、技術、活動、專案」改成「關於、專案、技術、活動、聯絡」，作品往前移。

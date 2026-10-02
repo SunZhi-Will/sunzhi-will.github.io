@@ -4,6 +4,8 @@ interface LogoIconProps {
   className?: string;
 }
 
+// 字標：兩個圓弧接成的 S，上端筆畫收成一顆太陽。
+// 同一組數值也寫在 scripts/generate-brand-assets.js（favicon 與 OG 圖片），改了要兩邊一起改
 export function LogoIcon({ className = "w-6 h-6" }: LogoIconProps) {
   return (
     <svg
@@ -11,19 +13,15 @@ export function LogoIcon({ className = "w-6 h-6" }: LogoIconProps) {
       viewBox="0 0 100 100"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
     >
       <path
-        fill="currentColor"
-        d="M69 18H38L18 35l25 11 7-7-18-7 10-8h27l13 10z"
+        d="M55.4 14.8A18 18 0 1 0 50 50A18 18 0 1 1 33.1 74.2"
+        stroke="currentColor"
+        strokeWidth="14"
+        strokeLinecap="round"
       />
-      <path
-        fill="currentColor"
-        d="M31 82h31l20-17-25-11-7 7 18 7-10 8H31L18 66z"
-      />
-      <path
-        fill="#10c8ff"
-        d="M50 36c2 9 5 12 14 14-9 2-12 5-14 14-2-9-5-12-14-14 9-2 12-5 14-14z"
-      />
+      <circle cx="67.6" cy="28.3" r="7.5" fill="#facc15" />
     </svg>
   );
 }

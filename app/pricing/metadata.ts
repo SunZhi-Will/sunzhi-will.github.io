@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://sunzhi-will.github.io';
+
 export const metadata: Metadata = {
     title: {
         default: "服務費用 | SunCodeStudio - 謝上智",
@@ -14,5 +16,12 @@ export const metadata: Metadata = {
         siteName: "SunCodeStudio",
         locale: "zh_TW",
         type: "website",
+        images: [
+            { url: `${baseUrl}/og-pricing.png`, width: 1200, height: 630, alt: 'SunCodeStudio - Pricing' },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        images: [`${baseUrl}/og-pricing.png`],
     },
 };
