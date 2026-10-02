@@ -1,40 +1,65 @@
 'use client'
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { useTheme } from '@/app/blog/ThemeProvider';
+import { isValidEmail, postNewsletter, type NewsletterFailure } from '@/lib/newsletter-api';
 
 interface NewsletterSubscribeProps {
     lang: 'zh-TW' | 'en';
-    /** 'inline' = compact row used in sidebar; 'section' = full-width editorial block */
+    /** 'inline' = compact block used in sidebars; 'section' = full-width block under the post list and articles */
     variant?: 'inline' | 'section';
 }
 
 const translations = {
     'zh-TW': {
-        eyebrow: 'NEWSLETTER',
-        title: '訂閱電子報',
-        subtitle: '每週精選技術文章、AI 動態與開發日常，直送您的信箱。',
-        emailPlaceholder: '輸入您的 Email 地址',
+        eyebrow: '電子報',
+        title: '新文章寄到你的信箱',
+        subtitle: 'AI 應用、軟體開發，還有做產品的第一手觀察。有新文章才寄，不會塞滿你的收件匣。',
+        emailLabel: '電子信箱',
         subscribe: '訂閱',
-        subscribing: '訂閱中...',
-        success: '🎉 感謝訂閱！請至信箱確認驗證信。',
-        error: '訂閱失敗，請稍後再試。',
-        invalidEmail: '請輸入有效的 Email 地址。',
+        subscribing: '送出中',
+        privacy: '不寄垃圾信，隨時可以',
         unsubscribe: '取消訂閱',
-        privacy: '不發送垃圾信件，隨時可退訂。',
+        successTitle: '去收信，完成最後一步',
+        successBody: (email: string) => `驗證信已經寄到 ${email}，點信裡的按鈕就完成訂閱。沒看到的話，找找垃圾信件匣。`,
+        useAnother: '換一個信箱',
+        errors: {
+            invalid_email: '這個信箱格式不太對，再檢查一次。',
+            not_configured: '訂閱服務暫時無法使用，請稍後再試。',
+            rate_limited: '送出太頻繁了，請一分鐘後再試。',
+            verification_not_sent: '驗證信沒有寄出去，請稍後再試一次。',
+            timeout: '連線逾時，請再試一次。',
+            network: '網路連線失敗，請檢查連線後再試。',
+            not_found: '訂閱失敗，請稍後再試。',
+            not_subscribed: '訂閱失敗，請稍後再試。',
+            unknown: '訂閱失敗，請稍後再試。',
+        } satisfies Record<NewsletterFailure, string>,
     },
     'en': {
-        eyebrow: 'NEWSLETTER',
-        title: 'Stay in the Loop',
-        subtitle: 'Curated articles on software engineering, AI, and dev life — delivered weekly.',
-        emailPlaceholder: 'Enter your email address',
+        eyebrow: 'Newsletter',
+        title: 'New posts, straight to your inbox',
+        subtitle: 'Notes on applied AI, software engineering and building products. Sent only when there is something new.',
+        emailLabel: 'Email address',
         subscribe: 'Subscribe',
-        subscribing: 'Subscribing...',
-        success: '🎉 You\'re in! Check your inbox to confirm.',
-        error: 'Subscription failed. Please try again.',
-        invalidEmail: 'Please enter a valid email address.',
-        unsubscribe: 'Unsubscribe',
-        privacy: 'No spam, ever. Unsubscribe anytime.',
+        subscribing: 'Sending',
+        privacy: 'No spam. You can',
+        unsubscribe: 'unsubscribe',
+        successTitle: 'One last step: check your inbox',
+        successBody: (email: string) => `A confirmation link is on its way to ${email}. Click it to finish subscribing. If it is not there, check your spam folder.`,
+        useAnother: 'Use a different email',
+        errors: {
+            invalid_email: 'That email address does not look right. Please check it.',
+            not_configured: 'Subscriptions are unavailable right now. Please try again later.',
+            rate_limited: 'Too many attempts. Please try again in a minute.',
+            verification_not_sent: 'The confirmation email could not be sent. Please try again later.',
+            timeout: 'The request timed out. Please try again.',
+            network: 'Network error. Check your connection and try again.',
+            not_found: 'Subscription failed. Please try again later.',
+            not_subscribed: 'Subscription failed. Please try again later.',
+            unknown: 'Subscription failed. Please try again later.',
+        } satisfies Record<NewsletterFailure, string>,
     }
 };
 
@@ -42,295 +67,186 @@ export function NewsletterSubscribe({ lang, variant = 'section' }: NewsletterSub
     const { theme } = useTheme();
     const isDark = theme === 'dark';
     const t = translations[lang];
+    const isSection = variant === 'section';
+
+    const fieldId = useId();
+    const errorId = `${fieldId}-error`;
+    const titleId = `${fieldId}-title`;
 
     const [email, setEmail] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-    const [isFocused, setIsFocused] = useState(false);
-
-    const validateEmail = (val: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+    const [error, setError] = useState<NewsletterFailure | null>(null);
+    // 送出成功後記住寄到哪個信箱，畫面改成「去收信」的下一步提示
+    const [sentTo, setSentTo] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setMessage(null);
+        if (isSubmitting) return;
 
-        if (!email || !validateEmail(email)) {
-            setMessage({ type: 'error', text: t.invalidEmail });
+        const value = email.trim();
+        if (!isValidEmail(value)) {
+            setError('invalid_email');
             return;
         }
 
+        setError(null);
         setIsSubmitting(true);
+        const result = await postNewsletter({ email: value, types: 'all', lang });
+        setIsSubmitting(false);
 
-        try {
-            const scriptUrl = process.env.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_URL;
-
-            if (!scriptUrl) {
-                if (process.env.NODE_ENV === 'development') {
-                    console.error('NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_URL is not set');
-                }
-                setMessage({
-                    type: 'error',
-                    text: lang === 'zh-TW'
-                        ? '訂閱服務未配置，請聯繫管理員'
-                        : 'Subscription service not configured',
-                });
-                return;
-            }
-
-            try { new URL(scriptUrl); } catch {
-                setMessage({
-                    type: 'error',
-                    text: lang === 'zh-TW' ? '訂閱服務配置錯誤' : 'Service configuration error',
-                });
-                return;
-            }
-
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000);
-
-            const formData = new URLSearchParams();
-            formData.append('email', email);
-            formData.append('types', 'all');
-            formData.append('lang', lang);
-
-            const response = await fetch(scriptUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: formData.toString(),
-                signal: controller.signal,
-                mode: 'cors',
-            });
-
-            clearTimeout(timeoutId);
-
-            if (!response.ok) {
-                await response.text().catch(() => '');
-                setMessage({
-                    type: 'error',
-                    text: lang === 'zh-TW'
-                        ? `訂閱失敗 (${response.status})，請稍後再試`
-                        : `Subscription failed (${response.status}), please try again`,
-                });
-                return;
-            }
-
-            const responseText = await response.text();
-            let data;
-            try {
-                data = JSON.parse(responseText);
-            } catch {
-                if (responseText.toLowerCase().includes('success') || response.status === 200) {
-                    setMessage({ type: 'success', text: t.success });
-                    setEmail('');
-                } else {
-                    setMessage({ type: 'error', text: t.error });
-                }
-                return;
-            }
-
-            if (data.success) {
-                setMessage({ type: 'success', text: data.message || t.success });
-                setEmail('');
-            } else {
-                setMessage({ type: 'error', text: data.message || t.error });
-            }
-        } catch (error) {
-            if (process.env.NODE_ENV === 'development') console.error('Newsletter error:', error);
-            const msg = error instanceof Error ? error.message : '';
-            if (error instanceof Error && error.name === 'AbortError') {
-                setMessage({ type: 'error', text: lang === 'zh-TW' ? '請求超時，請稍後再試' : 'Request timed out.' });
-            } else if (msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
-                setMessage({ type: 'error', text: lang === 'zh-TW' ? '網路連接失敗' : 'Network error. Check your connection.' });
-            } else {
-                setMessage({ type: 'error', text: t.error });
-            }
-        } finally {
-            setIsSubmitting(false);
+        if (result.ok) {
+            setSentTo(value);
+            setEmail('');
+        } else {
+            setError(result.reason);
         }
     };
 
+    const tone = {
+        title: isDark ? 'text-white' : 'text-stone-900',
+        body: isDark ? 'text-zinc-200' : 'text-stone-600',
+        link: isDark
+            ? 'underline decoration-white/40 underline-offset-4 hover:text-yellow-400 hover:decoration-yellow-400'
+            : 'underline decoration-stone-400 underline-offset-4 hover:text-amber-700 hover:decoration-amber-700',
+        ring: isDark
+            ? 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111113]'
+            : 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-900 focus-visible:ring-offset-2 focus-visible:ring-offset-white',
+    };
+
+    const success = sentTo && (
+        <motion.div
+            key="success"
+            role="status"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className={isSection ? 'mt-6 flex max-w-xl gap-4' : 'mt-4 flex gap-3'}
+        >
+            <span
+                aria-hidden="true"
+                className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full ${
+                    isDark ? 'bg-emerald-400/15 text-emerald-400' : 'bg-emerald-100 text-emerald-700'
+                }`}
+            >
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                    <path d="M4 10.5l4 4 8-9" />
+                </svg>
+            </span>
+            <div className="min-w-0">
+                <p className={`${isSection ? 'text-base' : 'text-sm'} font-semibold ${tone.title}`}>{t.successTitle}</p>
+                <p className={`mt-1 break-words ${isSection ? 'text-sm leading-relaxed' : 'text-xs leading-relaxed'} ${tone.body}`}>
+                    {t.successBody(sentTo)}
+                </p>
+                <button
+                    type="button"
+                    onClick={() => setSentTo(null)}
+                    className={`mt-3 rounded-sm ${isSection ? 'text-sm' : 'text-xs'} font-medium ${tone.body} ${tone.link} ${tone.ring}`}
+                >
+                    {t.useAnother}
+                </button>
+            </div>
+        </motion.div>
+    );
+
+    const form = (
+        <form onSubmit={handleSubmit} noValidate className={isSection ? 'mt-6 max-w-xl' : 'mt-4'}>
+            <label htmlFor={fieldId} className={`block font-medium ${isSection ? 'text-sm' : 'text-xs'} ${tone.title}`}>
+                {t.emailLabel}
+            </label>
+            <div className={`mt-2 flex gap-2.5 ${isSection ? 'flex-col sm:flex-row' : 'flex-col'}`}>
+                <input
+                    id={fieldId}
+                    type="email"
+                    name="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    autoCapitalize="off"
+                    spellCheck={false}
+                    value={email}
+                    onChange={(e) => {
+                        setEmail(e.target.value);
+                        if (error) setError(null);
+                    }}
+                    disabled={isSubmitting}
+                    aria-invalid={error ? true : undefined}
+                    aria-describedby={error ? errorId : undefined}
+                    className={`w-full min-w-0 flex-shrink-0 rounded-xl border px-4 outline-none transition-colors disabled:opacity-60 ${
+                        isSection ? 'h-12 text-base sm:w-auto sm:flex-1' : 'h-10 text-sm'
+                    } ${
+                        isDark
+                            ? 'bg-white/[0.04] text-white focus:border-yellow-400 focus:bg-white/[0.07]'
+                            : 'bg-white text-stone-900 focus:border-stone-900'
+                    } ${
+                        error
+                            ? isDark ? 'border-red-400' : 'border-red-600'
+                            : isDark ? 'border-white/20 hover:border-white/40' : 'border-stone-300 hover:border-stone-500'
+                    }`}
+                />
+                <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    aria-busy={isSubmitting}
+                    className={`inline-flex flex-shrink-0 items-center justify-center gap-2 rounded-xl font-semibold transition-colors disabled:cursor-wait ${
+                        isSection ? 'h-12 px-7 text-base' : 'h-10 px-5 text-sm'
+                    } ${
+                        isDark
+                            ? 'bg-yellow-400 text-zinc-950 hover:bg-yellow-300'
+                            : 'bg-stone-900 text-white hover:bg-stone-700'
+                    } ${tone.ring}`}
+                >
+                    {isSubmitting && (
+                        <span aria-hidden="true" className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    )}
+                    {isSubmitting ? t.subscribing : t.subscribe}
+                </button>
+            </div>
+            {error && (
+                <p id={errorId} role="alert" className={`mt-2.5 ${isSection ? 'text-sm' : 'text-xs'} font-medium ${isDark ? 'text-red-400' : 'text-red-700'}`}>
+                    {t.errors[error]}
+                </p>
+            )}
+            <p className={`${isSection ? 'mt-4 text-sm' : 'mt-3 text-xs'} ${tone.body}`}>
+                {t.privacy}
+                {lang === 'en' ? ' ' : ''}
+                <Link href="/unsubscribe" className={`rounded-sm ${tone.link} ${tone.ring}`}>
+                    {t.unsubscribe}
+                </Link>
+                {lang === 'zh-TW' ? '。' : ' at any time.'}
+            </p>
+        </form>
+    );
+
     /* ─── INLINE VARIANT (compact, e.g. sidebar) ─── */
-    if (variant === 'inline') {
+    if (!isSection) {
         return (
             <div>
-                <p className={`text-[11px] font-bold tracking-widest uppercase mb-3 ${isDark ? 'text-zinc-200' : 'text-black/35'}`}>
-                    {t.eyebrow}
-                </p>
-                <p className={`text-sm font-semibold mb-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                    {t.title}
-                </p>
-                <p className={`text-xs leading-relaxed mb-4 ${isDark ? 'text-zinc-200' : 'text-gray-600'}`}>
-                    {t.subtitle}
-                </p>
-                <form onSubmit={handleSubmit} className="space-y-2">
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder={t.emailPlaceholder}
-                        disabled={isSubmitting}
-                        className={`w-full px-3 py-2 text-xs rounded-lg border outline-none transition-all ${
-                            isDark
-                                ? 'bg-white/5 border-white/10 text-white placeholder-white/30 focus:border-yellow-400/60 focus:bg-white/8'
-                                : 'bg-white border-black/10 text-black placeholder-black/40 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/20'
-                        } disabled:opacity-40`}
-                    />
-                    <button
-                        type="submit"
-                        disabled={isSubmitting || !email}
-                        className={`w-full py-2 text-xs font-semibold rounded-lg transition-all ${
-                            isDark
-                                ? 'bg-yellow-400 hover:bg-yellow-300 text-black disabled:bg-white/10 disabled:text-white/20'
-                                : 'bg-yellow-400 hover:bg-yellow-300 text-black disabled:bg-black/5 disabled:text-black/30'
-                        } disabled:cursor-not-allowed`}
-                    >
-                        {isSubmitting ? t.subscribing : t.subscribe}
-                    </button>
-                    {message && (
-                        <p className={`text-[11px] ${message.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
-                            {message.text}
-                        </p>
-                    )}
-                </form>
-                <div className="mt-3 flex items-center justify-between">
-                    <span className={`text-[10px] ${isDark ? 'text-zinc-200' : 'text-black/45'}`}>{t.privacy}</span>
-                    <a href="/unsubscribe" className={`text-[10px] transition-colors ${isDark ? 'text-zinc-200 hover:text-yellow-400' : 'text-black/40 hover:text-yellow-600'}`}>
-                        {t.unsubscribe}
-                    </a>
-                </div>
+                <p className={`text-sm font-semibold ${tone.title}`}>{t.title}</p>
+                <p className={`mt-1 text-xs leading-relaxed ${tone.body}`}>{t.subtitle}</p>
+                {success || form}
             </div>
         );
     }
 
     /* ─── SECTION VARIANT (full-width editorial block) ─── */
     return (
-        <div
-            className={`relative overflow-hidden rounded-2xl px-8 py-14 md:px-16 md:py-18 transition-colors ${
-                isDark
-                    ? 'bg-[#0d0d0d]'
-                    : 'bg-gradient-to-br from-amber-50/80 via-white to-yellow-50/50'
+        <section
+            id="newsletter"
+            aria-labelledby={titleId}
+            className={`scroll-mt-24 rounded-2xl border p-6 transition-colors sm:p-8 md:p-10 ${
+                isDark ? 'border-white/10 bg-[#111113]' : 'border-stone-200 bg-white'
             }`}
-            style={{
-                border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(202,138,4,0.15)',
-            }}
         >
-            {/* Decorative blobs */}
-            <div
-                aria-hidden="true"
-                className="pointer-events-none absolute -top-32 -right-32 w-96 h-96 rounded-full"
-                style={{
-                    background: isDark
-                        ? 'radial-gradient(circle, rgba(250,204,21,0.12) 0%, transparent 65%)'
-                        : 'radial-gradient(circle, rgba(253,211,77,0.35) 0%, transparent 65%)',
-                }}
-            />
-            <div
-                aria-hidden="true"
-                className="pointer-events-none absolute -bottom-24 -left-24 w-72 h-72 rounded-full"
-                style={{
-                    background: isDark
-                        ? 'radial-gradient(circle, rgba(250,204,21,0.08) 0%, transparent 65%)'
-                        : 'radial-gradient(circle, rgba(253,211,77,0.25) 0%, transparent 65%)',
-                }}
-            />
-
-            <div className="relative z-10 max-w-xl mx-auto text-center">
-                {/* Icon badge */}
-                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-2xl mb-5 ${
-                    isDark ? 'bg-yellow-400/10 text-yellow-400' : 'bg-yellow-400/20 text-yellow-600'
-                }`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-                        <path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" />
-                        <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" />
-                    </svg>
-                </div>
-
-                {/* Eyebrow */}
-                <p className={`text-[11px] font-bold tracking-[0.25em] uppercase mb-3 ${isDark ? 'text-yellow-400/70' : 'text-yellow-700'}`}>
-                    {t.eyebrow}
-                </p>
-
-                {/* Title */}
-                <h2 className={`text-2xl md:text-3xl font-bold mb-4 tracking-tight ${isDark ? 'text-white' : 'text-black'}`}>
-                    {t.title}
-                </h2>
-
-                {/* Subtitle */}
-                <p className={`text-sm md:text-base leading-relaxed mb-8 ${isDark ? 'text-zinc-200' : 'text-black/60'}`}>
-                    {t.subtitle}
-                </p>
-
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                    <div
-                        className={`relative flex-1 rounded-xl overflow-hidden transition-all ${
-                            isFocused
-                                ? isDark
-                                    ? 'ring-2 ring-yellow-400/50'
-                                    : 'ring-2 ring-yellow-500/40'
-                                : ''
-                        }`}
-                        style={{
-                            border: isDark
-                                ? `1px solid ${isFocused ? 'rgba(250,204,21,0.4)' : 'rgba(255,255,255,0.1)'}`
-                                : `1px solid ${isFocused ? 'rgba(161,98,7,0.35)' : 'rgba(0,0,0,0.12)'}`,
-                        }}
-                    >
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            onFocus={() => setIsFocused(true)}
-                            onBlur={() => setIsFocused(false)}
-                            placeholder={t.emailPlaceholder}
-                            disabled={isSubmitting}
-                            className={`w-full h-12 px-4 text-sm outline-none bg-transparent transition-colors ${
-                                isDark
-                                    ? 'text-white placeholder-white/30'
-                                    : 'text-black placeholder-black/40'
-                            } disabled:opacity-40`}
-                            style={{ background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.9)' }}
-                        />
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={isSubmitting || !email}
-                        className={`h-12 px-7 text-sm font-semibold rounded-xl transition-all whitespace-nowrap ${
-                            isDark
-                                ? 'bg-yellow-400 hover:bg-yellow-300 active:scale-95 text-black shadow-lg shadow-yellow-400/20 disabled:bg-white/10 disabled:text-white/20 disabled:shadow-none'
-                                : 'bg-yellow-500 hover:bg-yellow-400 active:scale-95 text-black shadow-lg shadow-yellow-500/30 disabled:bg-black/5 disabled:text-black/30 disabled:shadow-none'
-                        } disabled:cursor-not-allowed`}
-                    >
-                        {isSubmitting ? t.subscribing : t.subscribe}
-                    </button>
-                </form>
-
-                {/* Feedback message */}
-                {message && (
-                    <div
-                        className={`mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium ${
-                            message.type === 'success'
-                                ? isDark ? 'bg-green-900/40 text-green-400 border border-green-700/30' : 'bg-green-50 text-green-700 border border-green-300'
-                                : isDark ? 'bg-red-900/40 text-red-400 border border-red-700/30' : 'bg-red-50 text-red-700 border border-red-300'
-                        }`}
-                    >
-                        {message.text}
-                    </div>
-                )}
-
-                {/* Privacy note + unsubscribe */}
-                <div className={`mt-6 flex items-center justify-center gap-4 text-[11px] ${isDark ? 'text-zinc-200' : 'text-black/45'}`}>
-                    <span>{t.privacy}</span>
-                    <span aria-hidden="true">·</span>
-                    <a
-                        href="/unsubscribe"
-                        className={`underline underline-offset-2 transition-colors ${isDark ? 'hover:text-yellow-400' : 'hover:text-yellow-700'}`}
-                    >
-                        {t.unsubscribe}
-                    </a>
-                </div>
-            </div>
-        </div>
+            <p className={`font-geist-mono flex items-center gap-2 text-xs font-medium uppercase tracking-[0.14em] ${isDark ? 'text-zinc-200' : 'text-stone-600'}`}>
+                <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${isDark ? 'bg-yellow-400' : 'bg-amber-600'}`} />
+                {t.eyebrow}
+            </p>
+            <h2 id={titleId} className={`mt-3 text-2xl font-semibold leading-tight tracking-tight md:text-3xl ${tone.title}`}>
+                {t.title}
+            </h2>
+            <p className={`mt-3 max-w-xl text-base leading-relaxed [text-wrap:pretty] ${tone.body}`}>
+                {t.subtitle}
+            </p>
+            {success || form}
+        </section>
     );
 }

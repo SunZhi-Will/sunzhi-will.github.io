@@ -2,6 +2,20 @@
 
 本指南說明如何測試發布最新電子報的功能。
 
+## 👀 只看版面（不寄信）
+
+想確認信件長什麼樣子，不需要任何環境變數：
+
+```bash
+# 最新一篇文章
+node scripts/preview-newsletter.js
+
+# 指定文章
+node scripts/preview-newsletter.js 2026-10-02-inspiration-vs-plagiarism
+```
+
+腳本會把每個語言版本輸出成 HTML 檔並印出路徑，用瀏覽器打開即可。信件超過 102 KB 時會提醒（Gmail 會截斷，頁尾的取消訂閱連結會被藏起來）。
+
 ## 📋 測試方式
 
 ### 方式 1：測試模式（Dry Run）- 推薦

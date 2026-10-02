@@ -1,7 +1,9 @@
 'use client'
 
-import { useState } from 'react';
-import { useTheme } from '@/app/blog/ThemeProvider';
+import { useEffect, useId, useState } from 'react';
+import Link from 'next/link';
+import { isValidEmail, postNewsletter, type NewsletterFailure } from '@/lib/newsletter-api';
+import { ShellReveal, StatusMark, shellButton } from './NewsletterPageShell';
 
 interface NewsletterUnsubscribeProps {
     lang: 'zh-TW' | 'en';
@@ -9,249 +11,169 @@ interface NewsletterUnsubscribeProps {
 
 const translations = {
     'zh-TW': {
-        title: '取消訂閱電子報',
-        subtitle: '輸入您的 Email 地址來取消訂閱',
-        emailPlaceholder: '輸入您的 Email',
+        eyebrow: '電子報',
+        title: '取消訂閱',
+        subtitle: '輸入訂閱時用的信箱，之後就不會再收到電子報。',
+        emailLabel: '電子信箱',
         unsubscribe: '取消訂閱',
-        unsubscribing: '取消訂閱中...',
-        success: '取消訂閱成功。您將不會再收到我們的電子報。',
-        error: '取消訂閱失敗，請稍後再試',
-        invalidEmail: '請輸入有效的 Email 地址',
-        notFound: '找不到此 Email 的訂閱記錄',
-        alreadyUnsubscribed: '此 Email 已經取消訂閱',
+        unsubscribing: '處理中',
+        keep: '不取消了，回部落格',
+        doneTitle: '已取消訂閱',
+        doneBody: (email: string) => `${email} 不會再收到電子報。謝謝你讀到這裡。`,
+        inactiveTitle: '這個信箱目前沒有在收信',
+        inactiveBody: (email: string) => `${email} 還沒完成驗證，或是之前已經取消訂閱，所以不會收到電子報。`,
+        backToBlog: '回部落格',
+        resubscribe: '按錯了？重新訂閱',
+        errors: {
+            invalid_email: '這個信箱格式不太對，再檢查一次。',
+            not_configured: '取消訂閱服務暫時無法使用，請稍後再試。',
+            rate_limited: '送出太頻繁了，請一分鐘後再試。',
+            not_found: '找不到這個信箱的訂閱紀錄，確認一下是不是訂閱時用的那一個。',
+            not_subscribed: '這個信箱目前沒有訂閱。',
+            verification_not_sent: '取消訂閱失敗，請稍後再試。',
+            timeout: '連線逾時，請再試一次。',
+            network: '網路連線失敗，請檢查連線後再試。',
+            unknown: '取消訂閱失敗，請稍後再試。',
+        } satisfies Record<NewsletterFailure, string>,
     },
     'en': {
-        title: 'Unsubscribe from Newsletter',
-        subtitle: 'Enter your email address to unsubscribe',
-        emailPlaceholder: 'Enter your Email',
+        eyebrow: 'Newsletter',
+        title: 'Unsubscribe',
+        subtitle: 'Enter the email address you subscribed with and the newsletter will stop.',
+        emailLabel: 'Email address',
         unsubscribe: 'Unsubscribe',
-        unsubscribing: 'Unsubscribing...',
-        success: 'Successfully unsubscribed. You will no longer receive our newsletter.',
-        error: 'Unsubscribe failed, please try again',
-        invalidEmail: 'Please enter a valid Email address',
-        notFound: 'No subscription found for this email address',
-        alreadyUnsubscribed: 'This email has already been unsubscribed',
+        unsubscribing: 'Working',
+        keep: 'Never mind, back to the blog',
+        doneTitle: 'You are unsubscribed',
+        doneBody: (email: string) => `${email} will not receive the newsletter anymore. Thanks for reading.`,
+        inactiveTitle: 'This address is not receiving emails',
+        inactiveBody: (email: string) => `${email} was never confirmed or has already been unsubscribed, so no newsletter is sent to it.`,
+        backToBlog: 'Back to the blog',
+        resubscribe: 'Changed your mind? Subscribe again',
+        errors: {
+            invalid_email: 'That email address does not look right. Please check it.',
+            not_configured: 'Unsubscribing is unavailable right now. Please try again later.',
+            rate_limited: 'Too many attempts. Please try again in a minute.',
+            not_found: 'No subscription was found for this address. Check that it is the one you subscribed with.',
+            not_subscribed: 'This address is not subscribed.',
+            verification_not_sent: 'Unsubscribe failed. Please try again later.',
+            timeout: 'The request timed out. Please try again.',
+            network: 'Network error. Check your connection and try again.',
+            unknown: 'Unsubscribe failed. Please try again later.',
+        } satisfies Record<NewsletterFailure, string>,
     }
 };
 
 export function NewsletterUnsubscribe({ lang }: NewsletterUnsubscribeProps) {
-    const { theme } = useTheme();
-    const isDark = theme === 'dark';
     const t = translations[lang];
+    const fieldId = useId();
+    const errorId = `${fieldId}-error`;
 
     const [email, setEmail] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+    const [error, setError] = useState<NewsletterFailure | null>(null);
+    const [finished, setFinished] = useState<{ email: string; state: 'done' | 'inactive' } | null>(null);
 
-    const validateEmail = (email: string) => {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    };
+    // 信件裡的取消訂閱連結會帶上收件信箱，省掉再打一次
+    useEffect(() => {
+        const fromQuery = new URLSearchParams(window.location.search).get('email');
+        if (fromQuery && isValidEmail(fromQuery)) setEmail(fromQuery);
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setMessage(null);
+        if (isSubmitting) return;
 
-        if (!email || !validateEmail(email)) {
-            setMessage({ type: 'error', text: t.invalidEmail });
+        const value = email.trim();
+        if (!isValidEmail(value)) {
+            setError('invalid_email');
             return;
         }
 
+        setError(null);
         setIsSubmitting(true);
+        const result = await postNewsletter({ email: value, action: 'unsubscribe', lang });
+        setIsSubmitting(false);
 
-        try {
-            // 從環境變數獲取 Google Apps Script URL
-            const scriptUrl = process.env.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_URL;
-
-            if (!scriptUrl) {
-                if (process.env.NODE_ENV === 'development') {
-                    console.error('NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_URL is not set');
-                }
-                setMessage({
-                    type: 'error',
-                    text: lang === 'zh-TW'
-                        ? '取消訂閱服務未配置，請聯繫管理員'
-                        : 'Unsubscribe service not configured, please contact administrator'
-                });
-                setIsSubmitting(false);
-                return;
-            }
-
-            // 驗證 URL 格式
-            try {
-                new URL(scriptUrl);
-            } catch (urlError) {
-                if (process.env.NODE_ENV === 'development') {
-                    console.error('Invalid script URL:', scriptUrl, urlError);
-                }
-                setMessage({
-                    type: 'error',
-                    text: lang === 'zh-TW'
-                        ? '取消訂閱服務配置錯誤，請聯繫管理員'
-                        : 'Unsubscribe service configuration error, please contact administrator'
-                });
-                setIsSubmitting(false);
-                return;
-            }
-
-            if (process.env.NODE_ENV === 'development') {
-                console.log('Unsubscribing email:', email.substring(0, 3) + '***');
-            }
-
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 秒超時
-
-            // 使用表單提交方式避免 CORS 預檢請求
-            const formData = new URLSearchParams();
-            formData.append('email', email);
-            formData.append('action', 'unsubscribe');
-
-            const response = await fetch(scriptUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: formData.toString(),
-                signal: controller.signal,
-                mode: 'cors',
-            });
-
-            clearTimeout(timeoutId);
-
-            if (!response.ok) {
-                if (process.env.NODE_ENV === 'development') {
-                    console.error('Response not OK:', response.status, response.statusText);
-                    const errorText = await response.text().catch(() => 'Unknown error');
-                    console.error('Error response:', errorText);
-                } else {
-                    await response.text().catch(() => 'Unknown error');
-                }
-                setMessage({
-                    type: 'error',
-                    text: lang === 'zh-TW'
-                        ? `取消訂閱失敗 (${response.status})，請稍後再試`
-                        : `Unsubscribe failed (${response.status}), please try again`
-                });
-                setIsSubmitting(false);
-                return;
-            }
-
-            const responseText = await response.text();
-            if (process.env.NODE_ENV === 'development') {
-                console.log('Response text:', responseText);
-            }
-
-            let data;
-            try {
-                data = JSON.parse(responseText);
-            } catch (parseError) {
-                if (process.env.NODE_ENV === 'development') {
-                    console.error('Failed to parse JSON response:', parseError);
-                }
-                if (responseText.toLowerCase().includes('success') || response.status === 200) {
-                    setMessage({
-                        type: 'success',
-                        text: lang === 'zh-TW'
-                            ? '取消訂閱請求已處理'
-                            : 'Unsubscribe request processed'
-                    });
-                    setEmail('');
-                } else {
-                    setMessage({ type: 'error', text: t.error });
-                }
-                setIsSubmitting(false);
-                return;
-            }
-
-            if (data.success) {
-                const successMessage = data.message || t.success;
-                setMessage({ type: 'success', text: successMessage });
-                setEmail('');
-            } else {
-                // 處理特定的錯誤情況
-                let errorMessage = data.message || t.error;
-                if (data.message && data.message.includes('not found')) {
-                    errorMessage = t.notFound;
-                } else if (data.message && data.message.includes('already unsubscribed')) {
-                    errorMessage = t.alreadyUnsubscribed;
-                }
-                setMessage({ type: 'error', text: errorMessage });
-            }
-        } catch (error) {
-            if (process.env.NODE_ENV === 'development') {
-                console.error('Unsubscribe error:', error);
-            }
-            const errorMessage = error instanceof Error ? error.message : String(error);
-
-            let userMessage = t.error;
-            if (error instanceof Error && error.name === 'AbortError') {
-                userMessage = lang === 'zh-TW'
-                    ? '請求超時，請稍後再試'
-                    : 'Request timeout, please try again';
-            } else if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
-                userMessage = lang === 'zh-TW'
-                    ? '網路連接失敗，請檢查網路連線或聯繫管理員'
-                    : 'Network connection failed, please check your internet connection or contact administrator';
-            } else if (errorMessage.includes('CORS')) {
-                userMessage = lang === 'zh-TW'
-                    ? '跨域請求失敗，請聯繫管理員檢查服務配置'
-                    : 'CORS request failed, please contact administrator to check service configuration';
-            }
-
-            setMessage({ type: 'error', text: userMessage });
-        } finally {
-            setIsSubmitting(false);
+        if (result.ok) {
+            setFinished({ email: value, state: 'done' });
+        } else if (result.reason === 'not_subscribed') {
+            setFinished({ email: value, state: 'inactive' });
+        } else {
+            setError(result.reason);
         }
     };
 
+    if (finished) {
+        const done = finished.state === 'done';
+        return (
+            <ShellReveal role="status">
+                <StatusMark tone={done ? 'success' : 'neutral'} />
+                <h1 className="mt-6 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+                    {done ? t.doneTitle : t.inactiveTitle}
+                </h1>
+                <p className="mt-3 break-words text-base leading-relaxed text-zinc-200">
+                    {done ? t.doneBody(finished.email) : t.inactiveBody(finished.email)}
+                </p>
+                <div className="mt-8 flex flex-col items-start gap-5">
+                    <Link href="/blog" className={shellButton.primary}>{t.backToBlog}</Link>
+                    <Link href="/blog#newsletter" className={shellButton.link}>{t.resubscribe}</Link>
+                </div>
+            </ShellReveal>
+        );
+    }
+
     return (
         <div>
-            <h3 className={`text-sm font-semibold mb-2 ${isDark ? 'text-white/90' : 'text-black'}`}>
-                {t.title}
-            </h3>
-            <p className={`text-xs mb-3 ${isDark ? 'text-zinc-200' : 'text-black/60'}`}>
-                {t.subtitle}
-            </p>
+            <p className="eyebrow">{t.eyebrow}</p>
+            <h1 className="mt-3 text-2xl font-semibold tracking-tight text-white sm:text-3xl">{t.title}</h1>
+            <p className="mt-3 text-base leading-relaxed text-zinc-200">{t.subtitle}</p>
 
-            <form onSubmit={handleSubmit} className="space-y-3">
-                {/* Email 輸入 */}
+            <form onSubmit={handleSubmit} noValidate className="mt-7">
+                <label htmlFor={fieldId} className="block text-sm font-medium text-white">
+                    {t.emailLabel}
+                </label>
                 <input
+                    id={fieldId}
                     type="email"
+                    name="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    autoCapitalize="off"
+                    spellCheck={false}
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder={t.emailPlaceholder}
-                    required
+                    onChange={(e) => {
+                        setEmail(e.target.value);
+                        if (error) setError(null);
+                    }}
                     disabled={isSubmitting}
-                    className={`w-full px-3 py-2 text-xs rounded-lg border transition-colors ${
-                        isDark
-                            ? 'bg-gray-700/50 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:bg-gray-700/70'
-                            : 'bg-white border-black/15 text-black placeholder-black/40 focus:border-yellow-500 focus:bg-gray-50'
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    aria-invalid={error ? true : undefined}
+                    aria-describedby={error ? errorId : undefined}
+                    className={`mt-2 h-12 w-full rounded-xl border bg-white/[0.04] px-4 text-base text-white outline-none transition-colors focus:border-yellow-400 focus:bg-white/[0.07] disabled:opacity-60 ${
+                        error ? 'border-red-400' : 'border-white/20 hover:border-white/40'
+                    }`}
                 />
-
-                {/* 提交按鈕 */}
+                {error && (
+                    <p id={errorId} role="alert" className="mt-2.5 text-sm font-medium text-red-400">
+                        {t.errors[error]}
+                    </p>
+                )}
                 <button
                     type="submit"
-                    disabled={isSubmitting || !email}
-                    className={`w-full px-3 py-2 text-xs font-medium rounded-lg transition-all ${
-                        isDark
-                            ? 'bg-red-600 hover:bg-red-700 text-white disabled:bg-white/10 disabled:text-white/20'
-                            : 'bg-red-500 hover:bg-red-600 text-white disabled:bg-black/5 disabled:text-black/30'
-                    } disabled:cursor-not-allowed`}
+                    disabled={isSubmitting}
+                    aria-busy={isSubmitting}
+                    className="mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white px-7 text-base font-semibold text-zinc-950 transition-colors duration-200 hover:bg-yellow-400 disabled:cursor-wait"
                 >
+                    {isSubmitting && (
+                        <span aria-hidden="true" className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    )}
                     {isSubmitting ? t.unsubscribing : t.unsubscribe}
                 </button>
-
-                {/* 訊息顯示 */}
-                {message && (
-                    <div className={`text-xs px-2 py-1.5 rounded ${
-                        message.type === 'success'
-                            ? isDark ? 'bg-green-900/30 text-green-400' : 'bg-green-50 text-green-700'
-                            : isDark ? 'bg-red-900/30 text-red-400' : 'bg-red-50 text-red-700'
-                    }`}>
-                        {message.text}
-                    </div>
-                )}
             </form>
+
+            <p className="mt-6 text-center">
+                <Link href="/blog" className={shellButton.link}>{t.keep}</Link>
+            </p>
         </div>
     );
 }

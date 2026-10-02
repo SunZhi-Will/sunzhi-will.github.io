@@ -288,11 +288,90 @@ function resolveArticleLanguage(article, requestedLang = 'zh-TW') {
     throw new Error('Article does not contain a sendable language version');
 }
 
+// Gmail 會截斷超過約 102KB 的信件內文，被截掉的部分包含頁尾的取消訂閱連結
+const GMAIL_CLIP_BYTES = 102 * 1024;
+
+// 信件用的顏色與字體，對齊網站的深色版面（docs/uiux-redesign-2026.md）。
+// 黑底上不用灰色文字，層次靠字級與字重；強調色只有一個
+const EMAIL = {
+    bg: '#0a0a0a',
+    surface: '#111113',
+    line: '#27272a',
+    title: '#ffffff',
+    text: '#e4e4e7',
+    accent: '#facc15',
+    ink: '#0a0a0a',
+    font: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang TC', 'Microsoft JhengHei', sans-serif",
+    mono: "'SFMono-Regular', Menlo, Consolas, 'Liberation Mono', monospace"
+};
+
+function escapeHtml(value) {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
 /**
- * 將 Markdown 轉換為 HTML（改進版本，支持嵌套列表和 BookmarkCard 組件）
+ * 主要按鈕（黃底黑字）。用表格包起來，Outlook 才不會把內距吃掉
  */
-function markdownToHtml(markdown) {
-    let html = markdown;
+function emailButton(href, label) {
+    return `
+<table role="presentation" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+        <td style="border-radius: 999px; background-color: ${EMAIL.accent};">
+            <a href="${href}" target="_blank" style="display: inline-block; padding: 14px 28px; font-family: ${EMAIL.font}; font-size: 16px; font-weight: 700; line-height: 1; color: ${EMAIL.ink}; text-decoration: none; border-radius: 999px;">${label}</a>
+        </td>
+    </tr>
+</table>`.trim();
+}
+
+/**
+ * 將 Markdown 轉換為 HTML（支援巢狀列表、引言、圖片、表格與站內的 MDX 元件）
+ * @param {string} markdown - 文章內文
+ * @param {Object} options - lang、blogUrl、slug、articleUrl
+ */
+function markdownToHtml(markdown, options = {}) {
+    const lang = options.lang || 'zh-TW';
+    const isZh = lang === 'zh-TW';
+    const blogUrl = options.blogUrl || process.env.BLOG_URL || 'https://sunzhi-will.github.io';
+    const slug = options.slug || '';
+    const articleUrl = options.articleUrl || (slug ? `${blogUrl}/blog/${slug}` : blogUrl);
+
+    let html = markdown.replace(/\r\n/g, '\n');
+
+    // 區塊層級的 HTML 先收起來，換成一行佔位符，最後再放回去。
+    // 這樣多行的 HTML 才不會在逐行處理時被包進 <p>
+    const blocks = [];
+    const stash = (blockHtml) => {
+        blocks.push(blockHtml.trim());
+        return `\n\n@@BLOCK_${blocks.length - 1}@@\n\n`;
+    };
+    const inlines = [];
+    const stashInline = (inlineHtml) => {
+        inlines.push(inlineHtml);
+        return `@@INLINE_${inlines.length - 1}@@`;
+    };
+
+    // 站內圖片用相對路徑，信件裡要換成完整網址
+    const resolveUrl = (src) => {
+        if (/^(https?:|mailto:|data:)/.test(src)) return src;
+        if (src.startsWith('#')) return `${articleUrl}${src}`;
+        if (src.startsWith('/')) return `${blogUrl}${src}`;
+        return `${blogUrl}/blog/${slug}/${src.replace(/^\.\//, '')}`;
+    };
+
+    // 程式碼區塊（要在其他規則之前處理，內容才不會被當成 Markdown）
+    html = html.replace(/^```[^\n]*\n([\s\S]*?)\n```[ \t]*$/gm, (match, code) => stash(
+        `<pre style="margin: 24px 0; padding: 16px 18px; background-color: ${EMAIL.bg}; border: 1px solid ${EMAIL.line}; border-radius: 10px; font-family: ${EMAIL.mono}; font-size: 13px; line-height: 1.7; color: ${EMAIL.text}; white-space: pre-wrap; word-break: break-word;">${escapeHtml(code)}</pre>`
+    ));
+    html = html.replace(/`([^`\n]+)`/g, (match, code) => stashInline(
+        `<code style="padding: 2px 6px; background-color: ${EMAIL.bg}; border: 1px solid ${EMAIL.line}; border-radius: 4px; font-family: ${EMAIL.mono}; font-size: 0.9em; color: ${EMAIL.title};">${escapeHtml(code)}</code>`
+    ));
+
+    // MDX 的 import / export 不屬於內文
+    html = html.replace(/^(import|export)\s.+$/gm, '');
 
     // 先處理 BookmarkCard 組件（需要在分割之前處理）
     // 將多行 BookmarkCard 轉換為單行格式
@@ -351,22 +430,18 @@ function markdownToHtml(markdown) {
             const icon = iconMatch ? iconMatch[1] : '';
             const thumbnail = thumbnailMatch ? thumbnailMatch[1] : '';
 
-            // 處理相對路徑圖片
-            const blogUrl = process.env.BLOG_URL || 'https://sunzhi-will.github.io';
             let imageHtml = '';
             if (thumbnail) {
-                const thumbnailUrl = thumbnail.startsWith('http') ? thumbnail : `${blogUrl}${thumbnail}`;
                 imageHtml = `
 <td style="width: 140px; padding-left: 20px; vertical-align: middle;">
-    <img src="${thumbnailUrl}" alt="" style="width: 140px; height: 100px; object-fit: cover; border-radius: 6px; display: block;" />
+    <img src="${resolveUrl(thumbnail)}" alt="" style="width: 140px; height: 100px; object-fit: cover; border-radius: 6px; display: block;" />
 </td>
                 `;
             }
 
             let iconHtml = '';
             if (icon) {
-                const iconUrl = icon.startsWith('http') ? icon : `${blogUrl}${icon}`;
-                iconHtml = `<img src="${iconUrl}" alt="" style="width: 16px; height: 16px; border-radius: 50%; display: inline-block; vertical-align: middle; margin-right: 6px;" />`;
+                iconHtml = `<img src="${resolveUrl(icon)}" alt="" style="width: 16px; height: 16px; border-radius: 50%; display: inline-block; vertical-align: middle; margin-right: 6px;" />`;
             }
 
             let hostname = '';
@@ -376,15 +451,15 @@ function markdownToHtml(markdown) {
                 hostname = href;
             }
 
-            return `
-<div style="margin: 24px 0; padding: 20px; background-color: #202023; border: 1px solid #3f3f46; border-radius: 8px;">
+            return stash(`
+<div style="margin: 24px 0; padding: 20px; background-color: ${EMAIL.bg}; border: 1px solid ${EMAIL.line}; border-radius: 12px;">
     <a href="${href}" style="text-decoration: none; color: inherit; display: block;" target="_blank" rel="noopener noreferrer">
         <table role="presentation" style="width: 100%; border-collapse: collapse; border: none;">
             <tr>
                 <td style="vertical-align: top;">
-                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px; color: #e8e8e8; line-height: 1.4;">${title}</div>
-                    <div style="font-size: 14px; margin-bottom: 12px; color: #a1a1aa; line-height: 1.5;">${description}</div>
-                    <div style="font-size: 12px; color: #71717a;">
+                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px; color: ${EMAIL.title}; line-height: 1.4;">${title}</div>
+                    <div style="font-size: 14px; margin-bottom: 12px; color: ${EMAIL.text}; line-height: 1.5;">${description}</div>
+                    <div style="font-family: ${EMAIL.mono}; font-size: 12px; color: ${EMAIL.accent};">
                         ${iconHtml}
                         <span style="vertical-align: middle;">${hostname}</span>
                     </div>
@@ -394,7 +469,7 @@ function markdownToHtml(markdown) {
         </table>
     </a>
 </div>
-            `.trim();
+            `);
         }
     );
 
@@ -416,28 +491,28 @@ function markdownToHtml(markdown) {
             // 根據類型決定樣式 (與網站的 bg-opacity 和 border 同步)
             const getTypeConfig = (type) => {
                 const configs = {
-                    insight: { icon: '🔍', title: '內行人的深度點評', bgColor: '#202023', borderColor: '#2d2d30', textColor: '#d4d4d4' },
-                    experience: { icon: '💭', title: '我的親身體驗', bgColor: '#142b1b', borderColor: '#1e3f20', textColor: '#a7f3d0' },
-                    warning: { icon: '⚠️', title: '重要提醒', bgColor: '#2e2916', borderColor: '#4a3f1a', textColor: '#fef08a' },
-                    tip: { icon: '💡', title: '實用技巧', bgColor: '#2e2916', borderColor: '#4a3f1a', textColor: '#fef08a' }
+                    insight: { icon: '🔍', title: isZh ? '內行人的深度點評' : 'An insider take', bgColor: '#18181b', borderColor: EMAIL.line, textColor: EMAIL.text },
+                    experience: { icon: '💭', title: isZh ? '我的親身體驗' : 'From my own experience', bgColor: '#142b1b', borderColor: '#1e3f20', textColor: '#a7f3d0' },
+                    warning: { icon: '⚠️', title: isZh ? '重要提醒' : 'Heads up', bgColor: '#2e2916', borderColor: '#4a3f1a', textColor: '#fef08a' },
+                    tip: { icon: '💡', title: isZh ? '實用技巧' : 'Practical tip', bgColor: '#2e2916', borderColor: '#4a3f1a', textColor: '#fef08a' }
                 };
                 return configs[type] || configs.insight;
             };
 
             const config = getTypeConfig(type);
-            const authorHtml = author ? `<div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid ${config.borderColor}; font-size: 13px; color: #999999;">${author}${role ? ` • ${role}` : ''}</div>` : '';
+            const authorHtml = author ? `<div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid ${config.borderColor}; font-size: 13px; color: ${EMAIL.text};">${author}${role ? ` • ${role}` : ''}</div>` : '';
 
-            return `
-<div style="margin: 32px 0; padding: 24px; background-color: ${config.bgColor}; border: 1px solid ${config.borderColor}; border-radius: 8px;">
+            return stash(`
+<div style="margin: 32px 0; padding: 24px; background-color: ${config.bgColor}; border: 1px solid ${config.borderColor}; border-radius: 12px;">
     <table role="presentation" style="width: 100%; border-collapse: collapse;">
         <tr>
             <td style="vertical-align: top; width: 48px; padding-right: 16px;">
-                <div style="width: 48px; height: 48px; border-radius: 50%; background-color: #27272a; display: flex; align-items: center; justify-content: center; font-size: 24px; text-align: center; line-height: 48px;">
+                <div style="width: 48px; height: 48px; border-radius: 50%; background-color: ${EMAIL.line}; font-size: 24px; text-align: center; line-height: 48px;">
                     ${config.icon}
                 </div>
             </td>
             <td style="vertical-align: top;">
-                <div style="font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #e8e8e8;">
+                <div style="font-size: 16px; font-weight: 600; margin-bottom: 12px; color: ${EMAIL.title};">
                     ${config.title}
                 </div>
                 <div style="font-size: 15px; line-height: 1.7; color: ${config.textColor};">
@@ -448,7 +523,7 @@ function markdownToHtml(markdown) {
         </tr>
     </table>
 </div>
-            `.trim();
+            `);
         }
     );
 
@@ -466,20 +541,20 @@ function markdownToHtml(markdown) {
             // 根據類型決定樣式
             const getTypeConfig = (type) => {
                 const configs = {
-                    info: { icon: 'ℹ️', title: '資訊', bgColor: '#202023', borderColor: '#2d2d30', textColor: '#d4d4d4' },
-                    success: { icon: '✅', title: '成功', bgColor: '#142b1b', borderColor: '#1e3f20', textColor: '#a7f3d0' },
-                    warning: { icon: '⚠️', title: '警告', bgColor: '#2e2916', borderColor: '#4a3f1a', textColor: '#fef08a' },
-                    error: { icon: '❌', title: '錯誤', bgColor: '#2d1919', borderColor: '#4a1e1e', textColor: '#fecaca' },
-                    tip: { icon: '💡', title: '提示', bgColor: '#2e2916', borderColor: '#4a3f1a', textColor: '#fef08a' }
+                    info: { icon: 'ℹ️', bgColor: '#18181b', borderColor: EMAIL.line, textColor: EMAIL.text },
+                    success: { icon: '✅', bgColor: '#142b1b', borderColor: '#1e3f20', textColor: '#a7f3d0' },
+                    warning: { icon: '⚠️', bgColor: '#2e2916', borderColor: '#4a3f1a', textColor: '#fef08a' },
+                    error: { icon: '❌', bgColor: '#2d1919', borderColor: '#4a1e1e', textColor: '#fecaca' },
+                    tip: { icon: '💡', bgColor: '#2e2916', borderColor: '#4a3f1a', textColor: '#fef08a' }
                 };
                 return configs[type] || configs.info;
             };
 
             const config = getTypeConfig(type);
-            const titleHtml = title ? `<div style="font-weight: 600; margin-bottom: 8px; color: #e8e8e8;">${config.icon} ${title}</div>` : '';
+            const titleHtml = title ? `<div style="font-weight: 600; margin-bottom: 8px; color: ${EMAIL.title};">${config.icon} ${title}</div>` : '';
 
-            return `
-<div style="margin: 24px 0; padding: 16px 20px; background-color: ${config.bgColor}; border: 1px solid ${config.borderColor}; border-radius: 8px;">
+            return stash(`
+<div style="margin: 24px 0; padding: 16px 20px; background-color: ${config.bgColor}; border: 1px solid ${config.borderColor}; border-radius: 12px;">
     <table role="presentation" style="width: 100%; border-collapse: collapse;">
         <tr>
             ${!title ? `<td style="vertical-align: top; width: 24px; padding-right: 12px; font-size: 16px; line-height: 1.6;">${config.icon}</td>` : ''}
@@ -490,7 +565,7 @@ function markdownToHtml(markdown) {
         </tr>
     </table>
 </div>
-            `.trim();
+            `);
         }
     );
 
@@ -544,31 +619,66 @@ function markdownToHtml(markdown) {
                 for (const stat of statsData) {
                     statsHtml += `
 <td style="width: ${cellWidth}%; text-align: center; padding: 12px; vertical-align: top;">
-    <div style="font-size: 28px; font-weight: 700; color: #c084fc; margin-bottom: 4px;">${stat.value}</div>
-    <div style="font-size: 14px; color: #a1a1aa;">${stat.label}</div>
+    <div style="font-size: 28px; font-weight: 700; color: ${EMAIL.accent}; margin-bottom: 4px;">${stat.value}</div>
+    <div style="font-size: 14px; color: ${EMAIL.text};">${stat.label}</div>
 </td>
                     `;
                 }
                 statsHtml += '</tr></table>';
-            } else {
-                statsHtml = '<div style="font-size: 15px; color: #a1a1aa; text-align: center; padding: 12px;">統計數據</div>';
             }
 
-            return `
-<div style="margin: 32px 0; padding: 24px; background-color: #0a0a0a; border: 1px solid #333333; border-radius: 8px; text-align: center;">
-    ${title ? `<div style="font-size: 18px; font-weight: 600; margin-bottom: 16px; color: #e8e8e8;">${title}</div>` : ''}
+            return stash(`
+<div style="margin: 32px 0; padding: 24px; background-color: ${EMAIL.bg}; border: 1px solid ${EMAIL.line}; border-radius: 12px; text-align: center;">
+    ${title ? `<div style="font-size: 18px; font-weight: 600; margin-bottom: 16px; color: ${EMAIL.title};">${title}</div>` : ''}
     ${statsHtml}
 </div>
-            `.trim();
+            `);
         }
     );
 
-    // 先處理粗體和連結（在分割之前）
-    html = html.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #e8e8e8; font-weight: 600;">$1</strong>');
-    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: #c0c0c0; text-decoration: underline; transition: color 0.2s;">$1</a>');
+    // 其餘的 MDX 元件是網頁上才能操作的互動內容（components/blog/interactive/），
+    // 信件裡沒辦法執行，改放一張卡片帶讀者回網頁版，不要讓那一段憑空消失
+    const interactiveCard = () => stash(`
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="width: 100%; margin: 28px 0; background-color: ${EMAIL.bg}; border: 1px solid ${EMAIL.line}; border-radius: 12px;">
+    <tr>
+        <td style="padding: 18px 20px;">
+            <div style="font-family: ${EMAIL.mono}; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: ${EMAIL.accent}; margin-bottom: 6px;">${isZh ? '互動內容' : 'Interactive'}</div>
+            <div style="font-size: 15px; line-height: 1.7; color: ${EMAIL.text};">
+                ${isZh ? '這一段是可以動手操作的互動內容，信件裡無法顯示。' : 'This part is interactive and cannot be shown in an email.'}
+                <a href="${articleUrl}" target="_blank" style="color: ${EMAIL.accent}; font-weight: 600; text-decoration: underline; white-space: nowrap;">${isZh ? '到網頁版操作' : 'Try it on the web'}</a>
+            </div>
+        </td>
+    </tr>
+</table>
+    `);
+    html = html.replace(/<([A-Z][A-Za-z0-9]*)\b[^>]*\/>/g, interactiveCard);
+    html = html.replace(/<([A-Z][A-Za-z0-9]*)\b[^>]*>[\s\S]*?<\/\1>/g, interactiveCard);
 
-    // 先處理同一行內的多個編號列表項目（例如：1. xxx 2. xxx 3. xxx）
-    html = html.replace(/(\d+)\.\s+([^\d]+?)(?=\s+\d+\.|$)/g, '$1. $2\n');
+    // 圖片：獨立一行的當成區塊，夾在文字裡的維持行內。要在連結之前處理，否則會被當成連結
+    const imageTag = (alt, src, block) =>
+        `<img src="${resolveUrl(src)}" alt="${escapeHtml(alt)}" style="display: block; width: 100%; max-width: 100%; height: auto; border: 0; border-radius: 12px;${block ? '' : ' margin: 12px 0;'}" />`;
+    html = html.replace(/^[ \t]*!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)[ \t]*$/gm, (match, alt, src) =>
+        stash(`<div style="margin: 28px 0;">${imageTag(alt, src, true)}</div>`));
+    html = html.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g, (match, alt, src) => stashInline(imageTag(alt, src, false)));
+
+    // 粗體、斜體和連結（在分割之前）
+    html = html.replace(/\*\*(.*?)\*\*/g, `<strong style="color: ${EMAIL.title}; font-weight: 700;">$1</strong>`);
+    html = html.replace(/(^|[^*\w])\*([^*\s](?:[^*\n]*[^*\s])?)\*(?![*\w])/gm, '$1<em>$2</em>');
+    html = html.replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g, (match, text, href) =>
+        `<a href="${resolveUrl(href)}" target="_blank" style="color: ${EMAIL.accent}; text-decoration: underline;">${text}</a>`);
+
+    // 同一行內擠了多個編號項目（例如：1. xxx 2. xxx 3. xxx）時拆成多行。
+    // 只處理以編號開頭、而且編號連續的行，標題裡的數字（### 3. xxx）不能動
+    html = html.split('\n').map((line) => {
+        const first = line.match(/^(\s*)(\d+)\.\s+/);
+        if (!first) return line;
+        let expected = Number(first[2]) + 1;
+        return line.replace(/\s+(\d+)\.\s+(?=\S)/g, (match, number, offset) => {
+            if (offset === 0 || Number(number) !== expected) return match;
+            expected++;
+            return `\n${first[1]}${number}. `;
+        });
+    }).join('\n');
 
     // 按行分割處理（保留原始縮排）
     const lines = html.split('\n');
@@ -596,8 +706,8 @@ function markdownToHtml(markdown) {
                 const padding = 24 + (list.level * 20); // 每層增加20px縮排
                 // 為有序列表添加正確的樣式，確保顯示連續編號
                 const listStyle = list.isOrdered
-                    ? `margin: 12px 0; padding-left: ${padding}px; line-height: 1.7; list-style-type: decimal; counter-reset: item;`
-                    : `margin: 12px 0; padding-left: ${padding}px; line-height: 1.7;`;
+                    ? `margin: 16px 0; padding-left: ${padding}px; list-style-type: decimal;`
+                    : `margin: 16px 0; padding-left: ${padding}px;`;
                 const listHtml = `<${listTag} style="${listStyle}">${list.items.join('')}</${listTag}>`;
 
                 if (listStack.length > 0) {
@@ -614,6 +724,13 @@ function markdownToHtml(markdown) {
         }
     };
 
+    // 字級、行高與顏色由外層儲存格繼承。每一段都重複寫的話，長文會超過 Gmail 約 102KB 的截斷上限
+    const paragraphStyle = 'margin: 18px 0;';
+    const listItemStyle = 'margin: 8px 0; padding-left: 4px;';
+    const isListLine = (text) => /^[\*\-]\s/.test(text) || /^\d+\.\s+/.test(text);
+    const isTableLine = (text) => /^\|.*\|$/.test(text);
+    const tableCells = (text) => text.replace(/^\|/, '').replace(/\|$/, '').split('|').map((cell) => cell.trim());
+
     for (let i = 0; i < lines.length; i++) {
         const originalLine = lines[i];
         const trimmedLine = originalLine.trim();
@@ -621,33 +738,95 @@ function markdownToHtml(markdown) {
 
         if (!trimmedLine) {
             // 空行：如果下一行不是列表項目，關閉所有列表
-            const nextTrimmed = nextLine.trim();
-            const nextIsList = nextTrimmed.match(/^[\*\-] /) || nextTrimmed.match(/^\d+\.\s+/);
-            if (!nextIsList && listStack.length > 0) {
+            if (!isListLine(nextLine.trim()) && listStack.length > 0) {
                 closeListsToLevel(0);
             }
             continue;
         }
 
+        // 先前收起來的區塊，原樣放回
+        const blockMatch = trimmedLine.match(/^@@BLOCK_(\d+)@@$/);
+        if (blockMatch) {
+            closeListsToLevel(0);
+            result.push(blocks[Number(blockMatch[1])]);
+            continue;
+        }
+
         // 處理標題
+        if (trimmedLine.match(/^#### /)) {
+            closeListsToLevel(0);
+            result.push(`<h4 style="font-size: 17px; font-weight: 700; margin: 28px 0 12px 0; color: ${EMAIL.title}; line-height: 1.5;">${trimmedLine.replace(/^#### /, '')}</h4>`);
+            continue;
+        }
         if (trimmedLine.match(/^### /)) {
             closeListsToLevel(0);
-            result.push(`<h3 style="font-size: 20px; font-weight: 600; margin: 32px 0 16px 0; color: #e8e8e8; line-height: 1.4;">${trimmedLine.replace(/^### /, '')}</h3>`);
+            result.push(`<h3 style="font-size: 19px; font-weight: 700; margin: 32px 0 14px 0; color: ${EMAIL.title}; line-height: 1.45;">${trimmedLine.replace(/^### /, '')}</h3>`);
             continue;
         }
         if (trimmedLine.match(/^## /)) {
             closeListsToLevel(0);
-            result.push(`<h2 style="font-size: 24px; font-weight: 600; margin: 40px 0 20px 0; color: #e8e8e8; line-height: 1.4;">${trimmedLine.replace(/^## /, '')}</h2>`);
+            result.push(`<h2 style="font-size: 23px; font-weight: 700; margin: 44px 0 16px 0; color: ${EMAIL.title}; line-height: 1.4;">${trimmedLine.replace(/^## /, '')}</h2>`);
             continue;
         }
         if (trimmedLine.match(/^# /)) {
             closeListsToLevel(0);
-            result.push(`<h1 style="font-size: 28px; font-weight: 700; margin: 48px 0 24px 0; color: #e8e8e8; line-height: 1.3;">${trimmedLine.replace(/^# /, '')}</h1>`);
+            result.push(`<h1 style="font-size: 26px; font-weight: 700; margin: 48px 0 20px 0; color: ${EMAIL.title}; line-height: 1.35;">${trimmedLine.replace(/^# /, '')}</h1>`);
+            continue;
+        }
+
+        // 分隔線
+        if (/^(-{3,}|\*{3,}|_{3,})$/.test(trimmedLine)) {
+            closeListsToLevel(0);
+            result.push(`<hr style="border: none; border-top: 1px solid ${EMAIL.line}; margin: 36px 0;">`);
+            continue;
+        }
+
+        // 引言：連續的 > 行合成一個區塊，中間的空行分段
+        if (trimmedLine.startsWith('>')) {
+            closeListsToLevel(0);
+            const paragraphs = [[]];
+            while (i < lines.length && lines[i].trim().startsWith('>')) {
+                const content = lines[i].trim().replace(/^>\s?/, '').trim();
+                if (content) {
+                    paragraphs[paragraphs.length - 1].push(content);
+                } else if (paragraphs[paragraphs.length - 1].length > 0) {
+                    paragraphs.push([]);
+                }
+                i++;
+            }
+            i--;
+            const quoteHtml = paragraphs
+                .filter((paragraph) => paragraph.length > 0)
+                .map((paragraph, index, all) =>
+                    `<p style="margin: 0 0 ${index === all.length - 1 ? 0 : 12}px 0; font-size: 17px; line-height: 1.75; color: ${EMAIL.title};">${paragraph.join('<br>')}</p>`)
+                .join('');
+            result.push(`<blockquote style="margin: 24px 0; padding: 4px 0 4px 18px; border-left: 3px solid ${EMAIL.accent};">${quoteHtml}</blockquote>`);
+            continue;
+        }
+
+        // 表格：連續的 | 行，第二行是 | --- | 分隔線時第一行當表頭
+        if (isTableLine(trimmedLine)) {
+            closeListsToLevel(0);
+            const rows = [];
+            while (i < lines.length && isTableLine(lines[i].trim())) {
+                rows.push(tableCells(lines[i].trim()));
+                i++;
+            }
+            i--;
+            const hasHeader = rows.length > 1 && rows[1].every((cell) => /^:?-{2,}:?$/.test(cell));
+            const bodyRows = hasHeader ? rows.slice(2) : rows;
+            const cellStyle = `padding: 12px 14px; border-top: 1px solid ${EMAIL.line}; font-size: 15px; line-height: 1.65; color: ${EMAIL.text}; text-align: left; vertical-align: top;`;
+            const headHtml = hasHeader
+                ? `<tr>${rows[0].map((cell) => `<th style="padding: 12px 14px; font-size: 14px; font-weight: 700; line-height: 1.5; color: ${EMAIL.title}; text-align: left; vertical-align: top;">${cell}</th>`).join('')}</tr>`
+                : '';
+            const bodyHtml = bodyRows
+                .map((row, rowIndex) => `<tr>${row.map((cell) => `<td style="${!hasHeader && rowIndex === 0 ? cellStyle.replace(`border-top: 1px solid ${EMAIL.line}; `, '') : cellStyle}">${cell}</td>`).join('')}</tr>`)
+                .join('');
+            result.push(`<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="width: 100%; margin: 28px 0; border-collapse: separate; border-spacing: 0; background-color: ${EMAIL.bg}; border: 1px solid ${EMAIL.line}; border-radius: 12px;">${headHtml}${bodyHtml}</table>`);
             continue;
         }
 
         const indentLevel = getIndentLevel(originalLine);
-        const trimmedIndentLevel = getIndentLevel(trimmedLine);
 
         // 處理編號列表項目
         const orderedMatch = trimmedLine.match(/^(\d+)\.\s+(.+)$/);
@@ -662,8 +841,8 @@ function markdownToHtml(markdown) {
                 });
             }
 
-            const listContent = orderedMatch[2];
-            listStack[listStack.length - 1].items.push(`<li style="margin: 12px 0; color: #d4d4d4; line-height: 1.8; padding-left: 4px; display: list-item;">${listContent}</li>`);
+            // 用 value 保留原文的編號：被段落隔開的列表才不會每一段都從 1 開始
+            listStack[listStack.length - 1].items.push(`<li value="${orderedMatch[1]}" style="${listItemStyle}">${orderedMatch[2]}</li>`);
             continue;
         }
 
@@ -680,15 +859,14 @@ function markdownToHtml(markdown) {
                 });
             }
 
-            const listContent = unorderedMatch[1];
-            listStack[listStack.length - 1].items.push(`<li style="margin: 12px 0; color: #d4d4d4; line-height: 1.8; padding-left: 4px;">${listContent}</li>`);
+            listStack[listStack.length - 1].items.push(`<li style="${listItemStyle}">${unorderedMatch[1]}</li>`);
             continue;
         }
 
         // 處理普通段落或列表項目的延續內容
         if (listStack.length > 0) {
             // 檢查是否是列表項目的延續（有縮排但不是列表標記）
-            if (trimmedIndentLevel > 0 && !trimmedLine.match(/^[\*\-] /) && !trimmedLine.match(/^\d+\.\s+/)) {
+            if (indentLevel > 0 && !isListLine(trimmedLine)) {
                 // 這是列表項目的延續內容
                 const topList = listStack[listStack.length - 1];
                 if (topList.items.length > 0) {
@@ -703,21 +881,42 @@ function markdownToHtml(markdown) {
         }
 
         // 處理普通段落
-        if (listStack.length === 0 && trimmedLine) {
-            result.push(`<p style="margin: 20px 0; line-height: 1.8; color: #d4d4d4; font-size: 15px;">${trimmedLine}</p>`);
-        }
+        result.push(`<p style="${paragraphStyle}">${trimmedLine}</p>`);
     }
 
     // 關閉所有剩餘的列表
     closeListsToLevel(0);
 
-    return result.join('\n');
+    return result.join('\n').replace(/@@INLINE_(\d+)@@/g, (match, index) => inlines[Number(index)]);
+}
+
+/**
+ * 把 frontmatter 的日期（YYYY-MM-DD）轉成讀者看得懂的寫法
+ */
+function formatArticleDate(date, isZh) {
+    const match = String(date).match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (!match) return date || '';
+    const [, year, month, day] = match;
+    if (isZh) return `${year}.${month.padStart(2, '0')}.${day.padStart(2, '0')}`;
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    return `${months[Number(month) - 1]} ${Number(day)}, ${year}`;
+}
+
+/**
+ * 取消訂閱連結。帶上收件信箱與語言，讀者點進去不用再打一次
+ */
+function getUnsubscribeUrl(blogUrl, lang, recipientEmail) {
+    const params = new URLSearchParams();
+    if (recipientEmail) params.set('email', recipientEmail);
+    params.set('lang', lang);
+    return `${blogUrl}/unsubscribe?${params.toString()}`;
 }
 
 /**
  * 生成電子報 HTML
+ * @param {string} recipientEmail - 收件信箱（可省略），用來預填取消訂閱頁
  */
-function generateNewsletterHtml(article, slug, lang, blogUrl) {
+function generateNewsletterHtml(article, slug, lang, blogUrl, recipientEmail) {
     const isZh = lang === 'zh-TW';
     const data = isZh ? article.zh : article.en;
     const meta = data.meta;
@@ -725,102 +924,148 @@ function generateNewsletterHtml(article, slug, lang, blogUrl) {
 
     const title = meta.title || '';
     const description = meta.description || '';
-    const date = meta.date || '';
+    const date = formatArticleDate(meta.date || '', isZh);
     const coverImage = meta.coverImage || '';
 
     // 生成文章 URL
     const articleUrl = `${blogUrl}/blog/${slug}`;
+    const unsubscribeUrl = getUnsubscribeUrl(blogUrl, lang, recipientEmail);
 
     // 生成封面圖 URL（如果有的話）
     // 圖片存放在 public/blog/ 目錄，可以直接通過 /blog/ 路徑訪問
     const coverImageUrl = coverImage ? `${blogUrl}/blog/${slug}/${coverImage}` : '';
 
+    // AI 自動生成的日報才標示來源，Sun 自己寫的文章不標
+    const isAiDaily = !getArticleTypes(article).includes('sun-written');
+    const label = isAiDaily ? (isZh ? 'AI 日報' : 'AI Daily') : (isZh ? '電子報' : 'Newsletter');
+
+    // 網頁上的互動內容在信件裡看不到，有的話在開頭先說明
+    const interactiveCount = (body.match(/^<(?!BookmarkCard|InsightQuote|Callout|StatsHighlight)[A-Z][A-Za-z0-9]*\b/gm) || []).length;
+
     // 轉換 Markdown 為 HTML
-    const htmlBody = markdownToHtml(body);
+    const htmlBody = markdownToHtml(body, { lang, blogUrl, slug, articleUrl });
+
+    const eyebrowStyle = `font-family: ${EMAIL.mono}; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: ${EMAIL.text};`;
+    const footerLinkStyle = `color: ${EMAIL.text}; text-decoration: underline;`;
 
     return `
 <!DOCTYPE html>
-<html>
+<html lang="${isZh ? 'zh-Hant-TW' : 'en'}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title}</title>
+    <meta name="color-scheme" content="dark">
+    <meta name="supported-color-schemes" content="dark">
+    <title>${escapeHtml(title)}</title>
+    <style>
+        @media only screen and (max-width: 620px) {
+            .nl-wrap { padding: 0 !important; }
+            .nl-card { border-radius: 0 !important; border-left: 0 !important; border-right: 0 !important; }
+            .nl-pad { padding-left: 20px !important; padding-right: 20px !important; }
+            .nl-title { font-size: 26px !important; }
+        }
+    </style>
 </head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #000000; min-height: 100vh; padding: 40px 20px;">
-    <table role="presentation" style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #1a1a1a; border-radius: 16px; box-shadow: 0 10px 40px rgba(192, 192, 192, 0.1); overflow: hidden; border: 1px solid #333333;">
+<body style="margin: 0; padding: 0; background-color: ${EMAIL.bg}; font-family: ${EMAIL.font}; -webkit-text-size-adjust: 100%;">
+    <!-- 收件匣預覽文字 -->
+    <div style="display: none; max-height: 0; overflow: hidden; opacity: 0; color: transparent; mso-hide: all;">${escapeHtml(description)}</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width: 100%; background-color: ${EMAIL.bg};">
         <tr>
-            <td style="padding: 0;">
-                <!-- Site Header -->
-                <div style="background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); padding: 25px 30px; border-bottom: 1px solid #333333;">
-                    <div style="display: table; width: 100%;">
-                        <div style="display: table-cell; vertical-align: middle;">
-                            <div style="display: inline-block; vertical-align: middle;">
-                                <h2 style="color: #e8e8e8; margin: 0; font-size: 20px; font-weight: 600; text-shadow: 0 1px 3px rgba(192, 192, 192, 0.2);">
-                                    ${isZh ? 'Sun 的技術分享' : "Sun's Tech Blog"}
-                                </h2>
-                                <p style="color: #c0c0c0; margin: 0; font-size: 12px; opacity: 0.8;">
-                                    ${isZh ? 'AI 與區塊鏈技術探索' : 'AI & Blockchain Technology Exploration'}
-                                </p>
-                            </div>
-                        </div>
-                        <div style="display: table-cell; text-align: right; vertical-align: middle;">
-                            <a href="${articleUrl}" style="color: #c0c0c0; text-decoration: none; font-size: 12px; padding: 6px 12px; border: 1px solid #333333; border-radius: 4px; transition: all 0.2s;">
-                                ${isZh ? '閱讀全文' : 'Read More'}
-                            </a>
-                        </div>
-                    </div>
-                </div>
+            <td class="nl-wrap" align="center" style="padding: 32px 16px 0 16px;">
+                <table role="presentation" class="nl-card" width="600" cellpadding="0" cellspacing="0" border="0" style="width: 100%; max-width: 600px; background-color: ${EMAIL.surface}; border: 1px solid ${EMAIL.line}; border-radius: 16px; font-family: ${EMAIL.font};">
+                    <!-- Site Header -->
+                    <tr>
+                        <td class="nl-pad" style="padding: 22px 40px; border-bottom: 1px solid ${EMAIL.line};">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td style="vertical-align: middle;">
+                                        <a href="${blogUrl}/blog" target="_blank" style="text-decoration: none; color: ${EMAIL.title};">
+                                            <img src="${blogUrl}/logo.png" width="32" height="32" alt="" style="display: inline-block; vertical-align: middle; width: 32px; height: 32px; border: 0; border-radius: 8px;">
+                                            <span style="display: inline-block; vertical-align: middle; padding-left: 8px; font-size: 18px; font-weight: 700; letter-spacing: -0.01em; color: ${EMAIL.title};">Sun</span>
+                                        </a>
+                                    </td>
+                                    <td align="right" style="vertical-align: middle; ${eyebrowStyle}">${label}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
 
-                <!-- Article Header -->
-                <div style="background-color: #0a0a0a; padding: 30px 30px; border-bottom: 1px solid #333333;">
-                    <h1 style="color: #e8e8e8; margin-top: 0; margin-bottom: 10px; font-size: 26px; font-weight: 700; text-shadow: 0 2px 8px rgba(192, 192, 192, 0.3); line-height: 1.3;">${title}</h1>
-                    <p style="color: #c0c0c0; font-size: 14px; margin: 0;">${date}</p>
-                </div>
-                
-                ${coverImageUrl ? `
-                <!-- Cover Image -->
-                <div style="width: 100%; overflow: hidden; background-color: #0a0a0a;">
-                    <img src="${coverImageUrl}" alt="${title}" style="width: 100%; height: auto; display: block; border: none;">
-                </div>
-                ` : ''}
-                
-                <!-- Content -->
-                <div style="padding: 50px 40px; background-color: #1a1a1a;">
-                    <p style="color: #d4d4d4; font-size: 17px; margin: 0 0 40px 0; line-height: 1.7; font-weight: 400;">${description}</p>
-                    
-                    <hr style="border: none; border-top: 1px solid #333333; margin: 40px 0;">
-                    
-                    <div style="color: #d4d4d4; font-size: 15px; line-height: 1.8;">
-                        ${htmlBody}
-                    </div>
-                </div>
-                
+                    <!-- Article Header -->
+                    <tr>
+                        <td class="nl-pad" style="padding: 36px 40px 32px 40px;">
+                            ${date ? `<div style="${eyebrowStyle} margin-bottom: 14px;">${date}</div>` : ''}
+                            <h1 class="nl-title" style="margin: 0; font-size: 30px; font-weight: 700; line-height: 1.3; letter-spacing: -0.01em; color: ${EMAIL.title};">${title}</h1>
+                            ${description ? `<p style="margin: 16px 0 0 0; font-size: 17px; line-height: 1.75; color: ${EMAIL.text};">${description}</p>` : ''}
+                            <div style="margin-top: 26px;">
+                                ${emailButton(articleUrl, isZh ? '在網站上閱讀' : 'Read on the website')}
+                            </div>
+                            ${interactiveCount > 0 ? `<p style="margin: 16px 0 0 0; font-size: 14px; line-height: 1.7; color: ${EMAIL.text};">${isZh
+                                ? `這篇有 ${interactiveCount} 段可以動手操作的互動內容，只有網頁版看得到。`
+                                : `This post has ${interactiveCount} interactive ${interactiveCount === 1 ? 'section' : 'sections'} that only work on the web.`}</p>` : ''}
+                        </td>
+                    </tr>
+                    ${coverImageUrl ? `
+                    <!-- Cover Image -->
+                    <tr>
+                        <td class="nl-pad" style="padding: 0 40px;">
+                            <a href="${articleUrl}" target="_blank" style="display: block;">
+                                <img src="${coverImageUrl}" alt="${escapeHtml(title)}" width="520" style="display: block; width: 100%; max-width: 100%; height: auto; border: 0; border-radius: 12px;">
+                            </a>
+                        </td>
+                    </tr>
+                    ` : ''}
+                    <!-- Content -->
+                    <tr>
+                        <td class="nl-pad" style="padding: 16px 40px 40px 40px; font-size: 16px; line-height: 1.8; color: ${EMAIL.text};">
+                            ${htmlBody}
+                        </td>
+                    </tr>
+
+                    <!-- Closing -->
+                    <tr>
+                        <td class="nl-pad" style="padding: 32px 40px 36px 40px; border-top: 1px solid ${EMAIL.line};">
+                            <p style="margin: 0 0 6px 0; font-size: 19px; font-weight: 700; line-height: 1.4; color: ${EMAIL.title};">${isZh ? '讀完了，想聊聊？' : 'Finished reading?'}</p>
+                            <p style="margin: 0 0 22px 0; font-size: 15px; line-height: 1.7; color: ${EMAIL.text};">${isZh ? '網頁版可以留言，也方便分享給朋友。' : 'Leave a comment or share the post from the web version.'}</p>
+                            ${emailButton(articleUrl, isZh ? '打開網頁版' : 'Open the web version')}
+                        </td>
+                    </tr>
+                </table>
+
                 <!-- Footer -->
-                <div style="background-color: #0a0a0a; padding: 30px 40px; border-top: 1px solid #333333;">
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <a href="${articleUrl}" style="display: inline-block; color: #c0c0c0; text-decoration: none; font-size: 13px; padding: 8px 16px; border: 1px solid #333333; border-radius: 6px; transition: all 0.2s;">
-                            ${isZh ? '看網頁版' : 'View on Web'}
-                        </a>
-                    </div>
-                    <p style="color: #999999; font-size: 12px; text-align: center; margin: 0 0 15px 0; line-height: 1.6;">
-                        ${isZh ? '這是由 AI 自動生成的每日日報。' : 'This is an AI-generated daily report.'}
-                    </p>
-                    <p style="color: #666666; font-size: 11px; text-align: center; margin: 0; line-height: 1.5;">
-                        <a href="${blogUrl}/unsubscribe" style="color: #888888; text-decoration: underline; transition: color 0.2s;">
-                            ${isZh ? '取消訂閱' : 'Unsubscribe'}
-                        </a>
-                        <span style="color: #666666; margin: 0 8px;">|</span>
-                        <a href="${blogUrl}" style="color: #888888; text-decoration: underline; transition: color 0.2s;">
-                            ${isZh ? 'Sun 的網站' : "Sun's Website"}
-                        </a>
-                    </p>
-                </div>
+                <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width: 100%; max-width: 600px; font-family: ${EMAIL.font};">
+                    <tr>
+                        <td class="nl-pad" style="padding: 28px 24px 40px 24px; text-align: center; font-size: 13px; line-height: 1.8; color: ${EMAIL.text};">
+                            ${isZh ? '你會收到這封信，是因為你訂閱了 Sun 的電子報。' : "You are receiving this email because you subscribed to Sun's newsletter."}
+                            ${isAiDaily ? `<br>${isZh ? '這是由 AI 自動生成的每日日報。' : 'This is an AI-generated daily report.'}` : ''}
+                            <br>
+                            <a href="${unsubscribeUrl}" target="_blank" style="${footerLinkStyle}">${isZh ? '取消訂閱' : 'Unsubscribe'}</a>
+                            <span style="padding: 0 8px;">·</span>
+                            <a href="${blogUrl}/blog" target="_blank" style="${footerLinkStyle}">${isZh ? '所有文章' : 'All posts'}</a>
+                            <span style="padding: 0 8px;">·</span>
+                            <a href="${blogUrl}" target="_blank" style="${footerLinkStyle}">${isZh ? 'Sun 的網站' : "Sun's website"}</a>
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
     </table>
 </body>
 </html>
     `.trim();
+}
+
+/**
+ * 純文字版本：給不顯示 HTML 的信箱，也讓垃圾信過濾器看到與 HTML 相符的內容
+ */
+function generateNewsletterText(article, slug, lang, blogUrl, recipientEmail) {
+    const isZh = lang === 'zh-TW';
+    const meta = (isZh ? article.zh : article.en).meta;
+    return [
+        meta.title || '',
+        meta.description || '',
+        `${isZh ? '在網站上閱讀：' : 'Read on the website: '}${blogUrl}/blog/${slug}`,
+        `${isZh ? '取消訂閱：' : 'Unsubscribe: '}${getUnsubscribeUrl(blogUrl, lang, recipientEmail)}`
+    ].filter(Boolean).join('\n\n');
 }
 
 /**
@@ -936,8 +1181,11 @@ async function sendNewsletter(slug) {
 
             const meta = data.meta;
 
-            // 生成 HTML 電子報
-            const htmlContent = generateNewsletterHtml(article, slug, lang, blogUrl);
+            // 生成 HTML 電子報（帶上收件信箱，取消訂閱頁才能預填）
+            const htmlContent = generateNewsletterHtml(article, slug, lang, blogUrl, subscription.email);
+            if (Buffer.byteLength(htmlContent, 'utf8') > GMAIL_CLIP_BYTES) {
+                console.warn(`   ⚠️  Newsletter HTML is over ${GMAIL_CLIP_BYTES} bytes. Gmail will clip the message and hide the footer.`);
+            }
 
             // 根據文章類型和語言獲取寄件者名稱
             const getSenderName = (lang, articleTypes) => {
@@ -981,7 +1229,14 @@ async function sendNewsletter(slug) {
                 to: subscription.email,
                 subject: meta.title || (lang === 'zh-TW' ? '【AI日報】每日精選' : '【AI Daily】Daily Highlights'),
                 html: htmlContent,
-                text: meta.description || ''
+                text: generateNewsletterText(article, slug, lang, blogUrl, subscription.email),
+                // 讓 Gmail 等信箱在寄件者旁邊顯示內建的「取消訂閱」
+                list: {
+                    unsubscribe: {
+                        url: getUnsubscribeUrl(blogUrl, lang, subscription.email),
+                        comment: lang === 'zh-TW' ? '取消訂閱' : 'Unsubscribe'
+                    }
+                }
             };
 
             // 發送郵件
@@ -1205,5 +1460,7 @@ module.exports = {
     getLatestArticle,
     resolveArticleLanguage,
     generateNewsletterHtml,
+    generateNewsletterText,
+    markdownToHtml,
     updateLastArticleSent
 };
