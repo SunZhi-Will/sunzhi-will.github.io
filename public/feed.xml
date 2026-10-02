@@ -8,10 +8,31 @@
     <link>https://sunzhi-will.github.io</link>
     <description>Exploring software engineering, AI development, and the art of building great products.</description>
     <language>zh-TW</language>
-    <lastBuildDate>Wed, 24 Jun 2026 19:23:45 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 02 Oct 2026 14:53:50 GMT</lastBuildDate>
     <atom:link href="https://sunzhi-will.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <atom:link href="https://sunzhi-will.github.io/blog" rel="alternate" type="text/html"/>
     
+    <item>
+      <title><![CDATA[遊戲受到另一款作品影響，就等於抄襲嗎？從《方界》與 Cube World 的爭論談「借鑑、相似與抄襲」]]></title>
+      <link>https://sunzhi-will.github.io/blog/2026-10-02-inspiration-vs-plagiarism</link>
+      <guid isPermaLink="true">https://sunzhi-will.github.io/blog/2026-10-02-inspiration-vs-plagiarism</guid>
+      <pubDate>Fri, 02 Oct 2026 00:00:00 GMT</pubDate>
+      <description><![CDATA[一場 Threads 上的抄襲爭論，讓我重新思考：遊戲受到其他作品影響，什麼時候叫借鑑？什麼時候才跨過抄襲的界線？]]></description>
+      <content:encoded><![CDATA[&gt; ⚠️ 注意：本文含有生氣、吐槽與部分情緒性發言。
+&gt;
+&gt; 但我想討論的重點不是「大家幫我罵誰」，而是一個我覺得所有創作者遲早都會碰到的問題：
+&gt;
+&gt; 作品受到另一個作品影響，到底什麼時候叫「借鑑」，什麼時候才叫「抄襲」？
+
+最近我在 Threads 上宣傳自己開發的 Voxel RPG《方界：破碎祭壇》。
+
+結果下面出現了一場非常長的爭論。
+
+對方認為《方界》大量抄襲 Cube World。從角色、UI、創角、滑翔翼、地圖，到整體視覺，他都認為兩款遊戲高度雷同。甚至後來，留言直接變成「抄襲作品」、「竊取別人的作品」、「劣質盜版縫合複製品」這類非常強烈的指控。
+
+&lt;AccusationThr]]></content:encoded>
+      
+    </item>
     <item>
       <title><![CDATA[回高雄後，我開始重新思考：我到底敢不敢創業？]]></title>
       <link>https://sunzhi-will.github.io/blog/2026-06-25-entrepreneurship-after-kaohsiung</link>
@@ -38,7 +59,7 @@
 我不斷想找到機會創業；可是當機會真的出現在眼前，我又會開始想一堆問題。
 
 這個市場夠大嗎？會不會只是小眾需求？現在有人問，不]]></content:encoded>
-
+      
     </item>
     <item>
       <title><![CDATA[My Medical AI Agent Takeaway: The Value of AI Products Often Doesn't Depend on How Smart They Are]]></title>

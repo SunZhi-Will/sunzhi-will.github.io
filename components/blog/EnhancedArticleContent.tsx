@@ -11,6 +11,7 @@ import { StatsHighlight } from './StatsHighlight';
 import { InsightQuote } from './InsightQuote';
 import { ArticleConclusion } from './ArticleConclusion';
 import { BookmarkCard } from './BookmarkCard';
+import { interactiveMdxComponents } from './interactive';
 
 interface EnhancedArticleContentProps {
     htmlContent?: string;
@@ -26,6 +27,7 @@ const mdxComponents = {
     StatsHighlight,
     ArticleConclusion,
     BookmarkCard,
+    ...interactiveMdxComponents,
     table: (props: React.TableHTMLAttributes<HTMLTableElement>) => (
         <div className="table-wrapper overflow-x-auto my-6">
             <table {...props} />
