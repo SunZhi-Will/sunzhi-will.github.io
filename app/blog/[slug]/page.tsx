@@ -7,7 +7,7 @@ import type { Metadata } from 'next';
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import remarkGfm from 'remark-gfm';
 import { rehypeBlog } from '@/lib/rehype-blog';
-import { getBlogCard } from '@/lib/blog-images';
+import { getBlogShareCard } from '@/lib/blog-images';
 // MDX 組件現在由 Next.js 內建處理
 
 // 強制靜態生成
@@ -93,7 +93,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://sunzhi-will.github.io';
 
     // 社群預覽優先用 1200x630 的分享卡，沒有才退回封面圖
-    const shareImage = getBlogCard(slug, defaultPost.lang, 'og') ?? defaultPost.coverImage;
+    const shareImage = getBlogShareCard(slug, defaultPost.lang) ?? defaultPost.coverImage;
     let coverImageUrl;
     if (shareImage) {
         coverImageUrl = shareImage.startsWith('http')

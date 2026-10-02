@@ -16,7 +16,14 @@ on:
       - 'package.json'     # 當依賴變更時觸發
       - 'package-lock.json'
       - 'next.config.ts'
-      - 'scripts/**'       # 當腳本變更時觸發   # 當配置變更時觸發
+      - 'scripts/**'       # 當腳本變更時觸發
+      - 'data/**'          # 專案、活動等網站資料
+      - 'lib/**'
+      - 'types/**'
+      - 'public/**'        # 圖片、OG 圖、LOGO 等靜態檔
+      - 'tailwind.config.ts'
+      - 'postcss.config.mjs'
+      - '.github/workflows/nextjs.yml'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -75,12 +82,10 @@ jobs:
           cache: ${{ steps.detect-package-manager.outputs.manager }}
       - name: Setup Pages
         uses: actions/configure-pages@v5
-        with:
-          # Automatically inject basePath in your Next.js configuration file and disable
-          # server side image optimization (https://nextjs.org/docs/api-reference/next/image#unoptimized).
-          #
-          # You may remove this line if you want to manage the configuration yourself.
-          static_site_generator: next
+        # 不要設 static_site_generator: next。這個選項找不到 next.config.js/.mjs/.cjs（不認 .ts）時，
+        # 會自己建一份預設的 next.config.js，而 Next 會優先讀它，next.config.ts 就被整個忽略，
+        # 連 transpilePackages 都不會生效，文章頁預渲染因此報 useState 錯誤。
+        # next.config.ts 已經有 output: 'export' 與 images.unoptimized，不需要它來注入。
       - name: Restore cache
         uses: actions/cache@v4
         with:

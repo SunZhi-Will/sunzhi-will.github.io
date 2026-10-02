@@ -5,7 +5,7 @@
  *   node scripts/generate-brand-assets.js          全部重新產生
  *   node scripts/generate-brand-assets.js icons    只產生 LOGO 與 favicon
  *   node scripts/generate-brand-assets.js og       只產生 OG 圖片
- *   node scripts/generate-brand-assets.js posts    只產生文章的封面與分享卡
+ *   node scripts/generate-brand-assets.js posts    只產生文章的分享卡
  *
  * 圖示用 resvg 把 SVG 轉成 PNG。OG 圖片用 Playwright 開一頁 HTML 後截圖，
  * 這樣可以直接沿用網站的字體與 CSS 寫法（需要網路載入 Google Fonts，
@@ -138,10 +138,24 @@ const CARDS = [
   },
 ];
 
-// 文章卡片的介面文字，跟著文章語言走，同一張圖不混用兩種語言
+// 文章分享卡的介面文字，跟著文章語言走，同一張圖不混用兩種語言
 const POST_COPY = {
   'zh-TW': { pre: 'Sun 的部落格' },
   en: { pre: "Sun's Blog" },
+};
+
+// 文章分享卡右側放的插畫：從文章封面裁出沒有標題字的那一塊（數值是佔原圖寬高的比例）。
+// 只有列在這裡的文章會產生分享卡，其餘文章分享時直接用自己的封面。
+// title 可以指定主標與副標，沒寫就從 frontmatter 的標題自動拆。
+const POST_ART = {
+  '2026-06-16-ai-judgement': { image: '9389b71c-2553-4051-b5d9-a9b2fef351ac.png', crop: { x: 0.505, y: 0.08, w: 0.495, h: 0.92 } },
+  '2026-06-17-medical-ai-agent': {
+    image: 'cover.png',
+    crop: { x: 0.548, y: 0.1, w: 0.452, h: 0.8 },
+    // 標題沒有句號可以拆，照原封面的主副標指定
+    title: { 'zh-TW': { lead: 'AI 產品值不值錢，常常不是看它多聰明', rest: '醫療 AI Agent 給我的提醒' } },
+  },
+  '2026-06-25-entrepreneurship-after-kaohsiung': { image: 'cover.png', crop: { x: 0.52, y: 0.08, w: 0.48, h: 0.92 } },
 };
 const SENTENCE_END = '？！。?!';
 
@@ -156,28 +170,31 @@ function splitTitle(title) {
   return { lead: title, rest: '' };
 }
 
-// 讀出每篇文章每個語言版本的標題、日期、標籤
+// 讀出有插畫設定的文章：標題、日期、標籤來自 frontmatter，語言用文章的預設語言（中文優先）
 function loadPostCards() {
   const matter = require('gray-matter');
   const cards = [];
-  for (const slug of fs.readdirSync(POSTS).sort()) {
+  for (const [slug, art] of Object.entries(POST_ART)) {
     const folder = path.join(POSTS, slug);
-    if (!fs.statSync(folder).isDirectory()) continue;
-    for (const lang of Object.keys(POST_COPY)) {
-      const file = ['mdx', 'md'].map((ext) => path.join(folder, `article.${lang}.${ext}`)).find((f) => fs.existsSync(f));
-      if (!file) continue;
-      const { data } = matter(fs.readFileSync(file, 'utf8'));
-      if (!data.title) continue;
-      cards.push({
-        slug,
-        lang,
-        label: String(data.date || slug).slice(0, 10).replace(/-/g, '.'),
-        pre: POST_COPY[lang].pre,
-        post: splitTitle(String(data.title)),
-        topics: (data.tags || []).slice(0, 3).map(String),
-        url: `${SITE}/blog`,
-      });
-    }
+    const lang = Object.keys(POST_COPY).find((l) => fs.existsSync(path.join(folder, `article.${l}.mdx`)));
+    if (!lang) continue;
+    const { data } = matter(fs.readFileSync(path.join(folder, `article.${lang}.mdx`), 'utf8'));
+    const image = fs.readFileSync(path.join(folder, art.image));
+    cards.push({
+      slug,
+      lang,
+      label: String(data.date || slug).slice(0, 10).replace(/-/g, '.'),
+      pre: POST_COPY[lang].pre,
+      post: art.title?.[lang] ?? splitTitle(String(data.title)),
+      topics: (data.tags || []).slice(0, 2).map(String),
+      art: {
+        src: `data:image/png;base64,${image.toString('base64')}`,
+        // PNG 檔頭第 16 到 24 位元組是寬與高
+        width: image.readUInt32BE(16),
+        height: image.readUInt32BE(20),
+        crop: art.crop,
+      },
+    });
   }
   return cards;
 }
@@ -196,6 +213,19 @@ function cardHtml(card, shape, portraitSrc) {
   const visual = card.portrait
     ? `<div class="portrait"><div class="halo"></div><div class="disc"></div><img src="${portraitSrc}" alt="">${status('Available for hire')}</div>`
     : `<ul class="rows">${rows}</ul>`;
+
+  // 插畫區塊撐滿卡片高度（上下各留 28px），寬度跟著裁切範圍的比例走
+  let artStyle = null;
+  if (card.art) {
+    const { width, height, crop } = card.art;
+    const scale = (630 - 56) / (crop.h * height);
+    artStyle = {
+      width: Math.round(crop.w * width * scale),
+      imgWidth: width * scale,
+      left: -crop.x * width * scale,
+      top: -crop.y * height * scale,
+    };
+  }
 
   return `<!doctype html>
 <html lang="${card.lang || 'en'}">
@@ -298,32 +328,38 @@ function cardHtml(card, shape, portraitSrc) {
   .row-title { flex: 1; font-weight: 500; color: #f4f4f5; white-space: nowrap; }
   .row-arrow { color: #e4e4e7; }
 
-  /* 文章卡片：標題字級由頁面內的腳本縮到放得下為止 */
+  /* 文章分享卡：左邊字標與標題，右邊是文章插畫。標題字級由頁面內的腳本縮到放得下為止 */
+  body.post { padding-right: calc(var(--art-width) + 68px); }
   body.post .copy { width: 100%; }
   body.post h1 {
     margin-top: 14px;
-    max-width: 1040px;
-    font-size: var(--title, 84px);
+    font-size: var(--title, 60px);
     font-weight: 700;
-    line-height: 1.2;
+    line-height: 1.22;
     letter-spacing: -0.02em;
     white-space: normal;
-    text-wrap: balance;
   }
-  body.post:lang(en) h1 { font-weight: 600; line-height: 1.08; letter-spacing: -0.035em; }
+  body.post:lang(en) h1 { font-weight: 600; line-height: 1.1; letter-spacing: -0.035em; }
   body.post .rest {
-    margin-top: 22px;
-    max-width: 1000px;
-    font-size: calc(var(--title, 84px) * 0.5);
+    margin-top: 18px;
+    font-size: calc(var(--title, 60px) * 0.5);
     font-weight: 500;
     line-height: 1.4;
     color: #e4e4e7;
-    text-wrap: balance;
   }
   .nowrap { white-space: nowrap; }
   .clause { display: inline-block; }
-  /* 封面在列表會被裁成較窄的比例，內容留在中間約 75% 寬度內才不會被切到 */
-  body.cover { padding-left: 150px; padding-right: 150px; }
+  .art {
+    position: absolute;
+    top: 28px;
+    right: 28px;
+    bottom: 28px;
+    width: var(--art-width);
+    overflow: hidden;
+    border-radius: 28px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14);
+  }
+  .art img { position: absolute; max-width: none; }
 
   /* 1200x630 */
   .wide { padding: 52px 64px 0; }
@@ -358,7 +394,7 @@ function cardHtml(card, shape, portraitSrc) {
   .square .row-arrow { font-size: 22px; }
 </style>
 </head>
-<body class="${shape}${card.post ? ' post' : ''}${card.kind === 'cover' ? ' cover' : ''}">
+<body class="${shape}${card.post ? ' post' : ''}"${artStyle ? ` style="--art-width: ${artStyle.width}px"` : ''}>
   <div class="grid"></div>
   <div class="glow"></div>
   <header>
@@ -378,8 +414,9 @@ function cardHtml(card, shape, portraitSrc) {
   </main>
   <footer>
     <div class="topics eyebrow"><span>${card.topics.map(escapeHtml).join(' / ')}</span></div>
-    <span class="eyebrow">${card.url}</span>
+    ${card.url ? `<span class="eyebrow">${card.url}</span>` : ''}
   </footer>
+  ${artStyle ? `<div class="art"><img src="${card.art.src}" alt="" style="width: ${artStyle.imgWidth}px; left: ${artStyle.left}px; top: ${artStyle.top}px"></div>` : ''}
 </body>
 </html>`;
 }
@@ -429,35 +466,39 @@ function fitPostTitle() {
       }
     }
   }
-  let size = 84;
+  let size = 60;
   document.body.style.setProperty('--title', `${size}px`);
-  while (size > 40 && copy.offsetHeight > main.clientHeight - 48) {
+  const setSize = (value) => document.body.style.setProperty('--title', `${value}px`);
+  while (size > 36 && copy.offsetHeight > main.clientHeight - 40) {
     size -= 2;
-    document.body.style.setProperty('--title', `${size}px`);
+    setSize(size);
+  }
+  // 再小一點就能讓每個子句各佔一行的話，縮到那個字級；縮到 48px 還做不到就維持原樣
+  const wraps = () => [...document.querySelectorAll('h1 .clause')].some((clause) => clause.offsetHeight > size * 1.22 * 1.5);
+  const fitted = size;
+  while (size > 48 && wraps()) {
+    size -= 2;
+    setSize(size);
+  }
+  if (wraps()) {
+    size = fitted;
+    setSize(size);
   }
 }
 
 async function generatePostCards() {
   const { chromium } = require('playwright');
-  // 封面 1600x900（列表與文章首圖用），分享卡 1200x630（社群預覽用）
-  const kinds = {
-    cover: { viewport: { width: 1200, height: 675 }, deviceScaleFactor: 4 / 3 },
-    og: { viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 },
-  };
-
   const browser = await chromium.launch();
   try {
     for (const card of loadPostCards()) {
-      for (const [kind, options] of Object.entries(kinds)) {
-        const page = await browser.newPage(options);
-        await page.setContent(cardHtml({ ...card, kind }, 'wide', ''), { waitUntil: 'networkidle' });
-        await page.evaluate(() => document.fonts.ready);
-        await page.evaluate(fitPostTitle);
-        await page.evaluate(() => document.fonts.ready);
-        const png = await page.screenshot({ type: 'png' });
-        await page.close();
-        write(`blog-cards/${card.slug}/${kind}.${card.lang}.png`, png);
-      }
+      const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
+      await page.setContent(cardHtml(card, 'wide', ''), { waitUntil: 'networkidle' });
+      await page.evaluate(() => document.fonts.ready);
+      await page.evaluate(fitPostTitle);
+      await page.evaluate(() => document.fonts.ready);
+      const png = await page.screenshot({ type: 'png' });
+      await page.close();
+      write(`blog-cards/${card.slug}/og.${card.lang}.png`, png);
     }
   } finally {
     await browser.close();

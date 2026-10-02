@@ -9,7 +9,7 @@ import rehypeSanitize from 'rehype-sanitize';
 import { rehype } from 'rehype';
 import type { BlogPost } from '@/types/blog';
 import type { Lang } from '@/types';
-import { getBlogCard, getBlogImageInfo } from './blog-images';
+import { getBlogImageInfo } from './blog-images';
 import { estimateReadingMinutes } from './blog-utils';
 
 // 部落格文章存放目錄
@@ -189,9 +189,6 @@ export function getPostBySlug(slug: string, lang?: Lang): BlogPost | null {
                         }
                     }
                 }
-
-                // 有品牌樣式的封面時優先使用，文章自己的 coverImage 當作備援
-                coverImage = getBlogCard(slug, targetLang, 'cover') ?? coverImage;
 
                 // 頁面顯示用最佳化後的 WebP，社群預覽（coverImage）維持原檔
                 const coverImageDisplay = getBlogImageInfo(coverImage)?.webp ?? coverImage;
