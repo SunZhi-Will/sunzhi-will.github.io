@@ -67,19 +67,21 @@ export const common = {
             other: '其他技能'
         },
         aboutContent: {
-            intro: `Sun 是一位專注於產品實現、使用者體驗和實用 AI 整合的軟體工程師。他專精於建構結合前端卓越技術與 AI 驅動智能的可擴展工具，涵蓋 Web 全棧、桌面應用、Chrome 擴充到 AI SaaS 平台。
+            intro: `Sun 是一位專注於產品實現、使用者體驗和實用 AI 整合的軟體工程師，同時也是 Synvize 新維境的創辦人。他專精於建構結合前端卓越技術與 AI 驅動智能的可擴展工具，涵蓋 Web 全棧、桌面應用、遊戲到 AI 應用平台。
 
 Sun 目前主導多個核心專案：
 
-<strong>Threado</strong>：Threads 帳號 AI 排程管理平台，整合 Google Gemini 自動生成文章、BullMQ + Redis 排程佇列，實現從內容生成到自動發布的全自動化社群流程。
+<strong>Synvize 新維境</strong>：由 Sun 獨立創立與經營的 AI 原生產品公司，打造 AI 創作工具、學習平台與互動敘事體驗，旗下 6 項產品已公開，每項都清楚標示目前狀態與可用範圍。
 
-<strong>ResumeAI</strong>：AI 驅動的履歷生成工作區，透過 SSE 串流多輪對話式編輯（Cursor 風格）、7 種版型、Stripe 商業化，以及 Playwright E2E 測試保障品質。
+<strong>Vozmira</strong>：AI 短影音生成平台，把網址、部落格文章或 Podcast 逐字稿轉成腳本、分鏡與真人感中文配音，整合 VoxCPM2 語音克隆與可再編輯的互動式分鏡工作流程。
 
-<strong>Skyvize</strong>：社群聲量監控與 AI 情報分析 SaaS，使用 Next.js 16 + Drizzle ORM，整合 Threads、RSS、CSE 三路資料流，提供競品矩陣與 KOL 雷達圖表。
+<strong>山河未歸</strong>：動態繪卷式武俠敘事 RPG，選擇與後果化為人物態度與江湖傳聞，全三卷與終卷已上線，單次買斷、無訂閱、無廣告。
+
+<strong>方界：破碎祭壇</strong>：由 Three.js 原型重新打造的 WebGPU 體素合作動作 RPG，程序生成世界、職業與種族選角，目前開放封閉測試資格申請。
 
 <strong>KapZoom</strong>（前身 AutoLens）：Windows／Mac 桌面 AI 螢幕錄製與剪輯工具，自動聚焦操作、離線 Whisper 生成字幕，並開放 MCP 橋接讓 Claude Code 驅動錄製到匯出的完整流程。
 
-除了開發工作，Sun 積極透過工作坊和企業技術分享會傳授實務知識，涵蓋 Gemini API、OpenAI、Notion 整合等主題。他的技術廣度橫跨 Unity 遊戲、.NET 系統、全棧 Web、AI 工具與桌面應用。
+除了開發工作，Sun 也把工作坊與企業技術分享的實戰內容整理成 Sunkoro 課程平台，涵蓋 Google AI Studio 原型製作、Unity AR × Gemini AI 開發等主題。他的技術廣度橫跨 Unity 遊戲、.NET 系統、全棧 Web、AI 工具與桌面應用。
 
 Sun 相信偉大的技術不僅僅是演算法，而是要建構人們信任、理解並樂於使用的直觀工具。`,
             experiences: [
@@ -254,19 +256,21 @@ Sun 相信偉大的技術不僅僅是演算法，而是要建構人們信任、�
             other: 'Other Skills'
         },
         aboutContent: {
-            intro: `Sun is a software engineer with a strong focus on product implementation, user experience, and practical AI integration. He specializes in building scalable tools that span full-stack web, desktop apps, Chrome extensions, and AI SaaS platforms.
+            intro: `Sun is a software engineer with a strong focus on product implementation, user experience, and practical AI integration, and the founder of Synvize. He specializes in building scalable tools that span full-stack web, desktop apps, games, and AI application platforms.
 
 Sun currently leads several core projects:
 
-<strong>Threado</strong>: A Threads account AI scheduling platform that integrates Google Gemini for automatic post generation, BullMQ + Redis task queues, and a fully automated social media pipeline from content creation to publishing.
+<strong>Synvize</strong>: An AI-native product company independently founded and run by Sun, building AI creative tools, learning platforms, and interactive narrative experiences. Six products are public, each with a clearly stated status and scope.
 
-<strong>ResumeAI</strong>: An AI-driven resume generation workspace featuring SSE-streamed multi-turn conversational editing (Cursor-style), 7 layout themes, Stripe monetization, and Playwright E2E test coverage.
+<strong>Vozmira</strong>: An AI short-video platform that turns a URL, blog post, or podcast transcript into a script, storyboard, and natural Mandarin voice-over, with VoxCPM2 voice cloning and an editable, interactive storyboard workflow.
 
-<strong>Skyvize</strong>: A social media intelligence SaaS built on Next.js 16 + Drizzle ORM, aggregating Threads, RSS, and CSE data streams to deliver competitor matrices and KOL radar charts.
+<strong>Where the Mountains Await</strong>: A living-scroll wuxia narrative RPG where choices become character attitudes and rumors across the jianghu. All three volumes and the finale are out, as a one-time purchase with no subscription and no ads.
+
+<strong>Fangjie: Shattered Altars</strong>: A voxel co-op action RPG rebuilt from a Three.js prototype for WebGPU, with a procedurally generated world and class and race selection. Closed beta sign-ups are open.
 
 <strong>KapZoom</strong> (formerly AutoLens): A Windows/Mac desktop AI screen recording and editing tool with auto-focus zoom, offline Whisper captioning, and an MCP bridge that lets Claude Code drive the full record-to-export workflow.
 
-In addition to development, Sun actively shares his expertise through workshops and enterprise tech sessions covering Gemini APIs, OpenAI, and Notion integrations. His technical breadth spans Unity games, .NET systems, full-stack web, AI tools, and desktop applications.
+Beyond building products, Sun turns his workshop and enterprise tech sessions into Sunkoro, a course platform covering Google AI Studio prototyping and Unity AR × Gemini AI development. His technical breadth spans Unity games, .NET systems, full-stack web, AI tools, and desktop applications.
 
 Sun believes great technology isn't just about algorithms. It's about building intuitive tools that people trust, understand, and enjoy using.`,
             experiences: [

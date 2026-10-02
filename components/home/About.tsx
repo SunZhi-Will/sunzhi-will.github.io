@@ -1,8 +1,8 @@
 'use client'
 
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion';
+import { AnimatePresence, motion, useInView, useScroll, useSpring } from 'framer-motion';
 import { CountUp } from '@/components/motion/CountUp';
 import { Reveal } from '@/components/motion/Reveal';
 import { ScrollHighlight } from '@/components/motion/ScrollHighlight';
@@ -48,12 +48,84 @@ function splitTitle(title: string) {
   return { company, role: role.join(' - ') };
 }
 
+type Experience = { title: string; period?: string; description: string; achievements: string[] };
+
+// 單筆工作經歷。捲到畫面中下方時自動展開，之後仍可手動收合或再展開
+function ExperienceRow({ exp, delay, labels }: { exp: Experience; delay: number; labels: { show: string; hide: string } }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reached = useInView(ref, { once: true, margin: '0px 0px -35% 0px' });
+  const [open, setOpen] = useState(false);
+  const { company, role } = splitTitle(exp.title);
+
+  useEffect(() => {
+    if (reached) setOpen(true);
+  }, [reached]);
+
+  return (
+    <div ref={ref}>
+      <Reveal delay={delay} className="border-b border-white/10">
+        <button
+          type="button"
+          onClick={() => setOpen((prev) => !prev)}
+          aria-expanded={open}
+          aria-label={`${company}: ${open ? labels.hide : labels.show}`}
+          className="group flex w-full items-start justify-between gap-4 py-6 text-left"
+        >
+          <span className="grid gap-1 md:grid-cols-[11rem_1fr] md:items-baseline md:gap-8">
+            <span className="font-geist-mono text-xs text-zinc-500">{exp.period}</span>
+            <span>
+              <span className="block text-lg font-semibold text-white md:text-xl">{company}</span>
+              {role && <span className="mt-0.5 block text-sm text-zinc-400">{role}</span>}
+            </span>
+          </span>
+          <motion.span
+            aria-hidden="true"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/10 text-zinc-400 transition-colors duration-200 group-hover:border-white/30 group-hover:text-white"
+            animate={{ rotate: open ? 45 : 0 }}
+            transition={{ duration: 0.3, ease: EASE_OUT }}
+          >
+            +
+          </motion.span>
+        </button>
+        <AnimatePresence initial={false}>
+          {open && (
+            <motion.div
+              className="overflow-hidden"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.6, ease: EASE_OUT }}
+            >
+              <div className="pb-8 md:pl-[13rem]">
+                <p className="max-w-2xl text-[15px] leading-relaxed text-zinc-300">{exp.description}</p>
+                <ul className="mt-4 grid max-w-2xl gap-x-8 gap-y-2 sm:grid-cols-2">
+                  {exp.achievements.map((achievement, i) => (
+                    <motion.li
+                      key={achievement}
+                      className="flex gap-2.5 text-sm leading-relaxed text-zinc-400"
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.4, ease: EASE_OUT, delay: 0.15 + i * 0.06 }}
+                    >
+                      <span aria-hidden="true" className="mt-[0.6em] h-1 w-1 shrink-0 rounded-full bg-yellow-400/70" />
+                      {achievement}
+                    </motion.li>
+                  ))}
+                </ul>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </Reveal>
+    </div>
+  );
+}
+
 export function About({ lang }: { lang: Lang }) {
   const t = translations[lang];
   const copy = homeCopy[lang].about;
   const intro = useMemo(() => parseIntro(t.aboutContent.intro), [t]);
   const experiences = t.aboutContent.experiences.filter((exp) => exp.period);
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const timelineRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: timelineRef, offset: ['start 0.8', 'end 0.6'] });
@@ -140,60 +212,9 @@ export function About({ lang }: { lang: Lang }) {
               className="absolute bottom-0 left-0 top-0 w-px origin-top bg-yellow-400"
               style={{ scaleY: timelineProgress }}
             />
-            {experiences.map((exp, i) => {
-              const { company, role } = splitTitle(exp.title);
-              const isOpen = openIndex === i;
-              return (
-                <Reveal key={exp.title} delay={i * 0.05} className="border-b border-white/10">
-                  <button
-                    type="button"
-                    onClick={() => setOpenIndex(isOpen ? null : i)}
-                    aria-expanded={isOpen}
-                    aria-label={`${company}: ${isOpen ? copy.hideDetails : copy.showDetails}`}
-                    className="group flex w-full items-start justify-between gap-4 py-6 text-left"
-                  >
-                    <span className="grid gap-1 md:grid-cols-[11rem_1fr] md:items-baseline md:gap-8">
-                      <span className="font-geist-mono text-xs text-zinc-500">{exp.period}</span>
-                      <span>
-                        <span className="block text-lg font-semibold text-white md:text-xl">{company}</span>
-                        {role && <span className="mt-0.5 block text-sm text-zinc-400">{role}</span>}
-                      </span>
-                    </span>
-                    <motion.span
-                      aria-hidden="true"
-                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/10 text-zinc-400 transition-colors duration-200 group-hover:border-white/30 group-hover:text-white"
-                      animate={{ rotate: isOpen ? 45 : 0 }}
-                      transition={{ duration: 0.3, ease: EASE_OUT }}
-                    >
-                      +
-                    </motion.span>
-                  </button>
-                  <AnimatePresence initial={false}>
-                    {isOpen && (
-                      <motion.div
-                        className="overflow-hidden"
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.45, ease: EASE_OUT }}
-                      >
-                        <div className="pb-8 md:pl-[13rem]">
-                          <p className="max-w-2xl text-[15px] leading-relaxed text-zinc-300">{exp.description}</p>
-                          <ul className="mt-4 grid max-w-2xl gap-x-8 gap-y-2 sm:grid-cols-2">
-                            {exp.achievements.map((achievement) => (
-                              <li key={achievement} className="flex gap-2.5 text-sm leading-relaxed text-zinc-400">
-                                <span aria-hidden="true" className="mt-[0.6em] h-1 w-1 shrink-0 rounded-full bg-yellow-400/70" />
-                                {achievement}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </Reveal>
-              );
-            })}
+            {experiences.map((exp, i) => (
+              <ExperienceRow key={exp.title} exp={exp} delay={i * 0.05} labels={{ show: copy.showDetails, hide: copy.hideDetails }} />
+            ))}
           </div>
         </div>
 

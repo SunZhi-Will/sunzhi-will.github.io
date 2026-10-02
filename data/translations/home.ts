@@ -29,6 +29,7 @@ export const homeCopy: Record<Lang, {
         playVideo: string;
     };
     skills: { hint: string };
+    dock: { social: string; top: string };
     contact: {
         label: string;
         title: string;
@@ -67,6 +68,7 @@ export const homeCopy: Record<Lang, {
             playVideo: '播放影片'
         },
         skills: { hint: '滑鼠停留可暫停' },
+        dock: { social: '社群連結', top: '回到頂端' },
         contact: {
             label: '聯絡',
             title: '有想法？一起把它做出來。',
@@ -105,6 +107,7 @@ export const homeCopy: Record<Lang, {
             playVideo: 'Play video'
         },
         skills: { hint: 'Hover to pause' },
+        dock: { social: 'Social links', top: 'Back to top' },
         contact: {
             label: 'Contact',
             title: "Have an idea? Let's build it.",

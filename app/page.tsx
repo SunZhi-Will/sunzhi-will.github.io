@@ -6,6 +6,7 @@ import { About } from '@/components/home/About';
 import { Activities } from '@/components/home/Activities';
 import { Backdrop } from '@/components/home/Backdrop';
 import { Contact } from '@/components/home/Contact';
+import { FloatingDock } from '@/components/home/FloatingDock';
 import { Hero } from '@/components/home/Hero';
 import { SiteNav } from '@/components/home/SiteNav';
 import { Skills } from '@/components/home/Skills';
@@ -47,6 +48,7 @@ export default function Home() {
           <Activities lang={lang} />
         </main>
         <Contact lang={lang} />
+        <FloatingDock lang={lang} />
       </div>
     </MotionConfig>
   );

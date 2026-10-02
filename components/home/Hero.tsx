@@ -55,6 +55,51 @@ const fadeUp = (delay: number) => ({
   transition: { duration: 0.8, ease: EASE_OUT, delay },
 });
 
+// 去背大頭像：背後一個淺色圓形光盤讓黑西裝與深色背景分開，人像由下往上浮出，下緣漸隱
+function Portrait({ alt, status }: { alt: string; status: string }) {
+  return (
+    <div className="relative order-1 w-64 sm:w-72 lg:order-2 lg:w-[460px]">
+      <div
+        aria-hidden="true"
+        className="absolute -inset-12 -z-10 rounded-full bg-[radial-gradient(closest-side,rgba(250,204,21,0.12),transparent)]"
+      />
+      <motion.div
+        aria-hidden="true"
+        className="absolute inset-x-[5%] top-[12%] aspect-square rounded-full bg-[radial-gradient(circle_at_50%_28%,#52525b_0%,#27272a_55%,#18181b_100%)] ring-1 ring-white/10"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.2, ease: EASE_OUT }}
+      />
+      <motion.div
+        className="relative"
+        initial={{ opacity: 0, y: 48 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.1, ease: EASE_OUT, delay: 0.2 }}
+      >
+        <Image
+          src="/profile-cutout.png"
+          alt={alt}
+          width={460}
+          height={460}
+          sizes="(min-width: 1024px) 460px, 288px"
+          className="h-auto w-full drop-shadow-[0_0_1px_rgba(255,255,255,0.45)] [mask-image:linear-gradient(to_bottom,black_84%,transparent)]"
+          priority
+        />
+      </motion.div>
+      <motion.div
+        className="absolute bottom-[6%] left-0 flex items-center gap-2.5 rounded-full border border-white/10 bg-[#141416]/85 px-3.5 py-1.5 backdrop-blur-xl lg:left-2"
+        {...fadeUp(0.9)}
+      >
+        <span className="relative flex h-2 w-2">
+          <span className="animate-status-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+        </span>
+        <span className="text-xs font-medium text-zinc-200">{status}</span>
+      </motion.div>
+    </div>
+  );
+}
+
 export function Hero({ lang }: { lang: Lang }) {
   const ref = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
@@ -77,27 +122,17 @@ export function Hero({ lang }: { lang: Lang }) {
   return (
     <section id="home" ref={ref} className="relative flex min-h-[100svh] flex-col px-5 pb-8 pt-28 md:px-10 md:pt-32">
       <motion.div
-        className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center"
+        className="mx-auto flex w-full max-w-6xl flex-1 items-center"
         style={{ opacity, y, scale }}
       >
-        <motion.div className="flex items-center gap-4" {...fadeUp(0.15)}>
-          <div className="relative h-14 w-14 overflow-hidden rounded-full ring-1 ring-white/15">
-            <Image src="/profile.jpg" alt={`${copy.hero.name} ${copy.hero.alias}`} width={112} height={112} className="h-full w-full object-cover" priority />
-          </div>
-          <div className="flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-status-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-            </span>
-            <span className="text-xs font-medium text-zinc-300">{t.about.services.available}</span>
-          </div>
-        </motion.div>
-
-        <h1 key={lang} className="mt-8 md:mt-10">
+        <div className="grid w-full items-center gap-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-16">
+          <Portrait alt={`${copy.hero.name} ${copy.hero.alias}`} status={t.about.services.available} />
+          <div className="order-2 min-w-0 lg:order-1">
+        <h1 key={lang}>
           <motion.span className="block text-lg text-zinc-400 md:text-2xl" {...fadeUp(0.25)}>
             {copy.hero.greeting}
           </motion.span>
-          <span className="mt-1 block text-[clamp(3.25rem,13vw,10.5rem)] font-semibold leading-[0.95] tracking-[-0.04em] text-white">
+          <span className="mt-1 block text-[clamp(3rem,10vw,7rem)] font-semibold leading-[0.95] tracking-[-0.04em] text-white">
             <SplitText text={copy.hero.name} immediate delay={0.3} stagger={0.06} />
             <span className="text-zinc-700">
               {' '}
@@ -146,6 +181,8 @@ export function Hero({ lang }: { lang: Lang }) {
             {t.footer.courseWebsite} <span aria-hidden="true">↗</span>
           </a>
         </motion.div>
+          </div>
+        </div>
       </motion.div>
 
       <motion.div className="mx-auto mt-10 w-full max-w-6xl" style={{ opacity }}>
