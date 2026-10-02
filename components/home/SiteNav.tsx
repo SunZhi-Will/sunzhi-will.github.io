@@ -144,7 +144,7 @@ export function SiteNav({ lang, setLang }: SiteNavProps) {
               </motion.span>
             </AnimatePresence>
             <motion.svg
-              className="h-3.5 w-3.5 text-zinc-500"
+              className="h-3.5 w-3.5 text-zinc-400"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"

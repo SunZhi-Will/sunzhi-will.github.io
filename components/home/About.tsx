@@ -72,7 +72,7 @@ function ExperienceRow({ exp, delay, labels }: { exp: Experience; delay: number;
           className="group flex w-full items-start justify-between gap-4 py-6 text-left"
         >
           <span className="grid gap-1 md:grid-cols-[11rem_1fr] md:items-baseline md:gap-8">
-            <span className="font-geist-mono text-xs text-zinc-500">{exp.period}</span>
+            <span className="font-geist-mono text-xs text-zinc-400">{exp.period}</span>
             <span>
               <span className="block text-lg font-semibold text-white md:text-xl">{company}</span>
               {role && <span className="mt-0.5 block text-sm text-zinc-400">{role}</span>}
@@ -159,7 +159,7 @@ export function About({ lang }: { lang: Lang }) {
                 <CountUp to={stat.value} />
                 {stat.suffix && <span className="text-yellow-400">{stat.suffix}</span>}
               </p>
-              <p className="mt-2 text-xs text-zinc-500 md:text-sm">{stat.label}</p>
+              <p className="mt-2 text-xs text-zinc-400 md:text-sm">{stat.label}</p>
             </Reveal>
           ))}
         </div>
@@ -184,7 +184,7 @@ export function About({ lang }: { lang: Lang }) {
                     <h3 className="text-lg font-semibold text-white transition-colors duration-300 group-hover:text-yellow-400">
                       {item.name}
                     </h3>
-                    {item.note && <p className="mt-0.5 text-xs text-zinc-500">{item.note}</p>}
+                    {item.note && <p className="mt-0.5 text-xs text-zinc-400">{item.note}</p>}
                   </div>
                   <p className="text-[15px] leading-relaxed text-zinc-400">{item.text}</p>
                 </Reveal>
@@ -240,7 +240,7 @@ export function About({ lang }: { lang: Lang }) {
                 <Spotlight className="h-full p-6">
                   <span className="eyebrow">{String(i + 1).padStart(2, '0')}</span>
                   <h3 className="mt-8 text-base font-semibold text-white">{service.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-zinc-500">{service.description}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-zinc-400">{service.description}</p>
                 </Spotlight>
               </Reveal>
             ))}

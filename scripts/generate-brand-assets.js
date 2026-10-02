@@ -196,7 +196,7 @@ function cardHtml(card, shape, portraitSrc) {
     letter-spacing: 0.12em;
     text-transform: uppercase;
     white-space: nowrap;
-    color: #71717a;
+    color: #a1a1aa;
   }
   header, main, footer { position: relative; }
   header { display: flex; align-items: center; justify-content: space-between; }
@@ -204,12 +204,12 @@ function cardHtml(card, shape, portraitSrc) {
   .brand svg { width: 38px; height: 38px; }
   main { flex: 1; display: flex; min-height: 0; }
   .copy { min-width: 0; }
-  .pre { color: #a1a1aa; }
+  .pre { color: #d4d4d8; }
   h1 { font-weight: 600; line-height: 1; letter-spacing: -0.04em; color: #fff; white-space: nowrap; }
-  h1 .alt { color: #3f3f46; font-family: 'Noto Sans TC', 'PingFang TC', sans-serif; letter-spacing: -0.02em; }
+  h1 .alt { color: #71717a; font-family: 'Noto Sans TC', 'PingFang TC', sans-serif; letter-spacing: -0.02em; }
   .lead { color: #fff; }
-  .body { color: #a1a1aa; line-height: 1.45; text-wrap: balance; }
-  footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+  .body { color: #d4d4d8; line-height: 1.45; text-wrap: balance; }
+  footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255, 255, 255, 0.14); }
   .topics { display: flex; align-items: center; gap: 16px; }
   .topics::before { content: ''; width: 40px; height: 2px; background: ${ACCENT}; }
   .status {
@@ -251,10 +251,10 @@ function cardHtml(card, shape, portraitSrc) {
   .portrait .status { position: absolute; left: -4%; bottom: 9%; }
 
   .rows { list-style: none; flex: none; }
-  .rows li { display: flex; align-items: center; gap: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
-  .rows li:last-child { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+  .rows li { display: flex; align-items: center; gap: 20px; border-top: 1px solid rgba(255, 255, 255, 0.14); }
+  .rows li:last-child { border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
   .row-title { flex: 1; font-weight: 500; color: #f4f4f5; white-space: nowrap; }
-  .row-arrow { color: #52525b; }
+  .row-arrow { color: #a1a1aa; }
 
   /* 1200x630 */
   .wide { padding: 52px 64px 0; }

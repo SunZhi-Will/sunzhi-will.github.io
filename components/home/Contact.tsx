@@ -82,7 +82,7 @@ export function Contact({ lang }: { lang: Lang }) {
                   rel="noopener noreferrer"
                   className="link-draw text-lg font-medium text-zinc-300 hover:text-white md:text-xl"
                 >
-                  {social.label} <span aria-hidden="true" className="text-zinc-600">↗</span>
+                  {social.label} <span aria-hidden="true" className="text-zinc-500">↗</span>
                 </a>
               </li>
             ))}
@@ -97,7 +97,7 @@ export function Contact({ lang }: { lang: Lang }) {
           transition={{ duration: 1.1, ease: EASE_OUT }}
         />
 
-        <div className="flex flex-col gap-5 py-8 text-sm text-zinc-500 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-5 py-8 text-sm text-zinc-400 md:flex-row md:items-center md:justify-between">
           <p>
             © {new Date().getFullYear()} {t.footer.portfolio}
           </p>

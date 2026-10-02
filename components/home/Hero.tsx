@@ -134,14 +134,14 @@ export function Hero({ lang }: { lang: Lang }) {
           </motion.span>
           <span className="mt-1 block text-[clamp(3rem,10vw,7rem)] font-semibold leading-[0.95] tracking-[-0.04em] text-white">
             <SplitText text={copy.hero.name} immediate delay={0.3} stagger={0.06} />
-            <span className="text-zinc-700">
+            <span className="text-zinc-500">
               {' '}
               <SplitText text={copy.hero.alias} immediate delay={0.5} stagger={0.06} />
             </span>
           </span>
         </h1>
 
-        <motion.p className="mt-6 text-xl text-zinc-500 md:mt-8 md:text-3xl" {...fadeUp(0.75)}>
+        <motion.p className="mt-6 text-xl text-zinc-400 md:mt-8 md:text-3xl" {...fadeUp(0.75)}>
           <RoleRotator key={lang} roles={roles} />
         </motion.p>
 

@@ -59,7 +59,7 @@ export function Activities({ lang }: { lang: Lang }) {
                     <h3 className="mt-4 text-lg font-semibold leading-snug text-zinc-100 transition-colors duration-200 group-hover:text-yellow-400">
                       {item.title}
                     </h3>
-                    <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-zinc-500">{item.description}</p>
+                    <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-zinc-400">{item.description}</p>
                   </button>
                 </Reveal>
               </li>

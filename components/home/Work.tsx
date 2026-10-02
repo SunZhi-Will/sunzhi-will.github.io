@@ -158,9 +158,9 @@ const WorkCard = forwardRef<HTMLLIElement, { item: ShowcaseItem; onOpen: () => v
         </div>
         <div className="mt-3.5 flex items-baseline justify-between gap-3">
           <h3 className="truncate text-base font-medium text-zinc-100 transition-colors duration-200 group-hover:text-yellow-400">{name}</h3>
-          {item.startYear && <span className="font-geist-mono text-xs text-zinc-600">{item.startYear}</span>}
+          {item.startYear && <span className="font-geist-mono text-xs text-zinc-400">{item.startYear}</span>}
         </div>
-        <p className="mt-0.5 truncate text-sm text-zinc-500">{tagline}</p>
+        <p className="mt-0.5 truncate text-sm text-zinc-400">{tagline}</p>
       </button>
     </motion.li>
   );
@@ -260,7 +260,7 @@ export function Work({ lang }: { lang: Lang }) {
                     )}
                     <span className="relative">
                       {chip.label}
-                      <span className={`ml-1.5 font-geist-mono text-[11px] ${isActive ? 'text-zinc-500' : 'text-zinc-600'}`}>{chip.count}</span>
+                      <span className={`ml-1.5 font-geist-mono text-[11px] ${isActive ? 'text-zinc-500' : 'text-zinc-400'}`}>{chip.count}</span>
                     </span>
                   </button>
                 );

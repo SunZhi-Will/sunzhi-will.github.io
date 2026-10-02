@@ -255,7 +255,7 @@ export default function LinksPage() {
                 </div>
 
                 <div className="mt-4 flex items-center gap-2 border-t border-white/10 pt-4">
-                  <p className="flex-1 truncate text-xs text-zinc-500">{currentUrl}</p>
+                  <p className="flex-1 truncate text-xs text-zinc-400">{currentUrl}</p>
                   <button
                     type="button"
                     onClick={copyToClipboard}
@@ -354,12 +354,12 @@ export default function LinksPage() {
                       )}
                     </span>
                     {link.description && (
-                      <span className={`mt-0.5 block text-sm text-zinc-500 ${viewMode === 'list' ? 'truncate' : 'line-clamp-2'}`}>{link.description}</span>
+                      <span className={`mt-0.5 block text-sm text-zinc-400 ${viewMode === 'list' ? 'truncate' : 'line-clamp-2'}`}>{link.description}</span>
                     )}
                   </span>
                   <span
                     aria-hidden="true"
-                    className={`text-zinc-600 transition-all duration-300 group-hover:translate-x-1 group-hover:text-yellow-400 ${
+                    className={`text-zinc-500 transition-all duration-300 group-hover:translate-x-1 group-hover:text-yellow-400 ${
                       viewMode === 'grid' ? 'absolute right-5 top-5' : ''
                     }`}
                   >
@@ -371,7 +371,7 @@ export default function LinksPage() {
           </motion.ul>
 
           <motion.footer
-            className="mt-12 flex items-center justify-between text-sm text-zinc-500"
+            className="mt-12 flex items-center justify-between text-sm text-zinc-400"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.2, duration: 0.8 }}

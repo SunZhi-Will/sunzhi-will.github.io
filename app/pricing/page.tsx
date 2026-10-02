@@ -360,7 +360,7 @@ export default function PricingPage() {
                                         )}
                                     </div>
                                     <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white md:text-5xl">{service.title}</h2>
-                                    <p className="mt-2 text-sm text-zinc-500">{service.subtitle}</p>
+                                    <p className="mt-2 text-sm text-zinc-400">{service.subtitle}</p>
                                 </Reveal>
                                 <motion.div
                                     className="mt-8 h-px origin-left bg-white/10"
@@ -398,11 +398,11 @@ export default function PricingPage() {
                                                 </div>
 
                                                 <p className="mt-6 flex flex-wrap items-baseline gap-x-2">
-                                                    <span className="font-geist-mono text-xs text-zinc-500">{t.currency}</span>
+                                                    <span className="font-geist-mono text-xs text-zinc-400">{t.currency}</span>
                                                     <span className="text-3xl font-semibold tracking-tight text-white md:text-4xl">{tier.price}</span>
-                                                    <span className="text-sm text-zinc-500">{tier.unit}</span>
+                                                    <span className="text-sm text-zinc-400">{tier.unit}</span>
                                                 </p>
-                                                <p className="mt-2 text-sm leading-relaxed text-zinc-500">{tier.description}</p>
+                                                <p className="mt-2 text-sm leading-relaxed text-zinc-400">{tier.description}</p>
 
                                                 <ul className="mt-6 flex-1 space-y-2.5 border-t border-white/10 pt-6">
                                                     {tier.features.map((feat) => (
@@ -416,7 +416,7 @@ export default function PricingPage() {
                                                 </ul>
 
                                                 {tier.note && (
-                                                    <p className="mt-6 border-t border-white/10 pt-4 text-xs text-zinc-500">
+                                                    <p className="mt-6 border-t border-white/10 pt-4 text-xs text-zinc-400">
                                                         ＊ {tier.note}
                                                     </p>
                                                 )}
@@ -427,7 +427,7 @@ export default function PricingPage() {
                             </section>
                         ))}
 
-                        <Reveal className="max-w-2xl text-sm text-zinc-500">
+                        <Reveal className="max-w-2xl text-sm text-zinc-400">
                             {t.disclaimer}
                         </Reveal>
                     </div>
@@ -451,7 +451,7 @@ export default function PricingPage() {
                                     <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                                 </a>
                             </Magnetic>
-                            <p className="text-sm text-zinc-500">{t.ctaNote}</p>
+                            <p className="text-sm text-zinc-400">{t.ctaNote}</p>
                         </Reveal>
 
                         <div className="mt-16 grid gap-10 border-t border-white/10 pt-10 sm:grid-cols-2 md:mt-24">
@@ -465,7 +465,7 @@ export default function PricingPage() {
                             </Reveal>
                         </div>
 
-                        <div className="mt-16 flex flex-col gap-4 border-t border-white/10 py-8 text-sm text-zinc-500 md:flex-row md:items-center md:justify-between">
+                        <div className="mt-16 flex flex-col gap-4 border-t border-white/10 py-8 text-sm text-zinc-400 md:flex-row md:items-center md:justify-between">
                             <p>© {new Date().getFullYear()} {STUDIO_NAME} · 謝上智</p>
                             <nav className="flex items-center gap-6" aria-label={STUDIO_NAME}>
                                 <Link href="/" className="link-draw text-zinc-400 hover:text-white">{t.back.replace(/^←\s*/, '')}</Link>

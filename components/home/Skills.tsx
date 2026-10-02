@@ -21,7 +21,7 @@ function MarqueeItem({ tech }: { tech: Tech }) {
         height={40}
         className="h-7 w-7 opacity-50 grayscale transition-all duration-300 group-hover:opacity-100 group-hover:grayscale-0 md:h-10 md:w-10"
       />
-      <span className="whitespace-nowrap text-3xl font-semibold tracking-tight text-zinc-700 transition-colors duration-300 group-hover:text-white md:text-6xl">
+      <span className="whitespace-nowrap text-3xl font-semibold tracking-tight text-zinc-500 transition-colors duration-300 group-hover:text-white md:text-6xl">
         {tech.name}
       </span>
     </span>

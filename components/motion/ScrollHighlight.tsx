@@ -10,7 +10,7 @@ interface ScrollHighlightProps {
 }
 
 function Token({ text, progress, range }: { text: string; progress: MotionValue<number>; range: [number, number] }) {
-  const opacity = useTransform(progress, range, [0.2, 1]);
+  const opacity = useTransform(progress, range, [0.35, 1]);
   return <motion.span style={{ opacity }}>{text}</motion.span>;
 }
 
