@@ -63,6 +63,10 @@
   --color-brand-text: 180 83 9; /* amber-700，當文字用，對比 4.9:1 */
   --color-on-brand: 28 25 23; /* 放在品牌色上的文字 */
 
+  /* 操作：主要按鈕。淺色主題用深色按鈕，黃底在白底上對比不夠 */
+  --color-action: 28 25 23; /* stone-900 */
+  --color-on-action: 255 255 255;
+
   /* 表面：由下往上疊 */
   --color-canvas: 250 249 247; /* 頁面底色 */
   --color-surface: 255 255 255; /* 卡片 */
@@ -87,6 +91,14 @@
   --color-warning-text: 154 52 18; /* orange-800 */
   --color-danger: 220 38 38; /* red-600 */
   --color-danger-text: 153 27 27; /* red-800 */
+
+  /* 陰影：淺色主題靠陰影分層，深色主題靠表面明度，所以卡片在深色沒有陰影 */
+  --shadow-card: 0 1px 2px rgba(28, 25, 23, 0.05), 0 4px 14px -6px rgba(28, 25, 23, 0.08);
+  --shadow-pop: 0 10px 34px -10px rgba(28, 25, 23, 0.22), 0 2px 6px rgba(28, 25, 23, 0.06);
+
+  /* 完整顏色版本，給 framer-motion 這類只吃完整色值的動畫用。每個主題區塊都要重寫一次，否則子元素會繼承到另一個主題算好的值 */
+  --color-brand-solid: rgb(var(--color-brand));
+  --color-danger-solid: rgb(var(--color-danger));
 }
 
 /* ───────── 顏色：深色主題 ───────── */
@@ -102,6 +114,8 @@
     --color-brand: 250 204 21;
     --color-brand-text: 253 224 71;
     --color-on-brand: 10 10 10;
+    --color-action: 250 204 21;
+    --color-on-action: 10 10 10;
     --color-canvas: 10 10 10;
     --color-surface: 17 17 19;
     --color-surface-raised: 26 26 29;
@@ -119,6 +133,10 @@
     --color-warning-text: 254 215 170;
     --color-danger: 248 113 113;
     --color-danger-text: 254 202 202;
+    --shadow-card: none;
+    --shadow-pop: 0 12px 40px -12px rgba(0, 0, 0, 0.7);
+    --color-brand-solid: rgb(var(--color-brand));
+    --color-danger-solid: rgb(var(--color-danger));
   }
 }
 
@@ -128,6 +146,8 @@ html:not(.light) .blog-root {
   --color-brand: 250 204 21; /* yellow-400 */
   --color-brand-text: 253 224 71; /* yellow-300 */
   --color-on-brand: 10 10 10;
+  --color-action: 250 204 21; /* 深色主題的主要按鈕就是品牌黃 */
+  --color-on-action: 10 10 10;
   --color-canvas: 10 10 10; /* #0a0a0a */
   --color-surface: 17 17 19; /* #111113 */
   --color-surface-raised: 26 26 29;
@@ -145,4 +165,8 @@ html:not(.light) .blog-root {
   --color-warning-text: 254 215 170; /* orange-200 */
   --color-danger: 248 113 113; /* red-400 */
   --color-danger-text: 254 202 202; /* red-200 */
+  --shadow-card: none;
+  --shadow-pop: 0 12px 40px -12px rgba(0, 0, 0, 0.7);
+  --color-brand-solid: rgb(var(--color-brand));
+  --color-danger-solid: rgb(var(--color-danger));
 }

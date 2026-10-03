@@ -38,7 +38,7 @@ function Placeholder({ height }: { height: Height }) {
     return (
         <div
             aria-hidden="true"
-            className="lazy-widget not-prose my-10 animate-pulse rounded-xl border border-zinc-500/20 bg-zinc-500/5"
+            className="lazy-widget not-prose my-10 animate-pulse rounded-xl border border-line bg-fg/5"
             style={{ ['--h-mobile' as string]: `${height.mobile}px`, ['--h-desktop' as string]: `${height.desktop}px` }}
         />
     );

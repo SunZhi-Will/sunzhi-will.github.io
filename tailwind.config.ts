@@ -24,6 +24,8 @@ export default {
         },
         // 品牌
         brand: { DEFAULT: token('brand'), text: token('brand-text'), on: token('on-brand') },
+        // 操作（主要按鈕）
+        action: { DEFAULT: token('action'), on: token('on-action') },
         // 表面
         canvas: token('canvas'),
         surface: { DEFAULT: token('surface'), raised: token('surface-raised'), sunken: token('surface-sunken') },
@@ -72,6 +74,9 @@ export default {
         xs: '2px',
       },
       boxShadow: {
+        // 設計 token：淺色有陰影，深色的卡片沒有
+        card: 'var(--shadow-card)',
+        pop: 'var(--shadow-pop)',
         'glow': '0 0 20px rgba(161, 161, 170, 0.3)',
         'glow-lg': '0 0 40px rgba(161, 161, 170, 0.4)',
         'glow-silver': '0 0 20px rgba(192, 192, 192, 0.4)',

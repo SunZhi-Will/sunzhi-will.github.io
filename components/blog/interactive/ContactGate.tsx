@@ -43,7 +43,7 @@ function SwitchRow({ label, note, on, onToggle }: SwitchRowProps) {
         >
             <span
                 className={`flex h-6 w-11 shrink-0 items-center rounded-full px-0.5 ${
-                    on ? 'justify-end bg-yellow-400' : t.isDark ? 'justify-start bg-zinc-600' : 'justify-start bg-zinc-300'
+                    on ? 'justify-end bg-brand' : 'justify-start bg-line-strong'
                 }`}
             >
                 <motion.span
@@ -68,7 +68,8 @@ export function ContactGate() {
 
     const outcome = OUTCOMES[`${contact}-${similar}`];
     const both = contact && similar;
-    const wireOff = t.isDark ? '#3f3f46' : '#d4d4d8';
+    // 用 CSS 變數，framer-motion 會在動畫時解析成實際顏色，切換主題也會跟著變
+    const wireOff = 'var(--color-line-strong)';
 
     return (
         <InteractiveFrame
@@ -96,15 +97,15 @@ export function ContactGate() {
                         d="M0 28 H24 V60 H60"
                         fill="none"
                         strokeWidth="3"
-                        animate={{ stroke: contact ? '#facc15' : wireOff }}
+                        animate={{ stroke: contact ? 'var(--color-brand-solid)' : wireOff }}
                     />
                     <motion.path
                         d="M0 92 H24 V60"
                         fill="none"
                         strokeWidth="3"
-                        animate={{ stroke: similar ? '#facc15' : wireOff }}
+                        animate={{ stroke: similar ? 'var(--color-brand-solid)' : wireOff }}
                     />
-                    <motion.circle cx="24" cy="60" r="5" animate={{ fill: both ? '#facc15' : wireOff }} />
+                    <motion.circle cx="24" cy="60" r="5" animate={{ fill: both ? 'var(--color-brand-solid)' : wireOff }} />
                 </svg>
 
                 <motion.div
@@ -114,7 +115,7 @@ export function ContactGate() {
                     <motion.span
                         className="h-8 w-8 rounded-md"
                         animate={{
-                            backgroundColor: both ? '#facc15' : contact || similar ? '#a16207' : wireOff,
+                            backgroundColor: both ? 'var(--color-brand-solid)' : contact || similar ? '#a16207' : wireOff,
                             rotate: both ? 45 : 0,
                             scale: both ? [1, 1.25, 1] : 1,
                         }}

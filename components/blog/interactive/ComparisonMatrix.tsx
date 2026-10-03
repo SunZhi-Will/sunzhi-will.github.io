@@ -223,9 +223,7 @@ export function ComparisonMatrix() {
                                 type="button"
                                 aria-expanded={isOpen}
                                 onClick={() => setOpen(isOpen ? null : row.item)}
-                                className={`grid w-full grid-cols-[1fr_auto_auto] items-center gap-3 px-3 py-2.5 text-left transition-colors sm:px-4 ${
-                                    t.isDark ? 'hover:bg-white/5' : 'hover:bg-black/[0.03]'
-                                }`}
+                                className="grid w-full grid-cols-[1fr_auto_auto] items-center gap-3 px-3 py-2.5 text-left transition-colors sm:px-4 hover:bg-surface-raised"
                             >
                                 <span className={`flex items-center gap-2 text-sm font-semibold ${t.text}`}>
                                     <motion.span animate={{ rotate: isOpen ? 180 : 0 }} className={t.faint}>
@@ -312,9 +310,9 @@ export function ComparisonMatrix() {
             </div>
 
             <div className={`flex items-center gap-3 text-xs ${t.sub}`}>
-                <div className={`h-1.5 flex-1 overflow-hidden rounded-full ${t.isDark ? 'bg-zinc-800' : 'bg-zinc-200'}`}>
+                <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-line">
                     <motion.div
-                        className="h-full rounded-full bg-yellow-400"
+                        className="h-full rounded-full bg-brand"
                         animate={{ width: `${(filled / ROWS.length) * 100}%` }}
                     />
                 </div>

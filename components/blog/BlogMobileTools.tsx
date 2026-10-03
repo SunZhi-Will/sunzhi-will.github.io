@@ -18,43 +18,38 @@ interface BlogMobileToolsProps {
 // 搜尋、返回與主題切換放在內容區最上面，跟著頁面捲走，不佔閱讀空間
 export function BlogMobileTools({ lang, variant, searchQuery = '', setSearchQuery }: BlogMobileToolsProps) {
     const { theme, toggleTheme } = useTheme();
+    // 只有主題切換鈕要知道目前主題（決定顯示太陽或月亮），顏色都交給 token
     const dark = theme === 'dark';
     const t = blogTranslations[lang];
     const zh = lang === 'zh-TW';
 
-    const round = `flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border transition-colors ${
-        dark ? 'border-white/15 text-zinc-200 active:bg-white/10' : 'border-stone-300 text-stone-700 active:bg-stone-100'
-    }`;
+    const round = 'flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border transition-colors border-line-strong text-fg-body active:bg-surface-raised';
 
     return (
         <div className="flex items-center gap-2 md:hidden">
             {variant === 'list' ? (
                 <label
-                    className={`flex h-11 min-w-0 flex-1 items-center gap-2.5 rounded-full border px-4 ${
-                        dark ? 'border-white/15 bg-white/[0.04]' : 'border-stone-300 bg-white'
-                    }`}
+                    className="flex h-11 min-w-0 flex-1 items-center gap-2.5 rounded-full border px-4 border-line-strong bg-surface"
                 >
-                    <MagnifyingGlassIcon className={`h-4 w-4 flex-shrink-0 ${dark ? 'text-zinc-200' : 'text-stone-500'}`} />
+                    <MagnifyingGlassIcon className="h-4 w-4 flex-shrink-0 text-fg-muted" />
                     <input
                         type="search"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery?.(e.target.value)}
                         placeholder={t.searchPlaceholder}
                         aria-label={t.searchPlaceholder}
-                        className={`min-w-0 flex-1 bg-transparent text-sm focus:outline-none [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden ${
-                            dark ? 'text-white placeholder:text-zinc-200' : 'text-stone-900 placeholder:text-stone-400'
-                        }`}
+                        className={`min-w-0 flex-1 bg-transparent text-sm focus:outline-none [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden text-fg placeholder:text-fg-muted`}
                     />
                     {searchQuery && (
                         <button type="button" onClick={() => setSearchQuery?.('')} aria-label={zh ? '清除搜尋' : 'Clear search'}>
-                            <XMarkIcon className={`h-4 w-4 ${dark ? 'text-zinc-200' : 'text-stone-500'}`} />
+                            <XMarkIcon className="h-4 w-4 text-fg-muted" />
                         </button>
                     )}
                 </label>
             ) : (
                 <Link
                     href="/blog"
-                    className={`flex h-11 flex-1 items-center gap-1.5 text-sm font-medium ${dark ? 'text-zinc-200' : 'text-stone-700'}`}
+                    className="flex h-11 flex-1 items-center gap-1.5 text-sm font-medium text-fg-body"
                 >
                     <ChevronLeftIcon className="h-5 w-5" />
                     {zh ? '所有文章' : 'All posts'}

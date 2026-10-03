@@ -2,7 +2,6 @@
 
 import { ReactNode } from 'react';
 import Image from 'next/image';
-import { useTheme } from '@/app/blog/ThemeProvider';
 
 interface BookmarkCardProps {
   href: string;
@@ -20,18 +19,12 @@ export function BookmarkCard(props: BookmarkCardProps) {
   // 明確忽略 author 和 publisher，保持向後相容
   void props.author;
   void props.publisher;
-  
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
 
+  // 顏色來自 app/tokens.css，深淺色自動切換
   return (
     <figure className={`kg-card kg-bookmark-card my-8`}>
       <a
-        className={`kg-bookmark-container block rounded-lg border transition-all ${
-          isDark
-            ? 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-yellow-500/50'
-            : 'border-black/15 bg-white hover:bg-black/5 hover:border-yellow-500/50'
-        }`}
+        className="kg-bookmark-container block rounded-lg border transition-all border-line bg-surface hover:bg-surface-raised hover:border-brand/50"
         href={href}
         target="_blank"
         rel="noopener noreferrer"
@@ -42,9 +35,7 @@ export function BookmarkCard(props: BookmarkCardProps) {
           </div>
 
           {description && (
-            <div className={`kg-bookmark-description mb-4 text-sm leading-relaxed ${
-              isDark ? 'text-zinc-200' : 'text-black/60'
-            }`}>
+            <div className="kg-bookmark-description mb-4 text-sm leading-relaxed text-fg-muted">
               {description}
             </div>
           )}

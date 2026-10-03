@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Lang } from '@/types';
 import { blogTranslations } from '@/lib/blog-translations';
-import { useTheme } from '@/app/blog/ThemeProvider';
 
 interface BlogSearchIslandProps {
     lang: Lang;
@@ -21,8 +20,6 @@ export function BlogSearchIsland({
     setSearchQuery,
 }: BlogSearchIslandProps) {
     const [isFocused, setIsFocused] = useState(false);
-    const { theme } = useTheme();
-    const isDark = theme === 'dark';
     const t = blogTranslations[lang];
 
     const isExpanded = isFocused || searchQuery.length > 0;
@@ -35,11 +32,7 @@ export function BlogSearchIsland({
             transition={{ duration: 0.5, delay: 0.2 }}
         >
             <motion.div
-                className={`relative overflow-hidden mt-4 mr-4 md:mr-6 rounded-3xl backdrop-blur-2xl shadow-2xl transition-colors duration-300 ${
-                    isDark
-                        ? 'bg-[#1c1c1e]/95 border border-white/20'
-                        : 'bg-[#f0ece4]/92 border border-stone-300/60'
-                }`}
+                className="relative overflow-hidden mt-4 mr-4 md:mr-6 rounded-3xl backdrop-blur-2xl shadow-pop transition-colors duration-300 bg-surface-raised/95 border border-line-strong"
                 animate={{
                     minWidth: isExpanded ? '320px' : '180px',
                 }}
@@ -48,9 +41,7 @@ export function BlogSearchIsland({
                 <div className="flex items-center gap-2 px-4 py-2.5">
                     {/* 搜尋框 */}
                     <div className="relative flex-1 min-w-0">
-                        <MagnifyingGlassIcon className={`absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 z-10 ${
-                            isDark ? 'text-zinc-200' : 'text-black/50'
-                        }`} />
+                        <MagnifyingGlassIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 z-10 text-fg-muted" />
                         <AnimatePresence mode="wait">
                             {isExpanded ? (
                                 <motion.input
@@ -70,12 +61,8 @@ export function BlogSearchIsland({
                                         }
                                     }}
                                     autoFocus
-                                    className={`w-full pl-9 pr-8 py-1.5 text-sm bg-transparent border-0 
-                                             focus:outline-none ${
-                                                isDark
-                                                    ? 'text-white placeholder-white/35'
-                                                    : 'text-black placeholder-black/40'
-                                            }`}
+                                    className="w-full pl-9 pr-8 py-1.5 text-sm bg-transparent border-0 
+                                             focus:outline-none text-fg placeholder:text-fg-muted"
                                 />
                             ) : (
                                 <motion.button
@@ -84,11 +71,7 @@ export function BlogSearchIsland({
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
                                     onClick={() => setIsFocused(true)}
-                                    className={`w-full pl-9 pr-4 py-1.5 text-sm text-left transition-colors ${
-                                        isDark
-                                            ? 'text-zinc-200 hover:text-yellow-400'
-                                            : 'text-black/50 hover:text-black'
-                                    }`}
+                                    className="w-full pl-9 pr-4 py-1.5 text-sm text-left transition-colors text-fg-muted hover:text-brand-text"
                                 >
                                     {t.searchPlaceholder}
                                 </motion.button>
@@ -102,11 +85,7 @@ export function BlogSearchIsland({
                                     setSearchQuery('');
                                     setIsFocused(false);
                                 }}
-                                className={`absolute right-2 top-1/2 -translate-y-1/2 transition-colors z-10 ${
-                                    isDark
-                                        ? 'text-zinc-200 hover:text-yellow-400'
-                                        : 'text-black/50 hover:text-black'
-                                }`}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 transition-colors z-10 text-fg-muted hover:text-brand-text"
                             >
                                 <XMarkIcon className="w-4 h-4" />
                             </motion.button>
@@ -115,7 +94,7 @@ export function BlogSearchIsland({
 
                     {/* 分隔線 */}
                     <motion.div
-                        className={`w-px h-6 ${isDark ? 'bg-white/15' : 'bg-black/15'}`}
+                        className="w-px h-6 bg-line"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.1 }}
@@ -127,11 +106,7 @@ export function BlogSearchIsland({
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.15 }}
                         onClick={() => setLang(lang === 'zh-TW' ? 'en' : 'zh-TW')}
-                        className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-all duration-200 whitespace-nowrap flex-shrink-0 ${
-                            isDark
-                                ? 'text-zinc-200 hover:text-yellow-400 hover:bg-white/8'
-                                : 'text-black/70 hover:text-black hover:bg-black/8'
-                        }`}
+                        className="px-3 py-1.5 rounded-xl text-sm font-medium transition-all duration-200 whitespace-nowrap flex-shrink-0 text-fg-muted hover:text-brand-text hover:bg-fg/10"
                         whileHover={{ scale: 1.05, y: -1 }}
                         whileTap={{ scale: 0.95 }}
                     >

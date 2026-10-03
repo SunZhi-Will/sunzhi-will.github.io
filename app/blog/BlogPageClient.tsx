@@ -16,21 +16,14 @@ import { NewsletterSubscribe } from '@/components/blog/NewsletterSubscribe';
 import { SplitText } from '@/components/motion/SplitText';
 import { EASE_OUT } from '@/components/motion/ease';
 import { useMediaQuery } from '@/lib/use-media-query';
-import { useTheme } from './ThemeProvider';
 
 // 區塊小標：等寬字體，與首頁的編號小標同一套語言
-function SectionLabel({ children, isDark, color }: { children: React.ReactNode; isDark: boolean; color: 'amber' | 'neutral' }) {
+function SectionLabel({ children, color }: { children: React.ReactNode; color: 'amber' | 'neutral' }) {
     return (
         <div className={`font-geist-mono flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.12em]
-            ${color === 'amber'
-                ? isDark ? 'text-yellow-400' : 'text-amber-700'
-                : isDark ? 'text-zinc-200' : 'text-stone-500'
-            }
+            ${color === 'amber' ? 'text-brand-text' : 'text-fg-muted'}
         `}>
-            <span className={`h-px w-5 flex-shrink-0 ${color === 'amber'
-                ? isDark ? 'bg-yellow-400/70' : 'bg-amber-600/70'
-                : isDark ? 'bg-white/25' : 'bg-stone-300'
-            }`} />
+            <span className={`h-px w-5 flex-shrink-0 ${color === 'amber' ? 'bg-brand/70' : 'bg-line-strong'}`} />
             {children}
         </div>
     );
@@ -50,7 +43,6 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
     const [lang, setLang] = useState<Lang>('zh-TW');
     const [showAllTags, setShowAllTags] = useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)');
-    const { theme } = useTheme();
 
     const t = blogTranslations[lang];
 
@@ -177,25 +169,21 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
         return filtered;
     }, [posts, lang, searchQuery, selectedTag]);
 
-    const isDark = theme === 'dark';
-
     return (
         <div
             className="min-h-screen relative bg-canvas transition-colors duration-300"
             style={{
-                backgroundImage: isDark
-                    ? `radial-gradient(ellipse 80% 50% at 50% -20%, rgba(250,204,21,0.04) 0%, transparent 60%), radial-gradient(circle, rgba(255,255,255,0.025) 1px, transparent 1px)`
-                    : `radial-gradient(ellipse 80% 50% at 50% -20%, rgba(251,191,36,0.06) 0%, transparent 60%), radial-gradient(circle, rgba(0,0,0,0.03) 1px, transparent 1px)`,
-                backgroundSize: isDark ? '100% 100%, 48px 48px' : '100% 100%, 48px 48px',
+                // 頂部一抹品牌色光暈加上點陣網格，顏色取自 token，深淺色自動切換
+                backgroundImage: `radial-gradient(ellipse 80% 50% at 50% -20%, rgb(var(--color-brand) / 0.05) 0%, transparent 60%), radial-gradient(circle, rgb(var(--color-fg) / 0.03) 1px, transparent 1px)`,
+                backgroundSize: '100% 100%, 48px 48px',
                 backgroundPosition: '0 0, 0 0',
             } as React.CSSProperties}
         >
             {/* 電腦版置中導覽；手機版是底部分頁列 */}
-            <TabBar current="blog" lang={lang} theme={theme} />
+            <TabBar current="blog" lang={lang} />
             <PageNav
                 current="blog"
                 lang={lang}
-                theme={theme}
                 hideOnScroll
                 tools={<BlogNavTools lang={lang} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />}
             />
@@ -205,17 +193,17 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                 <div className="max-w-4xl mx-auto px-4 pb-32 md:pb-20 md:px-6 pt-12 md:pt-24">
                     {/* 頁面標題：讓第一次來的人知道這是誰的部落格、寫些什麼 */}
                     <header className="mb-10 md:mb-12">
-                        <span className={`font-geist-mono text-xs font-medium uppercase tracking-[0.14em] ${isDark ? 'text-zinc-200' : 'text-stone-500'}`}>
+                        <span className="font-geist-mono text-xs font-medium uppercase tracking-[0.14em] text-fg-muted">
                             {String(filteredPosts.length).padStart(2, '0')} {lang === 'zh-TW' ? '篇文章' : 'posts'}
                         </span>
-                        <h1 key={lang} className={`mt-3 text-[2.5rem] font-semibold leading-[1.1] tracking-tight md:text-6xl ${isDark ? 'text-white' : 'text-stone-900'}`}>
+                        <h1 key={lang} className="mt-3 text-[2.5rem] font-semibold leading-[1.1] tracking-tight md:text-6xl text-fg">
                             <SplitText text={lang === 'zh-TW' ? 'Sun 的部落格' : "Sun's Blog"} immediate stagger={0.05} />
                         </h1>
                         <motion.p
                             initial={{ opacity: 0, y: 12 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.7, ease: EASE_OUT, delay: 0.35 }}
-                            className={`mt-4 max-w-xl text-base leading-relaxed md:text-lg ${isDark ? 'text-zinc-200' : 'text-stone-600'}`}
+                            className="mt-4 max-w-xl text-base leading-relaxed md:text-lg text-fg-muted"
                         >
                             {lang === 'zh-TW'
                                 ? '寫 AI、產品、創業和遊戲開發，都是自己動手做過之後的想法。'
@@ -247,24 +235,22 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                                                 onClick={() => setSelectedTag(chip.tag === null || active ? null : chip.tag)}
                                                 aria-pressed={active}
                                                 className={`relative whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200 ${
-                                                    active
-                                                        ? isDark ? 'text-zinc-950' : 'text-white'
-                                                        : isDark ? 'text-zinc-200 hover:text-yellow-400' : 'text-stone-600 hover:text-stone-900'
+                                                    active ? 'text-action-on' : 'text-fg-muted hover:text-brand-text'
                                                 }`}
                                             >
                                                 {active ? (
                                                     <motion.span
                                                         layoutId="blog-filter"
-                                                        className={`absolute inset-0 rounded-full ${isDark ? 'bg-yellow-400' : 'bg-stone-900'}`}
+                                                        className="absolute inset-0 rounded-full bg-action"
                                                         transition={{ type: 'spring', stiffness: 400, damping: 32 }}
                                                     />
                                                 ) : (
-                                                    <span className={`absolute inset-0 rounded-full border ${isDark ? 'border-white/12' : 'border-stone-300'}`} />
+                                                    <span className="absolute inset-0 rounded-full border border-line-strong" />
                                                 )}
                                                 <span className="relative">
                                                     {chip.label}
                                                     {chip.count > 1 && (
-                                                        <span className={`font-geist-mono ml-1.5 text-[11px] ${active ? (isDark ? 'text-zinc-700' : 'text-white/60') : (isDark ? 'text-zinc-200' : 'text-stone-400')}`}>
+                                                        <span className={`font-geist-mono ml-1.5 text-[11px] ${active ? 'text-action-on/60' : 'text-fg-muted'}`}>
                                                             {chip.count}
                                                         </span>
                                                     )}
@@ -277,9 +263,7 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                                             type="button"
                                             onClick={() => setShowAllTags((value) => !value)}
                                             aria-expanded={showAllTags}
-                                            className={`rounded-full px-3 py-2 text-sm font-medium transition-colors ${
-                                                isDark ? 'text-yellow-400 hover:text-yellow-300' : 'text-amber-700 hover:text-amber-800'
-                                            }`}
+                                            className="rounded-full px-3 py-2 text-sm font-medium transition-colors text-brand-text hover:text-fg"
                                         >
                                             {showAllTags
                                                 ? (lang === 'zh-TW' ? '收起' : 'Less')
@@ -288,7 +272,7 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                                     )}
                                 </div>
                             </div>
-                            <div className={`mt-6 h-px w-full ${isDark ? 'bg-white/10' : 'bg-stone-200'}`} />
+                            <div className="mt-6 h-px w-full bg-line" />
                         </motion.div>
                     )}
 
@@ -299,7 +283,7 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                                 <>
                                     {/* 精選文章 */}
                                     <div className="space-y-4">
-                                        <SectionLabel isDark={isDark} color="amber">
+                                        <SectionLabel color="amber">
                                             {t.featuredPost || '精選文章'}
                                         </SectionLabel>
                                         <BlogCard
@@ -314,7 +298,7 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                                     {/* 其他文章 */}
                                     {filteredPosts.length > 1 && (
                                         <div className="space-y-4 pt-2">
-                                            <SectionLabel isDark={isDark} color="neutral">
+                                            <SectionLabel color="neutral">
                                                 {t.recentPosts || '最新文章'}
                                             </SectionLabel>
                                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -334,7 +318,7 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                             ) : (
                                 // 搜尋或標籤過濾時，不顯示精選文章，全部以網格展示
                                 <div className="space-y-4">
-                                    <SectionLabel isDark={isDark} color="amber">
+                                    <SectionLabel color="amber">
                                         {selectedTag 
                                             ? `${lang === 'zh-TW' ? '分類：' : 'Category: '}${selectedTag}` 
                                             : (lang === 'zh-TW' ? '搜尋結果' : 'Search Results')
@@ -360,13 +344,11 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                             animate={{ opacity: 1 }}
                             className="py-28 text-center"
                         >
-                            <div className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-5
-                                ${isDark ? 'bg-white/[0.04] border border-white/[0.08]' : 'bg-stone-100 border border-stone-200/80'}
-                            `}>
-                                <MagnifyingGlassIcon className={`w-6 h-6 ${isDark ? 'text-zinc-200' : 'text-stone-400'}`} />
+                            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-5 bg-surface-raised border border-line">
+                                <MagnifyingGlassIcon className="w-6 h-6 text-fg-muted" />
                             </div>
-                            <p className={`text-base font-semibold mb-1.5 ${isDark ? 'text-zinc-200' : 'text-stone-700'}`}>{t.noResults}</p>
-                            <p className={`text-sm ${isDark ? 'text-zinc-200' : 'text-stone-400'}`}>{t.noResultsDesc}</p>
+                            <p className="text-base font-semibold mb-1.5 text-fg-body">{t.noResults}</p>
+                            <p className="text-sm text-fg-muted">{t.noResultsDesc}</p>
                         </motion.div>
                     ) : (
                         <motion.div
@@ -374,22 +356,20 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
                             animate={{ opacity: 1 }}
                             className="py-28 text-center"
                         >
-                            <div className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-5
-                                ${isDark ? 'bg-white/[0.04] border border-white/[0.08]' : 'bg-stone-100 border border-stone-200/80'}
-                            `}>
-                                <svg className={`w-6 h-6 ${isDark ? 'text-zinc-200' : 'text-stone-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-5 bg-surface-raised border border-line">
+                                <svg className="w-6 h-6 text-fg-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
                             </div>
-                            <p className={`text-base font-semibold mb-1.5 ${isDark ? 'text-zinc-200' : 'text-stone-700'}`}>{t.noPosts}</p>
-                            <p className={`text-sm ${isDark ? 'text-zinc-200' : 'text-stone-400'}`}>{t.noPostsDesc}</p>
+                            <p className="text-base font-semibold mb-1.5 text-fg-body">{t.noPosts}</p>
+                            <p className="text-sm text-fg-muted">{t.noPostsDesc}</p>
                         </motion.div>
                     )}
 
                     {/* 訂閱電子報與頁尾區 */}
-                    <div className={`mt-16 pt-10 border-t ${isDark ? 'border-white/[0.06]' : 'border-stone-200/70'}`}>
+                    <div className="mt-16 pt-10 border-t border-line">
                         <NewsletterSubscribe lang={lang} variant="section" />
-                        <div className={`mt-10 text-center text-xs tracking-widest uppercase ${isDark ? 'text-zinc-200' : 'text-stone-300'}`}>
+                        <div className="mt-10 text-center text-xs tracking-widest uppercase text-fg-muted">
                             © {new Date().getFullYear()} Sun
                         </div>
                     </div>

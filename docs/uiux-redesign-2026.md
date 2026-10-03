@@ -156,13 +156,14 @@ node scripts/preview-newsletter.js <slug>   # 指定文章
 
 ### 顏色分類
 
-數值寫在 `app/tokens.css`，Tailwind 對照在 `tailwind.config.ts`。元件只寫語意名稱，深淺色由 `html` 上的 `.dark`／`.light` 自動切換，`.site` 範圍固定用深色。
+數值寫在 `app/tokens.css`，Tailwind 對照在 `tailwind.config.ts`。所有色塊、標題六級、提示框與按鈕的實際樣子可以在 `/design` 頁看到（可切換深淺色，不列入 sitemap、`noindex`，頁面在 `app/design/`，數值要和 `tokens.css` 一起改）。元件只寫語意名稱，深淺色由 `html` 上的 `.dark`／`.light` 自動切換，`.site` 範圍固定用深色。
 
 | 分類 | Tailwind 名稱 | 用途 | 深色 | 淺色 |
 | --- | --- | --- | --- | --- |
 | 品牌 | `brand` | 色塊、線條、清單符號、H2 短線 | `yellow-400` | `amber-600` |
 | | `brand-text` | 當文字用的強調色、連結、H5 | `yellow-300` | `amber-700` |
 | | `brand-on` | 放在品牌色上的文字 | `#0a0a0a` | `stone-900` |
+| 操作 | `action`、`action-on` | 主要按鈕的底色與文字 | `yellow-400`／黑 | `stone-900`／白 |
 | 表面 | `canvas` | 頁面底色 | `#0a0a0a` | `#faf9f7` |
 | | `surface` | 卡片 | `#111113` | 白 |
 | | `surface-raised` | 滑過、彈出層 | `#1a1a1d` | `stone-100` |
@@ -176,6 +177,8 @@ node scripts/preview-newsletter.js <slug>   # 指定文章
 | | `success`、`success-text` | 成功 | `emerald-400`／`emerald-200` | `emerald-600`／`emerald-800` |
 | | `warning`、`warning-text` | 注意 | `orange-400`／`orange-200` | `orange-600`／`orange-800` |
 | | `danger`、`danger-text` | 錯誤 | `red-400`／`red-200` | `red-600`／`red-800` |
+| 陰影 | `shadow-card` | 卡片 | 無 | 淡陰影 |
+| | `shadow-pop` | 導覽列、彈出層 | 深色陰影 | 中等陰影 |
 
 規則：
 
@@ -183,8 +186,10 @@ node scripts/preview-newsletter.js <slug>   # 指定文章
 2. 深色主題的 `fg-muted` 刻意和 `fg-body` 一樣，黑底不用灰字，層次靠字級與字重。
 3. 品牌色仍然是唯一的裝飾用彩色。狀態色只用在需要表達好壞的地方（提示框、表單驗證結果），不拿來裝飾或分類文章。
 4. 「注意」用橘色而不是黃色，避免和品牌色混在一起。
-5. 底色要淡時用透明度：`bg-info/10`、`border-success/30`。`line` 本身已經是半透明色，不能再加 `/透明度`。
-6. 部落格在 `ThemeProvider` 掛上 class 之前元件是以深色渲染，所以 `html` 還沒有 `.light` 時 `.blog-root` 先用深色數值。
+5. 主要按鈕用 `action`：深色主題是黃色按鈕，淺色主題是深色按鈕（黃底在白底上不夠清楚）。
+6. 深色主題靠表面明度分層，所以 `shadow-card` 在深色是無陰影；淺色靠陰影分層。
+7. 底色要淡時用透明度：`bg-info/10`、`border-success/30`。`line` 本身已經是半透明色，不能再加 `/透明度`。
+8. 部落格在 `ThemeProvider` 掛上 class 之前元件是以深色渲染，所以 `html` 還沒有 `.light` 時 `.blog-root` 先用深色數值。
 
 ### 標題六級
 
@@ -206,14 +211,27 @@ node scripts/preview-newsletter.js <slug>   # 指定文章
 - 元件裡需要同樣的字級時用 Tailwind 的 `text-h1` 到 `text-h6`、`text-body`、`text-display`。
 - H2 到 H6 都會產生錨點連結與目錄項目（`lib/rehype-blog.ts`）。
 
-### 已經改用 token 的地方
+### 改用 token 的範圍
 
-- 文章內文（`EnhancedArticleContent`）：原本深淺色各寫一份、MDX 與 HTML 又各寫一份的 class，合併成一個不分主題的 `PROSE_CLASS`。
-- `globals.css` 的 `.prose` 顏色與表格：拿掉 `slate` 與 `.dark .prose` 分支。
-- 提示框（`Callout`）：五種類型對應品牌與四個狀態色，圖示換成 Heroicons。
-- 文章頁與列表頁底色：都改成 `bg-canvas`。文章頁背後的點陣從 12% 降到 5%，不再干擾內文。
+部落格、設計規範頁、共用導覽（`PageNav`、`TabBar`）全部改完，`components/blog` 底下已經沒有 `isDark ? ... : ...` 的顏色分支。
 
-其餘部落格元件（側欄、卡片、目錄、互動元件等）還是 `isDark` 分支，之後動到時順手改成 token 即可，不需要一次全改。
+- 文章內文（`EnhancedArticleContent`）：原本深淺色各一份、MDX 與 HTML 又各一份的 class，合併成一個不分主題的 `PROSE_CLASS`。`globals.css` 的 `.prose` 顏色與表格也改用 token。
+- `PageNav`、`TabBar` 拿掉 `theme` 屬性。部落格跟著主題切換，首頁、連結頁、報價頁在 `.site` 裡自動是深色。
+- `ArticleHero` 拿掉 `isDark` 屬性。互動元件共用的 `useFrameTheme()` 回傳固定的 token class，不再回傳 `isDark`。
+- 文章頁與列表頁底色都是 `bg-canvas`，文章頁背後的點陣從 12% 降到 5%。
+- 原本當裝飾用的紫色、綠色（`StepGuide`、`InteractiveQuote`、`InsightQuote`）改成品牌色或中性色；`InsightQuote` 的 warning 改用狀態色的橘色。
+- framer-motion 只吃完整色值，所以另外提供 `--color-brand-solid`、`--color-danger-solid`（每個主題區塊都要宣告一次，因為自訂屬性繼承的是算好的值）。
+
+刻意保留的 `useTheme`：主題切換按鈕（`BlogNavTools`、`BlogMobileTools`、`/design`）要知道目前主題才能顯示太陽或月亮。
+
+刻意保留的寫死顏色：
+
+| 位置 | 原因 |
+| --- | --- |
+| 互動元件裡的熱度條（黃到紅的漸層） | 資料視覺化，兩種主題要長一樣 |
+| `HudCompare` 的遊戲介面、`RuleStressTest` 的紅色印章、`InteractiveFrame` 標題旁的方塊圖示 | 插畫與遊戲畫面 |
+| 蓋在截圖上的黑色半透明、目錄抽屜背後的遮罩 `bg-black/40` | 疊在照片或畫面上，兩種主題都要是暗的 |
+| 首頁、連結頁、報價頁、電子報頁面（`components/home`、`NewsletterPageShell`） | 固定深色，原本的值和深色 token 相同 |
 
 ## 資訊架構
 

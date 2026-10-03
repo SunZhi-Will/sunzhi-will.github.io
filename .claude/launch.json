@@ -4,8 +4,9 @@
     {
       "name": "blog-dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--", "--port", "3111"],
-      "port": 3111
+      "runtimeArgs": ["run", "dev"],
+      "port": 3111,
+      "autoPort": true
     }
   ]
 }

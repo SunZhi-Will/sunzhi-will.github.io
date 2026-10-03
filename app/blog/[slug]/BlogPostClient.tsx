@@ -23,7 +23,6 @@ const ShareButtons = dynamic(() => import('@/components/blog/ShareButtons').then
 const TableOfContents = dynamic(() => import('@/components/blog/TableOfContents').then(mod => ({ default: mod.TableOfContents })), { ssr: false });
 const NewsletterSubscribe = dynamic(() => import('@/components/blog/NewsletterSubscribe').then(mod => ({ default: mod.NewsletterSubscribe })), { ssr: false });
 // import { ScrollReveal } from '@/components/blog/ScrollReveal';
-import { useTheme } from '../ThemeProvider';
 // import type { MDXRemoteSerializeResult } from 'next-mdx-remote'; // 臨時禁用MDX
 
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
@@ -70,8 +69,6 @@ export default function BlogPostClient({
     const [currentAllPosts, setCurrentAllPosts] = useState<BlogPost[]>(defaultAllPosts);
     // 使用服務端傳來的 baseUrl 作為初始值，避免 hydration mismatch
     const [currentBaseUrl, setCurrentBaseUrl] = useState<string>(baseUrl);
-    const { theme } = useTheme();
-    const isDark = theme === 'dark';
     const [isMobileTOCOpen, setIsMobileTOCOpen] = useState(false);
 
     // 在客戶端更新 baseUrl（僅在客戶端執行，不影響 SSR）
@@ -153,21 +150,18 @@ export default function BlogPostClient({
         <div
             className="min-h-screen relative bg-canvas transition-colors duration-300"
             style={{
-                // 點陣只是底紋，壓到幾乎看不見，避免在內文後面干擾閱讀
-                backgroundImage: isDark
-                    ? `radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)`
-                    : `radial-gradient(circle, rgba(0,0,0,0.05) 1px, transparent 1px)`,
+                // 點陣只是底紋，壓到幾乎看不見，避免在內文後面干擾閱讀；用文字色加透明度，深淺色自動切換
+                backgroundImage: `radial-gradient(circle, rgb(var(--color-fg) / 0.05) 1px, transparent 1px)`,
                 backgroundSize: '50px 50px',
             } satisfies CSSProperties}
         >
             {/* 手機版：底部分頁列，往下閱讀時收起 */}
-            <TabBar current="blog" lang={lang} theme={theme} hideOnScroll />
+            <TabBar current="blog" lang={lang} hideOnScroll />
 
             {/* 電腦版置中導覽：往下閱讀時自動收起 */}
             <PageNav
                 current="blog"
                 lang={lang}
-                theme={theme}
                 hideOnScroll
                 back={{ href: '/blog', label: lang === 'zh-TW' ? '所有文章' : 'All posts' }}
                 tools={
@@ -205,7 +199,6 @@ export default function BlogPostClient({
                                 post={currentPost}
                                 lang={lang}
                                 readingTime={readingTime}
-                                isDark={isDark}
                             />
 
                             {/* 內容開始分界線 */}
@@ -248,7 +241,7 @@ export default function BlogPostClient({
                             />
 
                             {/* 訂閱電子報 */}
-                            <div className="pt-10 border-t border-black/8 dark:border-white/8">
+                            <div className="pt-10 border-t border-line">
                                 <NewsletterSubscribe lang={lang} variant="section" />
                             </div>
 

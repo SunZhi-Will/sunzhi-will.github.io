@@ -91,8 +91,7 @@ export function VoxelCharacterLab() {
                     style={{ height: STAGE.height }}
                 >
                     <div
-                        className="absolute inset-x-0 bottom-0 h-[18px]"
-                        style={{ background: t.isDark ? 'rgba(250,204,21,0.12)' : 'rgba(202,138,4,0.14)' }}
+                        className="absolute inset-x-0 bottom-0 h-[18px] bg-brand/[0.13]"
                     />
                     <div className="absolute left-1/2 top-0 h-full -translate-x-1/2" style={{ width: STAGE.width }}>
                         <Block left={cx - head / 2} top={headTop} width={head} height={head} color={colors.skin}>
@@ -148,7 +147,7 @@ export function VoxelCharacterLab() {
                             <span>四肢與軀幹分離</span>
                             <span
                                 className={`flex h-5 w-9 shrink-0 items-center rounded-full px-0.5 ${
-                                    floating ? 'justify-end bg-yellow-400' : t.isDark ? 'justify-start bg-zinc-600' : 'justify-start bg-zinc-300'
+                                    floating ? 'justify-end bg-brand' : 'justify-start bg-line-strong'
                                 }`}
                             >
                                 <motion.span layout transition={SPRING} className="h-4 w-4 rounded-full bg-white shadow" />
@@ -169,7 +168,7 @@ export function VoxelCharacterLab() {
                                 max={96}
                                 value={head}
                                 onChange={(e) => setHead(Number(e.target.value))}
-                                className="mt-1 w-full accent-yellow-400"
+                                className="mt-1 w-full accent-brand"
                             />
                         </label>
                         <label className={`block text-sm ${t.text}`}>
@@ -184,7 +183,7 @@ export function VoxelCharacterLab() {
                                 step={0.1}
                                 value={limb}
                                 onChange={(e) => setLimb(Number(e.target.value))}
-                                className="mt-1 w-full accent-yellow-400"
+                                className="mt-1 w-full accent-brand"
                             />
                         </label>
                         <div className="flex flex-wrap items-center gap-2">

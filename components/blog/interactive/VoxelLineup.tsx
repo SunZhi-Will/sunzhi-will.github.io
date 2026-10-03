@@ -89,10 +89,10 @@ export function VoxelLineup() {
                                 whileTap={revealed ? undefined : { scale: 0.97 }}
                                 className={`relative block aspect-video w-full overflow-hidden rounded-md border-2 bg-black bg-cover bg-center ${
                                     revealed && shot.mine
-                                        ? 'border-yellow-400'
+                                        ? 'border-brand'
                                         : isPicked
-                                            ? revealed ? 'border-red-400' : 'border-yellow-400'
-                                            : t.isDark ? 'border-zinc-800' : 'border-zinc-200'
+                                            ? revealed ? 'border-danger' : 'border-brand'
+                                            : 'border-line'
                                 } ${revealed ? 'cursor-default' : ''}`}
                                 style={{ backgroundImage: `url(${IMAGE_BASE}/${shot.file})` }}
                             >
@@ -105,7 +105,7 @@ export function VoxelLineup() {
                                             exit={{ scale: 0 }}
                                             transition={{ type: 'spring', stiffness: 420, damping: 18 }}
                                             className={`absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full ${
-                                                revealed && !shot.mine ? 'bg-red-500 text-white' : 'bg-yellow-400 text-black'
+                                                revealed && !shot.mine ? 'bg-danger text-canvas' : 'bg-brand text-brand-on'
                                             }`}
                                         >
                                             {revealed && !shot.mine ? <XMarkIcon className="h-4 w-4" /> : <CheckIcon className="h-4 w-4" />}
@@ -118,7 +118,7 @@ export function VoxelLineup() {
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: 0.05 * index }}
                                             className={`absolute inset-x-0 bottom-0 px-2 py-1 text-left text-xs font-semibold ${
-                                                shot.mine ? 'bg-yellow-400 text-black' : 'bg-black/75 text-white'
+                                                shot.mine ? 'bg-brand text-brand-on' : 'bg-black/75 text-white'
                                             }`}
                                         >
                                             {shot.game}
@@ -184,7 +184,7 @@ export function VoxelLineup() {
                         onClick={() => toggle(zoomedShot.file)}
                         className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
                             picked.includes(zoomedShot.file)
-                                ? 'border-yellow-400 bg-yellow-400 text-black'
+                                ? 'border-brand bg-brand text-brand-on'
                                 : 'border-white/40 bg-white/10 text-white hover:bg-white/20'
                         }`}
                     >

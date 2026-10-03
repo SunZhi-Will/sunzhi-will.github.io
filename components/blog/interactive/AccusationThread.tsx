@@ -25,7 +25,7 @@ function TypingDots({ align }: { align: 'start' | 'end' }) {
                 {[0, 1, 2].map((i) => (
                     <motion.span
                         key={i}
-                        className={`h-1.5 w-1.5 rounded-full ${t.isDark ? 'bg-zinc-500' : 'bg-zinc-400'}`}
+                        className="h-1.5 w-1.5 rounded-full bg-fg/40"
                         animate={{ opacity: [0.3, 1, 0.3] }}
                         transition={{ duration: 0.9, repeat: Infinity, delay: i * 0.15 }}
                     />
@@ -63,9 +63,7 @@ export function AccusationThread() {
                             className="flex justify-start"
                         >
                             <span
-                                className={`max-w-[85%] rounded-2xl rounded-bl-sm border px-4 py-2 text-[15px] font-medium ${
-                                    t.isDark ? 'border-red-500/30 bg-red-500/10 text-red-200' : 'border-red-200 bg-red-50 text-red-800'
-                                }`}
+                                className="max-w-[85%] rounded-2xl rounded-bl-sm border px-4 py-2 text-[15px] font-medium border-danger/30 bg-danger/10 text-danger-text"
                             >
                                 「{message.text}」
                             </span>
@@ -77,7 +75,7 @@ export function AccusationThread() {
 
             <div className="flex items-center gap-3">
                 <span className={`shrink-0 text-xs ${t.sub}`}>火藥味</span>
-                <div className={`h-2 flex-1 overflow-hidden rounded-full ${t.isDark ? 'bg-zinc-800' : 'bg-zinc-200'}`}>
+                <div className="h-2 flex-1 overflow-hidden rounded-full bg-line">
                     <motion.div
                         className="h-full rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500"
                         animate={{ width: `${(count / MESSAGES.length) * 100}%` }}

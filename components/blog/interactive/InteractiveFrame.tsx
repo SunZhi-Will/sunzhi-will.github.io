@@ -2,42 +2,31 @@
 
 import type { ReactNode } from 'react';
 import { MotionConfig, motion } from 'framer-motion';
-import { useTheme } from '@/app/blog/ThemeProvider';
 
 /**
  * 文章內互動元件共用的配色。
+ * 全部是設計 token，深淺色由 app/tokens.css 自動切換，所以不需要讀主題。
  * 注意：元件內不要使用 <p> 與 h2~h6，
  * 前者會被 EnhancedArticleContent 的數字高亮改寫 DOM，後者會被目錄抓進去。
  */
-export function useFrameTheme() {
-    const { theme } = useTheme();
-    const isDark = theme === 'dark';
+const FRAME_THEME = {
+    card: 'bg-surface border-line shadow-card',
+    inset: 'bg-surface-sunken border-line',
+    divider: 'border-line',
+    text: 'text-fg',
+    sub: 'text-fg-body',
+    faint: 'text-fg-muted',
+    accent: 'text-brand-text',
+    accentSoft: 'bg-brand/10 border-brand/30 text-brand-text',
+    chip: 'bg-surface-raised border-line text-fg-body hover:border-line-strong',
+    chipOn: 'bg-brand border-brand text-brand-on',
+    // 中性的高對比按鈕，深淺色都是反白
+    button: 'bg-fg text-canvas hover:bg-fg/90',
+    ghost: 'border-line-strong text-fg-body hover:bg-surface-raised',
+};
 
-    return {
-        isDark,
-        card: isDark ? 'bg-zinc-900/70 border-zinc-700/50' : 'bg-white border-zinc-200 shadow-sm',
-        inset: isDark ? 'bg-black/40 border-zinc-800' : 'bg-zinc-50 border-zinc-200',
-        divider: isDark ? 'border-zinc-800' : 'border-zinc-200',
-        text: isDark ? 'text-zinc-100' : 'text-zinc-900',
-        sub: isDark ? 'text-zinc-200' : 'text-zinc-600',
-        faint: isDark ? 'text-zinc-200' : 'text-zinc-400',
-        accent: isDark ? 'text-yellow-300' : 'text-yellow-700',
-        accentSoft: isDark
-            ? 'bg-yellow-400/10 border-yellow-400/30 text-yellow-200'
-            : 'bg-yellow-50 border-yellow-300 text-yellow-800',
-        chip: isDark
-            ? 'bg-zinc-800/70 border-zinc-700 text-zinc-200 hover:border-zinc-500'
-            : 'bg-white border-zinc-300 text-zinc-700 hover:border-zinc-400',
-        chipOn: isDark
-            ? 'bg-yellow-400 border-yellow-400 text-black'
-            : 'bg-yellow-400 border-yellow-500 text-black',
-        button: isDark
-            ? 'bg-zinc-100 text-zinc-900 hover:bg-white'
-            : 'bg-zinc-900 text-white hover:bg-zinc-800',
-        ghost: isDark
-            ? 'border-zinc-700 text-zinc-200 hover:bg-zinc-800'
-            : 'border-zinc-300 text-zinc-700 hover:bg-zinc-100',
-    };
+export function useFrameTheme() {
+    return FRAME_THEME;
 }
 
 /** 標題列左側的小方塊圖示，呼應體素主題 */

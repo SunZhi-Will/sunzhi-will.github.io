@@ -3,7 +3,6 @@
 import { useId, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useTheme } from '@/app/blog/ThemeProvider';
 import { isValidEmail, postNewsletter, type NewsletterFailure } from '@/lib/newsletter-api';
 
 interface NewsletterSubscribeProps {
@@ -64,8 +63,6 @@ const translations = {
 };
 
 export function NewsletterSubscribe({ lang, variant = 'section' }: NewsletterSubscribeProps) {
-    const { theme } = useTheme();
-    const isDark = theme === 'dark';
     const t = translations[lang];
     const isSection = variant === 'section';
 
@@ -102,15 +99,12 @@ export function NewsletterSubscribe({ lang, variant = 'section' }: NewsletterSub
         }
     };
 
+    // 顏色來自 app/tokens.css，深淺色自動切換。焦點框用主要按鈕的顏色（深色黃、淺色深灰）
     const tone = {
-        title: isDark ? 'text-white' : 'text-stone-900',
-        body: isDark ? 'text-zinc-200' : 'text-stone-600',
-        link: isDark
-            ? 'underline decoration-white/40 underline-offset-4 hover:text-yellow-400 hover:decoration-yellow-400'
-            : 'underline decoration-stone-400 underline-offset-4 hover:text-amber-700 hover:decoration-amber-700',
-        ring: isDark
-            ? 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111113]'
-            : 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-900 focus-visible:ring-offset-2 focus-visible:ring-offset-white',
+        title: 'text-fg',
+        body: 'text-fg-muted',
+        link: 'underline decoration-fg/40 underline-offset-4 hover:text-brand-text hover:decoration-brand-text',
+        ring: 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-action focus-visible:ring-offset-2 focus-visible:ring-offset-surface',
     };
 
     const success = sentTo && (
@@ -124,9 +118,7 @@ export function NewsletterSubscribe({ lang, variant = 'section' }: NewsletterSub
         >
             <span
                 aria-hidden="true"
-                className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full ${
-                    isDark ? 'bg-emerald-400/15 text-emerald-400' : 'bg-emerald-100 text-emerald-700'
-                }`}
+                className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-success/15 text-success"
             >
                 <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
                     <path d="M4 10.5l4 4 8-9" />
@@ -172,14 +164,8 @@ export function NewsletterSubscribe({ lang, variant = 'section' }: NewsletterSub
                     aria-describedby={error ? errorId : undefined}
                     className={`w-full min-w-0 flex-shrink-0 rounded-xl border px-4 outline-none transition-colors disabled:opacity-60 ${
                         isSection ? 'h-12 text-base sm:w-auto sm:flex-1' : 'h-10 text-sm'
-                    } ${
-                        isDark
-                            ? 'bg-white/[0.04] text-white focus:border-yellow-400 focus:bg-white/[0.07]'
-                            : 'bg-white text-stone-900 focus:border-stone-900'
-                    } ${
-                        error
-                            ? isDark ? 'border-red-400' : 'border-red-600'
-                            : isDark ? 'border-white/20 hover:border-white/40' : 'border-stone-300 hover:border-stone-500'
+                    } bg-surface-raised text-fg focus:border-action ${
+                        error ? 'border-danger' : 'border-line-strong hover:border-fg/40'
                     }`}
                 />
                 <button
@@ -188,11 +174,7 @@ export function NewsletterSubscribe({ lang, variant = 'section' }: NewsletterSub
                     aria-busy={isSubmitting}
                     className={`inline-flex flex-shrink-0 items-center justify-center gap-2 rounded-xl font-semibold transition-colors disabled:cursor-wait ${
                         isSection ? 'h-12 px-7 text-base' : 'h-10 px-5 text-sm'
-                    } ${
-                        isDark
-                            ? 'bg-yellow-400 text-zinc-950 hover:bg-yellow-300'
-                            : 'bg-stone-900 text-white hover:bg-stone-700'
-                    } ${tone.ring}`}
+                    } bg-action text-action-on hover:bg-action/90 ${tone.ring}`}
                 >
                     {isSubmitting && (
                         <span aria-hidden="true" className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
@@ -201,7 +183,7 @@ export function NewsletterSubscribe({ lang, variant = 'section' }: NewsletterSub
                 </button>
             </div>
             {error && (
-                <p id={errorId} role="alert" className={`mt-2.5 ${isSection ? 'text-sm' : 'text-xs'} font-medium ${isDark ? 'text-red-400' : 'text-red-700'}`}>
+                <p id={errorId} role="alert" className={`mt-2.5 ${isSection ? 'text-sm' : 'text-xs'} font-medium text-danger`}>
                     {t.errors[error]}
                 </p>
             )}
@@ -232,12 +214,10 @@ export function NewsletterSubscribe({ lang, variant = 'section' }: NewsletterSub
         <section
             id="newsletter"
             aria-labelledby={titleId}
-            className={`scroll-mt-24 rounded-2xl border p-6 transition-colors sm:p-8 md:p-10 ${
-                isDark ? 'border-white/10 bg-[#111113]' : 'border-stone-200 bg-white'
-            }`}
+            className="scroll-mt-24 rounded-2xl border p-6 transition-colors sm:p-8 md:p-10 border-line bg-surface"
         >
-            <p className={`font-geist-mono flex items-center gap-2 text-xs font-medium uppercase tracking-[0.14em] ${isDark ? 'text-zinc-200' : 'text-stone-600'}`}>
-                <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${isDark ? 'bg-yellow-400' : 'bg-amber-600'}`} />
+            <p className={`font-geist-mono flex items-center gap-2 text-xs font-medium uppercase tracking-[0.14em] text-fg-muted`}>
+                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-brand" />
                 {t.eyebrow}
             </p>
             <h2 id={titleId} className={`mt-3 text-2xl font-semibold leading-tight tracking-tight md:text-3xl ${tone.title}`}>

@@ -20,8 +20,6 @@ export const NAV_PAGES: Array<{ id: 'home' | PageId; href: string; zh: string; e
 interface PageNavProps {
   current: PageId;
   lang: Lang;
-  // 部落格有淺色主題，其他頁面固定深色
-  theme?: 'dark' | 'light';
   // 部落格往下閱讀時收起，避免蓋住內文
   hideOnScroll?: boolean;
   // 文章頁最左邊的明確返回
@@ -32,22 +30,20 @@ interface PageNavProps {
 
 // 首頁以外各頁共用的桌面導覽膠囊，與首頁的導覽列同一套外觀，置中在畫面上方。
 // 手機版沒有這個元件，由底部的 TabBar 負責
-export function PageNav({ current, lang, theme = 'dark', hideOnScroll = false, back, tools }: PageNavProps) {
+// 顏色全部用 app/tokens.css 的 token：部落格跟著主題切換，其他頁面在 .site 裡固定深色
+export function PageNav({ current, lang, hideOnScroll = false, back, tools }: PageNavProps) {
   const [focused, setFocused] = useState(false);
   const scrolledDown = useHideOnScroll();
   const hidden = hideOnScroll && scrolledDown && !focused;
-  const dark = theme === 'dark';
   const zh = lang === 'zh-TW';
 
-  const shell = dark
-    ? 'border-white/10 bg-[#141416]/85 shadow-[0_8px_40px_rgba(0,0,0,0.45)]'
-    : 'border-stone-300/70 bg-[#faf9f7]/90 shadow-[0_8px_30px_rgba(0,0,0,0.08)]';
-  const logoText = dark ? 'text-zinc-100' : 'text-stone-900';
-  const itemBase = dark ? 'text-zinc-200 hover:text-yellow-400' : 'text-stone-600 hover:text-amber-700';
-  const itemActive = dark ? 'text-white' : 'text-stone-900';
-  const activeBg = dark ? 'bg-white/10' : 'bg-stone-900/[0.07]';
-  const divider = dark ? 'bg-white/10' : 'bg-stone-300';
-  const sunkoro = dark ? 'text-amber-400 hover:text-amber-300' : 'text-amber-700 hover:text-amber-800';
+  const shell = 'border-line bg-surface/85 shadow-pop';
+  const logoText = 'text-fg';
+  const itemBase = 'text-fg-muted hover:text-brand-text';
+  const itemActive = 'text-fg';
+  const activeBg = 'bg-fg/[0.08]';
+  const divider = 'bg-line';
+  const sunkoro = 'text-brand-text hover:text-brand';
 
   return (
     <motion.header

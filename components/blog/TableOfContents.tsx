@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react';
-import { useTheme } from '@/app/blog/ThemeProvider';
 import { Lang } from '@/types';
 
 interface Heading {
@@ -33,9 +32,6 @@ export function TableOfContents({
     
     const isMobileOpen = controlledIsMobileOpen !== undefined ? controlledIsMobileOpen : localIsMobileOpen;
     const setIsMobileOpen = controlledSetIsMobileOpen !== undefined ? controlledSetIsMobileOpen : setLocalIsMobileOpen;
-    
-    const { theme } = useTheme();
-    const isDark = theme === 'dark';
 
     // 提取文章中的標題
     useEffect(() => {
@@ -332,12 +328,8 @@ export function TableOfContents({
                             onClick={(e) => handleClick(heading.id, e)}
                             className={`block leading-snug transition-all duration-200 ${clamp ? 'py-1 text-xs line-clamp-2' : 'py-3 text-sm'
                                 } ${isActive
-                                    ? isDark
-                                        ? 'text-yellow-300 font-medium'
-                                        : 'text-yellow-700 font-medium'
-                                    : isDark
-                                        ? 'text-zinc-200 hover:text-yellow-400'
-                                        : 'text-gray-600 hover:text-gray-900'
+                                    ? 'text-brand-text font-medium'
+                                    : 'text-fg-muted hover:text-brand-text'
                                 }`}
                         >
                             {heading.text}
@@ -356,13 +348,11 @@ export function TableOfContents({
             <nav
                 ref={desktopNavRef}
                 data-lenis-prevent
-                className={`toc-scroll hidden xl:block fixed top-[6rem] w-44 max-h-[calc(100vh-8rem)] overflow-y-auto overscroll-contain pb-4 z-10 transition-all duration-300 ${edges.top ? 'toc-fade-top' : ''} ${edges.bottom ? 'toc-fade-bottom' : ''} ${isDark ? 'text-zinc-200' : 'text-gray-700'
-                    }`}
+                className={`toc-scroll hidden xl:block fixed top-[6rem] w-44 max-h-[calc(100vh-8rem)] overflow-y-auto overscroll-contain pb-4 z-10 transition-all duration-300 ${edges.top ? 'toc-fade-top' : ''} ${edges.bottom ? 'toc-fade-bottom' : ''} text-fg-body`}
                 style={{ left: `${leftPosition}px` }}
                 aria-label={lang === 'zh-TW' ? '目錄' : 'Table of Contents'}
             >
-                <p className={`mb-3 text-[11px] font-bold tracking-widest uppercase ${isDark ? 'text-zinc-200' : 'text-gray-400'
-                    }`}>
+                <p className="mb-3 text-[11px] font-bold tracking-widest uppercase text-fg-muted">
                     {tocLabel}
                 </p>
                 <TocList clamp />
@@ -377,10 +367,7 @@ export function TableOfContents({
                         type="button"
                         onClick={() => setIsMobileOpen(true)}
                         aria-label={tocLabel}
-                        className={`fixed bottom-[5.5rem] right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full border shadow-xl backdrop-blur-xl transition-colors ${isDark
-                            ? 'border-white/15 bg-[#1c1c1e]/90 text-yellow-300 hover:bg-[#2a2a2c]'
-                            : 'border-stone-300/70 bg-white/90 text-yellow-700 hover:bg-stone-50'
-                            }`}
+                        className={`fixed bottom-[5.5rem] right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full border shadow-pop backdrop-blur-xl transition-colors border-line-strong bg-surface/90 text-brand-text hover:bg-surface-raised`}
                     >
                         <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h10M4 14h16M4 18h10" />
@@ -401,26 +388,21 @@ export function TableOfContents({
                     className={`fixed bottom-0 left-0 right-0 z-50 transition-transform duration-300 ease-out ${isMobileOpen ? 'translate-y-0' : 'translate-y-full'
                         }`}
                 >
-                    <div className={`rounded-t-2xl shadow-2xl border-t max-h-[70vh] flex flex-col backdrop-blur-2xl ${isDark
-                        ? 'bg-gray-900/95 border-white/10'
-                        : 'bg-white/95 border-black/10'
-                        }`}>
+                    <div className="rounded-t-2xl shadow-pop border-t max-h-[70vh] flex flex-col backdrop-blur-2xl bg-surface/95 border-line">
                         {/* 抽屜頭部 */}
-                        <div className={`flex items-center justify-between px-5 py-2 border-b ${isDark ? 'border-white/10' : 'border-black/8'
-                            }`}>
+                        <div className="flex items-center justify-between px-5 py-2 border-b border-line">
                             <div className="flex items-center gap-2">
-                                <svg className={`w-4 h-4 ${isDark ? 'text-yellow-300' : 'text-yellow-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-4 h-4 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                                         d="M4 6h16M4 10h10M4 14h16M4 18h10" />
                                 </svg>
-                                <span className={`text-sm font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
+                                <span className="text-sm font-semibold text-fg">
                                     {tocLabel}
                                 </span>
                             </div>
                             <button
                                 onClick={() => setIsMobileOpen(false)}
-                                className={`w-11 h-11 -mr-2 flex items-center justify-center rounded-full transition-colors ${isDark ? 'text-zinc-200 hover:text-yellow-400 hover:bg-white/10' : 'text-gray-500 hover:text-gray-800 hover:bg-black/5'
-                                    }`}
+                                className="w-11 h-11 -mr-2 flex items-center justify-center rounded-full transition-colors text-fg-muted hover:text-brand-text hover:bg-surface-raised"
                                 aria-label={lang === 'zh-TW' ? '關閉目錄' : 'Close'}
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

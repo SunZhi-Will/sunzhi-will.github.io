@@ -6,7 +6,6 @@ import {
     LinkIcon, 
     ClipboardDocumentCheckIcon 
 } from '@heroicons/react/24/outline';
-import { useTheme } from '@/app/blog/ThemeProvider';
 import { Lang } from '@/types';
 
 interface ShareButtonsProps {
@@ -17,8 +16,6 @@ interface ShareButtonsProps {
 
 export function ShareButtons({ title, url, lang }: ShareButtonsProps) {
     const [copied, setCopied] = useState(false);
-    const { theme } = useTheme();
-    const isDark = theme === 'dark';
 
     const shareText = lang === 'zh-TW' 
         ? `分享：${title}` 
@@ -56,12 +53,8 @@ export function ShareButtons({ title, url, lang }: ShareButtonsProps) {
     };
 
     return (
-        <div className="py-3 border-b" style={{
-            borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
-        }}>
-            <div className={`flex items-center gap-2 mb-4 ${
-                isDark ? 'text-zinc-200' : 'text-gray-700'
-            }`}>
+        <div className="py-3 border-b border-line">
+            <div className="flex items-center gap-2 mb-4 text-fg-body">
                 <ShareIcon className="w-4 h-4 opacity-60" />
                 <span className="text-sm font-normal">
                     {lang === 'zh-TW' ? '分享這篇文章' : 'Share this article'}
@@ -72,11 +65,7 @@ export function ShareButtons({ title, url, lang }: ShareButtonsProps) {
                     href={shareLinks.twitter}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`px-4 py-2 text-sm font-normal rounded-md border transition-all hover:opacity-80 ${
-                        isDark
-                            ? 'text-zinc-200 border-gray-700/50 bg-gray-800/30 hover:bg-gray-800/50'
-                            : 'text-gray-600 border-gray-300/50 bg-gray-50/50 hover:bg-gray-100/50'
-                    }`}
+                    className={`px-4 py-2 text-sm font-normal rounded-md border transition-all hover:opacity-80 text-fg-muted border-line bg-surface-raised hover:border-line-strong`}
                 >
                     Twitter
                 </a>
@@ -84,11 +73,7 @@ export function ShareButtons({ title, url, lang }: ShareButtonsProps) {
                     href={shareLinks.facebook}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`px-4 py-2 text-sm font-normal rounded-md border transition-all hover:opacity-80 ${
-                        isDark
-                            ? 'text-zinc-200 border-gray-700/50 bg-gray-800/30 hover:bg-gray-800/50'
-                            : 'text-gray-600 border-gray-300/50 bg-gray-50/50 hover:bg-gray-100/50'
-                    }`}
+                    className={`px-4 py-2 text-sm font-normal rounded-md border transition-all hover:opacity-80 text-fg-muted border-line bg-surface-raised hover:border-line-strong`}
                 >
                     Facebook
                 </a>
@@ -96,21 +81,13 @@ export function ShareButtons({ title, url, lang }: ShareButtonsProps) {
                     href={shareLinks.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`px-4 py-2 text-sm font-normal rounded-md border transition-all hover:opacity-80 ${
-                        isDark
-                            ? 'text-zinc-200 border-gray-700/50 bg-gray-800/30 hover:bg-gray-800/50'
-                            : 'text-gray-600 border-gray-300/50 bg-gray-50/50 hover:bg-gray-100/50'
-                    }`}
+                    className={`px-4 py-2 text-sm font-normal rounded-md border transition-all hover:opacity-80 text-fg-muted border-line bg-surface-raised hover:border-line-strong`}
                 >
                     LinkedIn
                 </a>
                 <button
                     onClick={handleShare}
-                    className={`px-4 py-2 text-sm font-normal rounded-md border transition-all hover:opacity-80 flex items-center gap-2 ${
-                        isDark
-                            ? 'text-zinc-200 border-gray-700/50 bg-gray-800/30 hover:bg-gray-800/50'
-                            : 'text-gray-600 border-gray-300/50 bg-gray-50/50 hover:bg-gray-100/50'
-                    }`}
+                    className={`px-4 py-2 text-sm font-normal rounded-md border transition-all hover:opacity-80 flex items-center gap-2 text-fg-muted border-line bg-surface-raised hover:border-line-strong`}
                 >
                     {copied ? (
                         <>

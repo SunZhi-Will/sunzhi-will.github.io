@@ -30,7 +30,7 @@ export function CritiqueOrInsult() {
         const tone = !sorted
             ? t.chip
             : person
-                ? t.isDark ? 'border-red-500/30 bg-red-500/10 text-red-200' : 'border-red-200 bg-red-50 text-red-800'
+                ? 'border-danger/30 bg-danger/10 text-danger-text'
                 : t.accentSoft;
 
         return (

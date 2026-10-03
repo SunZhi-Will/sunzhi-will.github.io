@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
-import { useTheme } from '@/app/blog/ThemeProvider';
 
 interface ExpandableSectionProps {
     title: string;
@@ -19,28 +18,17 @@ export function ExpandableSection({
     icon 
 }: ExpandableSectionProps) {
     const [isExpanded, setIsExpanded] = useState(defaultExpanded);
-    const { theme } = useTheme();
-    const isDark = theme === 'dark';
 
+    // 顏色來自 app/tokens.css，深淺色自動切換
     return (
-        <div className={`my-6 rounded-xl border transition-all duration-300 ${
-            isDark
-                ? 'border-gray-700/50 bg-gray-800/30'
-                : 'border-gray-300/50 bg-gray-50/50'
-        }`}>
+        <div className="my-6 rounded-xl border transition-all duration-300 border-line bg-surface">
             <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className={`w-full px-5 py-4 flex items-center justify-between gap-3 text-left transition-colors duration-200 ${
-                    isDark
-                        ? 'hover:bg-gray-800/50'
-                        : 'hover:bg-gray-100/50'
-                }`}
+                className="w-full px-5 py-4 flex items-center justify-between gap-3 text-left transition-colors duration-200 hover:bg-surface-raised"
             >
                 <div className="flex items-center gap-3">
                     {icon && <span className="text-lg">{icon}</span>}
-                    <span className={`font-medium ${
-                        isDark ? 'text-gray-200' : 'text-gray-900'
-                    }`}>
+                    <span className="font-medium text-fg">
                         {title}
                     </span>
                 </div>
@@ -48,9 +36,7 @@ export function ExpandableSection({
                     animate={{ rotate: isExpanded ? 180 : 0 }}
                     transition={{ duration: 0.2 }}
                 >
-                    <ChevronDownIcon className={`w-5 h-5 ${
-                        isDark ? 'text-zinc-200' : 'text-gray-600'
-                    }`} />
+                    <ChevronDownIcon className="w-5 h-5 text-fg-muted" />
                 </motion.div>
             </button>
             <AnimatePresence>
@@ -62,9 +48,7 @@ export function ExpandableSection({
                         transition={{ duration: 0.3, ease: 'easeInOut' }}
                         className="overflow-hidden"
                     >
-                        <div className={`px-5 pb-5 ${
-                            isDark ? 'text-zinc-200' : 'text-gray-700'
-                        }`}>
+                        <div className="px-5 pb-5 text-fg-body">
                             {children}
                         </div>
                     </motion.div>

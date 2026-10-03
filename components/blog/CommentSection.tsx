@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react';
 import Script from 'next/script';
 import { Lang } from '@/types';
-import { useTheme } from '@/app/blog/ThemeProvider';
 
 interface CommentSectionProps {
     postSlug: string;
@@ -34,8 +33,6 @@ interface DisqusConfig {
 }
 
 export function CommentSection({ postSlug, postTitle, lang, postUrl }: CommentSectionProps) {
-    const { theme } = useTheme();
-    const isDark = theme === 'dark';
     const disqusRef = useRef<HTMLDivElement>(null);
 
     // Disqus shortname - 從環境變數取得並驗證
@@ -87,9 +84,8 @@ export function CommentSection({ postSlug, postTitle, lang, postUrl }: CommentSe
 
     return (
         <section>
-            <h2 className={`text-lg font-light mb-6 ${
-                isDark ? 'text-white' : 'text-black font-semibold'
-            }`}>
+            {/* 字重仍依主題不同：深色用細體，淺色用粗體，這不是顏色所以留給 dark: 前綴處理 */}
+            <h2 className="text-lg font-semibold dark:font-light mb-6 text-fg">
                 {lang === 'zh-TW' ? '留言' : 'Comments'}
             </h2>
 

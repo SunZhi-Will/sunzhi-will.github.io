@@ -20,12 +20,11 @@ export function BlogNavTools({ lang, searchQuery, setSearchQuery }: BlogNavTools
     const [open, setOpen] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const t = blogTranslations[lang];
+    // 只有主題切換鈕要知道目前主題（決定顯示太陽或月亮），顏色都交給 token
     const dark = theme === 'dark';
     const expanded = open || searchQuery.length > 0;
 
-    const button = `flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-200 ${
-        dark ? 'text-zinc-200 hover:text-yellow-400' : 'text-stone-600 hover:text-amber-700'
-    }`;
+    const button = 'flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-200 text-fg-muted hover:text-brand-text';
 
     const close = () => {
         setSearchQuery('');
@@ -54,9 +53,7 @@ export function BlogNavTools({ lang, searchQuery, setSearchQuery }: BlogNavTools
                             onKeyDown={(e) => e.key === 'Escape' && close()}
                             placeholder={t.searchPlaceholder}
                             aria-label={t.searchPlaceholder}
-                            className={`h-8 w-[200px] bg-transparent px-3 text-[13px] focus:outline-none ${
-                                dark ? 'text-white placeholder:text-zinc-200' : 'text-stone-900 placeholder:text-stone-400'
-                            }`}
+                            className="h-8 w-[200px] bg-transparent px-3 text-[13px] focus:outline-none text-fg placeholder:text-fg-muted"
                         />
                     </motion.div>
                 )}

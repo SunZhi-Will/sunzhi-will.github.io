@@ -6,7 +6,6 @@ import { formatDate } from '@/lib/blog-utils';
 import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
 import { blogTranslations, filterTagsByLanguage, translateTag } from '@/lib/blog-translations';
-import { useTheme } from '@/app/blog/ThemeProvider';
 import { NewsletterSubscribe } from './NewsletterSubscribe';
 
 interface BlogPostSidebarProps {
@@ -18,56 +17,36 @@ interface BlogPostSidebarProps {
 
 export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSidebarProps) {
     const t = blogTranslations[lang];
-    const { theme } = useTheme();
-    const isDark = theme === 'dark';
 
     return (
-        <aside className={`w-56 lg:w-64 border-r backdrop-blur-sm flex flex-col overflow-y-auto scrollbar-hide relative transition-colors duration-300 ${
-            isDark
-                ? 'border-gray-700/50 bg-gradient-to-b from-gray-800/80 via-gray-900/60 to-gray-800/80'
-                : 'border-gray-300/50 bg-gradient-to-b from-white/80 via-gray-50/60 to-white/80'
-        }`}>
+        <aside className="w-56 lg:w-64 border-r backdrop-blur-sm flex flex-col overflow-y-auto scrollbar-hide relative transition-colors duration-300 border-line bg-gradient-to-b from-surface/80 via-surface-sunken/60 to-surface/80">
             {/* 背景裝飾 */}
-            <div className={`absolute inset-0 bg-gradient-to-br via-transparent pointer-events-none ${
-                isDark
-                    ? 'from-gray-600/5 to-gray-500/5'
-                    : 'from-gray-300/5 to-gray-400/5'
-            }`}></div>
+            <div className="absolute inset-0 bg-gradient-to-br via-transparent pointer-events-none from-fg/5 to-fg/5"></div>
             
             <div className="relative z-10 flex flex-col h-full">
                 {/* 個人資訊區域 */}
-                <div className={`p-5 border-b backdrop-blur-sm ${
-                    isDark
-                        ? 'border-gray-700/50 bg-gradient-to-br from-gray-800/30 to-gray-900/30'
-                        : 'border-gray-300/50 bg-gradient-to-br from-gray-200/30 to-gray-100/30'
-                }`}>
+                <div className="p-5 border-b backdrop-blur-sm border-line bg-gradient-to-br from-surface-raised/30 to-surface/30">
                     {/* 個人資訊 - 左右排列 */}
                     <div className="flex items-center gap-3 mb-4">
                         {/* 個人照片 */}
                         <div className="relative group flex-shrink-0">
-                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-gray-400/50 to-gray-500/50 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-fg/20 to-fg/30 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             <Image
                                 src="/profile.jpg"
                                 alt={lang === 'zh-TW' ? '謝上智' : 'Sun Zhi'}
                                 width={52}
                                 height={52}
-                                className="relative rounded-full border-2 border-gray-400/50 shadow-lg group-hover:border-gray-500/70 transition-all duration-300 group-hover:scale-105"
+                                className="relative rounded-full border-2 border-line-strong shadow-lg group-hover:border-fg/40 transition-all duration-300 group-hover:scale-105"
                                 priority
                             />
                         </div>
 
                         {/* 姓名和職稱 */}
                         <div className="flex-1 min-w-0">
-                            <h1 className={`text-sm font-semibold mb-0.5 truncate bg-clip-text text-transparent ${
-                                isDark
-                                    ? 'text-gray-200 bg-gradient-to-r from-gray-200 to-gray-400'
-                                    : 'text-gray-900 bg-gradient-to-r from-gray-800 to-gray-600'
-                            }`}>
+                            <h1 className="text-sm font-semibold mb-0.5 truncate text-fg">
                                 {lang === 'zh-TW' ? '謝上智' : 'Sun Zhi'}
                             </h1>
-                            <p className={`text-xs line-clamp-2 font-light ${
-                                isDark ? 'text-zinc-200' : 'text-gray-600'
-                            }`}>
+                            <p className="text-xs line-clamp-2 font-light text-fg-muted">
                                 {lang === 'zh-TW' ? '軟體工程師 | AI 開發者' : 'Software Engineer | AI Developer'}
                             </p>
                         </div>
@@ -79,11 +58,7 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                             href="https://github.com/SunZhi-Will"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`group w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg ${
-                                isDark
-                                    ? 'bg-gray-700/70 hover:bg-gray-600/80 text-zinc-200 hover:text-yellow-400 border border-gray-600/60 hover:border-gray-500/70 hover:shadow-gray-600/30'
-                                    : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 hover:shadow-gray-400/30'
-                            }`}
+                            className="group w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg bg-surface-raised hover:bg-fg/10 text-fg-muted hover:text-brand-text border border-line hover:border-line-strong"
                             aria-label="GitHub"
                         >
                             <svg className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" fill="currentColor" viewBox="0 0 24 24">
@@ -94,11 +69,7 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                             href="https://www.linkedin.com/in/sunzhi-will"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`group w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg ${
-                                isDark
-                                    ? 'bg-gray-700/70 hover:bg-gray-600/80 text-zinc-200 hover:text-yellow-400 border border-gray-600/60 hover:border-gray-500/70 hover:shadow-gray-600/30'
-                                    : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 hover:shadow-gray-400/30'
-                            }`}
+                            className="group w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg bg-surface-raised hover:bg-fg/10 text-fg-muted hover:text-brand-text border border-line hover:border-line-strong"
                             aria-label="LinkedIn"
                         >
                             <svg className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" fill="currentColor" viewBox="0 0 24 24">
@@ -107,11 +78,7 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                         </a>
                         <a
                             href="mailto:sun055676@gmail.com"
-                            className={`group w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg ${
-                                isDark
-                                    ? 'bg-gray-700/70 hover:bg-gray-600/80 text-zinc-200 hover:text-yellow-400 border border-gray-600/60 hover:border-gray-500/70 hover:shadow-gray-600/30'
-                                    : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 hover:shadow-gray-400/30'
-                            }`}
+                            className="group w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg bg-surface-raised hover:bg-fg/10 text-fg-muted hover:text-brand-text border border-line hover:border-line-strong"
                             aria-label="Email"
                         >
                             <svg className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -122,11 +89,7 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                             href="https://www.instagram.com/bing_sunzhi"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`group w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg ${
-                                isDark
-                                    ? 'bg-gray-700/70 hover:bg-gray-600/80 text-zinc-200 hover:text-yellow-400 border border-gray-600/60 hover:border-gray-500/70 hover:shadow-gray-600/30'
-                                    : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 hover:shadow-gray-400/30'
-                            }`}
+                            className="group w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg bg-surface-raised hover:bg-fg/10 text-fg-muted hover:text-brand-text border border-line hover:border-line-strong"
                             aria-label="Instagram"
                         >
                             <svg className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" fill="currentColor" viewBox="0 0 24 24">
@@ -137,20 +100,12 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                 </div>
 
                 {/* 文章元資訊 */}
-                <div className={`p-5 border-b backdrop-blur-sm ${
-                    isDark
-                        ? 'border-gray-700/50 bg-gradient-to-br from-gray-800/20 to-gray-900/20'
-                        : 'border-gray-300/50 bg-gradient-to-br from-gray-200/20 to-gray-100/20'
-                }`}>
+                <div className="p-5 border-b backdrop-blur-sm border-line bg-gradient-to-br from-surface-raised/20 to-surface/20">
                     {/* 全部文章按鈕 */}
                     <div className="mb-5">
                         <Link
                             href="/blog"
-                            className={`group block px-3 py-2 text-xs text-left transition-all duration-300 rounded-lg border font-medium hover:scale-[1.02] hover:shadow-lg ${
-                                isDark
-                                    ? 'text-gray-200 bg-gradient-to-r from-gray-700/50 via-gray-600/50 to-gray-500/50 border-gray-600/60 hover:from-gray-600/60 hover:via-gray-500/60 hover:to-gray-400/60 hover:border-gray-500/70 hover:shadow-gray-600/20'
-                                    : 'text-gray-900 bg-gradient-to-r from-gray-300/50 via-gray-400/50 to-gray-500/50 border-gray-400/60 hover:from-gray-400/60 hover:via-gray-500/60 hover:to-gray-600/60 hover:border-gray-500/70 hover:shadow-gray-400/20'
-                            }`}
+                            className="group block px-3 py-2 text-xs text-left transition-all duration-300 rounded-lg border font-medium hover:scale-[1.02] hover:shadow-lg text-fg bg-surface-raised border-line hover:bg-fg/10 hover:border-line-strong"
                         >
                             <span className="flex items-center gap-2">
                                 <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -163,20 +118,16 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
 
                     <div className="flex flex-col gap-4 text-xs">
                         <div className="space-y-1">
-                            <div className={`text-xs uppercase tracking-wider mb-1.5 font-medium ${
-                                isDark ? 'text-zinc-200' : 'text-gray-600'
-                            }`}>
+                            <div className="text-xs uppercase tracking-wider mb-1.5 font-medium text-fg-muted">
                                 {t.published}
                             </div>
-                            <time className={`font-light ${isDark ? 'text-zinc-200' : 'text-gray-800'}`}>{formatDate(post.date, lang === 'zh-TW' ? 'zh-TW' : 'en-US')}</time>
+                            <time className="font-light text-fg-body">{formatDate(post.date, lang === 'zh-TW' ? 'zh-TW' : 'en-US')}</time>
                         </div>
                         <div className="space-y-1">
-                            <div className={`text-xs uppercase tracking-wider mb-1.5 font-medium ${
-                                isDark ? 'text-zinc-200' : 'text-gray-600'
-                            }`}>
+                            <div className="text-xs uppercase tracking-wider mb-1.5 font-medium text-fg-muted">
                                 {t.readTime}
                             </div>
-                            <div className={`font-light ${isDark ? 'text-zinc-200' : 'text-gray-800'}`}>
+                            <div className="font-light text-fg-body">
                                 {readingTime} {lang === 'zh-TW' ? '分鐘' : 'min'}
                             </div>
                         </div>
@@ -185,7 +136,7 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                             const translatedTags = Array.from(new Set(filteredTags.map(tag => translateTag(tag, lang)))).filter(Boolean);
                             return translatedTags.length > 0 && (
                                 <div className="flex flex-col gap-2">
-                                    <div className="text-xs text-gray-600 uppercase tracking-wider font-medium">
+                                    <div className="text-xs text-fg-muted uppercase tracking-wider font-medium">
                                         {t.tags}
                                     </div>
                                     <div className="flex flex-wrap gap-2">
@@ -193,11 +144,7 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                                             <span
                                                 key={tag}
                                                 className={`px-2.5 py-1 text-xs uppercase tracking-wider border rounded-md
-                                                         transition-all duration-300 hover:scale-105 ${
-                                    isDark
-                                        ? 'text-zinc-200 bg-gradient-to-br from-gray-700/70 to-gray-600/70 border-gray-600/60 hover:border-gray-500/70 hover:bg-gradient-to-br hover:from-gray-600/80 hover:to-gray-500/80'
-                                        : 'text-gray-800 bg-gradient-to-br from-gray-200/70 to-gray-300/70 border-gray-300/60 hover:border-gray-500/70 hover:bg-gradient-to-br hover:from-gray-300/80 hover:to-gray-400/80'
-                                }`}
+                                                         transition-all duration-300 hover:scale-105 text-fg-body bg-surface-raised border-line hover:border-line-strong hover:bg-fg/10`}
                                             >
                                                 {tag}
                                             </span>
@@ -215,19 +162,11 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                 </div>
 
                 {/* 返回個人頁、語言切換和頁尾 */}
-                <div className={`p-5 border-t backdrop-blur-sm ${
-                    isDark
-                        ? 'border-gray-700/50 bg-gradient-to-br from-gray-800/20 to-gray-900/20'
-                        : 'border-gray-300/50 bg-gradient-to-br from-gray-200/20 to-gray-100/20'
-                }`}>
+                <div className="p-5 border-t backdrop-blur-sm border-line bg-gradient-to-br from-surface-raised/20 to-surface/20">
                     {/* 返回個人頁按鈕 */}
                     <Link
                         href="/"
-                        className={`group block w-full px-3 py-2 text-xs transition-all duration-300 rounded-lg text-left mb-3 hover:scale-[1.02] hover:shadow-md ${
-                            isDark
-                                ? 'text-zinc-200 hover:text-yellow-400 bg-gray-700/50 hover:bg-gray-600/70 border border-gray-600/60 hover:border-gray-500/70'
-                                : 'text-gray-700 hover:text-gray-900 bg-gray-200/50 hover:bg-gray-300/70 border border-gray-300/60 hover:border-gray-400/70'
-                        }`}
+                        className="group block w-full px-3 py-2 text-xs transition-all duration-300 rounded-lg text-left mb-3 hover:scale-[1.02] hover:shadow-md text-fg-muted hover:text-brand-text bg-surface-raised hover:bg-fg/10 border border-line hover:border-line-strong"
                     >
                         <span className="flex items-center gap-2">
                             <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -239,11 +178,7 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                     
                     <button
                         onClick={() => setLang(lang === 'zh-TW' ? 'en' : 'zh-TW')}
-                        className={`group w-full px-3 py-2 text-xs transition-all duration-300 rounded-lg text-left mb-4 hover:scale-[1.02] hover:shadow-md ${
-                            isDark
-                                ? 'text-zinc-200 hover:text-yellow-400 bg-gray-700/50 hover:bg-gray-600/70 border border-gray-600/60 hover:border-gray-500/70'
-                                : 'text-gray-700 hover:text-gray-900 bg-gray-200/50 hover:bg-gray-300/70 border border-gray-300/60 hover:border-gray-400/70'
-                        }`}
+                        className="group w-full px-3 py-2 text-xs transition-all duration-300 rounded-lg text-left mb-4 hover:scale-[1.02] hover:shadow-md text-fg-muted hover:text-brand-text bg-surface-raised hover:bg-fg/10 border border-line hover:border-line-strong"
                     >
                         <span className="flex items-center gap-2">
                             <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -252,9 +187,7 @@ export function BlogPostSidebar({ lang, setLang, post, readingTime }: BlogPostSi
                             {t.langSwitch}
                         </span>
                     </button>
-                    <div className={`text-xs text-center font-light ${
-                        isDark ? 'text-zinc-200' : 'text-gray-600'
-                    }`}>
+                    <div className="text-xs text-center font-light text-fg-muted">
                         © {new Date().getFullYear()} Sun
                     </div>
                 </div>

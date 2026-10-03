@@ -76,9 +76,9 @@ export function ArgumentLoop() {
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <div className={`h-2 overflow-hidden rounded-full ${t.isDark ? 'bg-zinc-800' : 'bg-zinc-200'}`}>
+                                    <div className="h-2 overflow-hidden rounded-full bg-line">
                                         <motion.div
-                                            className="h-full rounded-full bg-gradient-to-r from-yellow-400 to-amber-500"
+                                            className="h-full rounded-full bg-gradient-to-r from-brand to-brand-text"
                                             animate={{ width: `${(built / SYSTEMS.length) * 100}%` }}
                                             transition={{ type: 'spring', stiffness: 140, damping: 20 }}
                                         />
@@ -105,10 +105,8 @@ export function ArgumentLoop() {
                                                 <span
                                                     className={`rounded-2xl border px-3.5 py-1.5 text-sm font-medium ${
                                                         mine
-                                                            ? 'rounded-br-sm border-yellow-400 bg-yellow-400 text-black'
-                                                            : t.isDark
-                                                                ? 'rounded-bl-sm border-zinc-700 bg-zinc-800 text-zinc-200'
-                                                                : 'rounded-bl-sm border-zinc-300 bg-white text-zinc-800'
+                                                            ? 'rounded-br-sm border-brand bg-brand text-brand-on'
+                                                            : 'rounded-bl-sm border-line-strong bg-surface-raised text-fg-body'
                                                     }`}
                                                 >
                                                     「{line.text}」

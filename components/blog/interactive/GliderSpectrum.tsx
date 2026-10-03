@@ -141,7 +141,8 @@ export function GliderSpectrum() {
 
     const count = copied.size;
     const level = count === 0 ? 0 : count <= 2 ? 1 : count <= 4 ? 2 : 3;
-    const stroke = t.isDark ? '#e4e4e7' : '#27272a';
+    // 線條跟著外層的 text-fg-body 走
+    const stroke = 'currentColor';
 
     return (
         <InteractiveFrame
@@ -154,7 +155,7 @@ export function GliderSpectrum() {
                     { name: '我的滑翔翼', look: mine },
                 ].map((side) => (
                     <div key={side.name} className={`rounded-lg border px-2 pb-2 pt-3 ${t.inset}`}>
-                        <div className="mx-auto max-w-[190px]">
+                        <div className="mx-auto max-w-[190px] text-fg-body">
                             <Glider look={side.look} stroke={stroke} />
                         </div>
                         <div className={`mt-1 text-center text-xs font-medium ${t.sub}`}>{side.name}</div>
@@ -184,9 +185,7 @@ export function GliderSpectrum() {
             <div>
                 <div className="relative h-2.5 rounded-full bg-gradient-to-r from-zinc-400/40 via-yellow-400 to-red-500">
                     <motion.span
-                        className={`absolute top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-md border-2 shadow ${
-                            t.isDark ? 'border-black bg-white' : 'border-white bg-zinc-900'
-                        }`}
+                        className="absolute top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-md border-2 shadow border-canvas bg-fg"
                         animate={{ left: `${4 + (count / TRAITS.length) * 92}%` }}
                         transition={{ type: 'spring', stiffness: 200, damping: 20 }}
                     />

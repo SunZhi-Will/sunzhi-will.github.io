@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion';
 import { Lang } from '@/types';
 import { blogTranslations } from '@/lib/blog-translations';
-import { useTheme } from '@/app/blog/ThemeProvider';
 
 interface BlogPostDynamicIslandProps {
     lang: Lang;
@@ -15,8 +14,6 @@ export function BlogPostDynamicIsland({
     setLang,
 }: BlogPostDynamicIslandProps) {
     const t = blogTranslations[lang];
-    const { theme } = useTheme();
-    const isDark = theme === 'dark';
 
     return (
         <motion.div
@@ -26,10 +23,7 @@ export function BlogPostDynamicIsland({
             transition={{ duration: 0.5, delay: 0.2 }}
         >
             <motion.div
-                className={`relative overflow-hidden mt-4 mr-4 rounded-3xl backdrop-blur-2xl shadow-2xl transition-colors duration-300 ${isDark
-                    ? 'bg-[#1c1c1e]/95 border border-white/20'
-                    : 'bg-[#f0ece4]/92 border border-stone-300/60'
-                    }`}
+                className="relative overflow-hidden mt-4 mr-4 rounded-3xl backdrop-blur-2xl shadow-pop transition-colors duration-300 bg-surface-raised/95 border border-line-strong"
                 animate={{
                     width: 'auto',
                     height: '3rem',
@@ -44,10 +38,7 @@ export function BlogPostDynamicIsland({
                         transition={{ delay: 0.15 }}
                         onClick={() => setLang(lang === 'zh-TW' ? 'en' : 'zh-TW')}
                         className={`px-3 py-1.5 rounded-lg text-xs font-medium
-                        transition-all duration-200 whitespace-nowrap ${isDark
-                                ? 'text-zinc-200 hover:text-yellow-400 hover:bg-white/5'
-                                : 'text-gray-700 hover:text-gray-900 hover:bg-black/5'
-                            }`}
+                        transition-all duration-200 whitespace-nowrap text-fg-muted hover:text-brand-text hover:bg-fg/5`}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >

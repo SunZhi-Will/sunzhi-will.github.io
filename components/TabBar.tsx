@@ -29,8 +29,6 @@ const TABS: Array<{ id: TabId | 'sunkoro'; href: string; zh: string; en: string;
 interface TabBarProps {
   current: TabId;
   lang: Lang;
-  // 部落格有淺色主題，其他頁面固定深色
-  theme?: 'dark' | 'light';
   // 往下閱讀時收起，騰出閱讀空間
   hideOnScroll?: boolean;
 }
@@ -45,16 +43,16 @@ function Icon({ name }: { name: string }) {
 
 // 手機專用的底部分頁列：固定在畫面下緣，五個圖示加文字，目前頁面亮黃色。
 // 直立握持時大拇指搆得到，也是手機 App 最熟悉的操作方式。桌面版由頂部的導覽膠囊負責
-export function TabBar({ current, lang, theme = 'dark', hideOnScroll = false }: TabBarProps) {
-  const dark = theme === 'dark';
+// 顏色用 app/tokens.css 的 token：部落格跟著主題切換，其他頁面在 .site 裡固定深色
+export function TabBar({ current, lang, hideOnScroll = false }: TabBarProps) {
   const zh = lang === 'zh-TW';
   const scrolledDown = useHideOnScroll();
   const hidden = hideOnScroll && scrolledDown;
 
-  const shell = dark ? 'border-white/10 bg-[#0a0a0a]/90' : 'border-stone-300/70 bg-[#faf9f7]/92';
-  const idle = dark ? 'text-zinc-200' : 'text-stone-600';
-  const active = dark ? 'text-yellow-400' : 'text-amber-700';
-  const pill = dark ? 'bg-yellow-400/15' : 'bg-amber-600/12';
+  const shell = 'border-line bg-canvas/90';
+  const idle = 'text-fg-muted';
+  const active = 'text-brand-text';
+  const pill = 'bg-brand/15';
 
   const render = (tab: (typeof TABS)[number]): ReactNode => {
     const isActive = tab.id === current;

@@ -87,8 +87,8 @@ export function IdeaExpressionSorter() {
                             className="h-1.5 flex-1 rounded-full"
                             animate={{
                                 backgroundColor: answered
-                                    ? right ? '#facc15' : '#f87171'
-                                    : t.isDark ? '#27272a' : '#e4e4e7',
+                                    ? right ? 'var(--color-brand-solid)' : 'var(--color-danger-solid)'
+                                    : 'var(--color-line)',
                             }}
                         />
                     );
@@ -172,14 +172,14 @@ export function IdeaExpressionSorter() {
                                     <div className={`flex items-start gap-3 rounded-lg border px-4 py-3 text-sm leading-relaxed ${
                                         correct
                                             ? t.accentSoft
-                                            : t.isDark ? 'border-red-500/30 bg-red-500/10 text-red-200' : 'border-red-200 bg-red-50 text-red-800'
+                                            : 'border-danger/30 bg-danger/10 text-danger-text'
                                     }`}>
                                         <motion.span
                                             initial={{ scale: 0 }}
                                             animate={{ scale: 1 }}
                                             transition={{ type: 'spring', stiffness: 420, damping: 14 }}
                                             className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
-                                                correct ? 'bg-yellow-400 text-black' : 'bg-red-500 text-white'
+                                                correct ? 'bg-brand text-brand-on' : 'bg-danger text-canvas'
                                             }`}
                                         >
                                             {correct ? <CheckIcon className="h-3.5 w-3.5" /> : <XMarkIcon className="h-3.5 w-3.5" />}

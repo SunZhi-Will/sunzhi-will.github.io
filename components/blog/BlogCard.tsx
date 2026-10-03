@@ -7,7 +7,6 @@ import { formatDate } from '@/lib/blog-utils';
 import type { BlogPost } from '@/types/blog';
 import { Lang } from '@/types';
 import { blogTranslations, filterTagsByLanguage, translateTag } from '@/lib/blog-translations';
-import { useTheme } from '@/app/blog/ThemeProvider';
 
 interface BlogCardProps {
     post: BlogPost;
@@ -19,8 +18,6 @@ interface BlogCardProps {
 
 export function BlogCard({ post, lang, index, layout = 'horizontal', featured = false }: BlogCardProps) {
     const t = blogTranslations[lang];
-    const { theme } = useTheme();
-    const isDark = theme === 'dark';
     const isHorizontal = layout === 'horizontal';
 
     return (
@@ -32,12 +29,7 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
             className="group h-full"
         >
             <Link href={`/blog/${post.slug}`} className="block h-full">
-                <div className={`relative overflow-hidden rounded-2xl h-full transition-colors duration-300
-                    ${isDark
-                        ? 'bg-[#111113] border border-white/10 hover:border-white/25'
-                        : 'bg-white border border-stone-200 hover:border-stone-400'
-                    }
-                `}>
+                <div className="relative overflow-hidden rounded-2xl h-full transition-colors duration-300 bg-surface border border-line hover:border-line-strong">
 
                     <div className={`relative flex gap-0
                         ${isHorizontal ? 'flex-col md:flex-row' : 'flex-col'}
@@ -54,7 +46,7 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
                         `}>
                             <div className={`relative w-full overflow-hidden
                                 ${isHorizontal ? 'aspect-[16/9] md:aspect-auto md:h-full md:min-h-[200px]' : 'aspect-[16/9]'}
-                                ${isDark ? 'bg-[#1a1a1a]' : 'bg-stone-50'}
+                                bg-surface-raised
                             `}>
                                 {post.coverImage ? (
                                     <Image
@@ -71,7 +63,7 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
                                     />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center">
-                                        <svg className={`w-8 h-8 ${isDark ? 'text-zinc-200' : 'text-stone-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className="w-8 h-8 text-fg-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                         </svg>
                                     </div>
@@ -85,7 +77,7 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
                         `}>
 
                             {/* Meta: Date + Tags */}
-                            <div className={`flex items-center flex-wrap gap-2 ${isDark ? 'text-zinc-200' : 'text-stone-500'}`}>
+                            <div className="flex items-center flex-wrap gap-2 text-fg-muted">
                                 <time className="flex items-center gap-1.5 text-xs whitespace-nowrap font-medium">
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -98,16 +90,11 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
                                     const translatedTags = Array.from(new Set(filteredTags.map(tag => translateTag(tag, lang)))).filter(Boolean);
                                     return translatedTags.length > 0 && (
                                         <div className="flex items-center gap-1.5 flex-wrap">
-                                            <span className={`w-0.5 h-3 rounded-full ${isDark ? 'bg-white/15' : 'bg-stone-200'}`} />
+                                            <span className="w-0.5 h-3 rounded-full bg-line" />
                                             {translatedTags.slice(0, 2).map((tag, idx) => (
                                                 <span
                                                     key={idx}
-                                                    className={`px-2.5 py-0.5 rounded-full border text-[11px] font-medium transition-colors duration-200
-                                                        ${isDark
-                                                            ? 'border-white/12 text-zinc-200 group-hover:border-yellow-400/40 group-hover:text-yellow-300'
-                                                            : 'border-stone-200 text-stone-600 group-hover:border-amber-400 group-hover:text-amber-700'
-                                                        }
-                                                    `}
+                                                    className="px-2.5 py-0.5 rounded-full border text-[11px] font-medium transition-colors duration-200 border-line text-fg-muted group-hover:border-brand/40 group-hover:text-brand-text"
                                                 >
                                                     {tag}
                                                 </span>
@@ -120,7 +107,7 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
                             {/* Title */}
                             <h2 className={`font-semibold leading-snug transition-colors duration-300
                                 ${featured ? 'line-clamp-3 text-xl md:text-[1.4rem]' : 'line-clamp-2 text-base md:text-lg lg:text-xl'}
-                                ${isDark ? 'text-white group-hover:text-yellow-300' : 'text-stone-900 group-hover:text-amber-700'}
+                                text-fg group-hover:text-brand-text
                             `}>
                                 {post.title}
                             </h2>
@@ -131,19 +118,14 @@ export function BlogCard({ post, lang, index, layout = 'horizontal', featured = 
                                     ? 'text-sm md:text-[0.9375rem] line-clamp-3'
                                     : 'text-sm line-clamp-2'
                                 }
-                                ${isDark ? 'text-zinc-200' : 'text-stone-600'}
+                                text-fg-muted
                             `}>
                                 {post.description}
                             </p>
 
                             {/* Read more CTA */}
                             <div className="flex items-center pt-0.5">
-                                <span className={`inline-flex items-center gap-1.5 font-geist-mono text-xs font-medium tracking-wider uppercase transition-colors duration-200
-                                    ${isDark
-                                        ? 'text-zinc-200 group-hover:text-yellow-400'
-                                        : 'text-stone-500 group-hover:text-amber-700'
-                                    }
-                                `}>
+                                <span className="inline-flex items-center gap-1.5 font-geist-mono text-xs font-medium tracking-wider uppercase transition-colors duration-200 text-fg-muted group-hover:text-brand-text">
                                     {t.readMore}
                                     <svg className="w-3 h-3 transition-transform duration-200 group-hover:translate-x-1"
                                         fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -11,7 +11,6 @@ interface ArticleHeroProps {
     readonly post: Omit<BlogPost, 'content'>;
     readonly lang: Lang;
     readonly readingTime: number;
-    readonly isDark: boolean;
 }
 
 const SENTENCE_END = '？！。?!';
@@ -136,7 +135,7 @@ function reveal(order: number): { className: string; style: CSSProperties } {
     };
 }
 
-export function ArticleHero({ post, lang, readingTime, isDark }: ArticleHeroProps) {
+export function ArticleHero({ post, lang, readingTime }: ArticleHeroProps) {
     const t = blogTranslations[lang];
     const filteredTags = filterTagsByLanguage(post.tags, lang);
     const translatedTags = Array.from(new Set(filteredTags.map(tag => translateTag(tag, lang)))).filter(Boolean);
@@ -158,23 +157,21 @@ export function ArticleHero({ post, lang, readingTime, isDark }: ArticleHeroProp
     return (
         <header className="relative pt-2 md:pt-6">
             <div
-                className={`flex flex-wrap items-center gap-x-3 gap-y-1 text-sm ${meta.className} ${
-                    isDark ? 'text-zinc-200' : 'text-zinc-500'
-                }`}
+                className={`flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-fg-muted ${meta.className}`}
                 style={meta.style}
             >
-                <span className={`inline-flex items-center gap-2 font-medium ${isDark ? 'text-yellow-300' : 'text-yellow-700'}`}>
-                    <span aria-hidden="true" className="h-2 w-2 rounded-[2px] bg-yellow-400" />
+                <span className="inline-flex items-center gap-2 font-medium text-brand-text">
+                    <span aria-hidden="true" className="h-2 w-2 rounded-[2px] bg-brand" />
                     {formatDate(post.date, lang === 'zh-TW' ? 'zh-TW' : 'en-US')}
                 </span>
-                <span aria-hidden="true" className={isDark ? 'text-zinc-200' : 'text-zinc-300'}>/</span>
+                <span aria-hidden="true" className="text-fg-muted">/</span>
                 <span>
                     {readingTime} {t.readTime}
                 </span>
             </div>
 
             <h1
-                className={`mt-5 font-bold tracking-normal ${title.className} ${isDark ? 'text-zinc-50' : 'text-zinc-950'}`}
+                className={`mt-5 font-bold tracking-normal text-fg ${title.className}`}
                 style={title.style}
             >
                 <span className="block text-[1.9rem] leading-[1.28] sm:text-4xl sm:leading-[1.25] md:text-[2.75rem] md:leading-[1.22]">
@@ -182,9 +179,7 @@ export function ArticleHero({ post, lang, readingTime, isDark }: ArticleHeroProp
                 </span>
                 {rest && (
                     <span
-                        className={`mt-3 block text-xl font-semibold leading-snug sm:text-2xl md:mt-4 md:text-[1.7rem] md:leading-[1.4] ${
-                            isDark ? 'text-zinc-200' : 'text-zinc-500'
-                        }`}
+                        className={`mt-3 block text-xl font-semibold leading-snug sm:text-2xl md:mt-4 md:text-[1.7rem] md:leading-[1.4] text-fg-muted`}
                     >
                         <BalancedText text={rest} segmenter={segmenter} />
                     </span>
@@ -192,15 +187,11 @@ export function ArticleHero({ post, lang, readingTime, isDark }: ArticleHeroProp
             </h1>
 
             <div className={summary.className} style={summary.style}>
-                <div aria-hidden="true" className="mt-7 h-[3px] w-12 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500" />
+                <div aria-hidden="true" className="mt-7 h-[3px] w-12 rounded-full bg-brand" />
 
                 {post.description && (
                     <div
-                        className={`mt-6 max-w-2xl text-balance text-[17px] font-normal leading-8 md:text-lg md:leading-9 ${
-                            isDark
-                                ? 'text-zinc-200 prose-strong:text-zinc-50'
-                                : 'text-zinc-700 prose-strong:text-zinc-950'
-                        }`}
+                        className={`mt-6 max-w-2xl text-balance text-[17px] font-normal leading-8 md:text-lg md:leading-9 text-fg-body prose-strong:text-fg`}
                         dangerouslySetInnerHTML={{
                             __html: post.descriptionHtml || post.description,
                         }}
@@ -212,13 +203,9 @@ export function ArticleHero({ post, lang, readingTime, isDark }: ArticleHeroProp
                         {translatedTags.map((tag) => (
                             <span
                                 key={tag}
-                                className={`rounded-md border px-2.5 py-1 text-xs font-medium ${
-                                    isDark
-                                        ? 'border-zinc-800 bg-zinc-900/80 text-zinc-200'
-                                        : 'border-zinc-200 bg-white text-zinc-600'
-                                }`}
+                                className="rounded-md border border-line bg-surface px-2.5 py-1 text-xs font-medium text-fg-muted"
                             >
-                                <span aria-hidden="true" className={isDark ? 'text-yellow-400/80' : 'text-yellow-600'}>#</span>
+                                <span aria-hidden="true" className="text-brand">#</span>
                                 {tag}
                             </span>
                         ))}
@@ -228,9 +215,7 @@ export function ArticleHero({ post, lang, readingTime, isDark }: ArticleHeroProp
 
             {post.coverImage && (
                 <div
-                    className={`relative mt-9 aspect-[16/9] w-full overflow-hidden rounded-xl border ${cover.className} ${
-                        isDark ? 'border-zinc-800 bg-zinc-900/60 shadow-2xl shadow-black/50' : 'border-zinc-200 bg-zinc-50 shadow-xl shadow-zinc-200/70'
-                    }`}
+                    className={`relative mt-9 aspect-[16/9] w-full overflow-hidden rounded-xl border border-line bg-surface-sunken shadow-pop ${cover.className}`}
                     style={cover.style}
                 >
                     {/* 容器固定 16:9，圖片載入前後版面不會跳；封面是首屏最大的圖，優先載入 */}

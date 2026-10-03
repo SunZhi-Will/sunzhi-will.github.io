@@ -5,23 +5,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Lang } from '@/types';
-import { useTheme } from '@/app/blog/ThemeProvider';
 
 interface ProfileCardProps {
     lang: Lang;
 }
 
 export function ProfileCard({ lang }: ProfileCardProps) {
-    const { theme } = useTheme();
     const [mounted, setMounted] = useState(false);
-    const isDark = theme === 'dark';
 
     useEffect(() => {
         setMounted(true);
     }, []);
-
-    // 在首次渲染時（服務器和客戶端 hydration）使用固定的 theme 值，避免 hydration 不匹配
-    const safeIsDark = mounted ? isDark : true; // 預設使用 dark theme
 
     return (
         <motion.aside
@@ -32,10 +26,7 @@ export function ProfileCard({ lang }: ProfileCardProps) {
             suppressHydrationWarning
         >
             <div
-                className={`relative backdrop-blur-xl rounded-2xl p-6 ${safeIsDark
-                    ? 'bg-[#0d0d0d] border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.2)]'
-                    : 'bg-white/80 border border-black/10'
-                    }`}
+                className="relative backdrop-blur-xl rounded-2xl p-6 bg-surface/80 border border-line"
             >
                     {/* 個人資訊 - 可點擊連結到首頁 */}
                     <Link
@@ -48,30 +39,22 @@ export function ProfileCard({ lang }: ProfileCardProps) {
                         <div className="flex flex-col items-center text-center mb-6">
                             {/* 個人照片 */}
                             <div className="relative mb-4">
-                                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-yellow-500/10 to-amber-500/10 blur-md opacity-0 group-hover/profile:opacity-100 transition-opacity duration-300"></div>
+                                <div className="absolute inset-0 rounded-full bg-brand/10 blur-md opacity-0 group-hover/profile:opacity-100 transition-opacity duration-300"></div>
                                 <Image
                                     src="/profile.jpg"
                                     alt={lang === 'zh-TW' ? '謝上智' : 'Sun Zhi'}
                                     width={80}
                                     height={80}
-                                    className={`relative rounded-full border-2 shadow-lg group-hover/profile:border-yellow-500/50 transition-all duration-300 group-hover/profile:scale-105 ${
-                                        safeIsDark ? 'border-white/10' : 'border-black/10'
-                                    }`}
+                                    className="relative rounded-full border-2 shadow-lg group-hover/profile:border-brand/50 transition-all duration-300 group-hover/profile:scale-105 border-line"
                                     priority
                                 />
                             </div>
 
                             {/* 姓名和職稱 */}
-                            <h1 className={`text-lg font-semibold mb-1.5 bg-clip-text text-transparent transition-all duration-300 ${safeIsDark
-                                ? 'text-white bg-gradient-to-r from-white via-white to-yellow-400'
-                                : 'text-gray-900 bg-gradient-to-r from-gray-800 to-gray-600 group-hover/profile:from-gray-700 group-hover/profile:to-gray-500'
-                                }`}>
+                            <h1 className="text-lg font-semibold mb-1.5 bg-clip-text text-transparent transition-all duration-300 bg-gradient-to-r from-fg via-fg to-brand-text">
                                 {lang === 'zh-TW' ? '謝上智' : 'Sun Zhi'}
                             </h1>
-                            <p className={`text-sm font-light leading-relaxed transition-colors duration-300 ${safeIsDark
-                                ? 'text-zinc-200 group-hover/profile:text-yellow-400'
-                                : 'text-gray-600 group-hover/profile:text-gray-700'
-                                }`}>
+                            <p className="text-sm font-light leading-relaxed transition-colors duration-300 text-fg-muted group-hover/profile:text-brand-text">
                                 {lang === 'zh-TW' ? '軟體工程師 | AI 開發者' : 'Software Engineer | AI Developer'}
                             </p>
                         </div>
@@ -86,10 +69,7 @@ export function ProfileCard({ lang }: ProfileCardProps) {
                             onClick={(e) => {
                                 e.stopPropagation();
                             }}
-                            className={`group w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg cursor-pointer ${safeIsDark
-                                ? 'bg-[#18181b] hover:bg-[#27272a] text-zinc-200 hover:text-yellow-400 border border-[#3f3f46]/40 hover:border-yellow-500/50'
-                                : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 hover:shadow-gray-400/30'
-                                }`}
+                            className="group w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg cursor-pointer bg-surface-raised hover:bg-fg/10 text-fg-muted hover:text-brand-text border border-line hover:border-brand/50"
                             aria-label="GitHub"
                         >
                             <svg className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" fill="currentColor" viewBox="0 0 24 24">
@@ -103,10 +83,7 @@ export function ProfileCard({ lang }: ProfileCardProps) {
                             onClick={(e) => {
                                 e.stopPropagation();
                             }}
-                            className={`group w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg cursor-pointer ${safeIsDark
-                                ? 'bg-[#18181b] hover:bg-[#27272a] text-zinc-200 hover:text-yellow-400 border border-[#3f3f46]/40 hover:border-yellow-500/50'
-                                : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 hover:shadow-gray-400/30'
-                                }`}
+                            className="group w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg cursor-pointer bg-surface-raised hover:bg-fg/10 text-fg-muted hover:text-brand-text border border-line hover:border-brand/50"
                             aria-label="LinkedIn"
                         >
                             <svg className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" fill="currentColor" viewBox="0 0 24 24">
@@ -118,10 +95,7 @@ export function ProfileCard({ lang }: ProfileCardProps) {
                             onClick={(e) => {
                                 e.stopPropagation();
                             }}
-                            className={`group w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg cursor-pointer ${safeIsDark
-                                ? 'bg-[#18181b] hover:bg-[#27272a] text-zinc-200 hover:text-yellow-400 border border-[#3f3f46]/40 hover:border-yellow-500/50'
-                                : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 hover:shadow-gray-400/30'
-                                }`}
+                            className="group w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg cursor-pointer bg-surface-raised hover:bg-fg/10 text-fg-muted hover:text-brand-text border border-line hover:border-brand/50"
                             aria-label="Email"
                         >
                             <svg className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -135,10 +109,7 @@ export function ProfileCard({ lang }: ProfileCardProps) {
                             onClick={(e) => {
                                 e.stopPropagation();
                             }}
-                            className={`group w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg cursor-pointer ${safeIsDark
-                                ? 'bg-[#18181b] hover:bg-[#27272a] text-zinc-200 hover:text-yellow-400 border border-[#3f3f46]/40 hover:border-yellow-500/50'
-                                : 'bg-gray-200/70 hover:bg-gray-300/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 hover:shadow-gray-400/30'
-                                }`}
+                            className="group w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg cursor-pointer bg-surface-raised hover:bg-fg/10 text-fg-muted hover:text-brand-text border border-line hover:border-brand/50"
                             aria-label="Instagram"
                         >
                             <svg className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" fill="currentColor" viewBox="0 0 24 24">
@@ -148,12 +119,10 @@ export function ProfileCard({ lang }: ProfileCardProps) {
                     </div>
 
                     {/* 分隔線 */}
-                    <div className={`h-px bg-gradient-to-r from-transparent to-transparent mb-6 ${safeIsDark ? 'via-white/10' : 'via-black/10'
-                        }`}></div>
+                    <div className="h-px bg-gradient-to-r from-transparent via-fg/10 to-transparent mb-6"></div>
 
                     {/* 頁尾 */}
-                    <div className={`text-xs text-center font-light ${safeIsDark ? 'text-zinc-200' : 'text-gray-600'
-                        }`} suppressHydrationWarning>
+                    <div className="text-xs text-center font-light text-fg-muted" suppressHydrationWarning>
                         © {new Date().getFullYear()} Sun
                     </div>
                 </div>

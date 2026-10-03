@@ -1,7 +1,5 @@
 'use client';
 
-import { useTheme } from '@/app/blog/ThemeProvider';
-
 interface StatItem {
   value: string;
   label: string;
@@ -16,19 +14,15 @@ interface StatsHighlightProps {
 }
 
 export function StatsHighlight({ title, stats, layout = 'grid' }: StatsHighlightProps) {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
-
   const gridCols = stats.length <= 2 ? 'grid-cols-1 md:grid-cols-2' :
                    stats.length === 3 ? 'grid-cols-1 md:grid-cols-3' :
                    'grid-cols-2 md:grid-cols-4';
 
+  // 顏色來自 app/tokens.css，深淺色自動切換；漲跌用狀態色
   return (
     <div className="not-prose my-8">
       {title && (
-        <h3 className={`text-xl font-light mb-6 text-center ${
-          isDark ? 'text-gray-100' : 'text-gray-900'
-        }`}>
+        <h3 className="text-xl font-light mb-6 text-center text-fg">
           {title}
         </h3>
       )}
@@ -37,29 +31,21 @@ export function StatsHighlight({ title, stats, layout = 'grid' }: StatsHighlight
         {stats.map((stat, index) => (
           <div
             key={index}
-            className={`p-6 rounded-lg text-center border ${
-              isDark
-                ? 'bg-gray-800/50 border-gray-700/30'
-                : 'bg-white border-gray-200 shadow-sm'
-            }`}
+            className="p-6 rounded-lg text-center border bg-surface border-line shadow-card"
           >
-            <div className={`text-3xl font-bold mb-2 ${
-              isDark ? 'text-purple-400' : 'text-purple-600'
-            }`}>
+            <div className="text-3xl font-bold mb-2 text-brand-text">
               {stat.value}
             </div>
 
-            <div className={`text-sm mb-2 ${
-              isDark ? 'text-zinc-200' : 'text-gray-700'
-            }`}>
+            <div className="text-sm mb-2 text-fg-body">
               {stat.label}
             </div>
 
             {stat.change && (
               <div className={`text-xs flex items-center justify-center space-x-1 ${
-                stat.trend === 'up' ? (isDark ? 'text-green-400' : 'text-green-600') :
-                stat.trend === 'down' ? (isDark ? 'text-red-400' : 'text-red-600') :
-                (isDark ? 'text-zinc-200' : 'text-gray-600')
+                stat.trend === 'up' ? 'text-success-text' :
+                stat.trend === 'down' ? 'text-danger-text' :
+                'text-fg-muted'
               }`}>
                 <span>
                   {stat.trend === 'up' && '↗'}

@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Lang } from '@/types';
-import { useTheme } from '@/app/blog/ThemeProvider';
 import { NewsletterSubscribe } from './NewsletterSubscribe';
 
 interface NewsletterCardProps {
@@ -11,16 +10,11 @@ interface NewsletterCardProps {
 }
 
 export function NewsletterCard({ lang }: NewsletterCardProps) {
-    const { theme } = useTheme();
     const [mounted, setMounted] = useState(false);
-    const isDark = theme === 'dark';
 
     useEffect(() => {
         setMounted(true);
     }, []);
-
-    // 在首次渲染時（服務器和客戶端 hydration）使用固定的 theme 值，避免 hydration 不匹配
-    const safeIsDark = mounted ? isDark : true; // 預設使用 dark theme
 
     return (
         <motion.div
@@ -32,12 +26,7 @@ export function NewsletterCard({ lang }: NewsletterCardProps) {
         >
             <div className="px-6 pb-6">
                 {/* 訂閱卡片 */}
-                <div
-                    className={`relative backdrop-blur-xl rounded-2xl p-6 ${safeIsDark
-                        ? 'bg-[#0d0d0d] border border-white/10'
-                        : 'bg-white/80 border border-black/10'
-                        }`}
-                >
+                <div className="relative backdrop-blur-xl rounded-2xl p-6 bg-surface/80 border border-line">
                     <NewsletterSubscribe lang={lang === 'zh-TW' || lang === 'en' ? lang : 'zh-TW'} variant="inline" />
                 </div>
             </div>
