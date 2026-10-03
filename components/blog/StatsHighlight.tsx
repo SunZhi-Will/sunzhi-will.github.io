@@ -24,7 +24,7 @@ export function StatsHighlight({ title, stats, layout = 'grid' }: StatsHighlight
                    'grid-cols-2 md:grid-cols-4';
 
   return (
-    <div className="my-8">
+    <div className="not-prose my-8">
       {title && (
         <h3 className={`text-xl font-light mb-6 text-center ${
           isDark ? 'text-gray-100' : 'text-gray-900'

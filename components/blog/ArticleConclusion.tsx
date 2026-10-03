@@ -29,7 +29,7 @@ export function ArticleConclusion({
   const isDark = theme === 'dark';
 
   return (
-    <div className={`my-12 p-8 rounded-xl border ${
+    <div className={`not-prose my-12 p-8 rounded-xl border ${
       isDark
         ? 'bg-gradient-to-br from-zinc-900/60 to-zinc-950/60 border-yellow-500/20 shadow-glow-yellow/10'
         : 'bg-gradient-to-br from-yellow-50/50 to-zinc-50 border-zinc-200 shadow-sm'

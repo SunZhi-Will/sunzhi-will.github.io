@@ -1,0 +1,148 @@
+/*
+ * 設計 token：全站共用的顏色與字級。
+ *
+ * 元件裡不要再寫 isDark ? 'text-zinc-200' : 'text-stone-600' 這種分支，
+ * 改用語意名稱（text-fg-body、bg-surface、border-line、bg-info/10 ...），
+ * 深淺色由這裡依 html 上的 .dark / .light 切換。
+ * 首頁、連結頁、報價頁的 .site 範圍固定用深色。
+ *
+ * 可以加透明度的顏色存成「R G B」三個數字，Tailwind 寫 bg-brand/10 就會變成 rgb(var(--color-brand) / 0.1)。
+ * 線條本身就是半透明色，存成完整的顏色值，不能再加透明度。
+ *
+ * 完整說明與使用規則：docs/uiux-redesign-2026.md「設計 token」一節。
+ */
+
+/* ───────── 不分深淺色：字級 ───────── */
+:root {
+  /*
+   * 標題六級，相鄰兩級至少差 2px，並各有一個字級以外的辨識方式：
+   * H1 最粗加底線、H2 上方一條強調色短線、H3 粗體、H4 中粗、
+   * H5 與內文同大但用強調色、H6 等寬全大寫小標。
+   * 手機版用 clamp() 自動縮小，比例維持不變。
+   */
+  --font-size-display: clamp(1.9rem, 1.4rem + 2.2vw, 2.75rem); /* 30 → 44，文章頁頂的主標題 */
+  --font-size-h1: clamp(1.75rem, 1.45rem + 1.3vw, 2.25rem); /* 28 → 36 */
+  --font-size-h2: clamp(1.5rem, 1.3rem + 0.85vw, 1.875rem); /* 24 → 30 */
+  --font-size-h3: clamp(1.25rem, 1.15rem + 0.45vw, 1.4375rem); /* 20 → 23 */
+  --font-size-h4: clamp(1.125rem, 1.09rem + 0.15vw, 1.1875rem); /* 18 → 19 */
+  --font-size-h5: clamp(1rem, 0.98rem + 0.1vw, 1.0625rem); /* 16 → 17，與內文同大 */
+  --font-size-h6: 0.8125rem; /* 13 */
+  --font-size-body: clamp(1rem, 0.98rem + 0.1vw, 1.0625rem); /* 16 → 17 */
+  --font-size-small: 0.875rem; /* 14 */
+  --font-size-caption: 0.75rem; /* 12 */
+
+  --line-height-h1: 1.2;
+  --line-height-h2: 1.28;
+  --line-height-h3: 1.38;
+  --line-height-h4: 1.45;
+  --line-height-h5: 1.55;
+  --line-height-h6: 1.5;
+  --line-height-body: 1.9;
+
+  --font-weight-h1: 800;
+  --font-weight-h2: 700;
+  --font-weight-h3: 700;
+  --font-weight-h4: 600;
+  --font-weight-h5: 600;
+  --font-weight-h6: 500;
+
+  --letter-spacing-h1: -0.02em;
+  --letter-spacing-h2: -0.015em;
+  --letter-spacing-h3: -0.01em;
+  --letter-spacing-h6: 0.12em;
+
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ───────── 顏色：淺色主題 ───────── */
+/* 淺色用暖灰（stone）一個家族，不混 gray、zinc、slate */
+:root,
+.light {
+  /* 品牌：全站唯一的彩色，只用在連結、強調、進度、清單符號 */
+  --color-brand: 217 119 6; /* amber-600，色塊、線條、符號 */
+  --color-brand-text: 180 83 9; /* amber-700，當文字用，對比 4.9:1 */
+  --color-on-brand: 28 25 23; /* 放在品牌色上的文字 */
+
+  /* 表面：由下往上疊 */
+  --color-canvas: 250 249 247; /* 頁面底色 */
+  --color-surface: 255 255 255; /* 卡片 */
+  --color-surface-raised: 245 245 244; /* 滑過、彈出層 */
+  --color-surface-sunken: 243 241 237; /* 程式碼、引言、表頭 */
+
+  /* 文字：三個層級 */
+  --color-fg: 28 25 23; /* 標題、粗體 */
+  --color-fg-body: 41 37 36; /* 內文 */
+  --color-fg-muted: 87 83 78; /* 日期、說明、圖說 */
+
+  /* 線條 */
+  --color-line: rgba(28, 25, 23, 0.1);
+  --color-line-strong: rgba(28, 25, 23, 0.22);
+
+  /* 狀態：只用在提示框、驗證結果這類需要表達「好壞」的地方，不拿來裝飾 */
+  --color-info: 2 132 199; /* sky-600 */
+  --color-info-text: 7 89 133; /* sky-800 */
+  --color-success: 5 150 105; /* emerald-600 */
+  --color-success-text: 6 95 70; /* emerald-800 */
+  --color-warning: 234 88 12; /* orange-600，刻意避開品牌的黃 */
+  --color-warning-text: 154 52 18; /* orange-800 */
+  --color-danger: 220 38 38; /* red-600 */
+  --color-danger-text: 153 27 27; /* red-800 */
+}
+
+/* ───────── 顏色：深色主題 ───────── */
+/*
+ * 深色用冷灰（zinc）一個家族。
+ * 黑底不用灰字：fg-muted 與 fg-body 同為 zinc-200，層次靠字級與字重拉開。
+ * 兩組數值要一起改：系統偏好、部落格主題切換與固定深色的 .site。
+ * 部落格在 ThemeProvider 掛上 class 之前，元件是以深色渲染的，
+ * 所以 html 還沒有 .light 時，.blog-root 也先用深色，畫面才不會一半深一半淺。
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --color-brand: 250 204 21;
+    --color-brand-text: 253 224 71;
+    --color-on-brand: 10 10 10;
+    --color-canvas: 10 10 10;
+    --color-surface: 17 17 19;
+    --color-surface-raised: 26 26 29;
+    --color-surface-sunken: 22 22 25;
+    --color-fg: 250 250 250;
+    --color-fg-body: 228 228 231;
+    --color-fg-muted: 228 228 231;
+    --color-line: rgba(255, 255, 255, 0.1);
+    --color-line-strong: rgba(255, 255, 255, 0.22);
+    --color-info: 56 189 248;
+    --color-info-text: 186 230 253;
+    --color-success: 52 211 153;
+    --color-success-text: 167 243 208;
+    --color-warning: 251 146 60;
+    --color-warning-text: 254 215 170;
+    --color-danger: 248 113 113;
+    --color-danger-text: 254 202 202;
+  }
+}
+
+.dark,
+.site,
+html:not(.light) .blog-root {
+  --color-brand: 250 204 21; /* yellow-400 */
+  --color-brand-text: 253 224 71; /* yellow-300 */
+  --color-on-brand: 10 10 10;
+  --color-canvas: 10 10 10; /* #0a0a0a */
+  --color-surface: 17 17 19; /* #111113 */
+  --color-surface-raised: 26 26 29;
+  --color-surface-sunken: 22 22 25;
+  --color-fg: 250 250 250; /* zinc-50 */
+  --color-fg-body: 228 228 231; /* zinc-200 */
+  --color-fg-muted: 228 228 231; /* zinc-200，黑底不用灰字 */
+  --color-line: rgba(255, 255, 255, 0.1);
+  --color-line-strong: rgba(255, 255, 255, 0.22);
+  --color-info: 56 189 248; /* sky-400 */
+  --color-info-text: 186 230 253; /* sky-200 */
+  --color-success: 52 211 153; /* emerald-400 */
+  --color-success-text: 167 243 208; /* emerald-200 */
+  --color-warning: 251 146 60; /* orange-400 */
+  --color-warning-text: 254 215 170; /* orange-200 */
+  --color-danger: 248 113 113; /* red-400 */
+  --color-danger-text: 254 202 202; /* red-200 */
+}

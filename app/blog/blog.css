@@ -28,16 +28,115 @@ html.dark:has(.blog-root) {
   content: none !important;
 }
 
-/* 標題錨點：捲到標題時留出導覽列的高度 */
-[data-article-content] .prose :is(h2, h3, h4) {
+/*
+ * 內文字級，數值在 app/tokens.css
+ * 段落在手機是 16px、桌面 17px
+ */
+[data-article-content] .prose {
+  font-size: var(--font-size-body);
+}
+
+[data-article-content] .prose :where(p):not(:where(.not-prose, .not-prose *)) {
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+}
+
+/*
+ * 標題六級。字級、行高、字重都來自 app/tokens.css，這裡只決定間距與每一級的辨識記號：
+ * H1 最粗、底下一條實線
+ * H2 上方一條強調色短線，是讀者掃描章節時的落點
+ * H3 粗體，比 H2 小一級、沒有記號
+ * H4 中粗，再小一級
+ * H5 與內文同大，用強調色區分
+ * H6 等寬全大寫小標
+ * 選擇器排除 .not-prose，互動元件與提示框裡的標題不受影響
+ */
+[data-article-content] .prose :where(h1, h2, h3, h4, h5, h6):not(:where(.not-prose, .not-prose *)) {
+  color: rgb(var(--color-fg));
   scroll-margin-top: 6rem;
 }
 
+[data-article-content] .prose :where(h1):not(:where(.not-prose, .not-prose *)) {
+  font-size: var(--font-size-h1);
+  line-height: var(--line-height-h1);
+  font-weight: var(--font-weight-h1);
+  letter-spacing: var(--letter-spacing-h1);
+  margin: 4.5rem 0 1.5rem;
+  padding-bottom: 0.875rem;
+  border-bottom: 2px solid var(--color-line-strong);
+}
+
+[data-article-content] .prose :where(h2):not(:where(.not-prose, .not-prose *)) {
+  font-size: var(--font-size-h2);
+  line-height: var(--line-height-h2);
+  font-weight: var(--font-weight-h2);
+  letter-spacing: var(--letter-spacing-h2);
+  margin: 4.5rem 0 1.25rem;
+  padding: 0;
+  border: 0;
+}
+
+[data-article-content] .prose :where(h2):not(:where(.not-prose, .not-prose *))::before {
+  content: '';
+  display: block;
+  width: 2.5rem;
+  height: 3px;
+  margin-bottom: 1.125rem;
+  border-radius: 2px;
+  background: rgb(var(--color-brand));
+}
+
+[data-article-content] .prose :where(h3):not(:where(.not-prose, .not-prose *)) {
+  font-size: var(--font-size-h3);
+  line-height: var(--line-height-h3);
+  font-weight: var(--font-weight-h3);
+  letter-spacing: var(--letter-spacing-h3);
+  margin: 3rem 0 0.875rem;
+}
+
+[data-article-content] .prose :where(h4):not(:where(.not-prose, .not-prose *)) {
+  font-size: var(--font-size-h4);
+  line-height: var(--line-height-h4);
+  font-weight: var(--font-weight-h4);
+  margin: 2.5rem 0 0.75rem;
+}
+
+[data-article-content] .prose :where(h5):not(:where(.not-prose, .not-prose *)) {
+  font-size: var(--font-size-h5);
+  line-height: var(--line-height-h5);
+  font-weight: var(--font-weight-h5);
+  color: rgb(var(--color-brand-text));
+  margin: 2.25rem 0 0.5rem;
+}
+
+[data-article-content] .prose :where(h6):not(:where(.not-prose, .not-prose *)) {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-h6);
+  line-height: var(--line-height-h6);
+  font-weight: var(--font-weight-h6);
+  letter-spacing: var(--letter-spacing-h6);
+  text-transform: uppercase;
+  color: rgb(var(--color-fg-muted));
+  margin: 2.25rem 0 0.5rem;
+}
+
+/* 文章一開頭就是標題時不要留上方空白 */
+[data-article-content] .prose > :where(h1, h2, h3, h4, h5, h6):first-child {
+  margin-top: 0;
+}
+
+/* 連續兩個標題（例如 H2 底下緊接 H3）時，第二個不用再留整段距離 */
+[data-article-content] .prose :where(h1, h2, h3, h4, h5, h6) + :where(h3, h4, h5, h6) {
+  margin-top: 1.25rem;
+}
+
+/* 標題錨點 */
 [data-article-content] .prose .heading-anchor {
   margin-left: 0.4em;
   border: 0 !important;
   padding: 0 !important;
   font-weight: 400;
+  color: rgb(var(--color-brand-text));
   text-decoration: none;
   opacity: 0;
   transition: opacity 0.15s ease;
@@ -47,15 +146,15 @@ html.dark:has(.blog-root) {
   content: '#';
 }
 
-[data-article-content] .prose :is(h2, h3, h4):hover .heading-anchor,
+[data-article-content] .prose :is(h1, h2, h3, h4, h5, h6):hover .heading-anchor,
 [data-article-content] .prose .heading-anchor:focus-visible {
-  opacity: 0.6;
+  opacity: 0.8;
 }
 
 /* 觸控裝置沒有 hover，錨點常駐但調淡 */
 @media (hover: none) {
   [data-article-content] .prose .heading-anchor {
-    opacity: 0.3;
+    opacity: 0.35;
   }
 }
 

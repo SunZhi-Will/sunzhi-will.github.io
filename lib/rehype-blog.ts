@@ -9,7 +9,7 @@ interface HastNode {
     children?: HastNode[];
 }
 
-const HEADING_TAGS = new Set(['h2', 'h3', 'h4']);
+const HEADING_TAGS = new Set(['h2', 'h3', 'h4', 'h5', 'h6']);
 
 function textOf(node: HastNode): string {
     if (node.type === 'text') return node.value ?? '';

@@ -181,9 +181,8 @@ export default function BlogPageClient({ posts }: BlogPageClientProps) {
 
     return (
         <div
-            className="min-h-screen relative transition-colors duration-300"
+            className="min-h-screen relative bg-canvas transition-colors duration-300"
             style={{
-                backgroundColor: isDark ? '#0a0a0a' : '#faf9f7',
                 backgroundImage: isDark
                     ? `radial-gradient(ellipse 80% 50% at 50% -20%, rgba(250,204,21,0.04) 0%, transparent 60%), radial-gradient(circle, rgba(255,255,255,0.025) 1px, transparent 1px)`
                     : `radial-gradient(ellipse 80% 50% at 50% -20%, rgba(251,191,36,0.06) 0%, transparent 60%), radial-gradient(circle, rgba(0,0,0,0.03) 1px, transparent 1px)`,

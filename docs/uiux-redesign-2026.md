@@ -143,6 +143,78 @@ node scripts/preview-newsletter.js <slug>   # 指定文章
 
 驗證信的樣板與「已驗證過」的回覆寫在 `scripts/google-apps-script-example.js`。這個檔案只是範本，改完要自己貼到 Google Apps Script 重新部署才會生效；在那之前，網站端仍然相容舊版的回覆。
 
+## 設計 token（顏色分類與標題六級）
+
+### 為什麼要做
+
+| 問題 | 細節 |
+| --- | --- |
+| 標題分不出層級 | 文章內文 17px，H2 只有 20px、H3 18px，三者字重也一樣，讀者看不出哪裡是章節、哪裡是小節。H4 是 16px，比內文還小。H5、H6 完全沒有樣式 |
+| 灰色有四套 | 部落格元件同時用 `gray`（約 360 處）、`zinc`、`stone`、`slate`，同一頁的灰色冷暖不一 |
+| 顏色沒有分類 | 每個元件自己寫 `isDark ? 'text-zinc-200' : 'text-stone-600'`，部落格裡約 250 處。改一個顏色要找遍所有檔案，也說不出「這個灰是拿來做什麼的」 |
+| 文章頁與列表頁底色不同 | 列表頁 `#0a0a0a`／`#faf9f7`，文章頁 `#000000`／`#ffffff` |
+
+### 顏色分類
+
+數值寫在 `app/tokens.css`，Tailwind 對照在 `tailwind.config.ts`。元件只寫語意名稱，深淺色由 `html` 上的 `.dark`／`.light` 自動切換，`.site` 範圍固定用深色。
+
+| 分類 | Tailwind 名稱 | 用途 | 深色 | 淺色 |
+| --- | --- | --- | --- | --- |
+| 品牌 | `brand` | 色塊、線條、清單符號、H2 短線 | `yellow-400` | `amber-600` |
+| | `brand-text` | 當文字用的強調色、連結、H5 | `yellow-300` | `amber-700` |
+| | `brand-on` | 放在品牌色上的文字 | `#0a0a0a` | `stone-900` |
+| 表面 | `canvas` | 頁面底色 | `#0a0a0a` | `#faf9f7` |
+| | `surface` | 卡片 | `#111113` | 白 |
+| | `surface-raised` | 滑過、彈出層 | `#1a1a1d` | `stone-100` |
+| | `surface-sunken` | 程式碼、引言、表頭 | `#161619` | `#f3f1ed` |
+| 文字 | `fg` | 標題、粗體 | `zinc-50` | `stone-900` |
+| | `fg-body` | 內文 | `zinc-200` | `stone-800` |
+| | `fg-muted` | 日期、說明、圖說 | `zinc-200` | `stone-600` |
+| 線條 | `line` | 一般分隔線 | 白 10% | 黑 10% |
+| | `line-strong` | 表格外框、H1 底線 | 白 22% | 黑 22% |
+| 狀態 | `info`、`info-text` | 資訊提示 | `sky-400`／`sky-200` | `sky-600`／`sky-800` |
+| | `success`、`success-text` | 成功 | `emerald-400`／`emerald-200` | `emerald-600`／`emerald-800` |
+| | `warning`、`warning-text` | 注意 | `orange-400`／`orange-200` | `orange-600`／`orange-800` |
+| | `danger`、`danger-text` | 錯誤 | `red-400`／`red-200` | `red-600`／`red-800` |
+
+規則：
+
+1. 每個主題只用一個灰階家族：深色是 `zinc`，淺色是 `stone`。新元件不要再寫 `gray`、`slate`。
+2. 深色主題的 `fg-muted` 刻意和 `fg-body` 一樣，黑底不用灰字，層次靠字級與字重。
+3. 品牌色仍然是唯一的裝飾用彩色。狀態色只用在需要表達好壞的地方（提示框、表單驗證結果），不拿來裝飾或分類文章。
+4. 「注意」用橘色而不是黃色，避免和品牌色混在一起。
+5. 底色要淡時用透明度：`bg-info/10`、`border-success/30`。`line` 本身已經是半透明色，不能再加 `/透明度`。
+6. 部落格在 `ThemeProvider` 掛上 class 之前元件是以深色渲染，所以 `html` 還沒有 `.light` 時 `.blog-root` 先用深色數值。
+
+### 標題六級
+
+| 層級 | 字級（手機 → 桌面） | 字重 | 辨識記號 | 上方間距 |
+| --- | --- | --- | --- | --- |
+| 頁首主標題 | 30 → 44px | 700 | 只出現在文章頁頂（`ArticleHero`） | |
+| H1 | 28 → 36px | 800 | 底下一條 2px 實線 | 4.5rem |
+| H2 | 24 → 30px | 700 | 上方一條強調色短線（40 × 3px），章節的落點 | 4.5rem |
+| H3 | 20 → 23px | 700 | 無記號，靠字級 | 3rem |
+| H4 | 18 → 19px | 600 | 無記號 | 2.5rem |
+| H5 | 16 → 17px | 600 | 與內文同大，用 `brand-text` | 2.25rem |
+| H6 | 13px | 500 | 等寬、全大寫、字距 0.12em | 2.25rem |
+| 內文 | 16 → 17px | 400 | 行高 1.9 | |
+
+- 字級用 `clamp()`，手機與桌面之間平滑縮放，不需要另外寫手機版斷點。
+- 相鄰兩級至少差 2px，而且每一級除了大小之外還有另一個可以辨識的特徵（字重、記號、顏色或字體），即使只看一個標題也認得出層級。
+- 標題緊接著標題（例如 H2 底下直接是 H3）時，第二個標題的上方間距縮成 1.25rem。
+- 文章內文的標題樣式在 `app/blog/blog.css`，選擇器排除 `.not-prose`。自己有排版的 MDX 元件（`Callout`、`StepGuide`、`StatsHighlight`、`ArticleConclusion`、互動元件）根節點都要加 `not-prose`。
+- 元件裡需要同樣的字級時用 Tailwind 的 `text-h1` 到 `text-h6`、`text-body`、`text-display`。
+- H2 到 H6 都會產生錨點連結與目錄項目（`lib/rehype-blog.ts`）。
+
+### 已經改用 token 的地方
+
+- 文章內文（`EnhancedArticleContent`）：原本深淺色各寫一份、MDX 與 HTML 又各寫一份的 class，合併成一個不分主題的 `PROSE_CLASS`。
+- `globals.css` 的 `.prose` 顏色與表格：拿掉 `slate` 與 `.dark .prose` 分支。
+- 提示框（`Callout`）：五種類型對應品牌與四個狀態色，圖示換成 Heroicons。
+- 文章頁與列表頁底色：都改成 `bg-canvas`。文章頁背後的點陣從 12% 降到 5%，不再干擾內文。
+
+其餘部落格元件（側欄、卡片、目錄、互動元件等）還是 `isDark` 分支，之後動到時順手改成 token 即可，不需要一次全改。
+
 ## 資訊架構
 
 首頁順序從「關於、技術、活動、專案」改成「關於、專案、技術、活動、聯絡」，作品往前移。

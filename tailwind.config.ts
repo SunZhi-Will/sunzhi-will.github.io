@@ -1,6 +1,10 @@
 import type { Config } from "tailwindcss";
 import typography from '@tailwindcss/typography';
-import colors from 'tailwindcss/colors';
+// 設計 token（app/tokens.css）的 Tailwind 對照。可加透明度的寫成 rgb(var(--x) / <alpha-value>)
+const token = (name: string) => `rgb(var(--color-${name}) / <alpha-value>)`;
+const status = (name: string) => ({ DEFAULT: token(name), text: token(`${name}-text`) });
+const heading = (level: number, extra: Record<string, string> = {}) =>
+  [`var(--font-size-h${level})`, { lineHeight: `var(--line-height-h${level})`, fontWeight: `var(--font-weight-h${level})`, ...extra }] as [string, Record<string, string>];
 
 export default {
   darkMode: 'class',
@@ -18,6 +22,30 @@ export default {
           yellow: "var(--accent-yellow)",
           amber: "var(--accent-amber)",
         },
+        // 品牌
+        brand: { DEFAULT: token('brand'), text: token('brand-text'), on: token('on-brand') },
+        // 表面
+        canvas: token('canvas'),
+        surface: { DEFAULT: token('surface'), raised: token('surface-raised'), sunken: token('surface-sunken') },
+        // 文字
+        fg: { DEFAULT: token('fg'), body: token('fg-body'), muted: token('fg-muted') },
+        // 線條（本身已是半透明，不支援 /透明度）
+        line: { DEFAULT: 'var(--color-line)', strong: 'var(--color-line-strong)' },
+        // 狀態
+        info: status('info'),
+        success: status('success'),
+        warning: status('warning'),
+        danger: status('danger'),
+      },
+      fontSize: {
+        display: ['var(--font-size-display)', { lineHeight: '1.22', fontWeight: '700' }],
+        h1: heading(1, { letterSpacing: 'var(--letter-spacing-h1)' }),
+        h2: heading(2, { letterSpacing: 'var(--letter-spacing-h2)' }),
+        h3: heading(3, { letterSpacing: 'var(--letter-spacing-h3)' }),
+        h4: heading(4),
+        h5: heading(5),
+        h6: heading(6, { letterSpacing: 'var(--letter-spacing-h6)' }),
+        body: ['var(--font-size-body)', { lineHeight: 'var(--line-height-body)' }],
       },
       backgroundImage: {
         'gradient-primary': 'var(--gradient-primary)',

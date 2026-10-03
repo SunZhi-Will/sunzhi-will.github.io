@@ -21,7 +21,7 @@ export function StepGuide({ steps, title }: StepGuideProps) {
   const isDark = theme === 'dark';
 
   return (
-    <div className="my-8">
+    <div className="not-prose my-8">
       {title && (
         <h3 className={`text-xl font-light mb-6 ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
           {title}

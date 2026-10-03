@@ -151,12 +151,12 @@ export default function BlogPostClient({
 
     return (
         <div
-            className="min-h-screen relative transition-colors duration-300"
+            className="min-h-screen relative bg-canvas transition-colors duration-300"
             style={{
-                backgroundColor: isDark ? '#000000' : '#ffffff',
+                // 點陣只是底紋，壓到幾乎看不見，避免在內文後面干擾閱讀
                 backgroundImage: isDark
-                    ? `radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px)`
-                    : `radial-gradient(circle, rgba(0,0,0,0.08) 1px, transparent 1px)`,
+                    ? `radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)`
+                    : `radial-gradient(circle, rgba(0,0,0,0.05) 1px, transparent 1px)`,
                 backgroundSize: '50px 50px',
             } satisfies CSSProperties}
         >
@@ -209,9 +209,7 @@ export default function BlogPostClient({
                             />
 
                             {/* 內容開始分界線 */}
-                            <div className="pt-4 border-t" style={{
-                                borderColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'
-                            }} />
+                            <div className="pt-4 border-t border-line" />
 
                             {/* 增強的文章正文 - 包含互動功能 */}
                             <EnhancedArticleContent
@@ -226,9 +224,7 @@ export default function BlogPostClient({
                     {/* 文章底部 */}
                     <div className="max-w-3xl mx-auto px-4 md:px-8 pb-36 md:pb-20">
                         {/* 內容結束分界線 */}
-                        <div className="pt-6 border-t" style={{
-                            borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
-                        }} />
+                        <div className="pt-6 border-t border-line" />
                         <div className="space-y-8 pt-4">
                             {/* 分享按鈕 */}
                             <ShareButtons

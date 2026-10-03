@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react';
 import { MDXRemote } from 'next-mdx-remote';
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
-import { useTheme } from '@/app/blog/ThemeProvider';
 import { Lang } from '@/types';
 import { Callout } from './Callout';
 import { StepGuide } from './StepGuide';
@@ -19,6 +18,21 @@ interface EnhancedArticleContentProps {
     postSlug: string;
     lang: Lang;
 }
+// 內文的版面。顏色來自 app/tokens.css（深淺色自動切換），標題字級寫在 app/blog/blog.css
+const PROSE_CLASS = [
+    'prose prose-base max-w-none',
+    'prose-p:font-normal prose-p:mb-7 prose-p:break-words',
+    'prose-a:no-underline prose-a:border-b prose-a:border-brand/50 prose-a:transition-colors prose-a:font-medium prose-a:break-words prose-a:pb-0.5 hover:prose-a:border-brand',
+    'prose-strong:font-semibold',
+    'prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:font-mono prose-code:rounded prose-code:bg-surface-sunken prose-code:before:content-none prose-code:after:content-none',
+    'prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:my-10 prose-pre:border prose-pre:border-line',
+    'prose-blockquote:border-l-2 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-none prose-blockquote:font-normal prose-blockquote:not-italic prose-blockquote:my-10 prose-blockquote:leading-relaxed prose-blockquote:bg-surface-sunken',
+    'prose-ul:my-7 prose-ol:my-7',
+    'prose-li:leading-relaxed prose-li:break-words',
+    'prose-img:max-w-full prose-img:h-auto prose-img:rounded-lg prose-img:my-10 prose-img:border prose-img:border-line prose-img:transition-opacity prose-img:hover:opacity-90',
+    'prose-hr:my-14 prose-hr:border-line',
+].join(' ');
+
 // MDX 組件映射
 const mdxComponents = {
     InsightQuote,
@@ -42,8 +56,6 @@ export function EnhancedArticleContent({
     lang, // eslint-disable-line @typescript-eslint/no-unused-vars
 }: EnhancedArticleContentProps) {
     const contentRef = useRef<HTMLDivElement>(null);
-    const { theme } = useTheme();
-    const isDark = theme === 'dark';
 
     // 內容增強功能 - 適用於 MDX 與 HTML
     useEffect(() => {
@@ -125,7 +137,7 @@ export function EnhancedArticleContent({
                             }
                             // 創建高亮 span
                             const span = document.createElement('span');
-                            span.className = `font-semibold ${isDark ? 'text-yellow-300' : 'text-yellow-700'}`;
+                            span.className = 'font-semibold text-brand-text';
                             span.textContent = match[0];
                             parts.push(span);
                             lastIndex = match.index + match[0].length;
@@ -172,7 +184,7 @@ export function EnhancedArticleContent({
             if (!codeBlock.parentElement?.querySelector('.copy-button')) {
                 const pre = codeBlock.parentElement as HTMLElement;
                 const button = document.createElement('button');
-                button.className = 'copy-button absolute top-3 right-3 px-2 py-1 text-xs rounded bg-gray-700 text-white hover:bg-gray-600 transition-colors';
+                button.className = 'copy-button absolute top-3 right-3 px-2 py-1 text-xs rounded border border-line bg-surface-raised text-fg transition-colors hover:border-line-strong';
                 button.textContent = 'Copy';
                 button.onclick = async () => {
                     try {
@@ -187,7 +199,7 @@ export function EnhancedArticleContent({
                 pre.appendChild(button);
             }
         });
-    }, [htmlContent, isDark, mdxSource]);
+    }, [htmlContent, mdxSource]);
 
     // 如果有 MDX 內容，渲染 MDX
     if (mdxSource) {
@@ -195,52 +207,7 @@ export function EnhancedArticleContent({
             <div className="space-y-8">
                 <div
                     ref={contentRef}
-                    className={`prose prose-base max-w-none
-                        prose-h1:text-2xl prose-h1:mt-14 prose-h1:mb-8 prose-h1:font-semibold prose-h1:leading-tight prose-h1:tracking-normal prose-h1:pb-4 prose-h1:border-b prose-h1:border-opacity-20
-                        prose-h2:text-xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:font-semibold prose-h2:leading-tight prose-h2:tracking-normal prose-h2:pb-3 prose-h2:border-b prose-h2:border-opacity-15
-                        prose-h3:text-lg prose-h3:mt-10 prose-h3:mb-5 prose-h3:font-semibold prose-h3:leading-tight prose-h3:tracking-normal
-                        prose-h4:text-base prose-h4:mt-8 prose-h4:mb-4 prose-h4:font-semibold prose-h4:leading-tight
-                        prose-p:leading-[1.9] prose-p:font-normal prose-p:text-[17px] prose-p:mb-7 prose-p:break-words
-                        prose-a:no-underline prose-a:border-b prose-a:border-opacity-50 prose-a:transition-all prose-a:font-medium prose-a:break-words prose-a:pb-0.5
-                        prose-strong:font-semibold
-                        prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:font-mono prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-code:bg-opacity-60
-                        prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:my-10 prose-pre:border prose-pre:border-opacity-20
-                        prose-pre code:bg-transparent prose-pre code:px-0 prose-pre code:py-0 prose-pre code:border-0
-                        prose-blockquote:border-l-2 prose-blockquote:border-opacity-40 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-none prose-blockquote:font-normal prose-blockquote:not-italic prose-blockquote:my-10 prose-blockquote:leading-relaxed prose-blockquote:bg-opacity-30
-                        prose-ul:my-7 prose-ol:my-7
-                        prose-li:leading-relaxed prose-li:break-words
-                        prose-img:max-w-full prose-img:h-auto prose-img:rounded-lg prose-img:my-10 prose-img:border prose-img:border-opacity-20 prose-img:transition-opacity prose-img:hover:opacity-90
-                        prose-hr:my-14 prose-hr:border-opacity-20 prose-hr:has(+h2):my-4
-                        prose-th:border-opacity-30 prose-th:px-4 prose-th:py-2 prose-th:font-semibold
-                        prose-td:border-opacity-30 prose-td:px-4 prose-td:py-2 prose-td:break-words
-                        ${isDark
-                            ? `prose-headings:font-semibold prose-headings:tracking-normal prose-headings:text-gray-50 prose-h1:border-b-gray-700/20 prose-h2:border-b-gray-700/15
-                            prose-p:text-gray-200
-                            prose-a:text-yellow-200 prose-a:border-yellow-300/50 hover:prose-a:border-yellow-200 hover:prose-a:text-yellow-100
-                            prose-strong:text-gray-100
-                            prose-code:text-gray-300 prose-code:bg-gray-800/60
-                            prose-pre:bg-gray-900/60 prose-pre:border-gray-700/20
-                            prose-blockquote:text-gray-200 prose-blockquote:border-gray-500/50 prose-blockquote:bg-gray-800/40
-                            prose-ul:text-gray-200 prose-ol:text-gray-200
-                            prose-li:marker:text-gray-500
-                            prose-img:opacity-95 prose-img:border-gray-700/20
-                            prose-hr:border-gray-700/20
-                            prose-table:text-gray-200 prose-th:border-gray-700/30 prose-th:bg-gray-800/40
-                            prose-td:border-gray-700/30`
-                            : `prose-headings:font-semibold prose-headings:tracking-normal prose-headings:text-gray-950 prose-h1:border-b-gray-300/20 prose-h2:border-b-gray-300/15
-                            prose-p:text-gray-800
-                            prose-a:text-yellow-700 prose-a:border-yellow-500/50 hover:prose-a:border-cyan-700 hover:prose-a:text-yellow-900
-                            prose-strong:text-gray-900
-                            prose-code:text-gray-800 prose-code:bg-gray-100/60
-                            prose-pre:bg-gray-50/60 prose-pre:border-gray-300/20
-                            prose-blockquote:text-gray-800 prose-blockquote:border-gray-400/50 prose-blockquote:bg-gray-50/80
-                            prose-ul:text-gray-800 prose-ol:text-gray-800
-                            prose-li:marker:text-gray-500
-                            prose-img:opacity-95 prose-img:border-gray-300/20
-                            prose-hr:border-gray-300/20
-                            prose-table:text-gray-700 prose-th:border-gray-300/30 prose-th:bg-gray-100/20
-                            prose-td:border-gray-300/30`
-                        }`}
+                    className={PROSE_CLASS}
                 >
                     {/* 不包 Suspense：包了之後這一段會晚一步 hydrate，上面的 useEffect 會先改到還沒接管的 DOM，造成 hydration 不一致 */}
                     <MDXRemote {...mdxSource} components={mdxComponents} />
@@ -259,52 +226,7 @@ export function EnhancedArticleContent({
             {/* 文章內容 - 使用 dangerouslySetInnerHTML 正確渲染 HTML */}
             <div
                 ref={contentRef}
-                className={`prose prose-base max-w-none
-                    prose-h1:text-2xl prose-h1:mt-14 prose-h1:mb-8 prose-h1:font-semibold prose-h1:leading-tight prose-h1:tracking-normal prose-h1:pb-4 prose-h1:border-b prose-h1:border-opacity-20
-                    prose-h2:text-xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:font-semibold prose-h2:leading-tight prose-h2:tracking-normal prose-h2:pb-3 prose-h2:border-b prose-h2:border-opacity-15
-                    prose-h3:text-lg prose-h3:mt-10 prose-h3:mb-5 prose-h3:font-semibold prose-h3:leading-tight prose-h3:tracking-normal
-                    prose-h4:text-base prose-h4:mt-8 prose-h4:mb-4 prose-h4:font-semibold prose-h4:leading-tight
-                    prose-p:leading-[1.9] prose-p:font-normal prose-p:text-[17px] prose-p:mb-7 prose-p:break-words
-                    prose-a:no-underline prose-a:border-b prose-a:border-opacity-50 prose-a:transition-all prose-a:font-medium prose-a:break-words prose-a:pb-0.5
-                    prose-strong:font-semibold
-                    prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:font-mono prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-code:bg-opacity-60
-                    prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:my-10 prose-pre:border prose-pre:border-opacity-20
-                    prose-pre code:bg-transparent prose-pre code:px-0 prose-pre code:py-0 prose-pre code:border-0
-                    prose-blockquote:border-l-2 prose-blockquote:border-opacity-40 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-none prose-blockquote:font-normal prose-blockquote:not-italic prose-blockquote:my-10 prose-blockquote:leading-relaxed prose-blockquote:bg-opacity-30
-                    prose-ul:my-7 prose-ol:my-7
-                    prose-li:leading-relaxed prose-li:break-words
-                    prose-img:max-w-full prose-img:h-auto prose-img:rounded-lg prose-img:my-10 prose-img:border prose-img:border-opacity-20 prose-img:transition-opacity prose-img:hover:opacity-90
-                    prose-hr:my-14 prose-hr:border-opacity-20
-                    prose-th:border-opacity-30 prose-th:px-4 prose-th:py-2 prose-th:font-semibold
-                    prose-td:border-opacity-30 prose-td:px-4 prose-td:py-2 prose-td:break-words
-                    ${isDark
-                        ? `prose-headings:font-semibold prose-headings:tracking-normal prose-headings:text-gray-50 prose-h1:border-b-gray-700/20 prose-h2:border-b-gray-700/15
-                        prose-p:text-gray-200
-                        prose-a:text-yellow-200 prose-a:border-yellow-300/50 hover:prose-a:border-yellow-200 hover:prose-a:text-yellow-100
-                        prose-strong:text-gray-100
-                        prose-code:text-gray-300 prose-code:bg-gray-800/60
-                        prose-pre:bg-gray-900/60 prose-pre:border-gray-700/20
-                        prose-blockquote:text-gray-200 prose-blockquote:border-gray-500/50 prose-blockquote:bg-gray-800/40
-                        prose-ul:text-gray-200 prose-ol:text-gray-200
-                        prose-li:marker:text-gray-500
-                        prose-img:opacity-95 prose-img:border-gray-700/20
-                        prose-hr:border-gray-700/20
-                        prose-table:text-gray-200 prose-th:border-gray-700/30 prose-th:bg-gray-800/40
-                        prose-td:border-gray-700/30`
-                        : `prose-headings:font-semibold prose-headings:tracking-normal prose-headings:text-gray-950 prose-h1:border-b-gray-300/20 prose-h2:border-b-gray-300/15
-                        prose-p:text-gray-800
-                        prose-a:text-yellow-700 prose-a:border-yellow-500/50 hover:prose-a:border-cyan-700 hover:prose-a:text-yellow-900
-                        prose-strong:text-gray-900
-                        prose-code:text-gray-800 prose-code:bg-gray-100/60
-                        prose-pre:bg-gray-50/60 prose-pre:border-gray-300/20
-                        prose-blockquote:text-gray-800 prose-blockquote:border-gray-400/50 prose-blockquote:bg-gray-50/80
-                        prose-ul:text-gray-800 prose-ol:text-gray-800
-                        prose-li:marker:text-gray-500
-                        prose-img:opacity-95 prose-img:border-gray-300/20
-                        prose-hr:border-gray-300/20
-                        prose-table:text-gray-700 prose-th:border-gray-300/30 prose-th:bg-gray-100/20
-                        prose-td:border-gray-300/30`
-                    }`}
+                className={PROSE_CLASS}
                 dangerouslySetInnerHTML={{ __html: htmlContent }}
             />
         </div>
