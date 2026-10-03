@@ -63,3 +63,39 @@ html.dark:has(.blog-root) {
 [data-article-content] .prose img {
   height: auto;
 }
+
+/* 桌面版目錄：不顯示捲軸，仍可用滾輪捲動；上下有被藏住的項目時用淡出提示 */
+.toc-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.toc-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.toc-scroll.toc-fade-top {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 2.5rem);
+  mask-image: linear-gradient(to bottom, transparent, #000 2.5rem);
+}
+
+.toc-scroll.toc-fade-bottom {
+  -webkit-mask-image: linear-gradient(to top, transparent, #000 2.5rem);
+  mask-image: linear-gradient(to top, transparent, #000 2.5rem);
+}
+
+.toc-scroll.toc-fade-top.toc-fade-bottom {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 2.5rem, #000 calc(100% - 2.5rem), transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 2.5rem, #000 calc(100% - 2.5rem), transparent);
+}
+
+/* 互動元件載入前的佔位框，高度用實測值，載入後內文不會跳 */
+.lazy-widget {
+  height: var(--h-mobile);
+}
+
+@media (min-width: 640px) {
+  .lazy-widget {
+    height: var(--h-desktop);
+  }
+}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from './ThemeProvider';
 import './blog.css';
+import { BlogServiceWorker } from '@/components/blog/BlogServiceWorker';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://sunzhi-will.github.io';
 
@@ -48,6 +49,7 @@ export default function BlogLayout({
 }>) {
   return (
     <ThemeProvider>
+      <BlogServiceWorker />
       <div className="blog-root">{children}</div>
     </ThemeProvider>
   );

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTheme } from '@/app/blog/ThemeProvider';
 import { Lang } from '@/types';
 
@@ -25,6 +25,9 @@ export function TableOfContents({
 }: TableOfContentsProps) {
     const [headings, setHeadings] = useState<Heading[]>([]);
     const [activeId, setActiveId] = useState<string>('');
+    const desktopNavRef = useRef<HTMLElement>(null);
+    // 桌面版目錄上下還有沒有被藏住的項目，用來決定要不要顯示淡出提示
+    const [edges, setEdges] = useState({ top: false, bottom: false });
     const [leftPosition, setLeftPosition] = useState<number>(0);
     const [localIsMobileOpen, setLocalIsMobileOpen] = useState(false);
     
@@ -232,6 +235,44 @@ export function TableOfContents({
         };
     }, [headings]);
 
+    // 目錄上下是否還有內容沒露出來
+    useEffect(() => {
+        const nav = desktopNavRef.current;
+        if (!nav) return;
+        const update = () =>
+            setEdges({
+                top: nav.scrollTop > 4,
+                bottom: nav.scrollTop + nav.clientHeight < nav.scrollHeight - 4,
+            });
+        update();
+        nav.addEventListener('scroll', update, { passive: true });
+        window.addEventListener('resize', update);
+        const observer = new ResizeObserver(update);
+        observer.observe(nav);
+        if (nav.firstElementChild) observer.observe(nav.firstElementChild);
+        return () => {
+            nav.removeEventListener('scroll', update);
+            window.removeEventListener('resize', update);
+            observer.disconnect();
+        };
+    }, [headings]);
+
+    // 目前章節換了，就把它捲進目錄的可見範圍，長文讀到後段時目錄不會停在開頭
+    useEffect(() => {
+        const nav = desktopNavRef.current;
+        if (!nav || !activeId) return;
+        const link = nav.querySelector<HTMLElement>(`a[href="#${CSS.escape(activeId)}"]`);
+        if (!link) return;
+        const navRect = nav.getBoundingClientRect();
+        const linkRect = link.getBoundingClientRect();
+        if (linkRect.top < navRect.top + 40 || linkRect.bottom > navRect.bottom - 40) {
+            nav.scrollTo({
+                top: nav.scrollTop + linkRect.top - navRect.top - nav.clientHeight / 2 + linkRect.height / 2,
+                behavior: 'smooth',
+            });
+        }
+    }, [activeId]);
+
     // 處理點擊跳轉
     const handleClick = (id: string, e: React.MouseEvent) => {
         e.preventDefault();
@@ -256,9 +297,21 @@ export function TableOfContents({
 
     const tocLabel = lang === 'zh-TW' ? '目錄' : 'On this page';
 
+    // 每個小節屬於哪一章，以及目前讀到哪一章
+    const parentOf = new Map<string, string>();
+    let currentChapter = '';
+    for (const heading of headings) {
+        if (heading.level === 2) currentChapter = heading.id;
+        parentOf.set(heading.id, heading.level === 2 ? heading.id : currentChapter);
+    }
+    const activeChapter = parentOf.get(activeId) ?? '';
+
+    // 桌面版只列出各章，小節等讀到那一章才展開，目錄才不會長到要捲
     const TocList = ({ clamp = false }: { clamp?: boolean }) => (
         <ul className="space-y-0.5">
-            {headings.map((heading, index) => {
+            {headings
+                .filter((heading) => !clamp || heading.level === 2 || parentOf.get(heading.id) === activeChapter)
+                .map((heading, index) => {
                 const isActive = activeId === heading.id;
                 const indentClass = {
                     2: 'pl-0',
@@ -277,7 +330,7 @@ export function TableOfContents({
                         <a
                             href={`#${heading.id}`}
                             onClick={(e) => handleClick(heading.id, e)}
-                            className={`block leading-snug transition-all duration-200 ${clamp ? 'py-1.5 text-xs line-clamp-2' : 'py-3 text-sm'
+                            className={`block leading-snug transition-all duration-200 ${clamp ? 'py-1 text-xs line-clamp-2' : 'py-3 text-sm'
                                 } ${isActive
                                     ? isDark
                                         ? 'text-yellow-300 font-medium'
@@ -298,8 +351,12 @@ export function TableOfContents({
     return (
         <>
             {/* ── 桌面版：固定在左側，更長的高度 ── */}
+            {/* 高度 = 視窗高度 - 上方 6rem - 下方 2rem，確保最後一項看得到；
+                data-lenis-prevent 讓滾輪在目錄上時捲目錄本身，而不是被平滑捲動拿去捲文章 */}
             <nav
-                className={`hidden xl:block fixed top-[6rem] w-44 max-h-[calc(100vh-5rem)] overflow-hidden overflow-y-auto z-10 transition-all duration-300 scrollbar-hide ${isDark ? 'text-zinc-200' : 'text-gray-700'
+                ref={desktopNavRef}
+                data-lenis-prevent
+                className={`toc-scroll hidden xl:block fixed top-[6rem] w-44 max-h-[calc(100vh-8rem)] overflow-y-auto overscroll-contain pb-4 z-10 transition-all duration-300 ${edges.top ? 'toc-fade-top' : ''} ${edges.bottom ? 'toc-fade-bottom' : ''} ${isDark ? 'text-zinc-200' : 'text-gray-700'
                     }`}
                 style={{ left: `${leftPosition}px` }}
                 aria-label={lang === 'zh-TW' ? '目錄' : 'Table of Contents'}
@@ -373,7 +430,7 @@ export function TableOfContents({
                         </div>
 
                         {/* 抽屜內容 */}
-                        <div className="overflow-y-auto flex-1 px-5 py-4 scrollbar-hide">
+                        <div data-lenis-prevent className="overflow-y-auto overscroll-contain flex-1 px-5 py-4 scrollbar-hide">
                             <TocList />
                         </div>
 
