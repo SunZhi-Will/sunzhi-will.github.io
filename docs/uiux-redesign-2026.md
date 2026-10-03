@@ -219,7 +219,7 @@ node scripts/preview-newsletter.js <slug>   # 指定文章
 - `PageNav`、`TabBar` 拿掉 `theme` 屬性。部落格跟著主題切換，首頁、連結頁、報價頁在 `.site` 裡自動是深色。
 - `ArticleHero` 拿掉 `isDark` 屬性。互動元件共用的 `useFrameTheme()` 回傳固定的 token class，不再回傳 `isDark`。
 - 文章頁與列表頁底色都是 `bg-canvas`，文章頁背後的點陣從 12% 降到 5%。
-- 原本當裝飾用的紫色、綠色（`StepGuide`、`InteractiveQuote`、`InsightQuote`）改成品牌色或中性色；`InsightQuote` 的 warning 改用狀態色的橘色。
+- 原本當裝飾用的紫色、綠色（`StepGuide`、`InsightQuote`）改成品牌色或中性色；`InsightQuote` 的 warning 改用狀態色的橘色。
 - framer-motion 只吃完整色值，所以另外提供 `--color-brand-solid`、`--color-danger-solid`（每個主題區塊都要宣告一次，因為自訂屬性繼承的是算好的值）。
 
 刻意保留的 `useTheme`：主題切換按鈕（`BlogNavTools`、`BlogMobileTools`、`/design`）要知道目前主題才能顯示太陽或月亮。
@@ -270,6 +270,8 @@ JS 變小主要來自移除 tsParticles 與 HeroUI。
 | `types/global.d.ts` | `window.__lenis` 型別 |
 
 已刪除：`components/` 根目錄下的 `Hero`、`About`、`Activities`、`Projects`、`Footer`、`DynamicIslandNav`、`FloatingButtons`、`GlowingButton`、`GradientBackground`、`ParticlesBackground`、`NavDot`、`TechIcon`、`TechStackGrid`、`ProjectMedia`，以及 `globals.css` 裡對應的特效樣式。
+
+2026-10 改用 token 時一併刪除沒有任何頁面或文章引用的元件：`components/blog/` 底下的 `BlogSidebar`、`BlogPostSidebar`、`BlogSearchIsland`、`BlogPostDynamicIsland`、`ProfileCard`、`NewsletterCard`、`DataVisualization`、`ExpandableSection`、`InteractiveQuote`，以及放錯位置、Next.js 不會讀取的 `components/mdx-components.tsx`（文章用 `next-mdx-remote` 渲染，元件對照在 `EnhancedArticleContent` 的 `mdxComponents`）。
 
 ## 待辦
 
