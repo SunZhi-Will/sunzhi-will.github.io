@@ -1,6 +1,6 @@
 'use client'
 
-import type { ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { MotionConfig, motion } from 'framer-motion';
 
 /**
@@ -50,20 +50,45 @@ interface InteractiveFrameProps {
     title: string;
     kicker?: string;
     hint?: ReactNode;
+    /** 內容本來就會大幅伸縮的元件（例如手風琴）。只套用預設最小高度，不啟用「只增不減」 */
+    flexible?: boolean;
     children: ReactNode;
 }
 
-export function InteractiveFrame({ title, kicker = '互動展示', hint, children }: InteractiveFrameProps) {
+export function InteractiveFrame({ title, kicker = '互動展示', hint, flexible = false, children }: InteractiveFrameProps) {
     const t = useFrameTheme();
+    const ref = useRef<HTMLDivElement>(null);
+    // 保險：預設高度之外，若有狀態比預設更高，就把高度記住，之後只增不減。視窗寬度變了就重新計算
+    const [floor, setFloor] = useState(0);
+
+    useEffect(() => {
+        const element = ref.current;
+        if (flexible || !element || typeof ResizeObserver === 'undefined') return;
+        let width = window.innerWidth;
+        const observer = new ResizeObserver(() => setFloor((current) => Math.max(current, element.offsetHeight)));
+        observer.observe(element);
+        const onResize = () => {
+            if (window.innerWidth === width) return;
+            width = window.innerWidth;
+            setFloor(0);
+        };
+        window.addEventListener('resize', onResize);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener('resize', onResize);
+        };
+    }, [flexible]);
 
     return (
         <MotionConfig reducedMotion="user">
             <motion.div
+                ref={ref}
+                style={floor && !flexible ? { minHeight: floor } : undefined}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
                 transition={{ duration: 0.5, ease: 'easeOut' }}
-                className={`not-prose my-10 overflow-hidden rounded-xl border ${t.card}`}
+                className={`interactive-frame not-prose my-10 overflow-hidden rounded-xl border ${t.card}`}
             >
                 <div className={`flex items-center gap-3 border-b px-4 py-3 sm:px-5 ${t.divider}`}>
                     <VoxelGlyph />

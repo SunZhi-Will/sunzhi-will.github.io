@@ -8,10 +8,36 @@
     <link>https://sunzhi-will.github.io</link>
     <description>Exploring software engineering, AI development, and the art of building great products.</description>
     <language>zh-TW</language>
-    <lastBuildDate>Fri, 02 Oct 2026 18:35:35 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 06 Oct 2026 14:35:30 GMT</lastBuildDate>
     <atom:link href="https://sunzhi-will.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <atom:link href="https://sunzhi-will.github.io/blog" rel="alternate" type="text/html"/>
     
+    <item>
+      <title><![CDATA[React、前端、後端到底是什麼？給剛開始學 Web 的新手看的超白話版]]></title>
+      <link>https://sunzhi-will.github.io/blog/2026-10-06-react-frontend-backend-for-beginners</link>
+      <guid isPermaLink="true">https://sunzhi-will.github.io/blog/2026-10-06-react-frontend-backend-for-beginners</guid>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 GMT</pubDate>
+      <description><![CDATA[React 要一直開著後端嗎？前端跟後端差在哪？PM2 又是在顧什麼？用 25 個可以動手玩的互動圖解，一次把前端、後端、部署和執行位置講清楚。]]></description>
+      <content:encoded><![CDATA[&gt; 最近社群裡聊到一個很常見的問題：
+&gt; 「React 專案是不是要一直開著後端？」
+
+&lt;OverviewDeck /&gt;
+
+這個問題背後，其實常常還藏著另外幾個：前端跟後端到底差在哪？為什麼有時候要用 PM2，有時候又不用？現在 React 到底是用 JS 還是 TS？
+
+這些問題會混在一起很正常，因為「寫程式」、「部署」、「程式在哪裡執行」本來就是不同的概念。
+
+&lt;ThreeConcepts /&gt;
+
+這篇就用最簡單的方式整理一次，不塞太多術語。文章裡的圖都可以動手玩，目標是讓完全沒碰過前後端的人也看得懂。
+
+ 一、React 是前端
+
+先記最重要的一句：
+
+&gt; React 本身主要是拿來做前]]></content:encoded>
+      
+    </item>
     <item>
       <title><![CDATA[遊戲受到另一款作品影響，就等於抄襲嗎？從《方界》與 Cube World 的爭論談「借鑑、相似與抄襲」]]></title>
       <link>https://sunzhi-will.github.io/blog/2026-10-02-inspiration-vs-plagiarism</link>

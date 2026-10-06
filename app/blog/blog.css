@@ -195,6 +195,30 @@ html.dark:has(.blog-root) {
 
 @media (min-width: 640px) {
   .lazy-widget {
+    height: var(--h-tablet, var(--h-mobile));
+  }
+}
+
+@media (min-width: 768px) {
+  .lazy-widget {
     height: var(--h-desktop);
+  }
+}
+
+/* 互動元件載入後也維持同一個高度：操作時內容再怎麼變，版面都不會跳。
+   高度是把每個元件所有狀態都跑過一遍之後量到的最大值。 */
+.interactive-frame {
+  min-height: var(--h-mobile);
+}
+
+@media (min-width: 640px) {
+  .interactive-frame {
+    min-height: var(--h-tablet, var(--h-mobile));
+  }
+}
+
+@media (min-width: 768px) {
+  .interactive-frame {
+    min-height: var(--h-desktop);
   }
 }

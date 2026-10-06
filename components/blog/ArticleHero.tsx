@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import type { BlogPost } from '@/types/blog';
 import type { Lang } from '@/types';
@@ -127,6 +127,57 @@ function BalancedText({ text, segmenter }: { readonly text: string; readonly seg
     );
 }
 
+/** 大標題縮到一行的下限：縮到原字級的這個比例還放不下，就維持原本依子句換行 */
+const MIN_FIT_SCALE = 0.84;
+
+/**
+ * 標題若只差一點點就會換行，就把字級縮小一點，讓它留在一行。
+ * 縮到下限仍放不下的長標題，保持原字級，由 BalancedText 依子句換行。
+ * 量測只在瀏覽器端進行（掛載後、視窗寬度改變、字體載入完成時），不影響伺服器渲染。
+ */
+function FitLine({ className, deps, children }: { readonly className: string; readonly deps: unknown; readonly children: ReactNode }) {
+    const ref = useRef<HTMLSpanElement>(null);
+
+    useLayoutEffect(() => {
+        const element = ref.current;
+        if (!element) return;
+
+        const fit = () => {
+            element.style.fontSize = '';
+            element.style.whiteSpace = '';
+            const base = parseFloat(getComputedStyle(element).fontSize);
+            const available = element.clientWidth;
+            if (!base || !available) return;
+
+            element.style.whiteSpace = 'nowrap';
+            const natural = element.scrollWidth;
+            if (natural <= available) {
+                // 原字級就放得下一行，不需要鎖住換行
+                element.style.whiteSpace = '';
+                return;
+            }
+            const scale = available / natural;
+            if (scale >= MIN_FIT_SCALE) {
+                element.style.fontSize = `${Math.floor(base * scale * 100) / 100}px`;
+            } else {
+                element.style.whiteSpace = '';
+            }
+        };
+
+        fit();
+        const observer = new ResizeObserver(fit);
+        observer.observe(element);
+        void document.fonts?.ready.then(fit);
+        return () => observer.disconnect();
+    }, [deps]);
+
+    return (
+        <span ref={ref} className={className}>
+            {children}
+        </span>
+    );
+}
+
 /** 進場動畫：沿用 globals.css 的 fade-in-up，依序延遲 */
 function reveal(order: number): { className: string; style: CSSProperties } {
     return {
@@ -170,19 +221,21 @@ export function ArticleHero({ post, lang, readingTime }: ArticleHeroProps) {
                 </span>
             </div>
 
+            {/* 1024px 以上的標題比內文欄多出兩側各 32 到 40px。左邊目錄固定在文章左緣外 72px，仍留有 32px 以上的間距 */}
             <h1
-                className={`mt-5 font-bold tracking-normal text-fg ${title.className}`}
+                className={`mt-5 font-bold tracking-normal text-fg lg:-mx-8 xl:-mx-10 ${title.className}`}
                 style={title.style}
             >
-                <span className="block text-[1.9rem] leading-[1.28] sm:text-4xl sm:leading-[1.25] md:text-[2.75rem] md:leading-[1.22]">
+                <FitLine deps={segmenter} className="block text-[1.9rem] leading-[1.28] sm:text-4xl sm:leading-[1.25] md:text-[2.75rem] md:leading-[1.22]">
                     <BalancedText text={lead} segmenter={segmenter} />
-                </span>
+                </FitLine>
                 {rest && (
-                    <span
-                        className={`mt-3 block text-xl font-semibold leading-snug sm:text-2xl md:mt-4 md:text-[1.7rem] md:leading-[1.4] text-fg-muted`}
+                    <FitLine
+                        deps={segmenter}
+                        className="mt-3 block text-xl font-semibold leading-snug text-fg-muted sm:text-2xl md:mt-4 md:text-[1.7rem] md:leading-[1.4]"
                     >
                         <BalancedText text={rest} segmenter={segmenter} />
-                    </span>
+                    </FitLine>
                 )}
             </h1>
 

@@ -198,6 +198,7 @@ export function ComparisonMatrix() {
 
     return (
         <InteractiveFrame
+            flexible
             title="我一直想看到的那張表"
             hint="點任一列展開，兩邊的實際畫面都放上去了，點圖可以放大。結論留給你自己填。"
         >

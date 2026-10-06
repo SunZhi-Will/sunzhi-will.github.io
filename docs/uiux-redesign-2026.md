@@ -210,6 +210,7 @@ node scripts/preview-newsletter.js <slug>   # 指定文章
 - 文章內文的標題樣式在 `app/blog/blog.css`，選擇器排除 `.not-prose`。自己有排版的 MDX 元件（`Callout`、`StepGuide`、`StatsHighlight`、`ArticleConclusion`、互動元件）根節點都要加 `not-prose`。
 - 元件裡需要同樣的字級時用 Tailwind 的 `text-h1` 到 `text-h6`、`text-body`、`text-display`。
 - H2 到 H6 都會產生錨點連結與目錄項目（`lib/rehype-blog.ts`）。
+- 文章頁首的大標題（`ArticleHero`）盡量留在一行：1024px 以上比內文欄兩側各多出 32 到 40px（左邊目錄固定在文章左緣外 72px，仍留 32px 以上的間距）；再放不下時，在 84% 字級（約 37px，仍大於 H1 的 36px）以內自動縮小。縮到下限還放不下的長標題，維持原字級並依子句換行。量測只在瀏覽器端進行（`FitLine`）。
 
 ### 改用 token 的範圍
 
