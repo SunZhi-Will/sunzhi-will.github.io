@@ -2,70 +2,82 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Icon } from './icons';
-import { InteractiveFrame, Verdict, useFrameTheme } from './InteractiveFrame';
+import { Icon, type IconName } from './icons';
+import { Stage } from './kit';
+import { RustLogo } from './logos';
+import { InteractiveFrame, Verdict } from './InteractiveFrame';
 
 const COST = 70;
 
-const TASKS = [
-    { name: '個人網站', need: 6 },
-    { name: '記帳工具', need: 10 },
-    { name: 'Discord Bot', need: 12 },
-    { name: '資料處理腳本', need: 22 },
-    { name: '遊戲引擎', need: 82 },
-    { name: '資料庫、瀏覽器核心', need: 95 },
+const TASKS: { name: string; icon: IconName; need: number }[] = [
+    { name: '個人網站', icon: 'globe', need: 6 },
+    { name: '記帳工具', icon: 'doc', need: 10 },
+    { name: 'Discord Bot', icon: 'chat', need: 12 },
+    { name: '資料處理腳本', icon: 'code', need: 22 },
+    { name: '遊戲引擎', icon: 'bolt', need: 82 },
+    { name: '資料庫核心', icon: 'db', need: 95 },
 ];
 
-/** Rust 很強，但你現在的問題用得到它多少？ */
+/** Rust 很強，但你現在的問題用得到它多少？用一座蹺蹺板來秤 */
 export function RustFit() {
-    const t = useFrameTheme();
     const [i, setI] = useState(0);
     const task = TASKS[i];
     const worth = task.need >= COST;
+    // 重的那一邊往下：成本比較重時左邊下沉（逆時針）
+    const tilt = Math.max(-11, Math.min(11, ((task.need - COST) / 100) * 16));
+    const benefitH = 16 + (task.need / 100) * 74;
+    const costH = 16 + (COST / 100) * 74;
 
     return (
-        <InteractiveFrame title="Rust 很強，但划算嗎？" kicker="示意圖表" hint="選一個你現在想做的東西，比較「用得到的好處」與「學習成本」。數值是示意，不是統計。">
-            <div role="group" aria-label="我想做" className="flex flex-wrap gap-1.5">
+        <InteractiveFrame title="Rust 很強，但划算嗎？" kicker="秤一秤" hint="選一個你現在想做的東西，看蹺蹺板往哪邊倒。數值是示意，不是統計。">
+            <div role="group" aria-label="我想做" className="grid grid-cols-3 gap-1.5 sm:grid-cols-6">
                 {TASKS.map((x, k) => (
-                    <button key={x.name} type="button" aria-pressed={i === k} onClick={() => setI(k)} className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${i === k ? t.chipOn : t.chip}`}>
+                    <button
+                        key={x.name}
+                        type="button"
+                        aria-pressed={i === k}
+                        onClick={() => setI(k)}
+                        className={`flex flex-col items-center gap-1 rounded-xl border px-1 py-2 text-[11px] font-bold transition-colors ${i === k ? 'border-fg bg-fg text-canvas' : 'border-line bg-surface text-fg hover:border-line-strong'}`}
+                    >
+                        <Icon name={x.icon} className="h-5 w-5" />
                         {x.name}
                     </button>
                 ))}
             </div>
 
-            <div className={`space-y-4 rounded-lg border p-4 ${t.inset}`}>
-                <div>
-                    <div className={`mb-1 flex items-baseline justify-between text-xs font-bold ${t.text}`}>
-                        <span>這個問題用得到 Rust 的好處（效能、記憶體控制）</span>
-                        <span className="tabular-nums">{task.need}</span>
-                    </div>
-                    <div className="h-3.5 overflow-hidden rounded-full bg-fg/10">
-                        <motion.div className={`h-full rounded-full ${worth ? 'bg-success' : 'bg-info'}`} initial={false} animate={{ width: `${task.need}%` }} transition={{ type: 'spring', stiffness: 110, damping: 18 }} />
-                    </div>
-                </div>
-                <div>
-                    <div className={`mb-1 flex items-baseline justify-between text-xs font-bold ${t.text}`}>
-                        <span>對新手的學習成本</span>
-                        <span className="tabular-nums">{COST}</span>
-                    </div>
-                    <div className="h-3.5 overflow-hidden rounded-full bg-fg/10">
-                        <div className="h-full rounded-full bg-warning" style={{ width: `${COST}%` }} />
-                    </div>
-                </div>
-                <div className="flex items-center gap-2">
-                    <Icon name="scale" className={`h-5 w-5 ${worth ? 'text-success-text' : 'text-warning-text'}`} />
-                    <motion.span key={`${i}-${worth}`} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} className={`text-sm font-bold ${worth ? 'text-success-text' : 'text-warning-text'}`}>
-                        {worth ? '好處大於成本，Rust 開始划算' : '成本比較高，現在不急著上'}
-                    </motion.span>
-                </div>
-            </div>
+            <Stage className="px-2 pt-4">
+                <svg viewBox="0 0 520 250" className="block w-full" role="img" aria-label={`${task.name}：${worth ? '好處大於成本' : '成本大於好處'}`}>
+                    <motion.g initial={false} animate={{ rotate: tilt }} transition={{ type: 'spring', stiffness: 70, damping: 12 }} style={{ originX: '260px', originY: '176px' }}>
+                        <rect x="40" y="170" width="440" height="12" rx="6" className="fill-fg" />
+                        {/* 左：學習成本 */}
+                        <rect x="60" y={170 - costH} width="120" height={costH} rx="10" className="fill-warning" />
+                        <text x="120" y={170 - costH + 26} textAnchor="middle" className="fill-canvas text-[14px] font-black">學習成本</text>
+                        <text x="120" y={170 - costH + 46} textAnchor="middle" className="fill-canvas text-[13px] font-bold">{COST}</text>
+                        {/* 右：用得到的好處 */}
+                        <motion.rect x="340" width="120" rx="10" className={worth ? 'fill-success' : 'fill-info'} initial={false} animate={{ y: 170 - benefitH, height: benefitH }} transition={{ type: 'spring', stiffness: 120, damping: 16 }} />
+                        <motion.text x="400" textAnchor="middle" className="fill-canvas text-[14px] font-black" initial={false} animate={{ y: 170 - benefitH + (benefitH > 50 ? 26 : -10) }}>
+                            {benefitH > 50 ? '用得到的好處' : ''}
+                        </motion.text>
+                        <motion.text x="400" textAnchor="middle" className={benefitH > 50 ? 'fill-canvas text-[13px] font-bold' : 'fill-fg text-[13px] font-black'} initial={false} animate={{ y: 170 - benefitH + (benefitH > 50 ? 46 : -10) }}>
+                            {benefitH > 50 ? task.need : `用得到的好處 ${task.need}`}
+                        </motion.text>
+                    </motion.g>
+                    <path d="M230 240 L260 182 L290 240 Z" className="fill-fg" />
+                    <circle cx="260" cy="214" r="17" className="fill-surface" />
+                    <foreignObject x="246" y="200" width="28" height="28">
+                        <RustLogo className="h-7 w-7 text-fg" />
+                    </foreignObject>
+                </svg>
+            </Stage>
 
             <Verdict id={i}>
                 {worth ? (
-                    <>Rust 當然很強。<strong>當你的問題剛好卡在效能與記憶體，它就是對的工具。</strong></>
+                    <>
+                        好處壓過成本，蹺蹺板倒向右邊。<strong>當你的問題剛好卡在效能與記憶體，Rust 就是對的工具。</strong>
+                    </>
                 ) : (
                     <>
-                        你可能只是要鎖一顆螺絲，卻拿出了超高級的工業級工具。問題不是「Rust 強不強」，而是<strong>「我現在的問題需要 Rust 嗎？」</strong>
+                        成本那邊比較重。你可能只是要鎖一顆螺絲，卻拿出了超高級的工業級工具。問題不是「Rust 強不強」，而是<strong>「我現在的問題需要 Rust 嗎？」</strong>
                     </>
                 )}
             </Verdict>

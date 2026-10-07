@@ -119,9 +119,9 @@ export function QuestionCloud() {
                                     transition={{ delay: open ? 0 : i * 0.06 }}
                                     whileHover={{ y: -3 }}
                                     whileTap={{ scale: 0.97 }}
-                                    className="group relative flex h-[128px] flex-col items-center justify-center gap-3 rounded-xl border border-line bg-surface-raised shadow-card transition-colors hover:border-brand sm:h-[146px]"
+                                    className="group relative flex h-[104px] flex-col items-center justify-center gap-2 sm:gap-3 rounded-xl border border-line bg-surface-raised shadow-card transition-colors hover:border-brand sm:h-[146px]"
                                 >
-                                    <Logos logos={v.logos} size="h-11 w-11" />
+                                    <Logos logos={v.logos} size="h-9 w-9 sm:h-11 sm:w-11" />
                                     <span className={`text-sm font-bold ${t.text}`}>{v.label}</span>
                                     {visited && (
                                         <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-success text-canvas">
@@ -141,7 +141,7 @@ export function QuestionCloud() {
                                 transition={{ type: 'spring', stiffness: 320, damping: 32 }}
                                 className="absolute inset-0 z-10 flex flex-col overflow-hidden rounded-xl border border-line-strong bg-surface shadow-pop"
                             >
-                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ delay: 0.12 }} className="flex h-full flex-col gap-3 p-4 sm:p-5">
+                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ delay: 0.12 }} className="flex h-full flex-col gap-2.5 p-3.5 sm:gap-3 sm:p-5">
                                     <div className="flex items-center gap-3">
                                         <Logos logos={voice.logos} size="h-10 w-10 sm:h-12 sm:w-12" />
                                         <div className="min-w-0 flex-1">
@@ -159,16 +159,16 @@ export function QuestionCloud() {
                                         </button>
                                     </div>
 
-                                    <div className={`border-l-4 border-brand pl-3 text-base font-semibold leading-relaxed sm:text-lg ${t.text}`}>「{voice.line}」</div>
+                                    <div className={`border-l-4 border-brand pl-3 text-[15px] font-semibold leading-snug sm:text-lg sm:leading-relaxed ${t.text}`}>「{voice.line}」</div>
 
-                                    <div className="grid gap-2 sm:grid-cols-2">
-                                        <div className="rounded-lg border border-success/40 bg-success/10 px-3 py-2">
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <div className="rounded-lg border border-success/40 bg-success/10 px-2.5 py-1.5 sm:px-3 sm:py-2">
                                             <div className="text-[11px] font-bold tracking-[0.12em] text-success-text">{voice.question === 'method' ? '這題不一樣' : '適合'}</div>
-                                            <div className={`text-sm leading-snug ${t.text}`}>{voice.good}</div>
+                                            <div className={`text-xs leading-snug sm:text-sm ${t.text}`}>{voice.good}</div>
                                         </div>
-                                        <div className="rounded-lg border border-warning/40 bg-warning/10 px-3 py-2">
+                                        <div className="rounded-lg border border-warning/40 bg-warning/10 px-2.5 py-1.5 sm:px-3 sm:py-2">
                                             <div className="text-[11px] font-bold tracking-[0.12em] text-warning-text">要注意</div>
-                                            <div className={`text-sm leading-snug ${t.text}`}>{voice.watch}</div>
+                                            <div className={`text-xs leading-snug sm:text-sm ${t.text}`}>{voice.watch}</div>
                                         </div>
                                     </div>
 
