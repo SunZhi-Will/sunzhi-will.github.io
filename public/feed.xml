@@ -8,10 +8,26 @@
     <link>https://sunzhi-will.github.io</link>
     <description>Exploring software engineering, AI development, and the art of building great products.</description>
     <language>zh-TW</language>
-    <lastBuildDate>Tue, 06 Oct 2026 14:35:30 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 07 Oct 2026 14:49:30 GMT</lastBuildDate>
     <atom:link href="https://sunzhi-will.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <atom:link href="https://sunzhi-will.github.io/blog" rel="alternate" type="text/html"/>
     
+    <item>
+      <title><![CDATA[AI 都會寫程式了，我還需要學程式語言嗎？給剛開始學 Coding 的新手]]></title>
+      <link>https://sunzhi-will.github.io/blog/2026-10-07-ai-coding-do-i-still-need-to-learn-programming</link>
+      <guid isPermaLink="true">https://sunzhi-will.github.io/blog/2026-10-07-ai-coding-do-i-still-need-to-learn-programming</guid>
+      <pubDate>Wed, 07 Oct 2026 00:00:00 GMT</pubDate>
+      <description><![CDATA[JavaScript、TypeScript、Python、C# 還是 Rust？AI 都會寫了，還要從語法學起嗎？用 19 個可以動手玩的互動圖解，整理 AI 時代新手該怎麼學、怎麼問、怎麼不變成 Yes 工程師。]]></description>
+      <content:encoded><![CDATA[&gt; 最近社群裡從「React 到底是前端還是後端」一路聊下去之後，又出現了一個很有趣的問題：
+&gt; 「到底應該先學 JavaScript、TypeScript、Python、C，還是 Rust？」
+
+有人想先把 JavaScript 學好，有人推薦 TypeScript，有人覺得 Python 很適合新手，有人想學 Rust。也有人認為現在都有 Claude Code、Codex、Gemini 了，很多程式 AI 已經可以直接幫你寫，那還需要像以前一樣，一行一行從語法開始學嗎？
+
+&lt;QuestionCloud /&gt;
+
+我覺得這個問題真正有趣的地方，不是「2026 年最值得學的程式語言是哪一個」，]]></content:encoded>
+      
+    </item>
     <item>
       <title><![CDATA[React、前端、後端到底是什麼？給剛開始學 Web 的新手看的超白話版]]></title>
       <link>https://sunzhi-will.github.io/blog/2026-10-06-react-frontend-backend-for-beginners</link>

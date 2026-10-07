@@ -4,12 +4,25 @@
   <link rel="alternate" type="text/html" href="https://sunzhi-will.github.io"/>
   <link rel="self" type="application/atom+xml" href="https://sunzhi-will.github.io/feed.atom"/>
   <id>https://sunzhi-will.github.io/</id>
-  <updated>2026-10-06T14:35:30.339Z</updated>
+  <updated>2026-10-07T14:49:30.096Z</updated>
   <author>
     <name>Sun (謝上智)</name>
     <uri>https://sunzhi-will.github.io</uri>
   </author>
   
+  <entry>
+    <title type="html"><![CDATA[AI 都會寫程式了，我還需要學程式語言嗎？給剛開始學 Coding 的新手]]></title>
+    <link rel="alternate" type="text/html" href="https://sunzhi-will.github.io/blog/2026-10-07-ai-coding-do-i-still-need-to-learn-programming"/>
+    <id>https://sunzhi-will.github.io/blog/2026-10-07-ai-coding-do-i-still-need-to-learn-programming</id>
+    <published>2026-10-07T00:00:00.000Z</published>
+    <updated>2026-10-07T00:00:00.000Z</updated>
+    <summary type="html"><![CDATA[JavaScript、TypeScript、Python、C# 還是 Rust？AI 都會寫了，還要從語法學起嗎？用 19 個可以動手玩的互動圖解，整理 AI 時代新手該怎麼學、怎麼問、怎麼不變成 Yes 工程師。]]></summary>
+    
+    <author>
+      <name>Sun (謝上智)</name>
+      <uri>https://sunzhi-will.github.io</uri>
+    </author>
+  </entry>
   <entry>
     <title type="html"><![CDATA[React、前端、後端到底是什麼？給剛開始學 Web 的新手看的超白話版]]></title>
     <link rel="alternate" type="text/html" href="https://sunzhi-will.github.io/blog/2026-10-06-react-frontend-backend-for-beginners"/>
