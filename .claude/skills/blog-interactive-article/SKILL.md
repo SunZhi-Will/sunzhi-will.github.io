@@ -64,6 +64,6 @@ node .claude/skills/blog-interactive-article/check-headings.mjs content/blog/<sl
 ## 5. 部署
 
 - push `content/blog/**` 到 master 會觸發 GitHub Pages 部署與「Auto Send Newsletter on Push」電子報。**沒有使用者明確說要部署，不要 push。**
-- 修改已發布的文章再 push，也會跑電子報流程，事前要讓使用者知道。
+- **修改已發布的文章再 push，會把整篇文章重新寄給所有已驗證的訂閱者。** `send-newsletter.js` 裡「已寄過就跳過」的檢查（`lastArticleSent === slug`）實際上沒有作用：2026-10-12 修正目錄標題後重推，3 位訂閱者收到第二封。所以已發布文章的修正要先問使用者能不能接受重寄，或把多次修正合併成一次 push。
 - 部署後用 `gh run list` 確認「Deploy Next.js site to Pages」成功，再 `curl` 正式網址確認 200。
 - 網站有 Service Worker（scope `/blog`），舊讀者可能要重新整理才看到新版。
