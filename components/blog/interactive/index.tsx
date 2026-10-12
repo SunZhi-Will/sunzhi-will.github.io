@@ -188,4 +188,11 @@ export const interactiveMdxComponents = {
     EyePath: lazyWidget(() => import('./EyePath').then((mod) => mod.EyePath), { mobile: 715, tablet: 451, desktop: 463 }),
     TapTarget: lazyWidget(() => import('./TapTarget').then((mod) => mod.TapTarget), { mobile: 578, tablet: 617, desktop: 617 }),
     FeedbackButton: lazyWidget(() => import('./FeedbackButton').then((mod) => mod.FeedbackButton), { mobile: 601, tablet: 438, desktop: 438 }),
+    SlideVaguePrompts: lazyWidget(() => import('./SlideVaguePrompts').then((mod) => mod.SlideVaguePrompts), { mobile: 831, tablet: 536, desktop: 536 }),
+    SlideThreeThings: lazyWidget(() => import('./SlideThreeThings').then((mod) => mod.SlideThreeThings), { mobile: 695, tablet: 466, desktop: 466 }),
+    SlideRestaurant: lazyWidget(() => import('./SlideRestaurant').then((mod) => mod.SlideRestaurant), { mobile: 607, tablet: 449, desktop: 442 }),
+    SlideTwoTastes: lazyWidget(() => import('./SlideTwoTastes').then((mod) => mod.SlideTwoTastes), { mobile: 512, tablet: 483, desktop: 483 }),
+    SlideRulesGrid: lazyWidget(() => import('./SlideRulesGrid').then((mod) => mod.SlideRulesGrid), { mobile: 530, tablet: 503, desktop: 503 }),
+    SlideThenNow: lazyWidget(() => import('./SlideThenNow').then((mod) => mod.SlideThenNow), { mobile: 413, tablet: 442, desktop: 442 }),
+    SlideClosing: lazyWidget(() => import('./SlideClosing').then((mod) => mod.SlideClosing), { mobile: 331, tablet: 442, desktop: 442 }),
 };

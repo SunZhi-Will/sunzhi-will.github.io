@@ -1,0 +1,123 @@
+/*
+ * 文章動畫圖卡的視覺語言，移植自 GoogleAIStudioTeach 的《5 天 AI 上手挑戰》簡報
+ * （src/talks/ai-5day-challenge/deck.module.css）：米白紙面、便利貼、螢光筆、紅筆、蓋章、模擬手機。
+ * 動畫一律用 CSS 變數控制：--d（延遲）、--dur（長度）。圖卡捲進畫面時整張重新掛載，動畫自然重播。
+ */
+
+.card {
+  position: relative;
+  overflow: hidden;
+  font-family: inherit;
+  -webkit-font-smoothing: antialiased;
+}
+
+.paper {
+  background-color: #f6f2e9;
+  background-image: radial-gradient(circle at 1px 1px, rgba(120, 90, 40, 0.09) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+.desk {
+  background-color: #1a1712;
+  background-image: radial-gradient(circle at 1px 1px, rgba(232, 184, 74, 0.13) 1px, transparent 0);
+  background-size: 22px 22px;
+}
+
+.mono {
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 手寫感：系統內建楷體，都沒有時退回黑體 */
+.hand {
+  font-family: "BiauKai", "Kaiti TC", "DFKai-SB", "標楷體", "STKaiti", serif;
+}
+
+/* ── 進場 ── */
+
+.rise { animation: pd-rise var(--dur, 0.65s) cubic-bezier(0.2, 0.8, 0.2, 1) var(--d, 0s) both; }
+/* 不做上下位移：讀者捲動時畫面上下跳會讓人分心，只淡入 */
+@keyframes pd-rise { from { opacity: 0; } to { opacity: 1; } }
+
+.fade { animation: pd-fade var(--dur, 0.7s) ease var(--d, 0s) both; }
+@keyframes pd-fade { from { opacity: 0; } to { opacity: 1; } }
+
+.slideL { animation: pd-slide-l var(--dur, 0.65s) cubic-bezier(0.2, 0.8, 0.2, 1) var(--d, 0s) both; }
+@keyframes pd-slide-l { from { opacity: 0; transform: translateX(-26px); } to { opacity: 1; transform: none; } }
+
+.slideR { animation: pd-slide-r var(--dur, 0.65s) cubic-bezier(0.2, 0.8, 0.2, 1) var(--d, 0s) both; }
+@keyframes pd-slide-r { from { opacity: 0; transform: translateX(26px); } to { opacity: 1; transform: none; } }
+
+.pop { animation: pd-pop var(--dur, 0.45s) cubic-bezier(0.3, 1.5, 0.5, 1) var(--d, 0s) both; }
+@keyframes pd-pop { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: none; } }
+
+/* 清單列：由左往右刷出，不改高度 */
+.fill { animation: pd-fill var(--dur, 0.55s) cubic-bezier(0.5, 0, 0.2, 1) var(--d, 0s) both; }
+@keyframes pd-fill { from { opacity: 0; clip-path: inset(0 100% 0 0); } to { opacity: 1; clip-path: inset(0 0 0 0); } }
+
+/* 搖頭：失敗 */
+.shake { animation: pd-shake 0.5s ease var(--d, 0s) both; }
+@keyframes pd-shake { 0%, 100% { transform: none; } 20% { transform: translateX(-6px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(2px); } }
+
+/* 蓋上去的章 */
+.stamp { animation: pd-stamp var(--dur, 0.4s) cubic-bezier(0.2, 1.6, 0.4, 1) var(--d, 0s) both; }
+@keyframes pd-stamp { from { opacity: 0; transform: scale(1.8); } to { opacity: 1; transform: none; } }
+
+/* 螢光筆：由左往右刷過文字下半部 */
+.mark {
+  background-image: linear-gradient(transparent 55%, var(--mk, #fbe38a) 55%, var(--mk, #fbe38a) 94%, transparent 94%);
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding: 0 0.06em;
+  animation: pd-mark var(--dur, 0.65s) cubic-bezier(0.6, 0, 0.3, 1) var(--d, 0s) forwards;
+}
+@keyframes pd-mark { to { background-size: 100% 100%; } }
+
+/* 紅筆劃掉 */
+.strike { position: relative; display: inline-block; }
+.strike::after {
+  content: "";
+  position: absolute;
+  left: -3%;
+  right: -3%;
+  top: 52%;
+  height: var(--sw, 0.12em);
+  min-height: 2px;
+  border-radius: 2px;
+  background: var(--sc, #c2410c);
+  transform-origin: left center;
+  transform: scaleX(0) rotate(-1.5deg);
+  animation: pd-strike var(--dur, 0.45s) cubic-bezier(0.6, 0, 0.3, 1) var(--d, 0s) forwards;
+}
+@keyframes pd-strike { to { transform: scaleX(1) rotate(-1.5deg); } }
+
+/* 便利貼：旋轉著貼上（--rot 是最後的角度） */
+.stick { animation: pd-stick var(--dur, 0.55s) cubic-bezier(0.25, 1.4, 0.5, 1) var(--d, 0s) both; }
+/* 原地轉正貼上，不從上方掉下來 */
+@keyframes pd-stick { from { opacity: 0; transform: rotate(calc(var(--rot, 0deg) - 8deg)) scale(1.06); } to { opacity: 1; transform: rotate(var(--rot, 0deg)); } }
+
+/* 紅筆圈起來：SVG 要設 pathLength="1" */
+.draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: pd-draw var(--dur, 0.9s) cubic-bezier(0.6, 0, 0.2, 1) var(--d, 0s) forwards; }
+@keyframes pd-draw { to { stroke-dashoffset: 0; } }
+
+/* 一行被點亮 */
+.flash { animation: pd-flash var(--dur, 1.2s) ease var(--d, 0s) both; }
+@keyframes pd-flash { 0% { background-color: transparent; } 25% { background-color: var(--fl, rgba(232, 184, 74, 0.45)); } 100% { background-color: var(--fl2, rgba(232, 184, 74, 0.16)); } }
+
+/* 打字游標 */
+.caret::after { content: ""; display: inline-block; width: 0.5em; height: 1.05em; margin-left: 2px; vertical-align: -0.15em; background: currentColor; animation: pd-blink 1s steps(1) infinite; }
+@keyframes pd-blink { 50% { opacity: 0; } }
+
+/* 打字中的三個點 */
+/* 只跳四下就停，不一直循環 */
+.dot { display: inline-block; width: 6px; height: 6px; margin: 0 2px; border-radius: 50%; background: currentColor; opacity: 0.35; animation: pd-dot 1.2s ease-in-out var(--d, 0s) 4; }
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes pd-dot { 0%, 60%, 100% { opacity: 0.35; transform: none; } 30% { opacity: 1; transform: translateY(-3px); } }
+
+/* 減少動態：動畫瞬間跑完，停在最終狀態 */
+@media (prefers-reduced-motion: reduce) {
+  .card *, .card *::after { animation-duration: 0.001s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; }
+}

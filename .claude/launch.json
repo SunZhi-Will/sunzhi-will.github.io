@@ -7,6 +7,13 @@
       "runtimeArgs": ["run", "dev"],
       "port": 3111,
       "autoPort": true
+    },
+    {
+      "//": "參考用：看 GoogleAIStudioTeach 的手刻簡報（/dev/talks/<slug>）。不清 .next，避免影響那邊的工作階段",
+      "name": "talks-ref",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "cd /Applications/Projects/other/GoogleAIStudioTeach && npx next dev --turbopack -p 3600"],
+      "port": 3600
     }
   ]
 }

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { Note, Segmented, Stage } from './kit';
 import { InteractiveFrame } from './InteractiveFrame';
 
@@ -38,14 +37,12 @@ export function TypeScale() {
                                 {size}px
                                 <span className="block font-sans text-[10px] text-brand-text">{l.name}</span>
                             </span>
-                            <motion.span
-                                initial={false}
-                                animate={{ fontSize: size }}
-                                transition={{ type: 'spring', stiffness: 200, damping: 24 }}
+                            <span
+                                style={{ fontSize: size, transition: 'font-size 0.35s cubic-bezier(0.22, 1, 0.36, 1)' }}
                                 className={`block truncate leading-tight text-fg ${l.step >= 2 ? 'font-black' : l.step === 1 ? 'font-bold' : ''}`}
                             >
                                 {l.text}
-                            </motion.span>
+                            </span>
                         </div>
                     );
                 })}

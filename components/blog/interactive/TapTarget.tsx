@@ -15,7 +15,7 @@ const LABELS = ['收藏', '報名', '分享'];
 export function TapTarget() {
     const [size, setSize] = useState(24);
     const ref = useRef<SVGSVGElement>(null);
-    const inView = useInView(ref);
+    const inView = useInView(ref, { once: true });
     const reduce = useReducedMotion();
     const pulse = inView && !reduce;
     const s = size * K;
@@ -60,7 +60,7 @@ export function TapTarget() {
                         stroke="#f59e0b"
                         strokeWidth="2"
                         animate={pulse ? { scale: [1, 0.86, 1] } : { scale: 1 }}
-                        transition={pulse ? { duration: 1.4, repeat: Infinity, ease: 'easeInOut' } : { duration: 0.2 }}
+                        transition={pulse ? { duration: 1.4, repeat: 2, ease: 'easeInOut' } : { duration: 0.2 }}
                         style={{ originX: `${cx}px`, originY: `${cy}px` }}
                     />
                     <text x="160" y="258" textAnchor="middle" className="text-[12px] font-bold" fill="#374151">
