@@ -48,7 +48,7 @@ export const useCard = () => useContext(Ctx);
 const TOTAL = 7;
 
 /**
- * 一張圖卡。第一次捲進畫面時才掛上內容、CSS 動畫從頭播一次；還沒捲到之前先隱藏（高度照樣佔著），避免動畫在畫面外就播完。
+ * 一張圖卡。內容一開始就掛著（高度照樣佔著），但 CSS 動畫暫停在第一格（paper.module.css 的 data-play），第一次捲進畫面才開始播。
  * 「重播」會換 key 讓整張重新掛載。
  * n 是這篇文章的第幾張圖卡，tag 是左上角的小標。
  */
@@ -64,6 +64,7 @@ export function Card({ tone = 'paper', tag, n, children }: { tone?: 'paper' | 'd
         <Ctx.Provider value={{ on: inView, k, dark }}>
             <div
                 ref={ref}
+                data-play={inView ? '1' : '0'}
                 className={`slide-card not-prose relative my-10 rounded-xl ${s.card} ${dark ? s.desk : s.paper}`}
                 style={{ color: dark ? C.nightInk : C.ink, border: `1px solid ${dark ? '#2e2920' : C.line}` }}
             >
@@ -76,7 +77,7 @@ export function Card({ tone = 'paper', tag, n, children }: { tone?: 'paper' | 'd
                         {String(n).padStart(2, '0')} / {String(TOTAL).padStart(2, '0')}
                     </span>
                 </div>
-                <div key={k} style={inView ? undefined : { visibility: 'hidden' }} className="relative flex flex-col gap-6 px-5 pb-9 pt-5 sm:min-h-[400px] sm:px-9 sm:pb-10 sm:pt-6">
+                <div key={k} className="relative flex flex-col gap-6 px-5 pb-9 pt-5 sm:min-h-[400px] sm:px-9 sm:pb-10 sm:pt-6">
                     {children}
                 </div>
                 <button

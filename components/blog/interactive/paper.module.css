@@ -117,6 +117,12 @@
 .dot:nth-child(3) { animation-delay: 0.4s; }
 @keyframes pd-dot { 0%, 60%, 100% { opacity: 0.35; transform: none; } 30% { opacity: 1; transform: translateY(-3px); } }
 
+/* 還沒捲到的圖卡：所有動畫停在第一格（fill-mode: both 會維持起始狀態），捲到才一起開始播 */
+.card[data-play="0"] *,
+.card[data-play="0"] *::after {
+  animation-play-state: paused !important;
+}
+
 /* 減少動態：動畫瞬間跑完，停在最終狀態 */
 @media (prefers-reduced-motion: reduce) {
   .card *, .card *::after { animation-duration: 0.001s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; }
