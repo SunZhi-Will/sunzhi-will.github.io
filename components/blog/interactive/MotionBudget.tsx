@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Icon } from './icons';
-import { Stage } from './kit';
-import { InteractiveFrame, Verdict } from './InteractiveFrame';
+import { Note, Stage } from './kit';
+import { InteractiveFrame } from './InteractiveFrame';
 
 const EFFECTS = [
     { id: 'bg', name: '背景光影特效', sec: 0.8, info: false },
@@ -69,7 +69,7 @@ export function MotionBudget() {
                     <motion.div className={`h-full rounded-full ${bar}`} initial={false} animate={{ width: `${Math.min(100, (wait / 4) * 100)}%` }} transition={{ type: 'spring', stiffness: 110, damping: 18 }} />
                 </div>
             </div>
-            <Verdict id={tone}>
+            <Note id={tone}>
                 {wait <= 1 ? (
                     <>
                         資訊馬上出現，動畫才是加分。<strong>先讓網站清楚、好操作，再考慮適當增加動畫。</strong>
@@ -79,7 +79,7 @@ export function MotionBudget() {
                         如果使用者只想看活動日期，卻得等 {wait.toFixed(1)} 秒，這些動畫就在<strong>擋住資訊</strong>。也別忘了有人不喜歡大量動態效果。
                     </>
                 )}
-            </Verdict>
+            </Note>
         </InteractiveFrame>
     );
 }

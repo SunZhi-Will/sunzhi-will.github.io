@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Icon } from './icons';
-import { Stage } from './kit';
-import { InteractiveFrame, Verdict } from './InteractiveFrame';
+import { Note, Stage } from './kit';
+import { InteractiveFrame } from './InteractiveFrame';
 import { ALL_GOOD, EventMock } from './uiMock';
 
 const VERSIONS = [
@@ -45,7 +45,7 @@ export function VersionPicker() {
                     );
                 })}
             </div>
-            <Verdict id={pick ?? 'none'}>
+            <Note id={pick ?? 'none'}>
                 {chosen ? (
                     <>
                         選 {chosen.id}：{chosen.name}，適合「{chosen.fit}」。<strong>比較過，才知道自己真正想要什麼。</strong>
@@ -53,7 +53,7 @@ export function VersionPicker() {
                 ) : (
                     <>與其一直修改同一版卻不知道想要什麼，不如先看幾個明確不同的方向。</>
                 )}
-            </Verdict>
+            </Note>
         </InteractiveFrame>
     );
 }

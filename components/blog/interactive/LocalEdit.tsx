@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { Icon } from './icons';
-import { Bubble, Segmented, Stage } from './kit';
-import { InteractiveFrame, Verdict } from './InteractiveFrame';
+import { Bubble, Note, Segmented, Stage } from './kit';
+import { InteractiveFrame } from './InteractiveFrame';
 import { ALL_BAD, EventMock, type MockFix, type Region } from './uiMock';
 
 type Mode = 'local' | 'whole';
@@ -82,7 +82,7 @@ export function LocalEdit() {
                     )}
                 </div>
             </div>
-            <Verdict id={mode + String(lost)}>
+            <Note id={mode + String(lost)}>
                 {mode === 'local' ? (
                     <>
                         <strong>不要只說你不喜歡，要說哪個區域、為什麼。</strong>你不需要懂 CSS，也看得出哪個標題太大。
@@ -90,7 +90,7 @@ export function LocalEdit() {
                 ) : (
                     <>整個重做很省事，但<strong>喜歡的地方也一起被改掉</strong>，功能甚至可能受到影響。</>
                 )}
-            </Verdict>
+            </Note>
         </InteractiveFrame>
     );
 }

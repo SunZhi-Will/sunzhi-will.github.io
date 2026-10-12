@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Icon, type IconName } from './icons';
-import { Bubble, Stage } from './kit';
-import { InteractiveFrame, Verdict } from './InteractiveFrame';
+import { Bubble, Note, Stage } from './kit';
+import { InteractiveFrame } from './InteractiveFrame';
 import { ALL_BAD, ALL_GOOD, EventMock, type MockFix } from './uiMock';
 
 const STEPS: { icon: IconName; name: string; prompt: string; out: string; fix: MockFix }[] = [
@@ -112,9 +112,9 @@ export function WorkflowSteps() {
                     <EventMock fix={s.fix} />
                 </Stage>
             </div>
-            <Verdict id={i}>
+            <Note id={i}>
                 第 {i + 1} 步：{s.name}。<strong>你不是叫 AI 隨機產生畫面，而是在一步一步參與設計。</strong>
-            </Verdict>
+            </Note>
         </InteractiveFrame>
     );
 }

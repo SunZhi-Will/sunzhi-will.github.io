@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { Icon } from './icons';
-import { Meter } from './kit';
-import { InteractiveFrame, Verdict } from './InteractiveFrame';
+import { Meter, Note } from './kit';
+import { InteractiveFrame } from './InteractiveFrame';
 
 const ITEMS = [
     { t: '先確認網站的目的與使用者', d: '不要只列功能。' },
@@ -45,9 +45,9 @@ export function SevenChecklist() {
                 })}
             </div>
             <Meter label="已做到" value={on.length} max={ITEMS.length} suffix={` / ${ITEMS.length}`} tone={on.length === ITEMS.length ? 'success' : 'brand'} />
-            <Verdict id={on.length === ITEMS.length ? 'all' : 'part'}>
+            <Note id={on.length === ITEMS.length ? 'all' : 'part'}>
                 AI 可以幫你把畫面做出來，但<strong>你想帶給使用者什麼樣的體驗，仍然需要自己想清楚</strong>。
-            </Verdict>
+            </Note>
         </InteractiveFrame>
     );
 }

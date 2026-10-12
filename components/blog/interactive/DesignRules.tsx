@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react';
-import { Segmented, Stage } from './kit';
-import { InteractiveFrame, Verdict } from './InteractiveFrame';
+import { Note, Segmented, Stage } from './kit';
+import { InteractiveFrame } from './InteractiveFrame';
 import { ALL_GOOD, EventMock } from './uiMock';
 
 const COLORS = [
@@ -99,7 +99,7 @@ export function DesignRules() {
                     <input type="range" min={6} max={24} value={gap} onChange={(e) => setGap(+e.target.value)} className="mt-2 block w-full accent-[rgb(var(--color-brand))]" />
                 </label>
             </div>
-            <Verdict id={ruled ? 'on' : 'off'}>
+            <Note id={ruled ? 'on' : 'off'}>
                 {ruled ? (
                     <>
                         規則只有三個：顏色、圓角、間距。<strong>改一處，整個網站一起變。</strong>
@@ -109,7 +109,7 @@ export function DesignRules() {
                         每一頁單獨看都不難看，放在同一個網站就<strong>缺乏一致感</strong>。這就是需要 Design System 的原因。
                     </>
                 )}
-            </Verdict>
+            </Note>
         </InteractiveFrame>
     );
 }

@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { Icon } from './icons';
-import { InteractiveFrame, Verdict } from './InteractiveFrame';
+import { Note } from './kit';
+import { InteractiveFrame } from './InteractiveFrame';
 
 const ITEMS = [
     { t: '活動名稱與日期', now: true, why: '寫錯整個頁面都要重來' },
@@ -56,7 +57,7 @@ export function DecideNow() {
                     );
                 })}
             </div>
-            <Verdict id={done ? 'done' : answered}>
+            <Note id={done ? 'done' : answered}>
                 {done ? (
                     <>
                         答對 {correct} / {ITEMS.length}。這就是 MVP 的思考方式：<strong>先做出夠小、能確認方向的版本</strong>，再靠回饋決定下一步。但 MVP 不等於隨便做。
@@ -64,7 +65,7 @@ export function DecideNow() {
                 ) : (
                     <>已分類 {answered} / {ITEMS.length}。</>
                 )}
-            </Verdict>
+            </Note>
         </InteractiveFrame>
     );
 }

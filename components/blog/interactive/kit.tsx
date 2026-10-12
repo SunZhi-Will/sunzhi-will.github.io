@@ -165,3 +165,68 @@ export function Meter({ label, value, max = 100, tone = 'brand', suffix = '' }: 
 export function Eyebrow({ children }: { children: ReactNode }) {
     return <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-brand-text">{children}</div>;
 }
+
+/** 極簡的一行結論：沒有底框，只有一個強調色短線 */
+export function Note({ id, children }: { id: string | number; children: ReactNode }) {
+    return (
+        <motion.div
+            key={id}
+            initial={{ opacity: 0, x: -6 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+            aria-live="polite"
+            className="flex items-start gap-3 text-sm leading-relaxed text-fg-body [&_strong]:text-fg"
+        >
+            <span aria-hidden="true" className="mt-[0.6em] h-[3px] w-5 shrink-0 rounded-full bg-brand" />
+            <span>{children}</span>
+        </motion.div>
+    );
+}
+
+/** 極簡滑桿：細軌道、品牌色進度 */
+export function Slider({
+    label,
+    value,
+    min,
+    max,
+    step = 1,
+    onChange,
+    display,
+}: {
+    label: string;
+    value: number;
+    min: number;
+    max: number;
+    step?: number;
+    onChange: (v: number) => void;
+    display?: ReactNode;
+}) {
+    const pct = ((value - min) / (max - min)) * 100;
+    return (
+        <label className="block">
+            <span className="mb-2 flex items-baseline justify-between text-xs font-bold text-fg">
+                <span>{label}</span>
+                <span className="tabular-nums text-brand-text">{display ?? value}</span>
+            </span>
+            <span className="relative block h-6">
+                <span className="absolute inset-x-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-fg/15" />
+                <span className="absolute left-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-brand" style={{ width: `${pct}%` }} />
+                <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-brand bg-canvas shadow-card"
+                    style={{ left: `${pct}%` }}
+                />
+                <input
+                    type="range"
+                    min={min}
+                    max={max}
+                    step={step}
+                    value={value}
+                    onChange={(e) => onChange(+e.target.value)}
+                    aria-label={label}
+                    className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                />
+            </span>
+        </label>
+    );
+}

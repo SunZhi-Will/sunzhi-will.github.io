@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react';
-import { Bubble, Stage } from './kit';
-import { InteractiveFrame, Verdict } from './InteractiveFrame';
+import { Bubble, Note, Stage } from './kit';
+import { InteractiveFrame } from './InteractiveFrame';
 import { ALL_GOOD, EventMock, type Region } from './uiMock';
 
 const LESSONS: Record<Region, { name: string; learn: string; ask: string }> = {
@@ -40,17 +40,17 @@ export function ReferenceDissect() {
                     <EventMock fix={ALL_GOOD} dark accent="#facc15" radius={14} focus={region} onFocus={setRegion} />
                 </Stage>
                 <div className="flex flex-col gap-2.5">
-                    <div className="rounded-xl border border-line bg-surface-sunken p-3.5">
+                    <div className="px-1 py-2">
                         <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-brand-text">可以學到的</div>
-                        <div className="mt-1 text-base font-black text-fg">{l.name}</div>
+                        <div className="mt-1 text-2xl font-black text-fg">{l.name}</div>
                         <div className="mt-1 text-sm leading-relaxed text-fg-body">{l.learn}</div>
                     </div>
                     <Bubble who="me">{l.ask}</Bubble>
                 </div>
             </div>
-            <Verdict id={region}>
+            <Note id={region}>
                 當你開始能說出「它哪裡讓我覺得好看」，就已經在<strong>練習設計判斷</strong>了。記得只學方法，不要複製內容。
-            </Verdict>
+            </Note>
         </InteractiveFrame>
     );
 }

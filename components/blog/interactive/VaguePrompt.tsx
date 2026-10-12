@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { Icon } from './icons';
-import { Bubble, Stage } from './kit';
-import { InteractiveFrame, Verdict } from './InteractiveFrame';
+import { Bubble, Note, Stage } from './kit';
+import { InteractiveFrame } from './InteractiveFrame';
 import { ALL_BAD, ALL_GOOD, EventMock } from './uiMock';
 
 interface Look {
@@ -84,7 +84,7 @@ export function VaguePrompt() {
                     <EventMock fix={specific ? ALL_GOOD : ALL_BAD} accent={look.accent} radius={look.radius} dark={look.dark} bg={look.bg} />
                 </Stage>
             </div>
-            <Verdict id={prompt.id + roll}>
+            <Note id={prompt.id + roll}>
                 {specific ? (
                     <>
                         說出<strong>哪裡不好、希望變成什麼</strong>，AI 才有方向，其他地方也不會被誤傷。
@@ -94,7 +94,7 @@ export function VaguePrompt() {
                         顏色與風格換了，但<strong>資訊還是擠成一團、按鈕還是不明顯</strong>。「好看」對 AI 來說只是亂猜一個方向。
                     </>
                 )}
-            </Verdict>
+            </Note>
         </InteractiveFrame>
     );
 }

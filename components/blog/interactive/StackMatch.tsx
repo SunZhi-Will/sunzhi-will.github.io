@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { Icon } from './icons';
-import { Bubble, Segmented } from './kit';
-import { InteractiveFrame, Verdict } from './InteractiveFrame';
+import { Bubble, Note, Segmented } from './kit';
+import { InteractiveFrame } from './InteractiveFrame';
 
 type Stack = 'react' | 'vue' | 'plain';
 type Fit = 'yes' | 'maybe' | 'no';
@@ -33,9 +33,9 @@ const MATRIX: Record<Stack, { fits: Fit[]; notes: string[]; ask: string }> = {
 };
 
 const FIT: Record<Fit, { label: string; cls: string }> = {
-    yes: { label: '適合', cls: 'border-success/50 bg-success/10 text-success-text' },
-    maybe: { label: '要確認', cls: 'border-warning/50 bg-warning/10 text-warning-text' },
-    no: { label: '不適用', cls: 'border-danger/50 bg-danger/10 text-danger-text' },
+    yes: { label: '適合', cls: 'text-success-text' },
+    maybe: { label: '要確認', cls: 'text-warning-text' },
+    no: { label: '不適用', cls: 'text-danger-text' },
 };
 
 /** 元件庫不是看到就裝，先確認專案用什麼技術 */
@@ -60,10 +60,10 @@ export function StackMatch() {
                 {LIBS.map((lib, i) => {
                     const f = FIT[m.fits[i]];
                     return (
-                        <div key={lib.name} className={`flex flex-col gap-2 rounded-xl border p-3.5 ${f.cls}`}>
+                        <div key={lib.name} className="flex flex-col gap-2 rounded-xl border border-line bg-surface-sunken p-3.5">
                             <div className="flex items-center justify-between gap-2">
                                 <span className="font-mono text-sm font-black text-fg">{lib.name}</span>
-                                <span className="flex items-center gap-1 text-xs font-black">
+                                <span className={`flex items-center gap-1 text-xs font-black ${f.cls}`}>
                                     <Icon name={m.fits[i] === 'yes' ? 'check' : m.fits[i] === 'no' ? 'x' : 'warn'} className="h-4 w-4" />
                                     {f.label}
                                 </span>
@@ -75,9 +75,9 @@ export function StackMatch() {
                 })}
             </div>
             <Bubble who="me">{m.ask}</Bubble>
-            <Verdict id={stack}>
+            <Note id={stack}>
                 工具本身沒有好壞，<strong>支援的技術不同，用途也不同</strong>。叫 AI 安裝之前，先讓它確認專案現況。
-            </Verdict>
+            </Note>
         </InteractiveFrame>
     );
 }
