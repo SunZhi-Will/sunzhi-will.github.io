@@ -1,4 +1,8 @@
 import { morphline } from './morphline';
+import { schedary } from './schedary';
+import { usermeld } from './usermeld';
+import { vwonest } from './vwonest';
+import { tagStory } from './tag-story';
 import { vozmira } from './vozmira';
 import { mountainsUnreturned } from './mountains-unreturned';
 import { sunkoro } from './sunkoro';
@@ -83,6 +87,10 @@ const projectEntries: ProjectEntry[] = [
     { project: fangjie, timelineOrder: 42, startYear: 2026 },
     // 趣味作品，不佔上方精選卡的位置，排在作品格第一個
     { project: morphline, timelineOrder: 41.5, startYear: 2026 },
+    { project: vwonest, timelineOrder: 41.4, startYear: 2026 },
+    { project: schedary, timelineOrder: 41.3, startYear: 2026 },
+    { project: tagStory, timelineOrder: 41.2, startYear: 2026 },
+    { project: usermeld, timelineOrder: 41.1, startYear: 2026 },
     { project: nexusos, timelineOrder: 41, startYear: 2026 },
     { project: openring, timelineOrder: 40, startYear: 2026 },
     { project: broadvize, timelineOrder: 39, startYear: 2025 },

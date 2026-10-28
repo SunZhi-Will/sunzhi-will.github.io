@@ -12,6 +12,8 @@ export const mountainsUnreturned = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/mountains_unreturned/home.jpg", alt: "山河未歸 首頁" },
+            { type: 'image' as const, src: "/projects/mountains_unreturned/trailer.jpg", alt: "山河未歸 預告片區塊" },
+            { type: 'image' as const, src: "/projects/mountains_unreturned/story.jpg", alt: "山河未歸 故事介紹" },
         ],
         technologies: [
             "Next.js",
@@ -32,6 +34,8 @@ export const mountainsUnreturned = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/mountains_unreturned/home.jpg", alt: "Where the Mountains Await homepage" },
+            { type: 'image' as const, src: "/projects/mountains_unreturned/trailer.jpg", alt: "Where the Mountains Await trailer section" },
+            { type: 'image' as const, src: "/projects/mountains_unreturned/story.jpg", alt: "Where the Mountains Await story introduction" },
         ],
         technologies: [
             "Next.js",

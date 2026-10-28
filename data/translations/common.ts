@@ -77,7 +77,7 @@ Sun 目前主導多個核心專案：
 
 <strong>山河未歸</strong>：動態繪卷式武俠敘事 RPG，選擇與後果化為人物態度與江湖傳聞，全三卷與終卷已上線，單次買斷、無訂閱、無廣告。
 
-<strong>方界：破碎祭壇</strong>：由 Three.js 原型重新打造的 WebGPU 體素合作動作 RPG，程序生成世界、職業與種族選角，目前開放封閉測試資格申請。
+<strong>方界：破碎祭壇</strong>：從 Three.js 原型發展成的體素合作動作 RPG，程序生成世界、職業與種族選角、最多 48 人合作。免費試玩版已在 Steam 推出，已有 195 位玩家體驗。
 
 <strong>KapZoom</strong>（前身 AutoLens）：Windows／Mac 桌面 AI 螢幕錄製與剪輯工具，自動聚焦操作、離線 Whisper 生成字幕，並開放 MCP 橋接讓 Claude Code 驅動錄製到匯出的完整流程。
 
@@ -266,7 +266,7 @@ Sun currently leads several core projects:
 
 <strong>Where the Mountains Await</strong>: A living-scroll wuxia narrative RPG where choices become character attitudes and rumors across the jianghu. All three volumes and the finale are out, as a one-time purchase with no subscription and no ads.
 
-<strong>Fangjie: Shattered Altars</strong>: A voxel co-op action RPG rebuilt from a Three.js prototype for WebGPU, with a procedurally generated world and class and race selection. Closed beta sign-ups are open.
+<strong>Fangjie: Shattered Altars</strong>: A voxel co-op action RPG grown from a Three.js prototype, with a procedurally generated world, class and race selection, and co-op for up to 48 players. The free demo is out on Steam and 195 players have played it.
 
 <strong>KapZoom</strong> (formerly AutoLens): A Windows/Mac desktop AI screen recording and editing tool with auto-focus zoom, offline Whisper captioning, and an MCP bridge that lets Claude Code drive the full record-to-export workflow.
 

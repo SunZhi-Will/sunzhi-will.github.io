@@ -12,6 +12,8 @@ export const sunkoro = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/sunkoro/home.jpg", alt: "Sunkoro 首頁" },
+            { type: 'image' as const, src: "/projects/sunkoro/courses.jpg", alt: "Sunkoro 所有課程頁與學習路徑" },
+            { type: 'image' as const, src: "/projects/sunkoro/events.jpg", alt: "Sunkoro 近期活動與免費入門課" },
         ],
         technologies: [
             "Next.js",
@@ -32,6 +34,8 @@ export const sunkoro = {
         ],
         media: [
             { type: 'image' as const, src: "/projects/sunkoro/home.jpg", alt: "Sunkoro homepage" },
+            { type: 'image' as const, src: "/projects/sunkoro/courses.jpg", alt: "Sunkoro course catalog and learning path" },
+            { type: 'image' as const, src: "/projects/sunkoro/events.jpg", alt: "Sunkoro upcoming events and free starter courses" },
         ],
         technologies: [
             "Next.js",
